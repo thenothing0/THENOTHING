@@ -42,8 +42,26 @@ class PlannerAgent:
         self, target: str,
         goal: str = "Perform full security assessment",
         scope_context: Optional[Dict[str, Any]] = None,
+        scope_intelligence: Optional[Any] = None,
     ) -> ExecutionPlan:
-        """Create an execution plan for a target."""
+        """
+        Create an execution plan for a target.
+        
+        If scope_intelligence is provided (ScopeIntelligenceReport),
+        the planner uses its directives and recommended workflow
+        to shape the plan — ensuring no forbidden operations are included.
+        """
+        # Use scope intelligence to shape workflow
+        if scope_intelligence:
+            directives = getattr(scope_intelligence, 'planner_directives', [])
+            rec_workflow = getattr(scope_intelligence, 'recommended_workflow', None)
+            if rec_workflow and "full" not in goal.lower():
+                goal = f"Perform {rec_workflow.replace('_', ' ')} on {target}"
+            if directives:
+                logger.info(f"📋 Planner received {len(directives)} scope directives")
+                for d in directives:
+                    logger.info(f"  → {d}")
+
         if self.ai:
             enhanced = await self._ai_enhanced_planning(
                 target, goal, scope_context
@@ -55,6 +73,11 @@ class PlannerAgent:
 
         if scope_context:
             plan = self._apply_scope_restrictions(plan, scope_context)
+
+        # Apply scope intelligence directives
+        if scope_intelligence:
+            directives = getattr(scope_intelligence, 'planner_directives', [])
+            plan = self._apply_planner_directives(plan, directives)
 
         plan = self._optimize_step_order(plan)
         self._active_plans[plan.plan_id] = plan
@@ -72,6 +95,52 @@ class PlannerAgent:
             f"📋 Plan created: {plan.plan_id} — "
             f"{len(plan.steps)} steps, rev {plan.revision}"
         )
+        return plan
+
+    def _apply_planner_directives(
+        self, plan: ExecutionPlan, directives: List[str]
+    ) -> ExecutionPlan:
+        """Apply scope-derived planner directives to filter/augment the plan."""
+        disable_keywords = []
+        for d in directives:
+            if d.startswith("DISABLE:"):
+                keywords = [k.strip().lower() for k in d.split(":", 1)[1].split(",")]
+                disable_keywords.extend(keywords)
+            elif d.startswith("RATE_LIMIT:"):
+                rate = d.split(":", 1)[1].strip().split()[0]
+                try:
+                    rl = int(rate)
+                    for step in plan.steps:
+                        step.parameters["rate_limit"] = rl
+                except ValueError:
+                    pass
+            elif d.startswith("FOCUS_API:"):
+                api_target = d.split(":", 1)[1].strip()
+                plan.steps.append(PlanStep(
+                    id=f"{plan.plan_id}:api-focus-{len(plan.steps):03d}",
+                    phase="api_analysis", task_type="api_endpoint_analysis",
+                    agent_type="vuln_research", priority=0,
+                    parameters={"target": api_target, "mode": "api"},
+                ))
+            elif d.startswith("ENUM_SUBDOMAINS:"):
+                wildcard = d.split(":", 1)[1].strip()
+                plan.steps.append(PlanStep(
+                    id=f"{plan.plan_id}:enum-{len(plan.steps):03d}",
+                    phase="recon", task_type="wildcard_subdomain_enum",
+                    agent_type="recon", priority=0,
+                    parameters={"target": wildcard, "mode": "wildcard"},
+                ))
+
+        if disable_keywords:
+            filtered = []
+            for step in plan.steps:
+                blocked = any(kw in step.task_type.lower() for kw in disable_keywords)
+                if blocked:
+                    logger.info(f"🚫 Planner directive blocked step: {step.task_type}")
+                else:
+                    filtered.append(step)
+            plan.steps = filtered
+
         return plan
 
     async def replan(
