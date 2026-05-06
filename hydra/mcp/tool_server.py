@@ -144,6 +144,17 @@ class MCPToolServer:
         self.config = get_config()
         self._available_tools: Dict[str, bool] = {}
         self._execution_stats: Dict[str, Dict] = {}
+        self._scope_engine = None
+        self._artifact_store = None
+
+    def set_scope_engine(self, scope_engine):
+        """Attach scope policy engine — blocks out-of-scope executions."""
+        self._scope_engine = scope_engine
+        logger.info("🔒 Scope enforcement attached to MCP tool server")
+
+    def set_artifact_store(self, artifact_store):
+        """Attach artifact store — auto-saves all tool outputs."""
+        self._artifact_store = artifact_store
     
     async def initialize(self):
         """Detect available tools on the system."""
@@ -184,6 +195,16 @@ class MCPToolServer:
             Dict with keys: success, output, stderr, elapsed, tool_used
         """
         timeout = timeout or self.config.mcp.tool_timeout
+        
+        # ── SCOPE ENFORCEMENT GATE ─────────────────
+        target = params.get("target", "")
+        if self._scope_engine and self._scope_engine.is_loaded and target:
+            scope_check = self._scope_engine.validate_tool_execution(tool_name, target)
+            if not scope_check.allowed:
+                logger.warning(f"🚫 BLOCKED by scope: {tool_name} → {target}: {scope_check.reason}")
+                return {"success": False, "error": f"Scope violation: {scope_check.reason}",
+                        "output": "", "tool_used": tool_name, "blocked_by_scope": True,
+                        "policy_violations": scope_check.policy_violations}
         
         # Resolve logical name to physical tool
         physical_tool = params.pop("tool", None)
@@ -258,7 +279,7 @@ class MCPToolServer:
                 f"in {elapsed:.1f}s (rc={proc.returncode})"
             )
             
-            return {
+            result = {
                 "success": success,
                 "output": stdout_str,
                 "stderr": stderr_str,
@@ -266,6 +287,19 @@ class MCPToolServer:
                 "elapsed": round(elapsed, 2),
                 "tool_used": physical_tool,
             }
+            
+            # ── AUTO-SAVE ARTIFACTS ────────────────
+            if self._artifact_store and target:
+                try:
+                    self._artifact_store.save_raw_output(
+                        target, "scans", physical_tool, stdout_str)
+                    if stderr_str.strip():
+                        self._artifact_store.save_raw_output(
+                            target, "logs", f"{physical_tool}_stderr", stderr_str)
+                except Exception:
+                    pass  # Never fail a scan because of artifact saving
+            
+            return result
             
         except asyncio.TimeoutError:
             elapsed = time.time() - start
