@@ -14,21 +14,6 @@ HYDRA includes mandatory scope enforcement at three levels:
 3. **Coordinator** — Blocks entire scan phases for unauthorized targets
 
 These safety mechanisms should **never** be bypassed or disabled.
-
-## 🐛 Reporting Security Vulnerabilities
-
-If you discover a security vulnerability in HYDRA itself:
-
-1. **Do NOT** open a public issue
-2. Email: security@hydra-security.dev (replace with your actual email)
-3. Include:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if any)
-
-We will respond within 48 hours and work with you on a coordinated disclosure.
-
 ## 📋 Supported Versions
 
 | Version | Supported |
