@@ -125,7 +125,9 @@ hydra/
 ├── plugins/                     # 🔌 Plugin System
 │   └── __init__.py              #   Hot-loadable extensions
 ├── scope/                       # 🎯 Scope Intelligence
-│   └── __init__.py              #   HackerOne/Bugcrowd adapters
+│   └── __init__.py              #   HackerOne/Bugcrowd/Intigriti adapters
+├── output/                      # 💾 Persistent Artifact Output
+│   └── __init__.py              #   Structured output per target
 ├── recon/                       # 🔍 Advanced Reconnaissance
 │   └── __init__.py              #   ASN, GitHub, JS, params
 ├── learning/                    # 🧠 Self-Learning
@@ -151,8 +153,10 @@ hydra/
 
 ## 🧩 Components
 
-### 1. Planner Agent (NEW)
+### 1. Planner Agent
 Strategic planning above the Coordinator. Generates adaptive workflows from templates (`full_assessment`, `quick_scan`, `api_assessment`), dynamically replans when critical findings emerge, and injects investigation steps.
+- Accepts **scope intelligence directives** (`DISABLE:`, `RATE_LIMIT:`, `FOCUS_API:`, `ENUM_SUBDOMAINS:`)
+- Coordinator **only executes Planner decisions** — no independent phase launching
 
 ### 2. Attack Graph Intelligence
 NetworkX-based attack graph with:
@@ -243,10 +247,14 @@ FastAPI + WebSocket backend with embedded UI:
 - Tool, Agent, and Integration plugin types
 - Plugin registry with discovery
 
-### 16. Scope Intelligence (HackerOne)
-- Platform adapters (HackerOne, Bugcrowd, custom)
-- Scope policy engine
-- Pre-scan intelligence reports
+### 16. Scope Intelligence Layer
+Full pre-execution scope analysis — no task may execute without scope validation:
+- Platform adapters: **HackerOne**, **Bugcrowd**, **Intigriti**, Custom
+- Auto-detect platform from URL (`--scope-url https://hackerone.com/example`)
+- Parses: in-scope/out-of-scope assets, allowed/forbidden testing, rate limits, bounty rules, disclosure policy
+- **Scope Policy Engine** validates every target + tool + workflow before execution
+- **MCP layer blocks** out-of-scope scans, forbidden testing, unsafe workflows
+- Generates planner directives that shape the entire execution plan
 - Program memory (learns per-program patterns)
 
 ### 17. Advanced Reconnaissance
@@ -269,6 +277,22 @@ SQLite-backed learning correlation:
 - Horizontal Pod Autoscaler
 - Secret management
 - Prometheus + Grafana stack
+
+### 20. Persistent Artifact Output System
+ALL outputs auto-saved under `output/<target>/`:
+- Structured directories: `recon/`, `scans/`, `reports/`, `attack_graph/`, `evidence/`, `logs/`, `memory/`
+- Raw + parsed outputs, screenshots, HTTP evidence, replay artifacts
+- All files timestamped with content hashes for integrity
+- MCP tool server auto-saves every tool output
+- Reporting Agent reads evidence directly from artifact store
+
+### 21. Validation-First Reporting
+No finding may be reported unless:
+- Evidence exists (matched_at, proof_of_impact, or stored evidence)
+- Reproduction path exists
+- Validation score ≥ 0.6 threshold
+- Hallucination defense check passes
+- Rejected findings saved separately for audit trail
 
 ---
 
@@ -296,11 +320,13 @@ All configuration is environment-driven. Key variables:
 
 ## 🛡️ Safety Rules
 
-1. **No scan without scope validation** — all targets are checked against loaded scope
-2. **No finding without evidence** — hallucination defense rejects unsupported claims
-3. **No uncontrolled execution** — all tools run through the security sandbox
+1. **No scan without scope validation** — MCP layer blocks every out-of-scope target before tool execution
+2. **No finding without evidence** — validation-first filter rejects findings without evidence + reproduction path
+3. **No uncontrolled execution** — all tools run through the security sandbox + scope policy engine
 4. **No budget overrun** — automatic model downgrading when thresholds hit
 5. **No data loss** — workflow checkpointing ensures recovery from failures
+6. **No unreproducible work** — all outputs auto-saved to `output/` with timestamps and content hashes
+7. **No hallucinated reports** — AI safety module rejects unsupported claims at report generation
 
 ---
 
@@ -316,7 +342,14 @@ python -m hydra.main -t example.com --workflow quick_scan --budget 2.0
 # API-focused assessment
 python -m hydra.main -t api.example.com --workflow api_assessment
 
-# Scope-enforced scan
+# Scope from HackerOne URL (auto-detects platform)
+python -m hydra.main -t example.com --scope-url https://hackerone.com/example
+
+# Scope from Bugcrowd/Intigriti URL
+python -m hydra.main -t example.com --scope-url https://bugcrowd.com/example
+python -m hydra.main -t example.com --scope-url https://app.intigriti.com/programs/example
+
+# Scope from JSON file
 python -m hydra.main -t example.com --scope-file scope.json --platform hackerone --program example
 
 # MCP server only (for Claude Code integration)
