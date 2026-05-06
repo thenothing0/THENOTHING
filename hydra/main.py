@@ -50,6 +50,7 @@ from hydra.recon import AdvancedReconEngine
 from hydra.learning.knowledge_graph import KnowledgeGraph
 from hydra.graph.scoring import GraphScoringEngine
 from hydra.graph.visualization import GraphVisualizer
+from hydra.output import ArtifactStore
 
 BANNER = r"""
 ╔═══════════════════════════════════════════════════════════════╗
@@ -113,8 +114,10 @@ def parse_args():
                         help="Enable real-time dashboard")
     parser.add_argument("--scope-file", type=str, default=None,
                         help="Path to scope definition JSON file")
+    parser.add_argument("--scope-url", type=str, default=None,
+                        help="HackerOne/Bugcrowd/Intigriti program URL")
     parser.add_argument("--platform", type=str, default="custom",
-                        choices=["hackerone", "bugcrowd", "custom"],
+                        choices=["hackerone", "bugcrowd", "intigriti", "custom"],
                         help="Bug bounty platform (default: custom)")
     parser.add_argument("--program", type=str, default="",
                         help="Bug bounty program handle/ID")
@@ -242,6 +245,14 @@ async def main():
         bus=bus, ai_router=ai_router, attack_graph=attack_graph,
     )
     
+    # 21. Artifact Output System
+    artifact_store = ArtifactStore(base_dir="output")
+    artifact_store.initialize_target(args.target)
+    
+    # ── Wire scope enforcement into MCP + Coordinator ────
+    tool_server.set_scope_engine(scope_engine)
+    tool_server.set_artifact_store(artifact_store)
+    
     # ── Register health checks ──────────────
     health.register_check("memory_bus", lambda: bus.health_check())
     health.register_check("queue", lambda: task_queue.get_metrics())
@@ -249,20 +260,40 @@ async def main():
     
     logger.info("✅ All v2.0 subsystems initialized")
     
-    # ── Scope Validation ─────────────────────
+    # ═══════════════════════════════════════════
+    #  Scope Intelligence — MANDATORY before execution
+    # ═══════════════════════════════════════════
     scope_context = None
-    if args.scope_file:
-        import json
+    if args.scope_url:
+        # Auto-detect platform from URL
+        scope = await scope_engine.load_from_url(args.scope_url)
+        scope_validation = scope_engine.validate_target(args.target)
+        if not scope_validation.allowed:
+            logger.error(f"🚫 Target NOT in scope: {scope_validation.reason}")
+            return
+        scope_context = scope_engine.generate_execution_policy()
+        sandbox.update_policy(scope_context)
+        intel = scope_engine.generate_intelligence_report()
+        logger.info(f"🎯 Scope loaded from URL — workflow: {intel.recommended_workflow}")
+        if intel.warnings:
+            for w in intel.warnings:
+                logger.warning(f"  ⚠️  {w}")
+        # Save scope intelligence to artifacts
+        artifact_store.save_parsed_output(args.target, "logs", "scope_intelligence", {
+            "program": scope.program_name, "platform": scope.platform,
+            "in_scope": scope.in_scope, "out_of_scope": scope.out_of_scope,
+            "policy": scope_context, "directives": intel.planner_directives,
+        })
+    elif args.scope_file:
+        import json as _json
         with open(args.scope_file) as f:
-            raw_scope = json.load(f)
+            raw_scope = _json.load(f)
         scope = await scope_engine.load_scope(
             platform=args.platform, raw_scope=raw_scope,
         )
         scope_validation = scope_engine.validate_target(args.target)
-        if not scope_validation.get("allowed"):
-            logger.error(
-                f"🚫 Target NOT in scope: {scope_validation.get('reason')}"
-            )
+        if not scope_validation.allowed:
+            logger.error(f"🚫 Target NOT in scope: {scope_validation.reason}")
             return
         scope_context = scope_engine.generate_execution_policy()
         sandbox.update_policy(scope_context)
@@ -285,8 +316,8 @@ async def main():
     # ═══════════════════════════════════════════
     logger.info("🐝 Starting agent swarm...")
     
-    # Start coordinator
-    coordinator = CoordinatorAgent(bus)
+    # Start coordinator with scope + planner integration
+    coordinator = CoordinatorAgent(bus, scope_engine=scope_engine, planner=planner)
     
     # Create agent pools
     tasks: List[asyncio.Task] = []
@@ -308,13 +339,16 @@ async def main():
         )
         tasks.append(asyncio.create_task(dashboard.start()))
     
-    # Spawn worker agents
+    # Spawn worker agents (ReportingAgent gets validation-first enforcement)
     agent_classes = [
         (ReconAgent, {"bus": bus, "mcp_client": mcp_client}),
         (VulnResearchAgent, {"bus": bus, "mcp_client": mcp_client, "ai_router": ai_router}),
         (ExploitHypothesisAgent, {"bus": bus, "ai_router": ai_router}),
         (ValidationAgent, {"bus": bus, "ai_router": ai_router, "learning_engine": learning}),
-        (ReportingAgent, {"bus": bus, "ai_router": ai_router}),
+        (ReportingAgent, {"bus": bus, "ai_router": ai_router,
+                         "artifact_store": artifact_store,
+                         "validation_engine": validation_engine,
+                         "hallucination_defense": hallucination_defense}),
     ]
     
     for agent_cls, kwargs in agent_classes:
@@ -330,16 +364,32 @@ async def main():
     # ═══════════════════════════════════════════
     logger.info(f"📋 Creating execution plan for: {args.target}")
     
-    # Create plan via Planner Agent
+    # Generate scope intelligence for the Planner
+    scope_intel = scope_engine.generate_intelligence_report() if scope_engine.is_loaded else None
+    
+    # Create plan via Planner Agent (scope-driven)
     plan = await planner.create_plan(
         target=args.target,
         goal=f"Perform {args.workflow.replace('_', ' ')} on {args.target}",
         scope_context=scope_context,
+        scope_intelligence=scope_intel,
     )
     logger.info(
         f"📋 Plan: {plan.plan_id} — {len(plan.steps)} steps, "
         f"revision {plan.revision}"
     )
+    
+    # Feed plan to coordinator — coordinator only executes planner decisions
+    await coordinator.accept_plan(scan_id="pending", plan=plan)
+    
+    # Save plan as artifact
+    artifact_store.save_parsed_output(args.target, "logs", "execution_plan", {
+        "plan_id": plan.plan_id, "target": plan.target,
+        "goal": plan.goal, "total_steps": len(plan.steps),
+        "steps": [{"id": s.id, "phase": s.phase, "task_type": s.task_type,
+                   "agent_type": s.agent_type, "priority": s.priority}
+                  for s in plan.steps],
+    })
     
     # Save initial checkpoint
     await recovery.save_checkpoint(
