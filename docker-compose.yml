@@ -1,0 +1,122 @@
+version: "3.9"
+
+# ════════════════════════════════════════════════
+#  HYDRA — Docker Compose Deployment
+#  One command startup: docker compose up
+# ════════════════════════════════════════════════
+
+services:
+  # ── Redis — Shared Memory Bus ──────────────
+  redis:
+    image: redis:7-alpine
+    container_name: hydra-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── PostgreSQL — Persistent Storage ────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: hydra-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hydra}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hydra_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-hydra}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hydra"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── MCP Tool Server ────────────────────────
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: mcp-server
+    container_name: hydra-mcp
+    ports:
+      - "${MCP_PORT:-8900}:8900"
+    environment:
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8900
+    volumes:
+      - ./wordlists:/app/wordlists
+      - ./results:/app/results
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Swarm Coordinator ──────────────────────
+  coordinator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: coordinator
+    container_name: hydra-coordinator
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - POSTGRES_HOST=postgres
+      - HYDRA_NODE_ROLE=coordinator
+      - MCP_HOST=mcp-server
+      - MCP_PORT=8900
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OLLAMA_URL=${OLLAMA_URL:-http://host.docker.internal:11434}
+      - OLLAMA_ENABLED=${OLLAMA_ENABLED:-true}
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      mcp-server:
+        condition: service_started
+    restart: unless-stopped
+
+  # ── Worker Agents ──────────────────────────
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    container_name: hydra-worker-1
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - POSTGRES_HOST=postgres
+      - HYDRA_NODE_ROLE=worker
+      - HYDRA_NODE_ID=worker-1
+      - MCP_HOST=mcp-server
+      - MCP_PORT=8900
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OLLAMA_URL=${OLLAMA_URL:-http://host.docker.internal:11434}
+    depends_on:
+      redis:
+        condition: service_healthy
+      coordinator:
+        condition: service_started
+      mcp-server:
+        condition: service_started
+    deploy:
+      replicas: ${WORKER_REPLICAS:-2}
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  postgres-data:

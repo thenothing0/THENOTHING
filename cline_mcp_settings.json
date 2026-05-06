@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "hydra-security": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
