@@ -25,10 +25,10 @@
 
 ```bash
 # Linux / macOS
-git clone https://github.com/yourusername/hydra.git && cd hydra && ./setup.sh
+git clone https://github.com/thenothing0/HYDRA.git && cd hydra && ./setup.sh
 
 # Windows (PowerShell)
-git clone https://github.com/yourusername/hydra.git; cd hydra; .\setup.ps1
+git clone https://github.com/thenothing0/HYDRA.git; cd hydra; .\setup.ps1
 
 # Docker (production)
 docker compose up -d
