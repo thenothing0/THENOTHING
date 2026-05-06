@@ -14,6 +14,7 @@ HYDRA includes mandatory scope enforcement at three levels:
 3. **Coordinator** — Blocks entire scan phases for unauthorized targets
 
 These safety mechanisms should **never** be bypassed or disabled.
+
 ## 📋 Supported Versions
 
 | Version | Supported |
