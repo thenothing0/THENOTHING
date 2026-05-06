@@ -1,6 +1,6 @@
 """
 ╔══════════════════════════════════════════════════════════════╗
-║  HYDRA Main — Entry point for the Bug Bounty OS             ║
+║  HYDRA Main — Entry point for the Autonomous Security OS    ║
 ║  Usage: python -m hydra.main --target example.com           ║
 ╚══════════════════════════════════════════════════════════════╝
 """
@@ -30,6 +30,27 @@ from hydra.swarm.validation_agent import ValidationAgent
 from hydra.swarm.reporting_agent import ReportingAgent
 from hydra.bootstrap.installer import get_missing_tools, auto_install_all
 
+# ── New v2.0 imports ────────────────────────
+from hydra.planner import PlannerAgent
+from hydra.queue import DistributedTaskQueue, WorkerManager
+from hydra.memory.semantic import SemanticMemory
+from hydra.consensus import ConsensusEngine
+from hydra.validation import AdvancedValidationEngine
+from hydra.sandbox import SecuritySandbox, ExecutionPolicy
+from hydra.cost import CostTracker, BudgetConfig
+from hydra.ai.parallel import ParallelModelEngine
+from hydra.ai.safety import HallucinationDefense
+from hydra.recovery import WorkflowRecovery
+from hydra.observability import metrics, health, tracer
+from hydra.reporting import AdvancedReportEngine
+from hydra.dashboard import DashboardServer
+from hydra.plugins import PluginLoader
+from hydra.scope import ScopePolicyEngine, ProgramMemory
+from hydra.recon import AdvancedReconEngine
+from hydra.learning.knowledge_graph import KnowledgeGraph
+from hydra.graph.scoring import GraphScoringEngine
+from hydra.graph.visualization import GraphVisualizer
+
 BANNER = r"""
 ╔═══════════════════════════════════════════════════════════════╗
 ║  ██╗  ██╗██╗   ██╗██████╗ ██████╗  █████╗                    ║
@@ -39,8 +60,9 @@ BANNER = r"""
 ║  ██║  ██║   ██║   ██████╔╝██║  ██║██║  ██║                    ║
 ║  ╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝                 ║
 ║                                                                ║
-║  AI Bug Bounty Operating System v1.0.0                         ║
-║  Multi-Agent Swarm • MCP Tools • Self-Learning                 ║
+║  Autonomous AI Security Orchestration Platform v2.0.0          ║
+║  Multi-Agent Swarm • Planner • Consensus • Semantic Memory     ║
+║  Attack Graphs • Scope Intelligence • Self-Learning            ║
 ╚═══════════════════════════════════════════════════════════════╝
 """
 
@@ -67,7 +89,7 @@ def setup_logging(verbose: bool = False):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="HYDRA — AI Bug Bounty Operating System",
+        description="HYDRA — Autonomous AI Security Orchestration Platform",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("-t", "--target", required=True, help="Target domain or URL")
@@ -84,6 +106,20 @@ def parse_args():
                         help="Disable AI features")
     parser.add_argument("--agents", type=int, default=1,
                         help="Number of worker agents per type (default: 1)")
+    parser.add_argument("--workflow", type=str, default="full_assessment",
+                        choices=["full_assessment", "quick_scan", "api_assessment"],
+                        help="Scan workflow template (default: full_assessment)")
+    parser.add_argument("--dashboard", action="store_true",
+                        help="Enable real-time dashboard")
+    parser.add_argument("--scope-file", type=str, default=None,
+                        help="Path to scope definition JSON file")
+    parser.add_argument("--platform", type=str, default="custom",
+                        choices=["hackerone", "bugcrowd", "custom"],
+                        help="Bug bounty platform (default: custom)")
+    parser.add_argument("--program", type=str, default="",
+                        help="Bug bounty program handle/ID")
+    parser.add_argument("--budget", type=float, default=5.0,
+                        help="Per-scan AI budget in USD (default: 5.0)")
     return parser.parse_args()
 
 
@@ -105,8 +141,10 @@ async def main():
         if args.check_tools:
             return
     
-    # ── Initialize subsystems ────────────────
-    logger.info("🔧 Initializing HYDRA subsystems...")
+    # ═══════════════════════════════════════════
+    #  Initialize ALL subsystems
+    # ═══════════════════════════════════════════
+    logger.info("🔧 Initializing HYDRA v2.0 subsystems...")
     
     # 1. Memory Bus
     bus = MemoryBus(redis_url=config.redis.url)
@@ -123,12 +161,118 @@ async def main():
         ai_router = AIRouter()
         await ai_router.initialize()
     
-    # 4. Learning Engine
+    # 4. Learning Engine + Knowledge Graph
     learning = LearningEngine()
     learning.initialize()
+    knowledge_graph = KnowledgeGraph()
+    knowledge_graph.initialize()
     
-    # 5. Attack Graph
+    # 5. Attack Graph + Scoring + Visualization
     attack_graph = AttackGraph()
+    graph_scorer = GraphScoringEngine(attack_graph)
+    graph_visualizer = GraphVisualizer(attack_graph)
+    
+    # 6. Cost Tracker
+    cost_tracker = CostTracker(BudgetConfig(
+        per_scan_cap_usd=args.budget,
+        daily_cap_usd=config.cost.daily_cap_usd,
+        monthly_cap_usd=config.cost.monthly_cap_usd,
+    ))
+    
+    # 7. Distributed Task Queue
+    task_queue = DistributedTaskQueue(
+        redis_url=config.redis.url,
+    )
+    await task_queue.connect()
+    
+    # 8. Worker Manager
+    worker_manager = WorkerManager(redis_url=config.redis.url)
+    await worker_manager.connect()
+    
+    # 9. Semantic Memory
+    semantic_memory = SemanticMemory(
+        persist_dir=config.semantic_memory.persist_dir
+    )
+    await semantic_memory.initialize()
+    
+    # 10. Security Sandbox
+    sandbox = SecuritySandbox(ExecutionPolicy(
+        max_requests_per_second=config.sandbox.max_requests_per_second,
+        max_concurrent_tools=config.sandbox.max_concurrent_tools,
+    ))
+    
+    # 11. Consensus Engine
+    consensus = ConsensusEngine(
+        quorum_size=config.consensus.quorum_size,
+        approval_threshold=config.consensus.approval_threshold,
+    )
+    
+    # 12. Advanced Validation Engine
+    validation_engine = AdvancedValidationEngine()
+    
+    # 13. Parallel Model Engine
+    parallel_engine = ParallelModelEngine(ai_router=ai_router)
+    
+    # 14. Hallucination Defense
+    hallucination_defense = HallucinationDefense()
+    
+    # 15. Workflow Recovery
+    recovery = WorkflowRecovery(
+        checkpoint_dir=config.recovery.checkpoint_dir,
+    )
+    
+    # 16. Advanced Report Engine
+    report_engine = AdvancedReportEngine()
+    
+    # 17. Advanced Recon
+    adv_recon = AdvancedReconEngine(mcp_client=mcp_client)
+    
+    # 18. Scope Policy Engine
+    scope_engine = ScopePolicyEngine()
+    program_memory = ProgramMemory()
+    
+    # 19. Plugin Loader
+    plugin_loader = PluginLoader(
+        plugin_dirs=[config.plugins.plugin_dirs]
+    )
+    await plugin_loader.discover_and_load()
+    
+    # 20. Planner Agent (sits above Coordinator)
+    planner = PlannerAgent(
+        bus=bus, ai_router=ai_router, attack_graph=attack_graph,
+    )
+    
+    # ── Register health checks ──────────────
+    health.register_check("memory_bus", lambda: bus.health_check())
+    health.register_check("queue", lambda: task_queue.get_metrics())
+    health.register_check("cost", lambda: cost_tracker.check_budget())
+    
+    logger.info("✅ All v2.0 subsystems initialized")
+    
+    # ── Scope Validation ─────────────────────
+    scope_context = None
+    if args.scope_file:
+        import json
+        with open(args.scope_file) as f:
+            raw_scope = json.load(f)
+        scope = await scope_engine.load_scope(
+            platform=args.platform, raw_scope=raw_scope,
+        )
+        scope_validation = scope_engine.validate_target(args.target)
+        if not scope_validation.get("allowed"):
+            logger.error(
+                f"🚫 Target NOT in scope: {scope_validation.get('reason')}"
+            )
+            return
+        scope_context = scope_engine.generate_execution_policy()
+        sandbox.update_policy(scope_context)
+        logger.info("🎯 Scope validated — target is in-scope")
+    elif args.program:
+        scope = await scope_engine.load_scope(
+            platform=args.platform, program_id=args.program,
+        )
+        scope_context = scope_engine.generate_execution_policy()
+        sandbox.update_policy(scope_context)
     
     # MCP-only mode
     if args.mcp_only:
@@ -136,7 +280,9 @@ async def main():
         await mcp_http.start_standalone()
         return
     
-    # ── Start Swarm ──────────────────────────
+    # ═══════════════════════════════════════════
+    #  Start Agent Swarm
+    # ═══════════════════════════════════════════
     logger.info("🐝 Starting agent swarm...")
     
     # Start coordinator
@@ -152,6 +298,15 @@ async def main():
     # MCP HTTP server (background)
     mcp_http = MCPHTTPServer(tool_server, port=args.mcp_port)
     tasks.append(asyncio.create_task(mcp_http.start()))
+    
+    # Dashboard (background, optional)
+    dashboard = None
+    if args.dashboard or config.dashboard.enabled:
+        dashboard = DashboardServer(
+            host=config.dashboard.host,
+            port=config.dashboard.port,
+        )
+        tasks.append(asyncio.create_task(dashboard.start()))
     
     # Spawn worker agents
     agent_classes = [
@@ -170,12 +325,46 @@ async def main():
     
     logger.info(f"✅ {len(agent_instances)} agents running across {len(agent_classes)} types")
     
-    # ── Launch Scan ──────────────────────────
-    logger.info(f"🎯 Starting scan: {args.target}")
-    scan_id = await coordinator.start_scan(args.target)
-    logger.info(f"📋 Scan ID: {scan_id}")
+    # ═══════════════════════════════════════════
+    #  Create Plan and Launch Scan
+    # ═══════════════════════════════════════════
+    logger.info(f"📋 Creating execution plan for: {args.target}")
     
-    # ── Monitor Loop ─────────────────────────
+    # Create plan via Planner Agent
+    plan = await planner.create_plan(
+        target=args.target,
+        goal=f"Perform {args.workflow.replace('_', ' ')} on {args.target}",
+        scope_context=scope_context,
+    )
+    logger.info(
+        f"📋 Plan: {plan.plan_id} — {len(plan.steps)} steps, "
+        f"revision {plan.revision}"
+    )
+    
+    # Save initial checkpoint
+    await recovery.save_checkpoint(
+        scan_id=plan.plan_id, phase="plan_created",
+        state={"plan_id": plan.plan_id, "target": args.target},
+    )
+    
+    # Start scan via coordinator
+    scan_id = await coordinator.start_scan(args.target)
+    logger.info(f"🎯 Scan launched: {scan_id}")
+    
+    # Track metrics
+    metrics.inc_counter("scans_started")
+    metrics.set_gauge("active_agents", len(agent_instances))
+    
+    # Update dashboard state
+    if dashboard:
+        dashboard.state.scans[scan_id] = {
+            "target": args.target, "status": "running",
+            "plan_id": plan.plan_id, "started_at": time.time(),
+        }
+    
+    # ═══════════════════════════════════════════
+    #  Monitor Loop
+    # ═══════════════════════════════════════════
     try:
         while True:
             await asyncio.sleep(5)
@@ -187,9 +376,20 @@ async def main():
             current_phase = status.get("current_phase", "?")
             completed_phases = status.get("phases_completed", [])
             
+            # Track progress
+            progress = planner.get_plan_progress(plan.plan_id)
+            metrics.set_gauge("scan_progress", progress.get("progress_pct", 0))
+            
+            # Cost check
+            budget_status = cost_tracker.check_budget(scan_id)
+            if not budget_status.get("budget_ok"):
+                logger.warning("⚠️ Budget threshold reached — activating economy mode")
+                recovery.enter_degraded_mode("budget_threshold")
+            
             logger.info(
                 f"📊 Scan {scan_id}: status={scan_status} "
-                f"phase={current_phase} completed={completed_phases}"
+                f"phase={current_phase} completed={completed_phases} "
+                f"cost=${budget_status.get('scan_cost', 0):.4f}"
             )
             
             if scan_status in ("completed", "cancelled", "failed"):
@@ -199,7 +399,9 @@ async def main():
         logger.info("⚠️  Interrupted — shutting down...")
     
     finally:
-        # ── Shutdown ─────────────────────────
+        # ═══════════════════════════════════════════
+        #  Shutdown & Final Reports
+        # ═══════════════════════════════════════════
         logger.info("🛑 Shutting down HYDRA...")
         
         # Capture final status BEFORE disconnecting
@@ -216,6 +418,7 @@ async def main():
         for t in tasks:
             t.cancel()
         
+        await task_queue.disconnect()
         await bus.disconnect()
         
         # Print final summary
@@ -228,8 +431,39 @@ async def main():
         summary = learning.get_summary()
         logger.info(f"🧠 Learning: {summary['total_findings_recorded']} findings recorded")
         
+        # Knowledge graph summary
+        kg_summary = knowledge_graph.get_summary()
+        logger.info(
+            f"🧠 Knowledge: {kg_summary['exploit_patterns_learned']} patterns, "
+            f"{kg_summary['workflow_outcomes_recorded']} workflows"
+        )
+        
         # Attack graph summary
         logger.info(f"🕸️  {attack_graph.summary()}")
+        
+        # Cost summary
+        cost_analytics = cost_tracker.get_analytics()
+        logger.info(
+            f"💰 Total cost: ${cost_analytics['total_cost']:.4f} "
+            f"({cost_analytics['total_requests']} requests)"
+        )
+        
+        # Recovery summary
+        recovery_summary = recovery.get_recovery_summary()
+        if recovery_summary["total_recoveries"] > 0:
+            logger.info(
+                f"🔄 Recovery: {recovery_summary['retries']} retries, "
+                f"{recovery_summary['skipped']} skipped"
+            )
+        
+        # Consensus summary
+        consensus_summary = consensus.get_summary()
+        if consensus_summary["total_evaluated"] > 0:
+            logger.info(
+                f"🤝 Consensus: {consensus_summary['approved']} approved, "
+                f"{consensus_summary['rejected']} rejected "
+                f"({consensus_summary['avg_agreement']:.0%} agreement)"
+            )
         
         logger.info("👋 HYDRA shutdown complete")
 

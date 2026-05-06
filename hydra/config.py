@@ -119,6 +119,90 @@ class AttackGraphConfig:
     persist_interval: int = 60
 
 
+@dataclass
+class CostConfig:
+    """AI cost and token management configuration."""
+    monthly_cap_usd: float = float(os.getenv("HYDRA_MONTHLY_CAP", "100.0"))
+    daily_cap_usd: float = float(os.getenv("HYDRA_DAILY_CAP", "10.0"))
+    per_scan_cap_usd: float = float(os.getenv("HYDRA_SCAN_CAP", "5.0"))
+    warning_threshold: float = 0.8
+    downgrade_threshold: float = 0.9
+
+
+@dataclass
+class SandboxConfig:
+    """Security sandbox configuration."""
+    enabled: bool = os.getenv("HYDRA_SANDBOX", "true").lower() == "true"
+    max_requests_per_second: int = int(os.getenv("HYDRA_RATE_LIMIT", "50"))
+    max_concurrent_tools: int = int(os.getenv("HYDRA_MAX_TOOLS", "5"))
+    max_scan_duration: int = 7200
+    allow_active_exploitation: bool = False
+
+
+@dataclass
+class DashboardConfig:
+    """Real-time dashboard configuration."""
+    enabled: bool = os.getenv("HYDRA_DASHBOARD", "true").lower() == "true"
+    host: str = os.getenv("DASHBOARD_HOST", "0.0.0.0")
+    port: int = int(os.getenv("DASHBOARD_PORT", "8080"))
+
+
+@dataclass
+class ScopeConfig:
+    """Bug bounty scope / program intelligence configuration."""
+    platform: str = os.getenv("HYDRA_SCOPE_PLATFORM", "custom")
+    program_id: str = os.getenv("HYDRA_PROGRAM_ID", "")
+    enforce_scope: bool = os.getenv("HYDRA_ENFORCE_SCOPE", "true").lower() == "true"
+    hackerone_token: str = os.getenv("HACKERONE_API_TOKEN", "")
+
+
+@dataclass
+class RecoveryConfig:
+    """Workflow recovery configuration."""
+    enabled: bool = True
+    checkpoint_dir: str = str(DATA_DIR / "checkpoints")
+    max_retries: int = 5
+    checkpoint_interval: int = 60
+
+
+@dataclass
+class ConsensusConfig:
+    """Multi-agent consensus configuration."""
+    enabled: bool = os.getenv("HYDRA_CONSENSUS", "true").lower() == "true"
+    quorum_size: int = 2
+    approval_threshold: float = 0.6
+
+
+@dataclass
+class QueueConfig:
+    """Distributed queue configuration."""
+    mode: str = os.getenv("HYDRA_QUEUE_MODE", "local")  # local | distributed
+    lease_seconds: int = 300
+    dlq_max_size: int = 1000
+
+
+@dataclass
+class SemanticMemoryConfig:
+    """Semantic memory / vector DB configuration."""
+    enabled: bool = os.getenv("HYDRA_SEMANTIC_MEMORY", "true").lower() == "true"
+    persist_dir: str = str(DATA_DIR / "chromadb")
+    embedding_model: str = "all-MiniLM-L6-v2"
+
+
+@dataclass
+class PluginConfig:
+    """Plugin system configuration."""
+    enabled: bool = True
+    plugin_dirs: str = str(BASE_DIR / "plugins")
+
+
+@dataclass
+class ObservabilityConfig:
+    """Observability stack configuration."""
+    metrics_enabled: bool = os.getenv("HYDRA_METRICS", "true").lower() == "true"
+    tracing_enabled: bool = os.getenv("HYDRA_TRACING", "false").lower() == "true"
+
+
 class HydraConfig:
     """Master configuration singleton."""
     
@@ -141,6 +225,18 @@ class HydraConfig:
         self.mcp = MCPConfig()
         self.learning = LearningConfig()
         self.attack_graph = AttackGraphConfig()
+        
+        # New v2.0 subsystem configs
+        self.cost = CostConfig()
+        self.sandbox = SandboxConfig()
+        self.dashboard = DashboardConfig()
+        self.scope = ScopeConfig()
+        self.recovery = RecoveryConfig()
+        self.consensus = ConsensusConfig()
+        self.queue = QueueConfig()
+        self.semantic_memory = SemanticMemoryConfig()
+        self.plugins = PluginConfig()
+        self.observability = ObservabilityConfig()
         
         # AI Providers
         self.ai_providers = self._load_ai_providers()
