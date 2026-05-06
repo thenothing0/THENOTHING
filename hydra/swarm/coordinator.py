@@ -78,12 +78,30 @@ class CoordinatorAgent:
         },
     ]
     
-    def __init__(self, bus: MemoryBus):
+    def __init__(self, bus: MemoryBus, scope_engine=None, planner=None):
         self.bus = bus
         self.config = get_config()
         self._running = False
         self._active_scans: Dict[str, Dict[str, Any]] = {}
         self._phase_tracker: Dict[str, Dict[str, str]] = {}
+        self._scope_engine = scope_engine
+        self._planner = planner
+        self._planner_plans: Dict[str, Any] = {}  # scan_id → ExecutionPlan
+
+    def set_scope_engine(self, scope_engine):
+        """Attach scope engine — all targets validated before phase launch."""
+        self._scope_engine = scope_engine
+        logger.info("🔒 Scope enforcement attached to Coordinator")
+
+    def set_planner(self, planner):
+        """Attach Planner Agent — Coordinator only executes Planner decisions."""
+        self._planner = planner
+        logger.info("🧠 Planner Agent attached to Coordinator")
+
+    async def accept_plan(self, scan_id: str, plan):
+        """Accept an ExecutionPlan from the Planner Agent."""
+        self._planner_plans[scan_id] = plan
+        logger.info(f"📋 Plan accepted for scan {scan_id}: {len(plan.steps)} steps")
     
     async def start_scan(self, target: str, options: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -133,6 +151,16 @@ class CoordinatorAgent:
         """Launch all tasks for a given scan phase."""
         phase_name = phase_config["phase"]
         agent_type = phase_config["agent_type"]
+        
+        # ── MANDATORY SCOPE VALIDATION ──────────
+        if self._scope_engine and self._scope_engine.is_loaded:
+            scope_check = self._scope_engine.validate_target(target)
+            if not scope_check.allowed:
+                logger.warning(
+                    f"🚫 Phase '{phase_name}' BLOCKED — target out of scope: "
+                    f"{scope_check.reason}"
+                )
+                return
         
         logger.info(f"📋 Launching phase: {phase_name} for scan {scan_id}")
         
