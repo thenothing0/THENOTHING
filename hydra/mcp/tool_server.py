@@ -48,7 +48,11 @@ TOOL_REGISTRY: Dict[str, Dict[str, Any]] = {
     "httpx": {
         "binary": "httpx",
         "install": {"go": "go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest"},
-        "build_cmd": lambda params: ["httpx", "-silent", "-u", params.get("target", "")],
+        "build_cmd": lambda params: (
+            ["httpx", "-silent"]  # stdin mode when piping
+            if params.get("_stdin")
+            else ["httpx", "-silent", "-u", params.get("target", "")]
+        ),
         "stdin_mode": True,
         "description": "Fast HTTP probing",
     },
@@ -58,7 +62,7 @@ TOOL_REGISTRY: Dict[str, Dict[str, Any]] = {
         "build_cmd": lambda params: [
             "nuclei", "-u", params["target"], "-jsonl", "-silent",
             "-severity", params.get("severity", "medium,high,critical"),
-        ],
+        ] + (["--tags", params["tags"]] if params.get("tags") else []),
         "description": "Template-based vulnerability scanner",
     },
     "ffuf": {
@@ -242,9 +246,11 @@ class MCPToolServer:
         
         try:
             stdin_data = None
-            if tool_def.get("stdin_mode") and "targets" in params:
+            # Support piped input via _stdin param or targets list
+            if params.get("_stdin"):
+                stdin_data = params.pop("_stdin")
+            elif tool_def.get("stdin_mode") and "targets" in params:
                 stdin_data = "\n".join(params["targets"])
-                cmd = [tool_def["binary"], "-silent"]
             
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
