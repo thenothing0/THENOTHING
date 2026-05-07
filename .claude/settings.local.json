@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(subfinder -d tw.coupang.com -silent)",
+      "Bash(tee /tmp/subdomains_subfinder.txt)",
+      "Bash(wafw00f *)",
+      "Bash(whatweb *)",
+      "Bash(httpx -silent -status-code -title -tech-detect -follow-redirects -threads 50)",
+      "Bash(tee /tmp/live_hosts.txt)",
+      "Bash(gau --threads 5 --subs tw.coupang.com)",
+      "Bash(tee /tmp/gau_urls.txt)",
+      "Bash(tee /tmp/live_200_hosts.txt)",
+      "Bash(awk '{print $1}')",
+      "Bash(tee /tmp/targets_200.txt)",
+      "Bash(grep -v \"^\\\\s*$\")",
+      "Bash(tee /tmp/interesting_hosts.txt)",
+      "Bash(nuclei -severity high,critical,medium -silent -rate-limit 10 -timeout 10)",
+      "Bash(tee /tmp/nuclei_results.txt)",
+      "Bash(katana -u https://www.tw.coupang.com -d 3 -silent -jc -kf all -rate-limit 5)",
+      "Bash(tee /tmp/katana_urls.txt)",
+      "Bash(katana -u https://go-cms.tw.coupang.com -d 2 -silent -jc -kf all -rate-limit 5)",
+      "Bash(tee /tmp/katana_gocms.txt)",
+      "Bash(grep -iE \"\\\\.js$|\\\\.json$|\\\\.xml$|\\\\.yaml$|\\\\.yml$|\\\\.conf$|\\\\.bak$|\\\\.sql$|\\\\.log$\")",
+      "Bash(ffuf -u \"https://api-gateway.tw.coupang.com/FUZZ\" -w /usr/share/wordlists/dirb/common.txt -mc 200,301,302,401,405 -rate 5 -t 5 -timeout 10 -s)",
+      "Bash(curl -s -L -A \"Mozilla/5.0 \\(X11; Linux x86_64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://hackerone.com/coupang_tw\")",
+      "Bash(curl -s \"https://hackerone.com/coupang_tw/policy_scopes.json\" -H \"Accept: application/json\" -A \"Mozilla/5.0 \\(X11; Linux x86_64\\) AppleWebKit/537.36\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s \"https://hackerone.com/graphql\" -X POST -H \"Content-Type: application/json\" -H \"Accept: application/json\" -A \"Mozilla/5.0 \\(X11; Linux x86_64\\) AppleWebKit/537.36\" -d '{\"query\":\"{ __type\\(name: \\\\\"StructuredScopeDocument\\\\\"\\) { fields { name type { name kind ofType { name } } } } }\"}')",
+      "Bash(curl -s https://hackerone.com/graphql -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -A 'Mozilla/5.0 \\(X11; Linux x86_64\\) AppleWebKit/537.36' -d '{\"operationName\":\"PolicySearchStructuredScopes\",\"variables\":{\"handle\":\"coupang_tw\",\"eligibleForBounty\":null,\"eligibleForSubmission\":null,\"asmTagIds\":[],\"first\":100},\"query\":\"query PolicySearchStructuredScopes\\($handle:String!,$eligibleForBounty:Boolean,$eligibleForSubmission:Boolean,$asmTagIds:[Int],$first:Int\\){team\\(handle:$handle\\){structured_scopes_search\\(eligible_for_bounty:$eligibleForBounty,eligible_for_submission:$eligibleForSubmission,asm_tag_ids:$asmTagIds,first:$first\\){edges{node{...on StructuredScopeDocument{id,identifier,asset_type,availability_requirement,confidentiality_requirement,eligible_for_bounty,eligible_for_submission,instruction,integrity_requirement}}}}}}\"}')",
+      "Bash(python3 *)",
+      "Bash(pip install *)",
+      "WebFetch(domain:hackerone.com)",
+      "mcp__hydra-security__full_recon",
+      "mcp__hydra-security__subfinder_scan",
+      "mcp__hydra-security__amass_enum"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "hydra-security"
+  ]
+}
