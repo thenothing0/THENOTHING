@@ -5,7 +5,7 @@ Thank you for your interest in contributing to HYDRA! We welcome contributions o
 ## 🚀 Getting Started
 
 1. **Fork** the repository
-2. **Clone** your fork: `git clone https://github.com/yourusername/hydra.git`
+2. **Clone** your fork: `git clone https://github.com/thenothing0/hydra.git`
 3. **Create a branch**: `git checkout -b feature/amazing-feature`
 4. **Install dependencies**: `pip install -r requirements.txt`
 5. **Run tests**: `pytest tests/`
