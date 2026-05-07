@@ -135,29 +135,46 @@ graph TB
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Works Right Now)
+
+### Prerequisites
+```bash
+# Python 3.10+
+pip install rich aiohttp
+
+# Install security tools (Go 1.20+ required)
+go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+go install -v github.com/projectdiscovery/katana/cmd/katana@latest
+go install -v github.com/ffuf/ffuf/v2@latest
+```
 
 ### CLI Mode
 ```bash
-# Full autonomous assessment
-python -m hydra.main -t example.com --workflow full_bounty --dashboard
+# Check which tools are installed
+python -m hydra.main --check-tools
 
-# Quick reconnaissance
-python -m hydra.main -t example.com --workflow quick_recon
+# List available workflows
+python -m hydra.main --list-workflows
 
-# API-focused assessment
-python -m hydra.main -t api.example.com --workflow api_only
+# Quick recon (subdomains → probe → tech → nuclei)
+python -m hydra.main -t example.com -w quick_recon
 
-# Web3 smart contract audit
-python -m hydra.main -t contracts/Vault.sol --workflow web3_audit
+# Full bug bounty assessment
+python -m hydra.main -t example.com -w full_bounty
 
-# Scope from HackerOne (auto-detects platform)
-python -m hydra.main -t example.com --scope-url https://hackerone.com/example
+# API-focused scan
+python -m hydra.main -t api.example.com -w api_only
 
-# Scope from Bugcrowd or Intigriti
-python -m hydra.main -t example.com --scope-url https://bugcrowd.com/example
-python -m hydra.main -t example.com --scope-url https://app.intigriti.com/programs/example
+# Black-box aggressive recon
+python -m hydra.main -t example.com -w blackbox
+
+# Verbose + custom timeout
+python -m hydra.main -t example.com -w quick_recon -v --timeout 60
 ```
+
+All outputs saved to `output/<target>/` → `recon/`, `scans/`, `reports/`, `evidence/`, `logs/`
 
 ### Claude Code Mode
 ```bash
@@ -166,20 +183,15 @@ claude  # open Claude Code in the project folder
 # Then use slash commands:
 /recon example.com           # Full reconnaissance
 /hunt example.com            # Autonomous vulnerability hunting
-/hunt example.com --xss      # Target specific vuln class
 /autopilot example.com       # Full autonomous mode
 /chain                       # Build exploit chains from findings
-/validate                    # Validate all findings with evidence
 /report                      # Generate submission-ready report
-/web3-audit Contract.sol     # Smart contract audit
 /scope hackerone tesla       # Load scope from platform
 ```
 
 ### Docker Mode
 ```bash
 docker compose up -d
-
-# Scan via API
 curl -X POST http://localhost:8900/scan \
   -d '{"target": "example.com", "workflow": "full_bounty"}'
 ```
