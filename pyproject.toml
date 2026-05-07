@@ -1,0 +1,17 @@
+[project]
+name = "hydra"
+version = "3.0.0"
+description = "HYDRA - Autonomous Security Swarm Platform"
+requires-python = ">=3.10"
+dependencies = [
+    "typer", "rich", "pydantic", "python-dotenv",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hydra*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
