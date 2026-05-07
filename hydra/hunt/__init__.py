@@ -343,9 +343,9 @@ class HuntEngine:
         if "nuclei" in strategy.get("tools", []):
             tags = ",".join(strategy.get("nuclei_tags", []))
             severity = "low,medium,high,critical" if mode == "aggressive" else "medium,high,critical"
-            result = await self.mcp.execute(
-                tool_name="nuclei_scan",
-                params={
+            result = await self.mcp.execute_tool(
+                "nuclei_scan",
+                {
                     "target": target,
                     "severity": severity,
                     "tags": tags,
@@ -364,9 +364,9 @@ class HuntEngine:
             params = strategy.get("parameter_targets", [])
             if params:
                 for param in params[:5]:  # Limit to avoid abuse
-                    result = await self.mcp.execute(
-                        tool_name="fuzz_endpoint",
-                        params={"target": f"{target}/?{param}=FUZZ"},
+                    result = await self.mcp.execute_tool(
+                        "fuzz_endpoint",
+                        {"target": f"{target}/?{param}=FUZZ"},
                     )
                     if result.get("success") and result.get("output"):
                         for line in result["output"].strip().split("\n"):
@@ -383,9 +383,9 @@ class HuntEngine:
         # Phase 3: Path discovery for info disclosure
         if strategy.get("paths"):
             for path in strategy["paths"][:10]:
-                result = await self.mcp.execute(
-                    tool_name="http_probe",
-                    params={"target": f"{target}{path}"},
+                result = await self.mcp.execute_tool(
+                    "http_probe",
+                    {"target": f"{target}{path}"},
                 )
                 if result.get("success") and result.get("output"):
                     output = result["output"].strip()
