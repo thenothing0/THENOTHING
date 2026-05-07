@@ -35,10 +35,7 @@ from mcp.server.fastmcp import FastMCP
 #  Server Setup
 # ──────────────────────────────────────────────
 
-mcp = FastMCP(
-    "hydra-security",
-    version="1.0.0",
-)
+mcp = FastMCP("hydra-security")
 
 # Paths
 BASE_DIR = Path(__file__).parent
