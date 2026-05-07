@@ -15,12 +15,13 @@ class TestConsensusEngine:
         engine = ConsensusEngine()
         engine.submit_vote(
             finding_id="f1",
-            agent_id="recon-1",
-            agent_type="recon",
             verdict="valid",
             confidence=0.9,
+            agent_id="recon-1",      # Keep for compatibility if supported
+            agent_type="recon",
         )
-        assert len(engine.get_votes("f1")) == 1
+        votes = engine.get_votes("f1")
+        assert len(votes) == 1
 
     def test_consensus_reached_with_quorum(self):
         engine = ConsensusEngine()
@@ -28,10 +29,10 @@ class TestConsensusEngine:
         for i in range(3):
             engine.submit_vote(
                 finding_id="f2",
-                agent_id=f"agent-{i}",
-                agent_type="vuln_research",
                 verdict="valid",
                 confidence=0.85,
+                agent_id=f"agent-{i}",
+                agent_type="vuln_research",
             )
         result = engine.evaluate("f2")
         assert result is not None
@@ -39,16 +40,16 @@ class TestConsensusEngine:
 
     def test_contradiction_detection(self):
         engine = ConsensusEngine()
-        engine.submit_vote("f3", "a1", "recon", "valid", 0.9)
-        engine.submit_vote("f3", "a2", "validation", "invalid", 0.8)
+        engine.submit_vote("f3", verdict="valid", confidence=0.9, agent_id="a1", agent_type="recon")
+        engine.submit_vote("f3", verdict="invalid", confidence=0.8, agent_id="a2", agent_type="validation")
         result = engine.evaluate("f3")
         assert result.get("has_contradiction", False) is True
 
     def test_confidence_fusion(self):
         engine = ConsensusEngine()
-        engine.submit_vote("f4", "a1", "recon", "valid", 0.7)
-        engine.submit_vote("f4", "a2", "vuln_research", "valid", 0.9)
-        engine.submit_vote("f4", "a3", "validation", "valid", 0.85)
+        engine.submit_vote("f4", verdict="valid", confidence=0.7, agent_id="a1", agent_type="recon")
+        engine.submit_vote("f4", verdict="valid", confidence=0.9, agent_id="a2", agent_type="vuln_research")
+        engine.submit_vote("f4", verdict="valid", confidence=0.85, agent_id="a3", agent_type="validation")
         result = engine.evaluate("f4")
         fused = result.get("fused_confidence", 0)
         assert 0.7 <= fused <= 1.0
