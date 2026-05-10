@@ -1,8 +1,8 @@
 """
 ╔══════════════════════════════════════════════════════════════╗
-║  HYDRA Main — Entry point for the Autonomous Security OS    ║
+║  HYDRA Main v4.0 — Autonomous AI Security Orchestration     ║
 ║  Usage: python -m hydra.main -t example.com                 ║
-║         python -m hydra.main -t example.com -w quick_recon  ║
+║         python -m hydra.main -t example.com -w full_auto    ║
 ╚══════════════════════════════════════════════════════════════╝
 """
 
@@ -37,12 +37,12 @@ from hydra.memory.bus import MemoryBus
 
 BANNER = r"""
   _   ___   ______  ____      _
- | | | \ \ / /  _ \|  _ \    / \    v3.0
+ | | | \ \ / /  _ \|  _ \    / \    v4.0
  | |_| |\ V /| | | | |_) |  / _ \
  |  _  | | | | |_| |  _ <  / ___ \
  |_| |_| |_| |____/|_| \_\/_/   \_\
 
-  Autonomous AI Security Swarm Platform
+  Next-Gen AI Security Orchestration Platform
 """
 
 AVAILABLE_WORKFLOWS = [
@@ -152,22 +152,32 @@ def build_parser():
 
 class HydraEngine:
     """
-    Lightweight engine that initialises only what's needed and runs
-    a workflow against a target.  Designed to work NOW with zero
-    external services (no Redis, no ChromaDB, no AI keys needed).
+    Next-gen HYDRA engine with integrated OSINT, fingerprinting,
+    intelligence packs, heuristic reasoning, and hallucination defense.
+    Works NOW with zero external services (no Redis, no ChromaDB needed).
     """
 
     def __init__(self, target: str, workflow: str = "quick_recon",
-                 output_dir: str = "output", timeout: int = 120):
+                 output_dir: str = "output", timeout: int = 120,
+                 scope_url: str = ""):
         self.target = target
         self.workflow_name = workflow
         self.output_dir = Path(output_dir) / self._safe_dir(target)
         self.timeout = timeout
+        self.scope_url = scope_url
         self.tool_server: Optional[MCPToolServer] = None
         self.mcp: Optional[MCPClient] = None
         self.findings: List[Dict[str, Any]] = []
         self.recon_data: Dict[str, Any] = {}
         self._start_time = 0.0
+        # v4 subsystems (lazy-loaded)
+        self._scope_engine = None
+        self._osint_engine = None
+        self._fingerprinter = None
+        self._pack_registry = None
+        self._heuristics = None
+        self._hallucination_defense = None
+        self._artifact_store = None
 
     @staticmethod
     def _safe_dir(target: str) -> str:
@@ -176,18 +186,78 @@ class HydraEngine:
     # ── Lifecycle ──────────────────────────────
 
     async def init(self):
-        """Initialise only the MCP tool server (fast, no external deps)."""
+        """Initialise MCP tool server and v4 subsystems."""
         self._start_time = time.time()
 
-        # Output dirs
-        for sub in ["recon", "scans", "reports", "evidence", "logs"]:
+        # Output dirs (expanded for OSINT + attack graph)
+        for sub in ["recon", "osint", "scans", "reports", "evidence",
+                    "logs", "attack_graph", "memory", "raw"]:
             (self.output_dir / sub).mkdir(parents=True, exist_ok=True)
+
+        # Artifact store
+        try:
+            from hydra.output import ArtifactStore
+            self._artifact_store = ArtifactStore(str(self.output_dir.parent))
+            self._artifact_store.initialize_target(self.target)
+        except Exception:
+            pass
 
         # Tool server
         self.tool_server = MCPToolServer()
         await self.tool_server.initialize()
+        if self._artifact_store:
+            self.tool_server.set_artifact_store(self._artifact_store)
         self.mcp = MCPClient(tool_server=self.tool_server)
-        logger.info("[bold green]✅ HYDRA engine ready[/bold green]")
+
+        # Scope enforcement
+        if self.scope_url:
+            await self._init_scope()
+
+        # v4 subsystems (lightweight, no external deps)
+        self._init_v4_subsystems()
+
+        logger.info("[bold green]✅ HYDRA v4 engine ready[/bold green]")
+
+    async def _init_scope(self):
+        """Initialize scope from program URL."""
+        try:
+            from hydra.scope import ScopePolicyEngine
+            self._scope_engine = ScopePolicyEngine()
+            scope = await self._scope_engine.load_from_url(self.scope_url)
+            self.tool_server.set_scope_engine(self._scope_engine)
+            logger.info(f"[bold]🔒 Scope loaded: {scope.program_name} "
+                        f"({len(scope.in_scope)} in-scope)[/bold]")
+        except Exception as e:
+            logger.warning(f"Scope loading failed: {e}")
+
+    def _init_v4_subsystems(self):
+        """Initialize v4 intelligence subsystems."""
+        try:
+            from hydra.fingerprint import TechnologyFingerprinter
+            self._fingerprinter = TechnologyFingerprinter()
+        except Exception:
+            pass
+        try:
+            from hydra.packs import PackRegistry
+            self._pack_registry = PackRegistry()
+        except Exception:
+            pass
+        try:
+            from hydra.heuristics import HeuristicReasoningEngine
+            self._heuristics = HeuristicReasoningEngine()
+        except Exception:
+            pass
+        try:
+            from hydra.hallucination import HallucinationDefense
+            self._hallucination_defense = HallucinationDefense()
+        except Exception:
+            pass
+        try:
+            from hydra.osint import OSINTIntelligenceEngine
+            config = get_config()
+            self._osint_engine = OSINTIntelligenceEngine(api_keys=config.api_keys)
+        except Exception:
+            pass
 
     async def run(self) -> Dict[str, Any]:
         """Run the selected workflow and return a summary."""
@@ -310,12 +380,131 @@ class HydraEngine:
         await self._wf_full_bounty()  # same pipeline, more aggressive
 
     # ═══════════════════════════════════════════
+    #  WORKFLOW: osint_recon (NEW v4)
+    # ═══════════════════════════════════════════
+
+    async def _wf_osint_recon(self):
+        """OSINT-first: passive intel → fingerprint → targeted scan."""
+        # Phase 1: OSINT Intelligence
+        logger.info("[bold]── Phase 1/4: OSINT Intelligence ──[/bold]")
+        if self._osint_engine:
+            try:
+                report = await self._osint_engine.run_full_osint(self.target)
+                self.recon_data["osint_assets"] = [a.asset for a in report.assets[:200]]
+                self.recon_data["osint_findings"] = len(report.findings)
+                self._save_json("osint/osint_report.json", report.to_dict())
+                self._save_json("osint/attack_surface.json", report.attack_surface)
+                logger.info(f"  OSINT: [green]{len(report.assets)}[/] assets, "
+                            f"[green]{len(report.findings)}[/] findings")
+                # Feed subdomains from OSINT into recon data
+                osint_subs = [a.asset for a in report.assets if a.asset_type == "domain"]
+                self.recon_data["subdomains"] = osint_subs
+                self._save_lines("recon/subdomains_osint.txt", osint_subs)
+            except Exception as e:
+                logger.warning(f"  OSINT failed: {e}")
+        else:
+            logger.info("  [dim]OSINT engine not available — skipping[/dim]")
+
+        # Phase 2: Technology Fingerprinting
+        logger.info("[bold]── Phase 2/4: Technology Fingerprinting ──[/bold]")
+        if self._fingerprinter:
+            try:
+                fp = await self._fingerprinter.fingerprint(self.target)
+                self.recon_data["technologies"] = [
+                    {"name": t.name, "category": t.category, "confidence": t.confidence}
+                    for t in fp.technologies
+                ]
+                self._save_json("recon/fingerprint.json", {
+                    "server": fp.server, "framework": fp.framework,
+                    "cms": fp.cms, "cdn": fp.cdn, "waf": fp.waf_detected,
+                    "cloud": fp.cloud_provider, "technologies": self.recon_data["technologies"],
+                })
+                # Activate intelligence packs
+                if self._pack_registry:
+                    triggers = fp.get_intelligence_pack_triggers()
+                    activated = self._pack_registry.activate_packs(triggers)
+                    self.recon_data["packs_activated"] = [p.name for p in activated]
+                    logger.info(f"  Packs activated: [cyan]{', '.join(self.recon_data.get('packs_activated', []))}[/]")
+                # Feed technologies to heuristics
+                if self._heuristics:
+                    for t in fp.technologies:
+                        self._heuristics.add_technology(t.name)
+                logger.info(f"  Detected: [green]{len(fp.technologies)}[/] technologies")
+            except Exception as e:
+                logger.warning(f"  Fingerprinting failed: {e}")
+
+        # Phase 3: Tool-based recon
+        logger.info("[bold]── Phase 3/4: Subdomain + HTTP Probing ──[/bold]")
+        subs = await self._run_tool("subfinder", {"target": self.target})
+        tool_subs = self._lines(subs)
+        # Merge with OSINT subdomains
+        all_subs = list(set(self.recon_data.get("subdomains", []) + tool_subs))
+        self.recon_data["subdomains"] = all_subs
+        self._save_lines("recon/subdomains.txt", all_subs)
+        logger.info(f"  Total subdomains: [green]{len(all_subs)}[/]")
+
+        probe = await self._run_tool("httpx", {"target": self.target},
+                                     stdin="\n".join(all_subs) if all_subs else None)
+        self.recon_data["live_hosts"] = self._lines(probe)
+        self._save_lines("recon/live_hosts.txt", self.recon_data["live_hosts"])
+
+        # Phase 4: Heuristic-guided vulnerability scan
+        logger.info("[bold]── Phase 4/4: Heuristic-Guided Scan ──[/bold]")
+        nuclei_tags = ""
+        if self._pack_registry:
+            nuclei_tags = ",".join(self._pack_registry.get_all_nuclei_tags())
+        scan_params = {"target": self.target, "severity": "medium,high,critical"}
+        if nuclei_tags:
+            scan_params["tags"] = nuclei_tags
+        scan = await self._run_tool("nuclei", scan_params)
+        self.findings = self._parse_nuclei(scan.get("output", ""))
+        # Hallucination defense on findings
+        if self._hallucination_defense and self.findings:
+            self.findings = self._hallucination_defense.filter_verified_findings(
+                self.findings, min_confidence=0.3)
+        self._save_json("scans/nuclei_results.json", self.findings)
+        logger.info(f"  Findings: [{'red' if self.findings else 'green'}]{len(self.findings)}[/]")
+
+    # ═══════════════════════════════════════════
+    #  WORKFLOW: full_auto (NEW v4)
+    # ═══════════════════════════════════════════
+
+    async def _wf_full_auto(self):
+        """Full autonomous: OSINT → fingerprint → heuristic scan → crawl → fuzz → validate."""
+        await self._wf_osint_recon()
+
+        logger.info("[bold]── Phase 5: URL Crawling ──[/bold]")
+        crawl = await self._run_tool("katana", {"target": self.target})
+        self.recon_data["urls"] = self._lines(crawl)
+        self._save_lines("recon/urls.txt", self.recon_data["urls"])
+        logger.info(f"  Crawled [green]{len(self.recon_data['urls'])}[/] URLs")
+
+        logger.info("[bold]── Phase 6: Full Nuclei Scan ──[/bold]")
+        full_scan = await self._run_tool("nuclei", {
+            "target": self.target, "severity": "low,medium,high,critical",
+        })
+        extra = self._parse_nuclei(full_scan.get("output", ""))
+        seen = {f.get("template_id") for f in self.findings}
+        for f in extra:
+            if f.get("template_id") not in seen:
+                self.findings.append(f)
+        self._save_json("scans/nuclei_full.json", self.findings)
+
+        # Heuristic summary
+        if self._heuristics:
+            for f in self.findings:
+                self._heuristics.add_finding(f)
+            profile = self._heuristics.get_scan_profile()
+            self._save_json("reports/heuristic_profile.json", profile)
+
+        logger.info(f"  Total findings: [red]{len(self.findings)}[/]")
+
+    # ═══════════════════════════════════════════
     #  WORKFLOW stubs for web3 / code_review
     # ═══════════════════════════════════════════
 
     async def _wf_web3_audit(self):
         logger.info("[bold yellow]Web3 audit requires a .sol file — not yet integrated in CLI.[/]")
-        # TODO: integrate hydra.web3.SolidityAnalyzer
 
     async def _wf_code_review(self):
         logger.info("[bold yellow]Code review workflow coming soon.[/]")
@@ -499,6 +688,7 @@ async def async_main():
         workflow=args.workflow,
         output_dir=args.output_dir,
         timeout=args.timeout,
+        scope_url=args.scope_url or "",
     )
     await engine.init()
     summary = await engine.run()
