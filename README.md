@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/HYDRA-v4.0-00ff88?style=for-the-badge&labelColor=000000" alt="HYDRA v4.0"/>
+  <img src="https://img.shields.io/badge/THENOTHING-v4.0-00ff88?style=for-the-badge&labelColor=000000" alt="THENOTHING v4.0"/>
   <img src="https://img.shields.io/badge/Agents-50+-blueviolet?style=for-the-badge&labelColor=000000" alt="Agents"/>
   <img src="https://img.shields.io/badge/Tools-19-orange?style=for-the-badge&labelColor=000000" alt="Tools"/>
   <img src="https://img.shields.io/badge/Intel_Packs-11-ff6600?style=for-the-badge&labelColor=000000" alt="Packs"/>
@@ -8,16 +8,16 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge&labelColor=000000" alt="License"/>
 </p>
 
-<h1 align="center">🐉 HYDRA v4.0</h1>
-<h3 align="center">Next-Gen AI Security Orchestration Platform</h3>
+<h1 align="center">👁️‍🗨️ THENOTHING</h1>
+<h3 align="center">Autonomous AI Security Intelligence & Orchestration Platform</h3>
 
 <p align="center">
   <b>OSINT intelligence · Tech fingerprinting · Intelligence packs · Heuristic reasoning · Hallucination defense · Multi-agent swarm · Attack graphs · Semantic memory · 7 IDE support</b>
 </p>
 
 <p align="center">
-  The most advanced open-source autonomous bug bounty & pentest orchestration platform.<br/>
-  HYDRA deploys intelligent agent swarms that plan, hunt, validate, and report — with zero false positives.
+  The most advanced open-source autonomous security orchestration platform.<br/>
+  THENOTHING deploys intelligent agent swarms that plan, hunt, validate, and report — with zero false positives.
 </p>
 
 ---
@@ -41,10 +41,10 @@
 
 ```bash
 # Linux / macOS
-git clone https://github.com/thenothing0/HYDRA.git && cd HYDRA && ./setup.sh
+git clone https://github.com/thenothing0/THENOTHING.git && cd THENOTHING && ./setup.sh
 
 # Windows (PowerShell)
-git clone https://github.com/thenothing0/HYDRA.git; cd HYDRA; .\setup.ps1
+git clone https://github.com/thenothing0/THENOTHING.git; cd THENOTHING; .\setup.ps1
 
 # Docker (production)
 docker compose up -d
@@ -72,7 +72,7 @@ graph TB
         MWS["Writeup RAG Server"]
     end
 
-    subgraph BRAIN["🧠 HYDRA Brain"]
+    subgraph BRAIN["🧠 THENOTHING Brain"]
         PA["Strategic Planner — HTN"]
         CO["Coordinator — Orchestration"]
         CE["Consensus Engine — Voting"]
@@ -82,7 +82,7 @@ graph TB
 
     subgraph SWARM["🐝 Agent Swarm"]
         RA[Recon Agent]
-        OA["OSINT Agent — NEW"]
+        OA["OSINT Agent"]
         VR[Vuln Research]
         EH[Exploit Hypothesis]
         VA[Validation Agent]
@@ -189,26 +189,22 @@ claude  # open Claude Code in the project folder
 hydra/
 ├── main.py                        # 🚀 Entry Point (v4 engine)
 ├── config.py                      # ⚙️  Environment-driven Config
-├── osint/                         # 🔍 OSINT Intelligence Layer (NEW)
+├── osint/                         # 🔍 OSINT Intelligence Layer
 │   ├── __init__.py                #     crt.sh, Shodan, Censys, DNS, Wayback
 │   └── github_intel.py            #     GitHub secret scanning + endpoint extraction
-├── fingerprint/                   # 🔬 Technology Fingerprinting (NEW)
+├── fingerprint/                   # 🔬 Technology Fingerprinting
 │   └── __init__.py                #     80+ Wappalyzer-style signatures
-├── packs/                         # 📦 Intelligence Packs (NEW)
+├── packs/                         # 📦 Intelligence Packs
 │   └── __init__.py                #     11 built-in packs, hot-loadable
-├── heuristics/                    # 🧠 Heuristic Reasoning (NEW)
+├── heuristics/                    # 🧠 Heuristic Reasoning
 │   └── __init__.py                #     Bayesian vulnerability likelihood
-├── hallucination/                 # 🛡️ Hallucination Defense (NEW)
+├── hallucination/                 # 🛡️ Hallucination Defense
 │   └── __init__.py                #     Evidence-first verification
 ├── planner/                       # 🧠 Strategic Planner + HTN
-│   ├── planner_agent.py           #     Scope-driven plan generation
-│   ├── task_decomposer.py         #     Goal → subtask decomposition
-│   └── htn.py                     #     Hierarchical Task Network
 ├── swarm/                         # 🐝 Agent Swarm
 │   ├── coordinator.py             #     Scan orchestration
 │   ├── agent_factory.py           #     Dynamic agent spawning
-│   ├── osint_agent.py             #     OSINT Intelligence Agent (NEW)
-│   ├── base_agent.py              #     Stateless agent base class
+│   ├── osint_agent.py             #     OSINT Intelligence Agent
 │   └── specialized/               #     API, Web3, Mobile, Cloud agents
 ├── scope/                         # 🎯 Scope Intelligence Layer
 ├── graph/                         # 📊 Attack Graph + Scoring
@@ -219,7 +215,7 @@ hydra/
 ├── learning/                      # 🧠 Self-Learning Engine
 ├── sandbox/                       # 🔒 Security Sandbox
 ├── dashboard/                     # 📈 Real-Time Web Dashboard
-├── queue/                         # 📦 Distributed Queue (Redis Streams)
+├── queue/                         # 📦 Distributed Queue
 ├── hunt/                          # 🎯 Autonomous Hunt Loops
 ├── chains/                        # ⛓️  Exploit Chain Builder
 ├── reporting/                     # 📄 Advanced Reports
@@ -255,11 +251,9 @@ Wappalyzer-style detection with 80+ signatures:
 - **Headers** — Server, X-Powered-By, CDN, WAF detection
 - **HTML** — CMS, JS frameworks, analytics, auth systems
 - **Cookies** — Framework detection (PHP, Rails, Django, Express)
-- **Meta tags** — Generator-based CMS version extraction
 - **Auto-triggers** intelligence pack activation based on detected stack
 
 ### 📦 Intelligence Packs (11 Built-in)
-Hot-loadable, versioned attack intelligence:
 
 | Pack | Exploit Hypotheses | Key Checks |
 |------|-------------------|------------|
@@ -278,7 +272,7 @@ Hot-loadable, versioned attack intelligence:
 ### 🧠 Heuristic Reasoning Engine
 Bayesian vulnerability likelihood estimation:
 - **Prior probabilities** from real-world bug bounty data
-- **Technology boosters** — WordPress boosts XSS/SQLi/file upload likelihood; GraphQL boosts IDOR 1.8×
+- **Technology boosters** — WordPress boosts XSS/SQLi/file upload; GraphQL boosts IDOR 1.8×
 - **Adaptive decisions** — expand investigation on critical findings, reduce noise on low-value targets
 - **WAF-aware scanning** — automatic stealth mode with delay and header randomization
 
@@ -288,35 +282,33 @@ No unsupported AI-generated claim appears in reports:
 - **Hallucination indicator scanning** — detects vague language ("likely", "possibly")
 - **Contradiction detection** — flags "critical" + "low risk" in same finding
 - **Multi-agent consensus** — aggregates verification across agents
-- **Confidence scoring** — findings below threshold are filtered out
 
 ---
 
 ## 🧩 Core Components
 
 ### 🧠 Strategic Planner (HTN)
-Generates adaptive, scope-aware execution plans using Hierarchical Task Network decomposition.
+Goal-driven autonomous reasoning using Hierarchical Task Network decomposition:
+- Decomposes high-level goals into adaptive workflows
+- Recursively re-plans based on findings
+- Dynamically activates intelligence packs based on detected technologies
 - Accepts scope intelligence directives (`DISABLE:`, `RATE_LIMIT:`, `FOCUS_API:`)
-- Dynamically replans when critical findings emerge
-- Intelligence pack workflows feed directly into plan generation
 
 ### 🐝 Agent Swarm + Dynamic Spawning
 50+ specialized agents with on-the-fly spawning:
-- **Core agents**: Recon, OSINT, Vuln Research, Exploit Hypothesis, Validation, Reporting
-- **Specialized agents**: API, Web3, Mobile, Cloud — spawned dynamically
-- **OSINT Agent** (v4): handles 8 task types — full OSINT, cert transparency, DNS intel, Wayback, Shodan, GitHub, employee intel, attack surface mapping
+- **Core**: Recon, OSINT, Vuln Research, Exploit Hypothesis, Validation, Reporting
+- **Specialized**: API, Web3, Mobile, Cloud — spawned dynamically
+- **OSINT Agent**: 8 task types — full OSINT, cert transparency, DNS intel, Wayback, Shodan, GitHub, employee intel, attack surface mapping
 
 ### 📊 Attack Graph Intelligence
 NetworkX-based graph with risk propagation:
-- **Scoring Engine**: CVSS-weighted risk scores
-- **Blast Radius Estimation**: Impact propagation from any compromised node
-- **Privilege Escalation Detection**: Multi-hop chain analysis
-- **Visualization**: DOT, JSON, Cytoscape, interactive HTML export
+- CVSS-weighted risk scores, blast radius estimation
+- Multi-hop privilege escalation detection
+- Visualization: DOT, JSON, Cytoscape, interactive HTML export
 
 ### 🤝 Multi-Agent Consensus
 Weighted voting eliminates false positives (<2% FP rate):
 - Agent-type expertise weighting (validation > exploit > vuln_research > recon)
-- Quorum requirements for severity levels
 - Contradiction detection between agents
 
 ### 🎯 Scope Intelligence Layer
@@ -328,8 +320,7 @@ Mandatory pre-execution scope analysis:
 ### ✅ Validation-First Reporting
 No finding reported unless all checks pass:
 - Evidence must exist (HTTP artifacts, screenshots, matched patterns)
-- Reproduction path must be documented
-- Hallucination defense check passes
+- Reproduction path documented, hallucination defense check passes
 - Rejected findings saved separately for audit
 
 ---
@@ -338,8 +329,8 @@ No finding reported unless all checks pass:
 
 | Workflow | Duration | Description |
 |----------|----------|-------------|
-| `osint_recon` | ~10 min | **NEW** — OSINT → fingerprint → pack activation → heuristic-guided scan |
-| `full_auto` | ~40 min | **NEW** — Full autonomous: OSINT → fingerprint → crawl → deep scan → validate |
+| `osint_recon` | ~10 min | OSINT → fingerprint → pack activation → heuristic-guided scan |
+| `full_auto` | ~40 min | Full autonomous: OSINT → fingerprint → crawl → deep scan → validate |
 | `quick_recon` | ~5 min | Fast subdomain + tech + nuclei scan |
 | `full_bounty` | ~30 min | Complete assessment with exploit chains |
 | `api_only` | ~15 min | API endpoint discovery + auth testing |
@@ -350,8 +341,6 @@ No finding reported unless all checks pass:
 ---
 
 ## ⚙️ Configuration
-
-All configuration is environment-driven:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -390,7 +379,7 @@ All configuration is environment-driven:
 ### Docker Compose (Recommended)
 ```bash
 docker compose up -d
-# Services: hydra, redis, chromadb, prometheus, grafana
+# Services: thenothing, redis, chromadb, prometheus, grafana
 # Dashboard: http://localhost:8080
 ```
 
@@ -411,14 +400,14 @@ python -m hydra.main -t example.com -w full_auto
 
 ```bash
 python -m pytest tests/ -v --tb=short
-# 18 tests: consensus, planner, scope
+# 18 tests: consensus, planner, scope — all passing
 ```
 
 ---
 
 ## ⚠️ Legal Disclaimer
 
-**HYDRA is designed for authorized security testing only.**
+**THENOTHING is designed for authorized security testing only.**
 
 - Only test targets within approved bug bounty program scopes
 - Always verify scope before scanning
@@ -446,5 +435,5 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 <p align="center">
   <b>Built for bug bounty hunters, by bug bounty hunters.</b><br/>
-  <sub>HYDRA v4.0 — Next-Gen AI Security Orchestration Platform</sub>
+  <sub>THENOTHING — Autonomous AI Security Intelligence & Orchestration Platform</sub>
 </p>

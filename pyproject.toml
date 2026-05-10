@@ -1,7 +1,7 @@
 [project]
-name = "hydra"
+name = "thenothing"
 version = "4.0.0"
-description = "HYDRA - Next-Gen AI Security Orchestration Platform"
+description = "THENOTHING - Autonomous AI Security Intelligence & Orchestration Platform"
 requires-python = ">=3.10"
 dependencies = [
     "typer", "rich", "pydantic", "python-dotenv",
