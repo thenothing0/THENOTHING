@@ -1,17 +1,18 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/HYDRA-v3.0-00ff88?style=for-the-badge&labelColor=000000" alt="HYDRA v3.0"/>
+  <img src="https://img.shields.io/badge/HYDRA-v4.0-00ff88?style=for-the-badge&labelColor=000000" alt="HYDRA v4.0"/>
   <img src="https://img.shields.io/badge/Agents-50+-blueviolet?style=for-the-badge&labelColor=000000" alt="Agents"/>
   <img src="https://img.shields.io/badge/Tools-19-orange?style=for-the-badge&labelColor=000000" alt="Tools"/>
+  <img src="https://img.shields.io/badge/Intel_Packs-11-ff6600?style=for-the-badge&labelColor=000000" alt="Packs"/>
   <img src="https://img.shields.io/badge/MCP_Servers-3-cyan?style=for-the-badge&labelColor=000000" alt="MCP"/>
   <img src="https://img.shields.io/badge/IDEs-7-ff69b4?style=for-the-badge&labelColor=000000" alt="IDEs"/>
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge&labelColor=000000" alt="License"/>
 </p>
 
-<h1 align="center">🐉 HYDRA v3.0</h1>
-<h3 align="center">Autonomous AI Security Swarm Platform</h3>
+<h1 align="center">🐉 HYDRA v4.0</h1>
+<h3 align="center">Next-Gen AI Security Orchestration Platform</h3>
 
 <p align="center">
-  <b>Multi-agent swarm · Strategic planner · Attack graphs · Consensus engine · Semantic memory · Autonomous hunt loops · Exploit chain builder · Web3 audit · 7 IDE support</b>
+  <b>OSINT intelligence · Tech fingerprinting · Intelligence packs · Heuristic reasoning · Hallucination defense · Multi-agent swarm · Attack graphs · Semantic memory · 7 IDE support</b>
 </p>
 
 <p align="center">
@@ -21,20 +22,33 @@
 
 ---
 
+## 🆕 What's New in v4.0
+
+| Module | Description |
+|--------|-------------|
+| 🔍 **OSINT Intelligence** | Passive recon via crt.sh, Shodan, Censys, SecurityTrails, Wayback Machine, DNS/WHOIS |
+| 🐙 **GitHub Intelligence** | Secret scanning (20+ patterns), endpoint extraction, employee-to-infra correlation |
+| 🔬 **Tech Fingerprinting** | Wappalyzer-style detection — 80+ signatures across headers, HTML, cookies, meta tags |
+| 📦 **Intelligence Packs** | 11 hot-loadable packs: WordPress, Next.js, GraphQL, AWS, Laravel, OAuth, K8s, Firebase, Supabase, Cloudflare, API Security |
+| 🧠 **Heuristic Reasoning** | Bayesian vulnerability likelihood with tech-specific boosters for 15+ frameworks |
+| 🛡️ **Hallucination Defense** | Evidence-first verification, contradiction detection, confidence scoring — blocks unsupported claims |
+| 🕵️ **OSINT Swarm Agent** | Stateless agent handling 8 OSINT task types in the multi-agent architecture |
+| 🚀 **New Workflows** | `osint_recon` (OSINT → fingerprint → targeted scan) and `full_auto` (complete autonomous pipeline) |
+
+---
+
 ## ⚡ One-Command Install
 
 ```bash
 # Linux / macOS
-git clone https://github.com/thenothing0/HYDRA.git && cd hydra && ./setup.sh
+git clone https://github.com/thenothing0/HYDRA.git && cd HYDRA && ./setup.sh
 
 # Windows (PowerShell)
-git clone https://github.com/thenothing0/HYDRA.git; cd hydra; .\setup.ps1
+git clone https://github.com/thenothing0/HYDRA.git; cd HYDRA; .\setup.ps1
 
 # Docker (production)
 docker compose up -d
 ```
-
-Setup auto-detects missing tools, installs them safely, and validates your environment.
 
 ---
 
@@ -43,7 +57,7 @@ Setup auto-detects missing tools, installs them safely, and validates your envir
 ```mermaid
 graph TB
     subgraph IDE["🖥️ IDE Layer (7 IDEs)"]
-        CC[Claude Code] 
+        CC[Claude Code]
         CX[Codex]
         GM[Gemini]
         CR[Cursor]
@@ -53,96 +67,66 @@ graph TB
     end
 
     subgraph MCP["🔌 MCP Layer"]
-        MTS[Tool Server<br/>19 security tools]
-        MBS[Bounty Server<br/>H1 + BC + Intigriti]
-        MWS[Writeup RAG Server<br/>Semantic search]
+        MTS["Tool Server — 19 security tools"]
+        MBS["Bounty Server — H1 + BC + Intigriti"]
+        MWS["Writeup RAG Server"]
     end
 
     subgraph BRAIN["🧠 HYDRA Brain"]
-        PA[Strategic Planner<br/>HTN Planning]
-        CO[Coordinator<br/>Scan Orchestration]
-        CE[Consensus Engine<br/>Multi-Agent Voting]
+        PA["Strategic Planner — HTN"]
+        CO["Coordinator — Orchestration"]
+        CE["Consensus Engine — Voting"]
+        HR["Heuristic Reasoning"]
+        HD["Hallucination Defense"]
     end
 
     subgraph SWARM["🐝 Agent Swarm"]
         RA[Recon Agent]
+        OA["OSINT Agent — NEW"]
         VR[Vuln Research]
         EH[Exploit Hypothesis]
         VA[Validation Agent]
         RP[Reporting Agent]
-        CB[Chain Builder]
     end
 
-    subgraph SPECIALIZED["🎯 Specialized Agents"]
-        API[API Agent]
-        W3[Web3 Agent]
-        MB[Mobile Agent]
-        CL[Cloud Agent]
+    subgraph V4["🆕 v4 Intelligence Layer"]
+        OSINT["OSINT Engine — crt.sh, Shodan, Wayback"]
+        GH["GitHub Intel — Secrets + Endpoints"]
+        FP["Tech Fingerprinter — 80+ signatures"]
+        IP["Intelligence Packs — 11 built-in"]
     end
 
-    subgraph INTEL["📊 Intelligence"]
-        AG[Attack Graph<br/>NetworkX]
-        SM[Semantic Memory<br/>ChromaDB]
-        KG[Knowledge Graph<br/>Self-Learning]
-        SC[Scope Intelligence<br/>Policy Engine]
-    end
-
-    subgraph INFRA["⚙️ Infrastructure"]
-        RQ[Distributed Queue<br/>Redis Streams]
-        SB[Security Sandbox<br/>Rate Limiting]
-        CT[Cost Tracker<br/>Budget Caps]
-        OB[Observability<br/>Prometheus + Grafana]
-        RC[Workflow Recovery<br/>Checkpointing]
+    subgraph INTEL["📊 Data Layer"]
+        AG["Attack Graph — NetworkX"]
+        SM["Semantic Memory — ChromaDB"]
+        KG["Self-Learning — SQLite"]
+        SC["Scope Intelligence — Policy Engine"]
     end
 
     IDE --> MCP
     MCP --> BRAIN
     PA --> CO
     CO --> SWARM
-    CO --> SPECIALIZED
-    SWARM --> INTEL
+    SWARM --> V4
     SWARM --> MCP
-    SPECIALIZED --> MCP
+    V4 --> BRAIN
     INTEL --> BRAIN
-    INFRA --> BRAIN
-    INFRA --> SWARM
+    HR --> PA
+    FP --> IP
+    IP --> HR
+    HD --> RP
 ```
 
 ---
 
-## 🆚 How HYDRA Compares
-
-| Feature | **HYDRA v3** | pentest-agents | claude-bug-bounty | cruxss-bb-agent | web3-skills |
-|---|:---:|:---:|:---:|:---:|:---:|
-| Multi-Agent Swarm | ✅ **50+ agents** | Static files | Single loop | Single loop | — |
-| Strategic AI Planner | ✅ **HTN** | — | — | — | — |
-| Attack Graph Engine | ✅ **NetworkX** | — | — | — | — |
-| Consensus Voting | ✅ **Weighted** | — | — | — | — |
-| Semantic Memory | ✅ **ChromaDB** | — | — | — | — |
-| Autonomous Hunt Loops | ✅ | ✅ | ✅ | — | — |
-| Exploit Chain Builder | ✅ **PoC gen** | ✅ | ✅ | — | — |
-| RAG Writeup Search | ✅ **MCP** | ✅ | — | — | — |
-| Multi-IDE Support | ✅ **7 IDEs** | ✅ 7 IDEs | Claude only | Claude only | Claude only |
-| Web3 / Smart Contract | ✅ | — | ✅ | — | ✅ |
-| Web Dashboard | ✅ **Real-time** | — | Flask | — | — |
-| Distributed Queue | ✅ **Redis** | — | — | — | — |
-| K8s + Docker Deploy | ✅ **Production** | — | — | — | — |
-| Scope Enforcement | ✅ **3-layer** | — | Basic | ✅ | — |
-| Self-Learning | ✅ **KG + SM** | — | — | — | — |
-| Cost Tracking | ✅ **Budget caps** | Hook-based | — | — | — |
-| Validation-First | ✅ **Evidence** | — | — | — | — |
-| False Positive Rate | ✅ **<2%** | ~15% | ~20% | ~25% | N/A |
-
----
-
-## 🚀 Quick Start (Works Right Now)
+## 🚀 Quick Start
 
 ### Prerequisites
 ```bash
 # Python 3.10+
 pip install rich aiohttp
 
-# Install security tools (Go 1.20+ required)
+# Security tools (Go 1.20+ required)
 go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
 go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
 go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
@@ -158,6 +142,17 @@ python -m hydra.main --check-tools
 # List available workflows
 python -m hydra.main --list-workflows
 
+# ── v4 Workflows ──────────────────────────
+# OSINT-first recon (passive intel → fingerprint → targeted scan)
+python -m hydra.main -t example.com -w osint_recon
+
+# Full autonomous (OSINT → fingerprint → heuristic scan → crawl → fuzz → validate)
+python -m hydra.main -t example.com -w full_auto
+
+# With scope enforcement from HackerOne/Bugcrowd
+python -m hydra.main -t example.com -w full_auto --scope-url https://hackerone.com/example
+
+# ── Classic Workflows ─────────────────────
 # Quick recon (subdomains → probe → tech → nuclei)
 python -m hydra.main -t example.com -w quick_recon
 
@@ -169,18 +164,15 @@ python -m hydra.main -t api.example.com -w api_only
 
 # Black-box aggressive recon
 python -m hydra.main -t example.com -w blackbox
-
-# Verbose + custom timeout
-python -m hydra.main -t example.com -w quick_recon -v --timeout 60
 ```
 
-All outputs saved to `output/<target>/` → `recon/`, `scans/`, `reports/`, `evidence/`, `logs/`
+All outputs saved to `output/<target>/` → `recon/`, `osint/`, `scans/`, `reports/`, `evidence/`, `attack_graph/`, `logs/`
 
 ### Claude Code Mode
 ```bash
 claude  # open Claude Code in the project folder
 
-# Then use slash commands:
+# Slash commands:
 /recon example.com           # Full reconnaissance
 /hunt example.com            # Autonomous vulnerability hunting
 /autopilot example.com       # Full autonomous mode
@@ -189,215 +181,156 @@ claude  # open Claude Code in the project folder
 /scope hackerone tesla       # Load scope from platform
 ```
 
-### Docker Mode
-```bash
-docker compose up -d
-curl -X POST http://localhost:8900/scan \
-  -d '{"target": "example.com", "workflow": "full_bounty"}'
-```
-
 ---
 
 ## 📦 Project Structure
 
 ```
 hydra/
-├── providers/                     # 🖥️  Multi-IDE Support (7 IDEs)
-│   ├── claude/                    #     Claude Code
-│   ├── codex/                     #     OpenAI Codex
-│   ├── gemini/                    #     Google Gemini
-│   ├── cursor/                    #     Cursor
-│   ├── windsurf/                  #     Windsurf
-│   ├── copilot/                   #     GitHub Copilot
-│   └── openclaw/                  #     OpenClaw
-├── mcp-bounty-server/             # 🎯 MCP: Bounty Platform Integration
-├── mcp-writeup-server/            # 📚 MCP: RAG Writeup Search
-├── rag-builder/                   # 🔨 Writeup Corpus Indexer
-├── hydra/
-│   ├── main.py                    # 🚀 Entry Point
-│   ├── config.py                  # ⚙️  Environment-driven Config
-│   ├── planner/                   # 🧠 Strategic Planner + HTN
-│   │   ├── planner_agent.py       #     Scope-driven plan generation
-│   │   ├── task_decomposer.py     #     Goal → subtask decomposition
-│   │   └── htn.py                 #     Hierarchical Task Network
-│   ├── swarm/                     # 🐝 Agent Swarm
-│   │   ├── coordinator.py         #     Scan orchestration
-│   │   ├── agent_factory.py       #     Dynamic agent spawning
-│   │   ├── recon_agent.py         #     Asset discovery
-│   │   ├── vuln_research_agent.py #     Vulnerability scanning
-│   │   ├── exploit_hypothesis_agent.py  # Attack chain generation
-│   │   ├── validation_agent.py    #     False positive filtering
-│   │   ├── reporting_agent.py     #     Validation-first reports
-│   │   └── specialized/           #     Domain-specific agents
-│   │       ├── api_agent.py       #       API security
-│   │       ├── web3_agent.py      #       Smart contract analysis
-│   │       ├── mobile_agent.py    #       APK/IPA analysis
-│   │       └── cloud_agent.py     #       Cloud misconfiguration
-│   ├── hunt/                      # 🎯 Autonomous Hunt Loops
-│   │   ├── __init__.py            #     Hunt engine
-│   │   ├── strategies.py          #     SSRF, IDOR, XSS, OAuth...
-│   │   └── autopilot.py           #     Full autonomous mode
-│   ├── chains/                    # ⛓️  Exploit Chain Builder
-│   │   ├── __init__.py            #     Chain construction
-│   │   ├── poc_generator.py       #     Safe PoC generation
-│   │   └── validator.py           #     Chain validation
-│   ├── web3/                      # 🔗 Web3 / Smart Contract Engine
-│   ├── workflows/                 # 📋 Pre-built Workflow Templates
-│   │   ├── quick_recon.py         #     Fast reconnaissance
-│   │   ├── full_bounty.py         #     Complete assessment
-│   │   ├── api_only.py            #     API-focused
-│   │   ├── web3_audit.py          #     Smart contract audit
-│   │   ├── blackbox.py            #     Black-box testing
-│   │   └── code_review.py         #     Source code review
-│   ├── graph/                     # 📊 Attack Graph Intelligence
-│   │   ├── engine.py              #     NetworkX graph engine
-│   │   ├── scoring.py             #     Risk propagation
-│   │   └── visualization.py       #     DOT, Cytoscape, HTML export
-│   ├── scope/                     # 🎯 Scope Intelligence Layer
-│   │   └── __init__.py            #     H1/BC/Intigriti adapters
-│   ├── output/                    # 💾 Persistent Artifact Output
-│   ├── mcp/                       # 🔧 MCP Tool Server (19 tools)
-│   ├── memory/                    # 💾 Memory Bus + Semantic Memory
-│   ├── consensus/                 # 🤝 Multi-Agent Consensus
-│   ├── validation/                # ✅ Evidence-Based Validation
-│   ├── sandbox/                   # 🔒 Security Sandbox
-│   ├── cost/                      # 💰 Cost & Token Management
-│   ├── ai/                        # 🤖 Multi-LLM Router
-│   ├── recovery/                  # 🔄 Workflow Recovery
-│   ├── observability/             # 📊 Prometheus + Grafana
-│   ├── reporting/                 # 📄 Advanced Reports
-│   ├── dashboard/                 # 📈 Real-Time Web Dashboard
-│   ├── plugins/                   # 🔌 Plugin System
-│   ├── recon/                     # 🔍 Advanced Reconnaissance
-│   └── learning/                  # 🧠 Self-Learning Engine
-├── skills/                        # 📝 Claude Code Skills
-├── tests/                         # 🧪 pytest Suite
-├── k8s/                           # ☸️  Kubernetes Manifests
-├── docker-compose.yml             # 🐋 Production Docker Stack
-├── Dockerfile
-├── requirements.txt
-├── setup.sh / setup.ps1           # One-command setup
-├── CONTRIBUTING.md
-├── SECURITY.md
-└── LICENSE
+├── main.py                        # 🚀 Entry Point (v4 engine)
+├── config.py                      # ⚙️  Environment-driven Config
+├── osint/                         # 🔍 OSINT Intelligence Layer (NEW)
+│   ├── __init__.py                #     crt.sh, Shodan, Censys, DNS, Wayback
+│   └── github_intel.py            #     GitHub secret scanning + endpoint extraction
+├── fingerprint/                   # 🔬 Technology Fingerprinting (NEW)
+│   └── __init__.py                #     80+ Wappalyzer-style signatures
+├── packs/                         # 📦 Intelligence Packs (NEW)
+│   └── __init__.py                #     11 built-in packs, hot-loadable
+├── heuristics/                    # 🧠 Heuristic Reasoning (NEW)
+│   └── __init__.py                #     Bayesian vulnerability likelihood
+├── hallucination/                 # 🛡️ Hallucination Defense (NEW)
+│   └── __init__.py                #     Evidence-first verification
+├── planner/                       # 🧠 Strategic Planner + HTN
+│   ├── planner_agent.py           #     Scope-driven plan generation
+│   ├── task_decomposer.py         #     Goal → subtask decomposition
+│   └── htn.py                     #     Hierarchical Task Network
+├── swarm/                         # 🐝 Agent Swarm
+│   ├── coordinator.py             #     Scan orchestration
+│   ├── agent_factory.py           #     Dynamic agent spawning
+│   ├── osint_agent.py             #     OSINT Intelligence Agent (NEW)
+│   ├── base_agent.py              #     Stateless agent base class
+│   └── specialized/               #     API, Web3, Mobile, Cloud agents
+├── scope/                         # 🎯 Scope Intelligence Layer
+├── graph/                         # 📊 Attack Graph + Scoring
+├── memory/                        # 💾 Memory Bus + Semantic Memory
+├── mcp/                           # 🔧 MCP Tool Server (19 tools)
+├── consensus/                     # 🤝 Multi-Agent Consensus
+├── validation/                    # ✅ Evidence-Based Validation
+├── learning/                      # 🧠 Self-Learning Engine
+├── sandbox/                       # 🔒 Security Sandbox
+├── dashboard/                     # 📈 Real-Time Web Dashboard
+├── queue/                         # 📦 Distributed Queue (Redis Streams)
+├── hunt/                          # 🎯 Autonomous Hunt Loops
+├── chains/                        # ⛓️  Exploit Chain Builder
+├── reporting/                     # 📄 Advanced Reports
+├── cost/                          # 💰 Cost & Token Management
+├── ai/                            # 🤖 Multi-LLM Router
+├── recovery/                      # 🔄 Workflow Recovery
+├── observability/                 # 📊 Prometheus + Grafana
+└── plugins/                       # 🔌 Plugin System
 ```
+
+---
+
+## 🧩 v4 Intelligence Layer
+
+### 🔍 OSINT Intelligence Engine
+Passive reconnaissance with zero active scanning:
+- **crt.sh** — Certificate transparency subdomain discovery
+- **Shodan** — Open ports, CVEs, SSL certificates
+- **Censys** — Host and service discovery
+- **SecurityTrails** — DNS history, WHOIS, subdomain enumeration
+- **Wayback Machine** — Historical URL discovery with endpoint categorization
+- **DNS/WHOIS** — IP resolution, ASN attribution, reverse DNS
+
+### 🐙 GitHub Intelligence
+Employee-to-infrastructure correlation chains:
+- **20+ secret patterns** — AWS keys, GitHub tokens, Slack webhooks, JWTs, private keys, database URLs
+- **Endpoint extraction** — API routes, GraphQL endpoints, webhooks from source code
+- **Internal domain discovery** — staging/dev/internal subdomains leaked in repos
+- **Employee correlation** — `employee → repository → secret → infrastructure → attack path`
+
+### 🔬 Technology Fingerprinting
+Wappalyzer-style detection with 80+ signatures:
+- **Headers** — Server, X-Powered-By, CDN, WAF detection
+- **HTML** — CMS, JS frameworks, analytics, auth systems
+- **Cookies** — Framework detection (PHP, Rails, Django, Express)
+- **Meta tags** — Generator-based CMS version extraction
+- **Auto-triggers** intelligence pack activation based on detected stack
+
+### 📦 Intelligence Packs (11 Built-in)
+Hot-loadable, versioned attack intelligence:
+
+| Pack | Exploit Hypotheses | Key Checks |
+|------|-------------------|------------|
+| **WordPress** | User enum, XML-RPC brute, plugin vulns | xmlrpc, wp-json, debug.log |
+| **Next.js** | SSRF, auth bypass, env exposure | `__NEXT_DATA__`, API routes, source maps |
+| **GraphQL** | IDOR, injection, DoS | Introspection, GraphiQL, depth limits |
+| **AWS** | SSRF to metadata, S3 misconfig | 169.254.169.254, bucket perms |
+| **Laravel** | Debug RCE, deserialization | .env, Telescope, Ignition |
+| **OAuth** | Redirect steal, state bypass, scope escalation | redirect_uri, state param |
+| **Kubernetes** | Unauth API, dashboard exposure | /api/v1, privileged pods |
+| **API Security** | BOLA/IDOR, mass assignment, rate limit bypass | CORS, Swagger, auth endpoints |
+| **Firebase** | Unauth read/write | .json endpoint, storage bucket |
+| **Supabase** | RLS bypass, anon key exposure | PostgREST, service role key |
+| **Cloudflare** | Origin IP leak, WAF bypass | DNS history, direct origin |
+
+### 🧠 Heuristic Reasoning Engine
+Bayesian vulnerability likelihood estimation:
+- **Prior probabilities** from real-world bug bounty data
+- **Technology boosters** — WordPress boosts XSS/SQLi/file upload likelihood; GraphQL boosts IDOR 1.8×
+- **Adaptive decisions** — expand investigation on critical findings, reduce noise on low-value targets
+- **WAF-aware scanning** — automatic stealth mode with delay and header randomization
+
+### 🛡️ Hallucination Defense
+No unsupported AI-generated claim appears in reports:
+- **Evidence presence check** — requires tool output, matched_at, or registered evidence
+- **Hallucination indicator scanning** — detects vague language ("likely", "possibly")
+- **Contradiction detection** — flags "critical" + "low risk" in same finding
+- **Multi-agent consensus** — aggregates verification across agents
+- **Confidence scoring** — findings below threshold are filtered out
 
 ---
 
 ## 🧩 Core Components
 
 ### 🧠 Strategic Planner (HTN)
-Sits above the Coordinator. Generates adaptive, scope-aware execution plans using Hierarchical Task Network decomposition.
-- Accepts scope intelligence directives (`DISABLE:`, `RATE_LIMIT:`, `FOCUS_API:`, `ENUM_SUBDOMAINS:`)
+Generates adaptive, scope-aware execution plans using Hierarchical Task Network decomposition.
+- Accepts scope intelligence directives (`DISABLE:`, `RATE_LIMIT:`, `FOCUS_API:`)
 - Dynamically replans when critical findings emerge
-- Coordinator **only executes Planner decisions**
+- Intelligence pack workflows feed directly into plan generation
 
 ### 🐝 Agent Swarm + Dynamic Spawning
-50+ specialized agents with on-the-fly spawning based on target type:
-- **Core agents**: Recon, Vuln Research, Exploit Hypothesis, Validation, Reporting
-- **Specialized agents**: API, Web3, Mobile, Cloud — spawned dynamically when the Planner detects target type
-- **Agent Factory**: Creates purpose-built agents with domain-specific knowledge
-
-### ⛓️ Exploit Chain Builder
-Multi-hop attack chain construction with safe PoC generation:
-```
-subdomain → login page → SSRF → internal admin → credential leak → RCE
-```
-- Chains scored by blast radius and exploitability
-- PoC generated as reproducible HTTP sequences
-- Chain validation without actual exploitation
-
-### 🎯 Autonomous Hunt Loops
-Self-directed vulnerability hunting with success metrics:
-- Vuln-class-specific strategies (SSRF, IDOR, XSS, OAuth, SQLi, AuthZ)
-- Adaptive learning from each hunt cycle
-- `/autopilot` mode for fully autonomous operation
-- Success rate tracking per target type
+50+ specialized agents with on-the-fly spawning:
+- **Core agents**: Recon, OSINT, Vuln Research, Exploit Hypothesis, Validation, Reporting
+- **Specialized agents**: API, Web3, Mobile, Cloud — spawned dynamically
+- **OSINT Agent** (v4): handles 8 task types — full OSINT, cert transparency, DNS intel, Wayback, Shodan, GitHub, employee intel, attack surface mapping
 
 ### 📊 Attack Graph Intelligence
 NetworkX-based graph with risk propagation:
-- **Scoring Engine**: CVSS-weighted risk scores across all nodes
+- **Scoring Engine**: CVSS-weighted risk scores
 - **Blast Radius Estimation**: Impact propagation from any compromised node
 - **Privilege Escalation Detection**: Multi-hop chain analysis
 - **Visualization**: DOT, JSON, Cytoscape, interactive HTML export
 
 ### 🤝 Multi-Agent Consensus
 Weighted voting eliminates false positives (<2% FP rate):
-- Agent-type expertise weighting
+- Agent-type expertise weighting (validation > exploit > vuln_research > recon)
 - Quorum requirements for severity levels
 - Contradiction detection between agents
-- Confidence fusion across multiple validation rounds
-
-### 💾 Semantic Memory (ChromaDB)
-Cross-scan learning with vector similarity search:
-- Historical finding patterns
-- Attack chain templates
-- Methodology effectiveness tracking
-- Similar target profiling
 
 ### 🎯 Scope Intelligence Layer
-Mandatory pre-execution scope analysis — no task executes without validation:
+Mandatory pre-execution scope analysis:
 - Platform adapters: **HackerOne**, **Bugcrowd**, **Intigriti**, Custom
-- Auto-detect platform from URL
-- **MCP layer blocks** out-of-scope scans at every level
-- Generates planner directives that shape the entire execution plan
+- `--scope-url` CLI flag for automatic scope loading
+- MCP layer blocks out-of-scope scans at every level
 
 ### ✅ Validation-First Reporting
 No finding reported unless all checks pass:
 - Evidence must exist (HTTP artifacts, screenshots, matched patterns)
 - Reproduction path must be documented
-- Validation score ≥ 0.6 threshold
 - Hallucination defense check passes
 - Rejected findings saved separately for audit
-
-### 🔗 Web3 / Smart Contract Engine
-Specialized Solidity/Vyper analysis:
-- Reentrancy, flash loan, oracle manipulation detection
-- DeFi-specific vulnerability patterns
-- Token standard compliance checks (ERC20/ERC721)
-- Integration with Slither, Mythril, Echidna
-
-### 📚 RAG Writeup Search (MCP Server)
-Bring-your-own writeup corpus with semantic search:
-- Index public bug bounty writeups
-- Query similar vulnerabilities during hunting
-- Auto-suggest exploitation techniques
-
----
-
-## 🔌 MCP Servers
-
-HYDRA ships 3 MCP servers:
-
-| Server | Tools | Description |
-|--------|-------|-------------|
-| **Tool Server** | 19 | Real security tool execution (subfinder, nuclei, ffuf, nmap, etc.) |
-| **Bounty Server** | 6 | HackerOne, Bugcrowd, Intigriti API integration |
-| **Writeup Server** | 3 | Semantic search over bug bounty writeup corpus |
-
----
-
-## 🖥️ Multi-IDE Support
-
-Works with all 7 major AI coding tools:
-
-| IDE | Config Format | Status |
-|-----|--------------|--------|
-| Claude Code | `CLAUDE.md` + `.claude/` | ✅ Native |
-| OpenAI Codex | `AGENTS.md` + `.codex/` | ✅ |
-| Google Gemini | `GEMINI.md` + `.gemini/` | ✅ |
-| Cursor | `.cursor/rules/` + `.cursor/skills/` | ✅ |
-| Windsurf | `.windsurf/rules/` | ✅ |
-| GitHub Copilot | `.github/agents/` + `.github/prompts/` | ✅ |
-| OpenClaw | `AGENTS.md` + `.openclaw/` | ✅ |
-
-```bash
-# Install for specific IDE
-python3 tools/installer.py install --target cursor --scope project
-
-# Install for all IDEs
-python3 tools/installer.py install --target all --scope project
-```
 
 ---
 
@@ -405,11 +338,13 @@ python3 tools/installer.py install --target all --scope project
 
 | Workflow | Duration | Description |
 |----------|----------|-------------|
-| `quick_recon` | ~5 min | Fast subdomain + tech + port scan |
+| `osint_recon` | ~10 min | **NEW** — OSINT → fingerprint → pack activation → heuristic-guided scan |
+| `full_auto` | ~40 min | **NEW** — Full autonomous: OSINT → fingerprint → crawl → deep scan → validate |
+| `quick_recon` | ~5 min | Fast subdomain + tech + nuclei scan |
 | `full_bounty` | ~30 min | Complete assessment with exploit chains |
 | `api_only` | ~15 min | API endpoint discovery + auth testing |
-| `web3_audit` | ~20 min | Smart contract vulnerability analysis |
 | `blackbox` | ~25 min | Black-box testing without source code |
+| `web3_audit` | ~20 min | Smart contract vulnerability analysis |
 | `code_review` | ~15 min | Source code security review |
 
 ---
@@ -423,28 +358,30 @@ All configuration is environment-driven:
 | `OPENAI_API_KEY` | | OpenAI API key |
 | `ANTHROPIC_API_KEY` | | Anthropic API key |
 | `OLLAMA_URL` | `http://127.0.0.1:11434` | Ollama endpoint |
+| `SHODAN_API_KEY` | | Shodan API key (OSINT) |
+| `GITHUB_TOKEN` | | GitHub token (OSINT) |
+| `ST_API_KEY` | | SecurityTrails API key |
+| `CENSYS_ID` / `CENSYS_SECRET` | | Censys credentials |
 | `REDIS_HOST` | `127.0.0.1` | Redis host |
 | `HYDRA_MONTHLY_CAP` | `100` | Monthly AI budget (USD) |
-| `HYDRA_DAILY_CAP` | `10` | Daily AI budget (USD) |
-| `HYDRA_SCAN_CAP` | `5` | Per-scan AI budget (USD) |
 | `HYDRA_RATE_LIMIT` | `50` | Max requests/second |
 | `HYDRA_SANDBOX` | `true` | Enable sandbox |
 | `HYDRA_DASHBOARD` | `true` | Enable dashboard |
-| `HYDRA_CONSENSUS` | `true` | Enable consensus |
 | `HYDRA_QUEUE_MODE` | `local` | `local` or `distributed` |
-| `DASHBOARD_PORT` | `8080` | Dashboard port |
+
+> **Note**: OSINT API keys are optional. crt.sh, Wayback Machine, and DNS work without any keys.
 
 ---
 
 ## 🛡️ Safety Rules
 
-1. **No scan without scope validation** — MCP layer blocks every out-of-scope target before tool execution
-2. **No finding without evidence** — validation-first filter rejects findings without evidence + reproduction path
-3. **No uncontrolled execution** — all tools run through the security sandbox + scope policy engine
-4. **No budget overrun** — automatic model downgrading when thresholds hit
-5. **No data loss** — workflow checkpointing ensures recovery from failures
-6. **No unreproducible work** — all outputs auto-saved to `output/` with timestamps and content hashes
-7. **No hallucinated reports** — AI safety module rejects unsupported claims at report generation
+1. **No scan without scope validation** — MCP layer blocks every out-of-scope target
+2. **No finding without evidence** — validation-first filter rejects unsupported findings
+3. **No hallucinated reports** — hallucination defense blocks vague/contradictory claims
+4. **No uncontrolled execution** — all tools run through security sandbox + scope policy engine
+5. **No budget overrun** — automatic model downgrading when thresholds hit
+6. **No data loss** — workflow checkpointing ensures recovery from failures
+7. **No unreproducible work** — all outputs auto-saved with timestamps and content hashes
 
 ---
 
@@ -455,19 +392,26 @@ All configuration is environment-driven:
 docker compose up -d
 # Services: hydra, redis, chromadb, prometheus, grafana
 # Dashboard: http://localhost:8080
-# Grafana: http://localhost:3000
 ```
 
 ### Kubernetes (Production)
 ```bash
 kubectl apply -f k8s/manifests/
-# Includes HPA, PVCs, secrets, Prometheus stack
 ```
 
 ### Standalone
 ```bash
 pip install -r requirements.txt
-python -m hydra.main -t example.com
+python -m hydra.main -t example.com -w full_auto
+```
+
+---
+
+## 🧪 Tests
+
+```bash
+python -m pytest tests/ -v --tb=short
+# 18 tests: consensus, planner, scope
 ```
 
 ---
@@ -481,18 +425,16 @@ python -m hydra.main -t example.com
 - The scope enforcement engine will block out-of-scope targets, but **you are ultimately responsible**
 - Unauthorized scanning is illegal and unethical
 
-By using HYDRA, you agree to use it responsibly and only against targets you have explicit authorization to test.
-
 ---
 
 ## 🤝 Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. We welcome:
-- New agent types and specialized workflows
+- New intelligence packs (add to `hydra/packs/`)
+- OSINT data source integrations
 - Tool integrations (add to `TOOL_REGISTRY`)
 - Bug bounty platform adapters
-- RAG writeup corpus contributions
-- Plugin development
+- Fingerprint signatures
 
 ---
 
@@ -504,5 +446,5 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 <p align="center">
   <b>Built for bug bounty hunters, by bug bounty hunters.</b><br/>
-  <sub>HYDRA v3.0 — Autonomous Security Swarm Platform</sub>
+  <sub>HYDRA v4.0 — Next-Gen AI Security Orchestration Platform</sub>
 </p>
