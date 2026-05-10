@@ -33,6 +33,16 @@
 | 🧠 **Heuristic Reasoning** | Bayesian vulnerability likelihood with tech-specific boosters for 15+ frameworks |
 | 🛡️ **Hallucination Defense** | Evidence-first verification, contradiction detection, confidence scoring — blocks unsupported claims |
 | 🕵️ **OSINT Swarm Agent** | Stateless agent handling 8 OSINT task types in the multi-agent architecture |
+| 🔀 **Execution Graph Engine** | DAG-based workflows with branching, conditional, recursive expansion, rollback, snapshots |
+| 🌐 **Browser Intelligence** | Playwright-based SPA crawling, authenticated flows, token/JWT/cookie extraction, CSRF analysis |
+| 📜 **JavaScript Intelligence** | Endpoint extraction, source-map analysis, 15+ secret patterns, framework detection, webpack chunks |
+| 🔐 **API Security Agent** | BOLA/BFLA heuristics, JWT analysis, mass-assignment, CORS, rate-limit, OpenAPI parsing |
+| ☁️ **Cloud Security Agent** | AWS/Azure/GCP/K8s/Docker exposure, SSRF-to-metadata payloads, S3 permission checks, CI/CD analysis |
+| 🔗 **Secret Lineage Tracker** | Credential propagation mapping: origin → pipeline → deployment → runtime → exfiltration |
+| 🎯 **Universal Skills Engine** | 79 skills across 14 categories (OWASP Top 10, API Top 10, Web, Auth, Cloud, K8s, AI/LLM, CI/CD, OSINT) with 83 exploit hypotheses |
+| 🌍 **World Model Engine** | Cognitive target modeling — entity-relation graphs, trust boundaries, auth flow inference, attack surface computation |
+| 💣 **Payload Generation Engine** | Autonomous payload mutation with WAF profiling, 9 bypass strategies, adaptive response-based evolution |
+| ⚔️ **Multi-Agent Debate System** | Adversarial 4-agent reasoning (Hypothesis/Skeptic/Validator/Risk) — hallucination defense + self-critique |
 | 🚀 **New Workflows** | `osint_recon` (OSINT → fingerprint → targeted scan) and `full_auto` (complete autonomous pipeline) |
 
 ---
@@ -212,6 +222,18 @@ hydra/
 ├── mcp/                           # 🔧 MCP Tool Server (19 tools)
 ├── consensus/                     # 🤝 Multi-Agent Consensus
 ├── validation/                    # ✅ Evidence-Based Validation
+├── execution_graph/               # 🔀 DAG-Based Execution Engine (NEW)
+├── browser/                       # 🌐 Browser Intelligence — Playwright (NEW)
+├── js_intel/                      # 📜 JavaScript Intelligence Engine (NEW)
+├── api_security/                  # 🔐 API Security Agent (NEW)
+├── cloud_security/                # ☁️  Cloud Security Agent (NEW)
+├── secret_lineage/                # 🔗 Secret Lineage Tracker (NEW)
+├── skills/                        # 🎯 Universal Skills Engine (NEW)
+│   ├── __init__.py                #     Skill registry, composer, evolver
+│   └── library.py                 #     79 pre-built skills, 14 categories
+├── world_model/                   # 🌍 Cognitive Target Modeling (NEW)
+├── payload_engine/                # 💣 Autonomous Payload Generation (NEW)
+├── debate/                        # ⚔️  Multi-Agent Debate System (NEW)
 ├── learning/                      # 🧠 Self-Learning Engine
 ├── sandbox/                       # 🔒 Security Sandbox
 ├── dashboard/                     # 📈 Real-Time Web Dashboard
@@ -322,6 +344,108 @@ No finding reported unless all checks pass:
 - Evidence must exist (HTTP artifacts, screenshots, matched patterns)
 - Reproduction path documented, hallucination defense check passes
 - Rejected findings saved separately for audit
+
+### 🔀 Execution Graph Engine
+DAG-based workflow execution replacing linear pipelines:
+- **Branching execution** — parallel recon paths, speculative execution
+- **Conditional execution** — nodes run only when parent output matches conditions
+- **Recursive expansion** — nodes dynamically spawn sub-graphs at runtime
+- **Rollback edges** — trigger cleanup on failure
+- **Snapshot & recovery** — checkpoint/restore mid-execution
+- Pre-built graphs: `osint_recon` (7 nodes), `full_auto` (14 nodes, 15 edges)
+
+### 🌐 Browser Intelligence Engine
+Playwright-based SPA crawling and authenticated automation:
+- **Authenticated crawling** — cookie injection, session replay
+- **Token extraction** — JWT, Bearer, API keys from HTML, localStorage, sessionStorage
+- **Form analysis** — CSRF detection, input discovery
+- **Cookie security** — missing HttpOnly/Secure/SameSite flags
+- **Technology detection** — React, Vue, Next.js, Angular, Svelte, Remix
+- **Screenshot evidence** — full-page captures for every analyzed page
+
+### 📜 JavaScript Intelligence Engine
+Deep JS bundle analysis with 15+ secret patterns:
+- **Endpoint extraction** — fetch/axios calls, route definitions, dynamic imports
+- **Secret scanning** — AWS keys, Stripe keys, GitHub tokens, database URLs, JWTs, OAuth secrets
+- **Framework detection** — React, Vue, Angular, Next.js, Nuxt, Svelte, Webpack, Vite
+- **Source-map analysis** — discover original source code
+- **Internal domain leakage** — staging/dev/admin domains in bundles
+- **Hidden route discovery** — React Router paths, client-side navigation
+
+### 🔐 API Security Agent
+Dedicated API vulnerability intelligence:
+- **BOLA/IDOR heuristics** — auto-detect ID-parameterized endpoints
+- **JWT analysis** — algorithm none, weak HS256, privilege claims, missing expiry
+- **Mass-assignment detection** — flag PUT/PATCH endpoints accepting dangerous fields
+- **CORS analysis** — wildcard origin + credentials, reflected origin
+- **Rate-limit intelligence** — detect missing throttling headers
+- **OpenAPI parsing** — extract all endpoints from Swagger/OpenAPI specs
+
+### ☁️ Cloud Security Agent
+Multi-cloud exposure detection (AWS, Azure, GCP, K8s, Docker):
+- **AWS** — S3 buckets, access keys, EC2 metadata, Lambda, Cognito, CloudFront
+- **Azure** — Blob storage, App Service, Key Vault, Cosmos DB
+- **GCP** — Storage, Firebase, Cloud Functions, Cloud Run
+- **Kubernetes** — API server, dashboard, etcd, kubelet port exposure
+- **Docker** — socket exposure, registry discovery
+- **CI/CD** — GitHub Actions, GitLab CI, Jenkins, Terraform state
+- **SSRF payloads** — pre-built metadata service payloads for all providers
+
+### 🔗 Secret Lineage Tracker
+Full credential lifecycle tracking:
+- **Chain mapping**: `origin → storage → pipeline → deployment → runtime → exfiltration`
+- **Auto-inference** — builds chains from findings (GitHub → CI → Deploy → Runtime)
+- **Risk scoring** — based on propagation depth, secret type, exposure stages
+- **Blast radius** — counts affected systems per secret
+- **Remediation generation** — step-by-step rotation and cleanup guidance
+
+### 🎯 Universal Skills Engine
+79 pre-built autonomous vulnerability skills across 14 categories:
+
+| Category | Skills | Coverage |
+|----------|--------|----------|
+| **Web** | 18 | XSS (reflected/stored/DOM/mutation), SQLi (error/blind/time), SSRF, SSTI, XXE, CSRF, LFI, deserialization, request smuggling, cache poisoning, race conditions |
+| **Auth** | 9 | JWT attacks, OAuth abuse, session fixation/hijacking, MFA bypass, IDOR, privilege escalation, account takeover |
+| **API** | 8 | BOLA, BFLA, mass assignment, rate limit, GraphQL introspection/depth/IDOR |
+| **Cloud** | 6 | S3 exposure, IAM escalation, metadata abuse, Lambda exposure, Azure/GCP abuse |
+| **Kubernetes** | 4 | Dashboard exposure, RBAC bypass, container escape, Docker socket |
+| **Business Logic** | 5 | Payment abuse, coupon abuse, checkout bypass, workflow state, trust boundaries |
+| **AI/LLM** | 5 | Prompt injection (direct/indirect), RAG poisoning, tool abuse, context hijacking |
+| **CI/CD** | 6 | GitHub Actions, GitLab CI, Jenkins, dependency confusion, artifact poisoning, Terraform |
+| **Frontend** | 6 | DOM XSS, CSP bypass, postMessage, service workers, client-side auth, JS secrets |
+| **Mobile** | 6 | Android/iOS storage, cert pinning, API key extraction, deep links, Electron |
+| **OSINT** | 6 | Subdomain takeover, ASN mapping, GitHub leaks, employee intel, DNS history, CT logs |
+
+Each skill includes: exploit hypotheses, payloads, validation rules, chain links, and learning metrics.
+**Skill Composer** merges skills into hybrid attack workflows. **Skill Evolver** tracks success rates and adjusts confidence.
+
+### 🌍 World Model Engine
+Cognitive target modeling that understands systems, not just scans them:
+- **Entity graph** — applications, APIs, services, roles, permissions, sessions, tokens, cloud resources
+- **Relationship mapping** — authenticates, authorizes, trusts, depends_on, escalates_to, exposes
+- **Trust boundaries** — define security zones and detect cross-boundary violations
+- **Auth flow inference** — auto-detect endpoints missing authentication or authorization
+- **Escalation path discovery** — BFS through privilege hierarchies (User → Admin paths)
+- **Attack surface computation** — total endpoints, unauth endpoints, high-value targets, weakness indicators
+
+### 💣 Autonomous Payload Engine
+Context-aware payload generation with adaptive mutation:
+- **Pre-built templates** — 20 XSS, 14 SQLi, 14 SSRF, 10 SSTI, polyglots
+- **9 mutation strategies** — URL encode, double encode, unicode, hex, case swap, null byte, comment inject, whitespace, concat
+- **WAF/filter profiling** — infer blocking rules from response analysis (Cloudflare, Akamai, ModSecurity)
+- **Adaptive generation** — select mutations based on detected filter profile
+- **Bypass strategy suggestions** — auto-recommend evasion techniques per WAF
+- **Learning loop** — promote successful payloads, demote blocked ones
+
+### ⚔️ Multi-Agent Debate System
+Adversarial reasoning ensures zero hallucinated findings:
+- **Hypothesis Agent** — proposes vulnerabilities, evaluates evidence strength + exploit plausibility
+- **Skeptic Agent** — detects hallucination indicators ("likely", "possibly"), finds contradictions, checks evidence sufficiency
+- **Validation Agent** — verifies HTTP evidence, reproduction steps, severity justification (4 validation checks)
+- **Risk Agent** — scores severity × evidence quality × exploitability × blast radius
+- **Weighted verdict** — Validator (35%), Skeptic (25%), Hypothesis (20%), Risk (20%)
+- **Self-critique** — findings must survive adversarial scrutiny before entering reports
+- Proven: rejects weak/hallucinated findings (confidence 0.04), accepts strong evidence-backed ones
 
 ---
 

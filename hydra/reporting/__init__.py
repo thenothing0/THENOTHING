@@ -151,7 +151,7 @@ class AdvancedReportEngine:
         cvss = CVSS_SEVERITY.get(severity, CVSS_SEVERITY["info"])
 
         return {
-            "id": f"HYDRA-{index:04d}",
+            "id": f"THENOTHING-{index:04d}",
             "title": finding.get("name", "Unknown"),
             "severity": severity,
             "cvss_score": cvss["score"],
@@ -189,7 +189,7 @@ class AdvancedReportEngine:
     def _render_markdown(self, report: Dict) -> str:
         meta = report["meta"]
         lines = [
-            "# 🔥 HYDRA Security Assessment Report",
+            "# 🔥 THENOTHING Security Assessment Report",
             f"## Target: {meta['target']}",
             f"**Scan ID:** {meta['scan_id']}  ",
             f"**Generated:** {meta['generated_at']}  ",
@@ -265,7 +265,7 @@ class AdvancedReportEngine:
             </div>""")
 
         return f"""<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>HYDRA Report — {target}</title>
+<html><head><meta charset="UTF-8"><title>THENOTHING Report — {target}</title>
 <style>
 body{{font-family:'Segoe UI',sans-serif;background:#0a0a1a;color:#e0e0e0;padding:40px;max-width:900px;margin:auto;}}
 h1{{background:linear-gradient(90deg,#00d2ff,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}}
@@ -274,7 +274,7 @@ table{{width:100%;border-collapse:collapse;}}
 th,td{{padding:8px 12px;text-align:left;border-bottom:1px solid #333;}}
 th{{background:#1a1a2e;}}
 </style></head><body>
-<h1>🔥 HYDRA Security Report</h1>
+<h1>🔥 THENOTHING Security Report</h1>
 <h2>Target: {target}</h2>
 <p>Scan: {html_lib.escape(meta['scan_id'])} | Generated: {meta['generated_at']}</p>
 <h2>Executive Summary</h2><p>{summary}</p>

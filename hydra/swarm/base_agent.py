@@ -19,7 +19,7 @@ logger = logging.getLogger("hydra.swarm.agent")
 
 class BaseAgent(ABC):
     """
-    Abstract base class for all HYDRA swarm agents.
+    Abstract base class for all THENOTHING swarm agents.
     
     Contract:
       - Agents are STATELESS. No instance variables should persist across tasks.

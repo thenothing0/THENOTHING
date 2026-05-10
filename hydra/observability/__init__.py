@@ -90,7 +90,7 @@ class MetricsCollector:
 
 
 class HealthMonitor:
-    """Monitor health of all HYDRA subsystems."""
+    """Monitor health of all THENOTHING subsystems."""
 
     def __init__(self):
         self._checks: Dict[str, Dict[str, Any]] = {}

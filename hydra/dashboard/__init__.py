@@ -82,7 +82,7 @@ class DashboardServer:
             return None
 
         app = FastAPI(
-            title="HYDRA Dashboard",
+            title="THENOTHING Dashboard",
             version="2.0.0",
             description="Real-time security orchestration dashboard",
         )
@@ -190,7 +190,7 @@ class DashboardServer:
         """Embedded dashboard frontend."""
         return """<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8">
-<title>HYDRA Dashboard</title>
+<title>THENOTHING Dashboard</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0e0;}
@@ -205,7 +205,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0e
 #events{max-height:300px;overflow-y:auto;font-family:monospace;font-size:12px;}
 .event{padding:4px 0;border-bottom:1px solid #222;}
 </style></head><body>
-<div class="header"><h1>🔥 HYDRA Dashboard</h1></div>
+<div class="header"><h1>🔥 THENOTHING Dashboard</h1></div>
 <div class="grid">
 <div class="card"><h2>System Status</h2><div id="status">Loading...</div></div>
 <div class="card"><h2>Active Scans</h2><div id="scans" class="metric">0</div></div>

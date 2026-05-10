@@ -1,6 +1,6 @@
 """
 ╔══════════════════════════════════════════════════════════════╗
-║  HYDRA Configuration — Central Configuration Registry       ║
+║  THENOTHING Configuration — Central Configuration Registry       ║
 ║  Environment-driven, Docker-aware, production-grade         ║
 ╚══════════════════════════════════════════════════════════════╝
 """
@@ -256,7 +256,7 @@ class HydraConfig:
             "censys_secret": os.getenv("CENSYS_SECRET", ""),
         }
         
-        logger.info(f"HYDRA config loaded — node={self.node_id} distributed={self.distributed}")
+        logger.info(f"THENOTHING config loaded — node={self.node_id} distributed={self.distributed}")
     
     def _load_ai_providers(self) -> Dict[str, AIProviderConfig]:
         """Load all AI provider configurations from environment."""
