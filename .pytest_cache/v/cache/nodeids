@@ -1,0 +1,20 @@
+[
+  "tests/test_consensus.py::TestConsensusEngine::test_confidence_fusion",
+  "tests/test_consensus.py::TestConsensusEngine::test_consensus_reached_with_quorum",
+  "tests/test_consensus.py::TestConsensusEngine::test_contradiction_detection",
+  "tests/test_consensus.py::TestConsensusEngine::test_engine_creation",
+  "tests/test_consensus.py::TestConsensusEngine::test_submit_vote",
+  "tests/test_planner.py::TestHTNPlanner::test_all_tasks_are_primitive",
+  "tests/test_planner.py::TestHTNPlanner::test_available_goals",
+  "tests/test_planner.py::TestHTNPlanner::test_decompose_full_assessment",
+  "tests/test_planner.py::TestHTNPlanner::test_decompose_quick_recon",
+  "tests/test_planner.py::TestHTNPlanner::test_planner_creation",
+  "tests/test_planner.py::TestHTNPlanner::test_scope_directive_disables_task",
+  "tests/test_planner.py::TestHTNPlanner::test_task_info_lookup",
+  "tests/test_scope.py::TestScopePolicyEngine::test_empty_scope_blocks_everything",
+  "tests/test_scope.py::TestScopePolicyEngine::test_engine_creation",
+  "tests/test_scope.py::TestScopePolicyEngine::test_generate_directives",
+  "tests/test_scope.py::TestScopePolicyEngine::test_load_custom_scope",
+  "tests/test_scope.py::TestScopePolicyEngine::test_validate_in_scope_target",
+  "tests/test_scope.py::TestScopePolicyEngine::test_validate_out_of_scope_target"
+]
