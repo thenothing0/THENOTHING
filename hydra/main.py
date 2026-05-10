@@ -1,6 +1,6 @@
 """
 ╔══════════════════════════════════════════════════════════════╗
-║  HYDRA Main v4.0 — Autonomous AI Security Orchestration     ║
+║  THENOTHING Main v4.0 — Autonomous AI Security Intelligence & Orchestration     ║
 ║  Usage: python -m hydra.main -t example.com                 ║
 ║         python -m hydra.main -t example.com -w full_auto    ║
 ╚══════════════════════════════════════════════════════════════╝
@@ -36,17 +36,18 @@ from hydra.memory.bus import MemoryBus
 # ═══════════════════════════════════════════════
 
 BANNER = r"""
-  _   ___   ______  ____      _
- | | | \ \ / /  _ \|  _ \    / \    v4.0
- | |_| |\ V /| | | | |_) |  / _ \
- |  _  | | | | |_| |  _ <  / ___ \
- |_| |_| |_| |____/|_| \_\/_/   \_\
+  _____ _   _ _____ _   _  ___ _____ _   _ ___ _   _  ____
+ |_   _| | | | ____| \ | |/ _ \_   _| | | |_ _| \ | |/ ___|
+   | | | |_| |  _| |  \| | | | || | | |_| || ||  \| | |  _
+   | | |  _  | |___| |\  | |_| || | |  _  || || |\  | |_| |
+   |_| |_| |_|_____|_| \_|\___/ |_| |_| |_|___|_| \_|\____|
 
-  Next-Gen AI Security Orchestration Platform
+  Autonomous AI Security Intelligence & Orchestration Platform  v4.0
 """
 
 AVAILABLE_WORKFLOWS = [
     "quick_recon", "full_bounty", "api_only",
+    "osint_recon", "full_auto",
     "web3_audit", "blackbox", "code_review",
 ]
 
@@ -119,7 +120,7 @@ def build_parser():
     import argparse
     p = argparse.ArgumentParser(
         prog="hydra",
-        description="HYDRA — Autonomous AI Security Swarm Platform",
+        description="THENOTHING — Autonomous AI Security Intelligence & Orchestration Platform",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Examples:\n"
@@ -152,7 +153,7 @@ def build_parser():
 
 class HydraEngine:
     """
-    Next-gen HYDRA engine with integrated OSINT, fingerprinting,
+    Next-gen THENOTHING engine with integrated OSINT, fingerprinting,
     intelligence packs, heuristic reasoning, and hallucination defense.
     Works NOW with zero external services (no Redis, no ChromaDB needed).
     """
@@ -216,7 +217,7 @@ class HydraEngine:
         # v4 subsystems (lightweight, no external deps)
         self._init_v4_subsystems()
 
-        logger.info("[bold green]✅ HYDRA v4 engine ready[/bold green]")
+        logger.info("[bold green]✅ THENOTHING v4 engine ready[/bold green]")
 
     async def _init_scope(self):
         """Initialize scope from program URL."""
@@ -622,7 +623,7 @@ def print_workflows():
 def print_summary(summary: Dict):
     """Print a final scan summary."""
     rprint("\n[bold]═══════════════════════════════════════════════")
-    rprint("[bold cyan]📊 HYDRA Scan Summary[/bold cyan]")
+    rprint("[bold cyan]📊 THENOTHING Scan Summary[/bold cyan]")
     rprint("[bold]═══════════════════════════════════════════════")
     rprint(f"  Target:     [bold]{summary['target']}[/bold]")
     rprint(f"  Workflow:   {summary['workflow']}")
