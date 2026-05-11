@@ -39,7 +39,7 @@
 | 🔐 **API Security Agent** | BOLA/BFLA heuristics, JWT analysis, mass-assignment, CORS, rate-limit, OpenAPI parsing |
 | ☁️ **Cloud Security Agent** | AWS/Azure/GCP/K8s/Docker exposure, SSRF-to-metadata payloads, S3 permission checks, CI/CD analysis |
 | 🔗 **Secret Lineage Tracker** | Credential propagation mapping: origin → pipeline → deployment → runtime → exfiltration |
-| 🎯 **Universal Skills Engine** | 79 skills across 14 categories (OWASP Top 10, API Top 10, Web, Auth, Cloud, K8s, AI/LLM, CI/CD, OSINT) with 83 exploit hypotheses |
+| 🎯 **Universal Skills Engine** | 228 skills across 17 categories — OWASP Top 10, API Top 10, Web, Auth, Cloud, K8s, AI/LLM, CI/CD, OSINT, Network, Crypto, IoT, Supply Chain, Misconfig + 233 exploit hypotheses |
 | 🌍 **World Model Engine** | Cognitive target modeling — entity-relation graphs, trust boundaries, auth flow inference, attack surface computation |
 | 💣 **Payload Generation Engine** | Autonomous payload mutation with WAF profiling, 9 bypass strategies, adaptive response-based evolution |
 | ⚔️ **Multi-Agent Debate System** | Adversarial 4-agent reasoning (Hypothesis/Skeptic/Validator/Risk) — hallucination defense + self-critique |
@@ -400,21 +400,27 @@ Full credential lifecycle tracking:
 - **Remediation generation** — step-by-step rotation and cleanup guidance
 
 ### 🎯 Universal Skills Engine
-79 pre-built autonomous vulnerability skills across 14 categories:
+228 pre-built autonomous vulnerability skills across 17 categories:
 
 | Category | Skills | Coverage |
 |----------|--------|----------|
-| **Web** | 18 | XSS (reflected/stored/DOM/mutation), SQLi (error/blind/time), SSRF, SSTI, XXE, CSRF, LFI, deserialization, request smuggling, cache poisoning, race conditions |
-| **Auth** | 9 | JWT attacks, OAuth abuse, session fixation/hijacking, MFA bypass, IDOR, privilege escalation, account takeover |
-| **API** | 8 | BOLA, BFLA, mass assignment, rate limit, GraphQL introspection/depth/IDOR |
-| **Cloud** | 6 | S3 exposure, IAM escalation, metadata abuse, Lambda exposure, Azure/GCP abuse |
-| **Kubernetes** | 4 | Dashboard exposure, RBAC bypass, container escape, Docker socket |
-| **Business Logic** | 5 | Payment abuse, coupon abuse, checkout bypass, workflow state, trust boundaries |
-| **AI/LLM** | 5 | Prompt injection (direct/indirect), RAG poisoning, tool abuse, context hijacking |
-| **CI/CD** | 6 | GitHub Actions, GitLab CI, Jenkins, dependency confusion, artifact poisoning, Terraform |
-| **Frontend** | 6 | DOM XSS, CSP bypass, postMessage, service workers, client-side auth, JS secrets |
-| **Mobile** | 6 | Android/iOS storage, cert pinning, API key extraction, deep links, Electron |
-| **OSINT** | 6 | Subdomain takeover, ASN mapping, GitHub leaks, employee intel, DNS history, CT logs |
+| **Web** | 28 | XSS (reflected/stored/DOM/blind/mutation), SQLi (error/blind/time/stacked/second-order), NoSQLi, LDAP injection, command injection, SSRF, SSTI, XXE, CSRF, path traversal, LFI/RFI, deserialization, request smuggling, HTTP desync, cache poisoning, race conditions |
+| **Auth** | 23 | JWT (none/KID/JWK/confusion), OAuth (redirect/PKCE/scope/token leak), SAML (wrapping/XXE), session fixation/hijacking, MFA bypass, IDOR, privilege escalation, RBAC/ACL bypass, password reset poisoning, device-code abuse, token replay |
+| **API** | 18 | BOLA, BFLA, mass assignment, rate limit, GraphQL (introspection/depth/IDOR/batching/alias/field-suggest), gRPC reflection, SOAP injection, WebSocket hijack, parameter pollution, API versioning, API key exposure |
+| **Cloud** | 17 | AWS (S3/IAM/Lambda/Cognito/SQS/SNS/RDS/EC2 SSRF), Azure (blob/AD/functions/managed identity), GCP (buckets/Firebase/metadata v1/service accounts) |
+| **Kubernetes** | 8 | Dashboard exposure, RBAC bypass, container escape, Docker socket, secret exposure, pod security, network policy, lateral movement |
+| **Business Logic** | 15 | Payment/refund/coupon/checkout/trial abuse, workflow state, trust boundaries, referral abuse, file upload bypass, 2FA bypass, concurrent actions, email verification bypass |
+| **AI/LLM** | 12 | Prompt injection (direct/indirect/multimodal), RAG poisoning, memory poisoning, tool/function abuse, context hijacking, jailbreaks, agent loops, model DoS, data extraction |
+| **CI/CD** | 14 | GitHub Actions, GitLab CI, Jenkins, dependency confusion, artifact/cache poisoning, Terraform, PR injection, workflow dispatch, Docker build leaks, npm/PyPI abuse |
+| **Frontend** | 16 | DOM XSS, CSP bypass, postMessage, service workers, hydration mismatch, React/Vue/Angular/Svelte/Next.js/Nuxt-specific XSS, source maps, localStorage secrets, iframe escape |
+| **Mobile** | 14 | Android/iOS storage, cert pinning, API key extraction, deep links, Electron, intent hijacking, WebView, biometric bypass, clipboard sniffing, React Native debug |
+| **OSINT** | 16 | Subdomain takeover, ASN mapping, GitHub leaks, employee intel, DNS history, CT logs, Wayback secrets, favicon hashing, breach correlation, cloud attribution, document metadata |
+| **Network** | 8 | DNS rebinding, CORS misconfig, subdomain takeover, TLS weakness, DNS zone transfer, email spoofing, SNMP/SMB exposure |
+| **Cryptography** | 7 | Weak hashing, padding oracle, ECB detection, weak randomness, hardcoded keys, hash length extension, timing attacks |
+| **Misconfiguration** | 12 | Debug mode, default creds, directory listing, backup files, admin panels, security headers, exposed metrics, git/svn/env exposure, GraphQL playground |
+| **Supply Chain** | 6 | Typosquatting, dependency confusion, lockfile injection, build script RCE, compromised maintainer, unpinned dependencies |
+| **IoT** | 6 | Firmware extraction, UART/JTAG debug, MQTT/CoAP, BLE sniffing, default firmware credentials |
+| **Exploit Chains** | 8 | XSS→ATO, SSRF→Cloud, SQLi→RCE, IDOR→ATO, OAuth→ATO, CI→Production, SSTI→RCE, Subdomain→Session |
 
 Each skill includes: exploit hypotheses, payloads, validation rules, chain links, and learning metrics.
 **Skill Composer** merges skills into hybrid attack workflows. **Skill Evolver** tracks success rates and adjusts confidence.
