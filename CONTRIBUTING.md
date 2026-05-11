@@ -1,6 +1,6 @@
-# Contributing to HYDRA
+# Contributing to THENOTHING
 
-Thank you for your interest in contributing to HYDRA! We welcome contributions of all kinds.
+Thank you for your interest in contributing to THENOTHING! We welcome contributions of all kinds.
 
 ## 🚀 Getting Started
 
