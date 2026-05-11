@@ -8,7 +8,7 @@ HYDRA is designed **exclusively** for authorized security testing within approve
 
 ## 🔒 Scope Enforcement
 
-HYDRA includes mandatory scope enforcement at three levels:
+THENOTHING includes mandatory scope enforcement at three levels:
 1. **Scope Intelligence Layer** — Blocks out-of-scope targets before any scan
 2. **MCP Tool Server** — Validates every tool execution against scope policy
 3. **Coordinator** — Blocks entire scan phases for unauthorized targets
@@ -25,7 +25,7 @@ These safety mechanisms should **never** be bypassed or disabled.
 
 ## ⚖️ Legal Notice
 
-Users of HYDRA are solely responsible for ensuring compliance with:
+Users of THENOTHING are solely responsible for ensuring compliance with:
 - Applicable laws and regulations
 - Bug bounty program terms and conditions
 - Target organization's security testing policies
