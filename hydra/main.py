@@ -1,8 +1,9 @@
 """
 ╔══════════════════════════════════════════════════════════════╗
-║  THENOTHING Main v4.0 — Autonomous AI Security Intelligence & Orchestration     ║
+║  THENOTHING v5.0 — Autonomous AI-Native Offensive Security  ║
+║  Cognitive Reasoning · Simulation · Stealth · Causal AI     ║
 ║  Usage: python -m hydra.main -t example.com                 ║
-║         python -m hydra.main -t example.com -w full_auto    ║
+║         python -m hydra.main -t example.com -w cognitive_auto║
 ╚══════════════════════════════════════════════════════════════╝
 """
 
@@ -36,19 +37,21 @@ from hydra.memory.bus import MemoryBus
 # ═══════════════════════════════════════════════
 
 BANNER = r"""
-  _____ _   _ _____ _   _  ___ _____ _   _ ___ _   _  ____
- |_   _| | | | ____| \ | |/ _ \_   _| | | |_ _| \ | |/ ___|
-   | | | |_| |  _| |  \| | | | || | | |_| || ||  \| | |  _
-   | | |  _  | |___| |\  | |_| || | |  _  || || |\  | |_| |
-   |_| |_| |_|_____|_| \_|\___/ |_| |_| |_|___|_| \_|\____|
+   _____ _   _ _____ _   _  ___ _____ _   _ ___ _   _  ____
+  |_   _| | | | ____| \ | |/ _ \_   _| | | |_ _| \ | |/ ___|
+    | | | |_| |  _| |  \| | | | || | | |_| || ||  \| | |  _
+    | | |  _  | |___| |\  | |_| || | |  _  || || |\  | |_| |
+    |_| |_| |_|_____|_| \_|\___/ |_| |_| |_|___|_| \_|\____|
 
-  Autonomous AI Security Intelligence & Orchestration Platform  v4.0
+   Autonomous AI-Native Offensive Security Research Platform  v5.0
+   Cognitive Reasoning · Simulation · Causal AI · Stealth · Swarm
 """
 
 AVAILABLE_WORKFLOWS = [
     "quick_recon", "full_bounty", "api_only",
     "osint_recon", "full_auto",
     "web3_audit", "blackbox", "code_review",
+    "cognitive_auto",
 ]
 
 logger = logging.getLogger("hydra")
@@ -153,8 +156,16 @@ def build_parser():
 
 class HydraEngine:
     """
-    Next-gen THENOTHING engine with integrated OSINT, fingerprinting,
-    intelligence packs, heuristic reasoning, and hallucination defense.
+    THENOTHING v5 — Autonomous AI-Native Offensive Security Engine.
+
+    Integrates:
+      v4: OSINT, fingerprinting, intelligence packs, heuristic reasoning,
+          hallucination defense, scope enforcement, MCP tool execution
+      v5: Cognitive reasoning loop, environment simulation, causal AI,
+          stealth/OPSEC, deception detection, recon expansion, temporal
+          intelligence, human emulation, continuous learning, red-team
+          critic, collaborative swarm intelligence
+
     Works NOW with zero external services (no Redis, no ChromaDB needed).
     """
 
@@ -179,6 +190,19 @@ class HydraEngine:
         self._heuristics = None
         self._hallucination_defense = None
         self._artifact_store = None
+        # v5 cognitive subsystems (lazy-loaded)
+        self._cognitive_loop = None
+        self._simulation_engine = None
+        self._causal_engine = None
+        self._stealth_engine = None
+        self._deception_engine = None
+        self._recon_expander = None
+        self._temporal_engine = None
+        self._human_emulator = None
+        self._learning_engine = None
+        self._red_team_critic = None
+        self._cognitive_graph = None
+        self._swarm = None
 
     @staticmethod
     def _safe_dir(target: str) -> str:
@@ -217,7 +241,10 @@ class HydraEngine:
         # v4 subsystems (lightweight, no external deps)
         self._init_v4_subsystems()
 
-        logger.info("[bold green]✅ THENOTHING v4 engine ready[/bold green]")
+        # v5 cognitive subsystems
+        self._init_v5_subsystems()
+
+        logger.info("[bold green]✅ THENOTHING v5 engine ready[/bold green]")
 
     async def _init_scope(self):
         """Initialize scope from program URL."""
@@ -259,6 +286,90 @@ class HydraEngine:
             self._osint_engine = OSINTIntelligenceEngine(api_keys=config.api_keys)
         except Exception:
             pass
+
+    def _init_v5_subsystems(self):
+        """Initialize v5 cognitive intelligence subsystems."""
+        try:
+            from hydra.cognitive import CognitiveLoop
+            self._cognitive_loop = CognitiveLoop(self.target)
+        except Exception:
+            pass
+        try:
+            from hydra.simulation import EnvironmentSimulator
+            self._simulation_engine = EnvironmentSimulator()
+        except Exception:
+            pass
+        try:
+            from hydra.causal import CausalReasoningEngine
+            self._causal_engine = CausalReasoningEngine()
+        except Exception:
+            pass
+        try:
+            from hydra.stealth import StealthEngine
+            self._stealth_engine = StealthEngine()
+        except Exception:
+            pass
+        try:
+            from hydra.deception import DeceptionDetectionEngine
+            self._deception_engine = DeceptionDetectionEngine()
+        except Exception:
+            pass
+        try:
+            from hydra.recon_expansion import ReconExpansionEngine
+            self._recon_expander = ReconExpansionEngine()
+        except Exception:
+            pass
+        try:
+            from hydra.temporal import TemporalIntelligenceEngine
+            self._temporal_engine = TemporalIntelligenceEngine()
+        except Exception:
+            pass
+        try:
+            from hydra.human_emulation import HumanEmulationEngine
+            self._human_emulator = HumanEmulationEngine()
+        except Exception:
+            pass
+        try:
+            from hydra.continuous_learning import ContinuousLearningEngine
+            self._learning_engine = ContinuousLearningEngine(
+                persist_dir=str(self.output_dir / "memory"))
+        except Exception:
+            pass
+        try:
+            from hydra.red_team_critic import RedTeamCriticAgent
+            self._red_team_critic = RedTeamCriticAgent()
+        except Exception:
+            pass
+        try:
+            from hydra.cognitive_graph import CognitiveGraph
+            self._cognitive_graph = CognitiveGraph()
+        except Exception:
+            pass
+        try:
+            from hydra.swarm_intelligence import CollaborativeSwarm
+            self._swarm = CollaborativeSwarm()
+        except Exception:
+            pass
+
+        # Wire cognitive loop to subsystems
+        if self._cognitive_loop:
+            self._cognitive_loop.attach(
+                simulation_engine=self._simulation_engine,
+                causal_engine=self._causal_engine,
+                stealth_engine=self._stealth_engine,
+                learning_engine=self._learning_engine,
+                recon_expander=self._recon_expander,
+            )
+
+        v5_active = sum(1 for s in [
+            self._cognitive_loop, self._simulation_engine,
+            self._causal_engine, self._stealth_engine,
+            self._deception_engine, self._recon_expander,
+            self._temporal_engine, self._human_emulator,
+            self._learning_engine, self._red_team_critic,
+            self._cognitive_graph, self._swarm,
+        ] if s is not None)
+        logger.info(f"🧠 v5 cognitive subsystems active: {v5_active}/12")
 
     async def run(self) -> Dict[str, Any]:
         """Run the selected workflow and return a summary."""
