@@ -135,6 +135,19 @@ def _score_knowledge_scenario(scenario: Dict[str, Any], kind: str) -> ScenarioRe
         want = exp["confidence"]
         return _pass_or_drift(name, got == want, f"confidence {got} != expected {want}")
 
+    if kind == "report_learning_score":
+        from types import SimpleNamespace
+
+        from hydra.knowledge.learning_score import score_report
+        extracted = SimpleNamespace(
+            vuln_class=SimpleNamespace(value=inp["vuln_class"]),
+            signals=inp.get("signals", []),
+        )
+        score, _ = score_report(extracted)
+        lo, hi = exp.get("min", 1), exp.get("max", 10)
+        return _pass_or_drift(name, lo <= score <= hi,
+                              f"learning_score {score} not in band [{lo},{hi}]")
+
     if kind == "promotion_legality":
         from hydra.knowledge.promotion import validate_promotion
         from hydra.knowledge.schema import Stage

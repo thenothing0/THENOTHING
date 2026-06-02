@@ -1033,6 +1033,7 @@ try:
     from hydra.knowledge.graph_index import rebuild as _kb_rebuild
     from hydra.knowledge.memory import OffensiveMemory
     from hydra.knowledge.promotion import PromotionError, apply_promotion
+    from hydra.knowledge.report_intel import ReportIntelligencePipeline, ReportSource
     from hydra.knowledge.schema import NodeType as _NodeType
     from hydra.knowledge.schema import Stage as _Stage
     from hydra.knowledge.wiki_store import WikiStore
@@ -1237,6 +1238,83 @@ def graph_path(source_page: str, target_page: str) -> str:
     path = idx.shortest_path(source_page, target_page)
     return json.dumps({"from": source_page, "to": target_page,
                        "path": path, "length": max(0, len(path) - 1), "reachable": bool(path)}, indent=2)
+
+
+@mcp.tool()
+def ingest_report(path: str = "", text: str = "", source_url: str = "",
+                  target: str = "", title: str = "") -> str:
+    """Report Intelligence: distill a disclosed report/writeup into the knowledge graph.
+
+    Extracts reusable attacker knowledge (root cause, trust-boundary failure,
+    exploitation sequence, escalation, impact, attacker assumptions), assigns a
+    deterministic 1-10 `learning_score`, and writes cross-linked canonical
+    `report` + `intel` wiki pages. Offline-first; only `report`/`intel` pages are
+    ever created (no findings/patterns/chains); missing technique/pattern links
+    are recorded as `unresolved_references`, never auto-created.
+
+    Args:
+        path: path to a local report file (read offline)
+        text: raw report content (alternative to path)
+        source_url: original disclosure URL (for provenance / slug identity)
+        target: program/asset slug the report concerns (e.g. "vk")
+        title: report title (used for the deterministic page slug)
+    """
+    if (g := _kb_guard()):
+        return g
+    if not (path or text):
+        return json.dumps({"success": False, "error": "provide 'path' or 'text'"})
+    src = ReportSource(path=path, text=text, source_url=source_url, target=target, title=title)
+    try:
+        extracted = ReportIntelligencePipeline(WikiStore()).ingest(src)
+    except FileNotFoundError:
+        return json.dumps({"success": False, "error": f"report file not found: {path}"})
+    return json.dumps({"success": True, **extracted.to_dict()}, indent=2)
+
+
+@mcp.tool()
+def report_lookup(slug: str) -> str:
+    """Look up an ingested report page: metadata, learning_score, and links."""
+    if (g := _kb_guard()):
+        return g
+    store = WikiStore()
+    page = store.get(slug, _NodeType.REPORT)
+    if page is None:
+        return json.dumps({"success": False, "error": f"no report page for: {slug}"})
+    return json.dumps({
+        "success": True, "slug": slug, "path": str(page.path),
+        "learning_score": page.meta.get("learning_score"),
+        "learning_score_rationale": page.meta.get("learning_score_rationale"),
+        "vuln_class": page.meta.get("vuln_class"),
+        "severity": page.meta.get("severity"),
+        "unresolved_references": page.meta.get("unresolved_references", []),
+        "links": [s for s in page.links],
+    }, indent=2)
+
+
+@mcp.tool()
+def list_reports(min_learning_score: int = 0) -> str:
+    """List ingested report pages ranked by learning_score (high-value learning first).
+
+    Args:
+        min_learning_score: only include reports scoring at or above this (0-10)
+    """
+    if (g := _kb_guard()):
+        return g
+    store = WikiStore()
+    rows = []
+    for page in store.iter_pages(_NodeType.REPORT):
+        score = page.meta.get("learning_score", 0)
+        try:
+            score = int(score)
+        except (TypeError, ValueError):
+            score = 0
+        if score >= min_learning_score:
+            rows.append({"slug": page.slug, "learning_score": score,
+                         "vuln_class": page.meta.get("vuln_class"),
+                         "severity": page.meta.get("severity")})
+    # Deterministic order: highest score first, ties broken by slug.
+    rows.sort(key=lambda r: (-r["learning_score"], r["slug"]))
+    return json.dumps({"count": len(rows), "reports": rows}, indent=2)
 
 
 def _policy(online: bool):

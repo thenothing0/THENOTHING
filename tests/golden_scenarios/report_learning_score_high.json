@@ -1,0 +1,7 @@
+{
+  "name": "report_learning_score_high_chained_authz",
+  "kind": "report_learning_score",
+  "description": "A chained authz-bypass with escalation is high-value learning (>=7).",
+  "input": {"vuln_class": "authz_bypass", "signals": ["chain", "escalation"]},
+  "expected": {"min": 7, "max": 10}
+}

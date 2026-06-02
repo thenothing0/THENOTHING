@@ -1,308 +1,332 @@
 {
-  "amass_enum": {
-    "required": [
-      "domain"
-    ],
-    "params": [
-      "domain",
-      "passive"
-    ]
-  },
-  "asset_lookup": {
-    "required": [
-      "asset"
-    ],
-    "params": [
-      "asset"
-    ]
-  },
-  "capability_list": {
-    "required": [],
-    "params": []
-  },
-  "capability_sources": {
-    "required": [
-      "capability"
-    ],
-    "params": [
-      "capability",
-      "online"
-    ]
-  },
-  "check_tools": {
-    "required": [],
-    "params": []
-  },
-  "dalfox_scan": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "blind",
-      "pipe_mode",
-      "target",
-      "timeout"
-    ]
-  },
-  "dirsearch_scan": {
-    "required": [
-      "url"
-    ],
-    "params": [
-      "extensions",
-      "threads",
-      "url"
-    ]
-  },
-  "dnsx_resolve": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "record_type",
-      "target",
-      "timeout",
-      "wordlist"
-    ]
-  },
-  "ffuf_fuzz": {
-    "required": [
-      "url"
-    ],
-    "params": [
-      "fuzz_mode",
-      "headers",
-      "match_codes",
-      "method",
-      "url",
-      "wordlist"
-    ]
-  },
-  "full_recon": {
-    "required": [
-      "domain"
-    ],
-    "params": [
-      "domain"
-    ]
-  },
-  "gau_urls": {
-    "required": [
-      "domain"
-    ],
-    "params": [
-      "domain"
-    ]
-  },
-  "generate_report": {
-    "required": [
-      "findings_json",
-      "target"
-    ],
-    "params": [
-      "findings_json",
-      "report_format",
-      "target"
-    ]
-  },
-  "get_findings": {
-    "required": [],
-    "params": [
-      "limit",
-      "severity"
-    ]
-  },
-  "graph_neighbors": {
-    "required": [
-      "page"
-    ],
-    "params": [
-      "page"
-    ]
-  },
-  "graph_path": {
-    "required": [
-      "source_page",
-      "target_page"
-    ],
-    "params": [
-      "source_page",
-      "target_page"
-    ]
-  },
-  "gxss_check": {
-    "required": [
-      "urls"
-    ],
-    "params": [
-      "timeout",
-      "urls"
-    ]
-  },
-  "hakrawler_crawl": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "depth",
-      "plain",
-      "scope",
-      "target",
-      "timeout"
-    ]
-  },
-  "httpx_probe": {
-    "required": [
-      "targets"
-    ],
-    "params": [
-      "follow_redirects",
-      "status_code",
-      "targets",
-      "tech_detect",
-      "title"
-    ]
-  },
-  "katana_crawl": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "depth",
-      "js_crawl",
-      "target"
-    ]
-  },
-  "kb_lint": {
-    "required": [],
-    "params": []
-  },
-  "kb_promote": {
-    "required": [
-      "page",
-      "to_stage"
-    ],
-    "params": [
-      "evidence_count",
-      "page",
-      "scope_ok",
-      "sources",
-      "to_stage"
-    ]
-  },
-  "kb_rebuild_index": {
-    "required": [],
-    "params": []
-  },
-  "kb_recall": {
-    "required": [
-      "query"
-    ],
-    "params": [
-      "limit",
-      "query",
-      "target",
-      "types"
-    ]
-  },
-  "nmap_scan": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "ports",
-      "scan_type",
-      "scripts",
-      "target"
-    ]
-  },
-  "nuclei_scan": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "rate_limit",
-      "severity",
-      "tags",
-      "target",
-      "templates"
-    ]
-  },
-  "nuclei_scan_list": {
-    "required": [
-      "targets"
-    ],
-    "params": [
-      "rate_limit",
-      "severity",
-      "tags",
-      "targets"
-    ]
-  },
-  "recon_fuse": {
-    "required": [
-      "domain"
-    ],
-    "params": [
-      "capability",
-      "domain",
-      "online"
-    ]
-  },
-  "save_finding": {
-    "required": [
-      "description",
-      "severity",
-      "target",
-      "title"
-    ],
-    "params": [
-      "description",
-      "evidence",
-      "finding_type",
-      "severity",
-      "target",
-      "title"
-    ]
-  },
-  "sqlmap_scan": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "batch",
-      "level",
-      "risk",
-      "tamper",
-      "target",
-      "technique",
-      "timeout"
-    ]
-  },
-  "subfinder_scan": {
-    "required": [
-      "domain"
-    ],
-    "params": [
-      "domain",
-      "silent"
-    ]
-  },
-  "wafw00f_detect": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "target"
-    ]
-  },
-  "whatweb_detect": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "aggression",
-      "target"
-    ]
-  }
+ "amass_enum": {
+  "params": [
+   "domain",
+   "passive"
+  ],
+  "required": [
+   "domain"
+  ]
+ },
+ "asset_lookup": {
+  "params": [
+   "asset"
+  ],
+  "required": [
+   "asset"
+  ]
+ },
+ "capability_list": {
+  "params": [],
+  "required": []
+ },
+ "capability_sources": {
+  "params": [
+   "capability",
+   "online"
+  ],
+  "required": [
+   "capability"
+  ]
+ },
+ "check_tools": {
+  "params": [],
+  "required": []
+ },
+ "dalfox_scan": {
+  "params": [
+   "blind",
+   "pipe_mode",
+   "target",
+   "timeout"
+  ],
+  "required": [
+   "target"
+  ]
+ },
+ "dirsearch_scan": {
+  "params": [
+   "extensions",
+   "threads",
+   "url"
+  ],
+  "required": [
+   "url"
+  ]
+ },
+ "dnsx_resolve": {
+  "params": [
+   "record_type",
+   "target",
+   "timeout",
+   "wordlist"
+  ],
+  "required": [
+   "target"
+  ]
+ },
+ "ffuf_fuzz": {
+  "params": [
+   "fuzz_mode",
+   "headers",
+   "match_codes",
+   "method",
+   "url",
+   "wordlist"
+  ],
+  "required": [
+   "url"
+  ]
+ },
+ "full_recon": {
+  "params": [
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ]
+ },
+ "gau_urls": {
+  "params": [
+   "domain"
+  ],
+  "required": [
+   "domain"
+  ]
+ },
+ "generate_report": {
+  "params": [
+   "findings_json",
+   "report_format",
+   "target"
+  ],
+  "required": [
+   "findings_json",
+   "target"
+  ]
+ },
+ "get_findings": {
+  "params": [
+   "limit",
+   "severity"
+  ],
+  "required": []
+ },
+ "graph_neighbors": {
+  "params": [
+   "page"
+  ],
+  "required": [
+   "page"
+  ]
+ },
+ "graph_path": {
+  "params": [
+   "source_page",
+   "target_page"
+  ],
+  "required": [
+   "source_page",
+   "target_page"
+  ]
+ },
+ "gxss_check": {
+  "params": [
+   "timeout",
+   "urls"
+  ],
+  "required": [
+   "urls"
+  ]
+ },
+ "hakrawler_crawl": {
+  "params": [
+   "depth",
+   "plain",
+   "scope",
+   "target",
+   "timeout"
+  ],
+  "required": [
+   "target"
+  ]
+ },
+ "httpx_probe": {
+  "params": [
+   "follow_redirects",
+   "status_code",
+   "targets",
+   "tech_detect",
+   "title"
+  ],
+  "required": [
+   "targets"
+  ]
+ },
+ "ingest_report": {
+  "params": [
+   "path",
+   "source_url",
+   "target",
+   "text",
+   "title"
+  ],
+  "required": []
+ },
+ "katana_crawl": {
+  "params": [
+   "depth",
+   "js_crawl",
+   "target"
+  ],
+  "required": [
+   "target"
+  ]
+ },
+ "kb_lint": {
+  "params": [],
+  "required": []
+ },
+ "kb_promote": {
+  "params": [
+   "evidence_count",
+   "page",
+   "scope_ok",
+   "sources",
+   "to_stage"
+  ],
+  "required": [
+   "page",
+   "to_stage"
+  ]
+ },
+ "kb_rebuild_index": {
+  "params": [],
+  "required": []
+ },
+ "kb_recall": {
+  "params": [
+   "limit",
+   "query",
+   "target",
+   "types"
+  ],
+  "required": [
+   "query"
+  ]
+ },
+ "list_reports": {
+  "params": [
+   "min_learning_score"
+  ],
+  "required": []
+ },
+ "nmap_scan": {
+  "params": [
+   "ports",
+   "scan_type",
+   "scripts",
+   "target"
+  ],
+  "required": [
+   "target"
+  ]
+ },
+ "nuclei_scan": {
+  "params": [
+   "rate_limit",
+   "severity",
+   "tags",
+   "target",
+   "templates"
+  ],
+  "required": [
+   "target"
+  ]
+ },
+ "nuclei_scan_list": {
+  "params": [
+   "rate_limit",
+   "severity",
+   "tags",
+   "targets"
+  ],
+  "required": [
+   "targets"
+  ]
+ },
+ "recon_fuse": {
+  "params": [
+   "capability",
+   "domain",
+   "online"
+  ],
+  "required": [
+   "domain"
+  ]
+ },
+ "report_lookup": {
+  "params": [
+   "slug"
+  ],
+  "required": [
+   "slug"
+  ]
+ },
+ "save_finding": {
+  "params": [
+   "description",
+   "evidence",
+   "finding_type",
+   "severity",
+   "target",
+   "title"
+  ],
+  "required": [
+   "description",
+   "severity",
+   "target",
+   "title"
+  ]
+ },
+ "sqlmap_scan": {
+  "params": [
+   "batch",
+   "level",
+   "risk",
+   "tamper",
+   "target",
+   "technique",
+   "timeout"
+  ],
+  "required": [
+   "target"
+  ]
+ },
+ "subfinder_scan": {
+  "params": [
+   "domain",
+   "silent"
+  ],
+  "required": [
+   "domain"
+  ]
+ },
+ "wafw00f_detect": {
+  "params": [
+   "target"
+  ],
+  "required": [
+   "target"
+  ]
+ },
+ "whatweb_detect": {
+  "params": [
+   "aggression",
+   "target"
+  ],
+  "required": [
+   "target"
+  ]
+ }
 }

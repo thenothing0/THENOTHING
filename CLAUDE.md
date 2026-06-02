@@ -117,6 +117,15 @@ a derived graph index accelerates queries). See `wiki/SCHEMA.md`.
 - `graph_neighbors` — Knowledge-graph neighbors of a page (+ related findings/patterns/chains)
 - `graph_path` — Shortest attack path between two knowledge nodes
 
+### Report Intelligence (Phase B — pure-python, offline-first)
+Disclosed reports/writeups are learning assets: extract reusable attacker knowledge,
+score it, and cross-link the distilled intelligence into the graph. Only `report`/`intel`
+pages are ever created (never findings/patterns/chains); missing links are recorded as
+`unresolved_references`, never auto-created. Scoring is deterministic, explainable, LLM-free.
+- `ingest_report` — Distill a report/writeup → cross-linked `report`+`intel` pages with a 1-10 `learning_score`
+- `report_lookup` — Look up an ingested report's metadata, `learning_score`, rationale, and links
+- `list_reports` — List ingested reports ranked by `learning_score` (high-value learning first)
+
 ## CLI workflows
 
 ```bash

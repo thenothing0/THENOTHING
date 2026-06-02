@@ -12,7 +12,9 @@ venv/
 data/
 logs/
 results/
-reports/
+# Anchored to repo root: the top-level reports/ deliverables dir is ignored, but
+# the canonical wiki/reports/ knowledge pages and tests/.../fixtures/reports/ are NOT.
+/reports/
 output/
 *.db
 *.sqlite3
