@@ -126,6 +126,15 @@ pages are ever created (never findings/patterns/chains); missing links are recor
 - `report_lookup` — Look up an ingested report's metadata, `learning_score`, rationale, and links
 - `list_reports` — List ingested reports ranked by `learning_score` (high-value learning first)
 
+### Pattern & Chain Discovery (Phase C — pure-python, offline-first, propose-only)
+Cross-document synthesis over the wiki: recurring lessons → `pattern` candidates, composable
+multi-step paths → `chain` candidates. Evidence is weighted (validated findings > report-intel;
+hypotheses never count) and scored by the existing confidence engine. Discovery is **dry-run**;
+canonical pages are created only via an explicit `confirm_candidate`.
+- `discover_patterns` — Propose recurring-pattern candidates (≥2 independent weighted evidence, two-signal); ranked, with a machine-readable `explain` block; writes nothing
+- `discover_chains` — Propose chain candidates (shared-target / shared-asset / explicit graph-path only; no semantic guessing); writes nothing
+- `confirm_candidate` — The only Phase-C write path: concurrency-safe materialization of a candidate into a canonical `pattern`/`chain` page (`status: candidate`, full provenance), or strengthen the existing one
+
 ## CLI workflows
 
 ```bash

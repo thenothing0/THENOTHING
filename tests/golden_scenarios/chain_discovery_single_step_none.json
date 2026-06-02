@@ -1,0 +1,7 @@
+{
+  "name": "chain_discovery_single_step_none",
+  "kind": "chain_discovery_min_support",
+  "description": "A single step is below min_support → no chain candidate.",
+  "input": {"steps": 1, "min_support": 2},
+  "expected": {"is_candidate": false}
+}

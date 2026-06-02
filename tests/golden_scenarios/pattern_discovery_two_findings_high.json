@@ -1,0 +1,10 @@
+{
+  "name": "pattern_discovery_two_findings_high",
+  "kind": "pattern_discovery_confidence",
+  "description": "Two validated findings (different roots) → HIGH confidence pattern.",
+  "input": {"evidence": [
+    {"class": "validated_finding", "root": "f-a"},
+    {"class": "validated_finding", "root": "f-b"}
+  ]},
+  "expected": {"confidence": "high"}
+}

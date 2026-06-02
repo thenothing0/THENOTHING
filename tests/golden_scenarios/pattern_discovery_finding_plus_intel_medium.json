@@ -1,0 +1,10 @@
+{
+  "name": "pattern_discovery_finding_plus_intel_medium",
+  "kind": "pattern_discovery_confidence",
+  "description": "A validated finding + report-intel → MEDIUM (weighted, findings outrank intel).",
+  "input": {"evidence": [
+    {"class": "validated_finding", "root": "f-a"},
+    {"class": "report_intel", "root": "report-x"}
+  ]},
+  "expected": {"confidence": "medium"}
+}

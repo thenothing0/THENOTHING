@@ -1,0 +1,7 @@
+{
+  "name": "chain_discovery_two_steps_candidate",
+  "kind": "chain_discovery_min_support",
+  "description": "Two validated steps meet min_support → chain candidate.",
+  "input": {"steps": 2, "min_support": 2},
+  "expected": {"is_candidate": true}
+}

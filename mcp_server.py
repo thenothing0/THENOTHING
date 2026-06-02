@@ -1029,6 +1029,12 @@ def hakrawler_crawl(
 
 try:
     from hydra.capabilities import CapabilityRegistry, ExecutionPolicy
+    from hydra.knowledge.discovery import (
+        ChainDiscovery,
+        DiscoveryError,
+        PatternDiscovery,
+        confirm_candidate as _confirm_candidate,
+    )
     from hydra.knowledge.graph_index import KnowledgeGraphIndex
     from hydra.knowledge.graph_index import rebuild as _kb_rebuild
     from hydra.knowledge.memory import OffensiveMemory
@@ -1238,6 +1244,64 @@ def graph_path(source_page: str, target_page: str) -> str:
     path = idx.shortest_path(source_page, target_page)
     return json.dumps({"from": source_page, "to": target_page,
                        "path": path, "length": max(0, len(path) - 1), "reachable": bool(path)}, indent=2)
+
+
+@mcp.tool()
+def discover_patterns(min_support: int = 2) -> str:
+    """Propose recurring-pattern candidates across the wiki (Phase C — DRY-RUN, creates nothing).
+
+    Synthesizes patterns from ≥2 independent weighted evidence sources (validated
+    findings + report-intel; hypotheses excluded). Returns ranked candidates with a
+    machine-readable `explain` block and a create_new/strengthen_existing recommendation.
+    Nothing is written — materialize with `confirm_candidate`.
+
+    Args:
+        min_support: minimum independent evidence sources required (>=2).
+    """
+    if (g := _kb_guard()):
+        return g
+    cands = PatternDiscovery(WikiStore()).discover(min_support=max(2, min_support))
+    return json.dumps({"candidate_type": "pattern", "count": len(cands),
+                       "candidates": [c.to_dict() for c in cands]}, indent=2)
+
+
+@mcp.tool()
+def discover_chains(min_support: int = 2) -> str:
+    """Propose multi-step chain candidates (Phase C — DRY-RUN, creates nothing).
+
+    Conservative: chains are formed only from a shared target, a shared asset, or an
+    explicit graph path between validated findings — never from semantic similarity.
+    Returns ranked candidates; materialize with `confirm_candidate`.
+
+    Args:
+        min_support: minimum validated-finding steps required (>=2).
+    """
+    if (g := _kb_guard()):
+        return g
+    cands = ChainDiscovery(WikiStore()).discover(min_support=max(2, min_support))
+    return json.dumps({"candidate_type": "chain", "count": len(cands),
+                       "candidates": [c.to_dict() for c in cands]}, indent=2)
+
+
+@mcp.tool()
+def confirm_candidate(candidate_type: str, candidate_id: str) -> str:
+    """Explicitly materialize a discovered candidate into a canonical pattern/chain page.
+
+    The only Phase-C write path. Concurrency-safe: re-runs discovery, re-validates the
+    candidate by id and the two-signal gate, existence-checks before writing, and on a
+    strengthen_existing recommendation merges into the single canonical page. Idempotent.
+
+    Args:
+        candidate_type: "pattern" or "chain".
+        candidate_id: the id returned by discover_patterns / discover_chains.
+    """
+    if (g := _kb_guard()):
+        return g
+    try:
+        result = _confirm_candidate(candidate_type, candidate_id, WikiStore())
+    except DiscoveryError as e:
+        return json.dumps({"success": False, "rejected": True, "reason": str(e)})
+    return json.dumps({"success": True, **result}, indent=2)
 
 
 @mcp.tool()

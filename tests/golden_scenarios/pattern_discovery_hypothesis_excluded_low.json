@@ -1,0 +1,10 @@
+{
+  "name": "pattern_discovery_hypothesis_excluded_low",
+  "kind": "pattern_discovery_confidence",
+  "description": "One finding + a hypothesis → hypothesis excluded (weight 0) → only one real source → LOW (not a candidate).",
+  "input": {"evidence": [
+    {"class": "validated_finding", "root": "f-a"},
+    {"class": "hypothesis", "root": "hyp-1"}
+  ]},
+  "expected": {"confidence": "low"}
+}

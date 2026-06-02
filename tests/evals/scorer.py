@@ -158,6 +158,25 @@ def _score_knowledge_scenario(scenario: Dict[str, Any], kind: str) -> ScenarioRe
         return _pass_or_drift(name, d.allowed == exp["allowed"],
                               f"promotion allowed={d.allowed} != expected {exp['allowed']} ({d.reason})")
 
+    if kind == "pattern_discovery_confidence":
+        # Evidence classes → policy weights → existing confidence engine (no Phase-C math).
+        from hydra.knowledge import evidence_policy as pol
+        from hydra.knowledge.confidence import score_from_sources
+        refs, weights = [], {}
+        for ev in inp["evidence"]:
+            if pol.is_excluded(ev["class"]):
+                continue
+            refs.append(ev["root"])
+            weights[ev["root"]] = pol.weight_for(ev["class"])
+        got = score_from_sources(refs, weights).value
+        return _pass_or_drift(name, got == exp["confidence"],
+                              f"pattern confidence {got} != expected {exp['confidence']}")
+
+    if kind == "chain_discovery_min_support":
+        got = int(inp["steps"]) >= int(inp.get("min_support", 2))
+        return _pass_or_drift(name, got == exp["is_candidate"],
+                              f"chain candidate={got} != expected {exp['is_candidate']}")
+
     return _pass_or_drift(name, False, f"unknown scenario kind: {kind}")
 
 
