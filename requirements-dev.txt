@@ -1,0 +1,12 @@
+# ═══════════════════════════════════════════
+#  THENOTHING — Harness / Dev Dependencies
+#  Install with: pip install -r requirements-dev.txt
+#  Everything here is needed only to RUN THE HARNESS
+#  (tests, coverage, lint). Production runtime deps
+#  live in requirements.txt.
+# ═══════════════════════════════════════════
+
+pytest>=8.0
+pytest-cov>=4.1
+pytest-asyncio>=0.23
+ruff>=0.4

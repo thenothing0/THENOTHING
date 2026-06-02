@@ -1,0 +1,21 @@
+# THENOTHING modular skill schema (see hydra/skills/yaml_loader.py)
+required_concepts:
+  - id
+  - name
+  - category
+  - reasoning_heuristics
+  - mcp_tools
+optional:
+  - triggers
+  - technologies
+  - objectives
+  - exploit_hypotheses
+  - validation
+  - stealth_mode
+  - confidence_rules
+  - adaptive_branches
+  - false_positive_reduction
+  - reporting_guidance
+  - chain_to
+  - references
+execution_rule: "All tool execution via MCP only; store artifacts under output/"

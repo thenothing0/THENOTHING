@@ -1,0 +1,14 @@
+capability: attack_surface_mapping
+description: >-
+  Composite capability that unifies subdomain, URL, DNS, HTTP and technology
+  intelligence into a single living attack-surface model. Composes the other
+  capabilities; the listed sources are the offline-capable backbone used when
+  building the surface model directly.
+inputs: [domain]
+outputs: [asset, surface]
+composes: [discover_subdomains, dns_intelligence, http_probe, technology_fingerprinting, discover_urls]
+sources:
+  - {id: source.subfinder, name: subfinder, category: active, source_type: enumeration,  passive: false, requires_network: true, requires_api_key: false, offline_capable: true, trust_score: 0.55, confidence_weight: 0.5}
+  - {id: source.dnsx,      name: dnsx,      category: active, source_type: resolver,     passive: false, requires_network: true, requires_api_key: false, offline_capable: true, trust_score: 0.6,  confidence_weight: 0.6}
+  - {id: source.httpx,     name: httpx,     category: active, source_type: prober,       passive: false, requires_network: true, requires_api_key: false, offline_capable: true, trust_score: 0.6,  confidence_weight: 0.6}
+confidence_rules: {low: [single_source], medium: [two_independent_sources], high: [three_or_more_sources]}

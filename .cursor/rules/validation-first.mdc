@@ -1,0 +1,19 @@
+---
+description: THENOTHING v6 — validation with hallucination defense, debate, and red team critique
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Validation-first reporting (v6)
+
+1. **No submission-grade report** without: independent replay, minimal reproducible steps, and evidence artifacts under `output/<target>/evidence/`.
+2. **Hallucination defense:** run findings through `hydra.hallucination.HallucinationDefense.filter_verified_findings()` before reporting. Never invent tool output.
+3. **Red team critique:** use `hydra.red_team_critic.RedTeamCriticAgent` to adversarially review findings. Only report findings that survive critique.
+4. **Adversarial debate:** for ambiguous findings, use `hydra.debate.DebateEngine` for multi-perspective analysis.
+5. **Separate** "confirmed" vs "suspected" with explicit confidence scores and what would disprove each finding.
+6. **False-positive reduction:** reject banner-only version claims, single 500s without differential, and WAF replacement pages unless differentiated from true positives.
+7. **Second signal rule:** require two independent signals (e.g. tool + manual replay, or two parameter contexts) before High/Critical severity.
+8. **Theory status:** findings must trace back to a confirmed exploit theory with a reasoning chain. Orphaned scanner hits require additional validation.
+9. **Screenshots / HAR** when execution or UI state matters; redact third-party PII and secrets.
+
+If validation is incomplete, label the finding **hypothesis** and list the **next** validation step instead of inflating severity.

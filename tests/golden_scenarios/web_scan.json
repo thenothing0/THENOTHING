@@ -1,0 +1,10 @@
+{
+  "name": "web_scan",
+  "description": "A vulnerability scan goal must route to the nuclei-driven scan phase.",
+  "input": {"workflow": "vuln_scan", "goal": "vuln_scan", "target": "https://example.com"},
+  "expected": {
+    "tasks": ["nuclei_scan", "custom_checks"],
+    "tools": ["nuclei"],
+    "agents": ["vuln_research"]
+  }
+}

@@ -1,0 +1,9 @@
+capability: asn_intelligence
+description: Map an organization's ASN(s), CIDR ranges and IP clusters.
+inputs: [domain, ip]
+outputs: [asn, cidr, ip]
+sources:
+  - {id: source.asnmap, name: asnmap,    category: active,              source_type: asn,   passive: false, requires_network: true, requires_api_key: false, offline_capable: true,  trust_score: 0.55, confidence_weight: 0.55}
+  - {id: source.bgp_he, name: bgp.he.net,category: threat_intelligence, source_type: asn,   passive: true,  requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.whois,  name: whois,     category: passive,             source_type: rdap,  passive: true,  requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.4,  confidence_weight: 0.4}
+confidence_rules: {low: [single_source], medium: [two_independent_sources], high: [three_or_more_sources]}

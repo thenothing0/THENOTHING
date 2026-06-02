@@ -1,0 +1,54 @@
+id: tn_xss
+name: advanced_xss_hunting
+category: web
+version: '1.0'
+severity: high
+description: THENOTHING modular skill for /xss/ — authorized testing only.
+triggers:
+- reflected_input
+- dom_sink_detected
+- unsafe_innerhtml
+technologies:
+- React
+- Next.js
+- Vue
+objectives:
+- identify_reflection
+- infer_dom_execution
+- generate_bypass_payloads
+reasoning_heuristics:
+- Start from scope and program rules; refuse out-of-scope execution.
+- Prefer correlated weak signals over single noisy scanner lines.
+- 'Branch: if WAF or CDN detected, narrow active tests and increase validation rigor.'
+exploit_hypotheses:
+- id: tn_xss_h1
+  title: Contextual hypothesis
+  description: Derive a minimal test aligned with objectives; validate before reporting.
+  test_steps:
+  - Map entrypoint
+  - Isolate variable
+  - Replay with control
+  severity: medium
+  confidence: 0.45
+mcp_tools:
+- katana_crawl
+- httpx_probe
+- dalfox
+- gxss
+stealth_mode: adaptive
+validation:
+  require_replay: true
+  require_screenshot: false
+confidence_rules:
+  minimum_score: 0.72
+false_positive_reduction:
+- Require second independent signal (header + behavior, or tool + manual).
+- Discard banner-only version claims without behavior proof.
+reporting_guidance:
+- Impact, affected assets, reproduction, remediation, and safe harbor alignment.
+adaptive_branches:
+  waf_detected: reduce_active_fuzz
+  api_heavy: prioritize_api_skill_chain
+chain_to: []
+references:
+- https://owasp.org/www-project-top-ten/

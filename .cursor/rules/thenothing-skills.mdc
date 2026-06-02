@@ -1,0 +1,15 @@
+---
+description: 
+alwaysApply: true
+---
+
+# Cursor skills library
+
+When performing **authorized** offensive security, bug bounty, or assessment work in this workspace:
+
+1. **Consult** `.cursor/skills/README.md` for the skill index and folder map.
+2. **Load** relevant skills via `@.cursor/skills/<path>.md` (example: `@.cursor/skills/graphql/graphql_attack_surface.md`). Combine multiple skills when the fingerprint spans web + API + cloud.
+3. **Align** with repository-wide methodologies under `skills/**/*.md` and YAML skills under `skills/**/SKILL.yaml` when using Hydra loaders.
+4. **Record** reasoning updates and scope decisions under `output/<target_slug>/memory/` per `output-artifacts.mdc`.
+
+Skills are **methodology**, not permission to exceed scope or law.

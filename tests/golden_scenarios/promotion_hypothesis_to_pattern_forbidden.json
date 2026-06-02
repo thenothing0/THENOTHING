@@ -1,0 +1,7 @@
+{
+  "name": "promotion_hypothesis_to_pattern_forbidden",
+  "kind": "promotion_legality",
+  "description": "Hypothesis cannot be promoted directly to Pattern (validation mandatory).",
+  "input": {"from": "hypothesis", "to": "pattern", "sources": ["a", "b", "c"]},
+  "expected": {"allowed": false}
+}

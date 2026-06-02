@@ -1,0 +1,4 @@
+# hypotheses/ — future investigation candidates generated from intel, patterns, and disclosed
+# reports. One file per hypothesis, see ../_templates/hypothesis.md. A hypothesis is NOT a
+# finding: it is falsifiable, carries a confidence label, and promotes to a finding only after
+# two independent signals confirm it (SCHEMA.md evidence discipline). Empty until seeded.

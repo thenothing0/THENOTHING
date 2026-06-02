@@ -1,0 +1,25 @@
+---
+description: THENOTHING v6 — cognitive pipeline phases and autonomous reasoning loop
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Cognitive pipeline (v6)
+
+When performing authorized security research, follow the **9-phase cognitive loop** rather than a flat checklist:
+
+1. **OBSERVE** — Run passive recon tools (subfinder, httpx, OSINT, fingerprinting). Feed every result as an Observation with source, type, confidence.
+2. **UNDERSTAND** — Correlate observations into beliefs: tech_stack, auth_flow, trust_boundary. Score belief confidence.
+3. **REASON** — Generate exploit theories from beliefs with reasoning chains. Each theory needs: preconditions, attack_steps, success_probability, detection_probability.
+4. **SIMULATE** — Pre-execute each theory mentally. Score feasibility vs detection risk. Only proceed with theories > 0.3 confidence.
+5. **PLAN** — Generate executable decisions from simulation results. Consult stealth engine for pacing.
+6. **EXECUTE** — Run MCP tools with theory-specific nuclei tags (e.g. `sqli`, `xss`, `auth-bypass`, `ssrf`). Track which theory each scan tests.
+7. **VALIDATE** — Apply hallucination defense + red team critique. Require two independent signals for High/Critical.
+8. **LEARN** — Record confirmed/refuted outcomes. Update cognitive graph. Feed back to skill evolution.
+9. **REPLAN** — Invalidate contradicted beliefs. Check if target understanding is below 50% → expand recon.
+
+**Post-loop:** Build exploit chains from confirmed findings. Run targeted hunt cycles for high-value confirmed attack vectors.
+
+## Key principle
+
+**A scanner output is a hypothesis, not a conclusion.** Always interpret, correlate, and validate before reporting.

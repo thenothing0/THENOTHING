@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "hydra-security": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "cwd": ".",
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "check_tools",
+        "subfinder_scan",
+        "httpx_probe",
+        "whatweb_detect",
+        "wafw00f_detect",
+        "gau_urls",
+        "katana_crawl",
+        "hakrawler_crawl",
+        "dnsx_resolve",
+        "get_findings",
+        "save_finding"
+      ]
+    }
+  }
+}

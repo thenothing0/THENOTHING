@@ -1,0 +1,35 @@
+---
+description: THENOTHING v6 — full MCP tool palette (22 tools) and execution boundary
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# MCP-only execution and output artifacts
+
+1. **Security tool execution** goes through the configured MCP server (`hydra-security` / `mcp_server.py`). Do not instruct the user to run ad-hoc subprocesses for the same work unless MCP lacks that capability—and then **state the gap** explicitly.
+
+2. **22 MCP tools available:**
+   - **Recon:** `subfinder_scan`, `amass_enum`, `httpx_probe`, `katana_crawl`, `gau_urls`, `hakrawler_crawl`, `dnsx_resolve`
+   - **Vuln scanning:** `nuclei_scan`, `nuclei_scan_list`, `sqlmap_scan`, `dalfox_scan`, `gxss_check`
+   - **Fuzzing:** `ffuf_fuzz`, `dirsearch_scan`
+   - **Fingerprint:** `whatweb_detect`, `wafw00f_detect`, `nmap_scan`
+   - **Knowledge:** `save_finding`, `get_findings`, `generate_report`, `full_recon`, `check_tools`
+
+3. **Persist artifacts** for meaningful runs under:
+
+```
+output/<target_slug>/
+  recon/          # subdomain lists, live hosts, URLs
+  osint/          # OSINT reports, attack surface
+  scans/          # nuclei, sqlmap, dalfox results
+  evidence/       # raw HTTP replays, screenshots
+  logs/           # tool execution logs
+  reports/        # cognitive summaries, exploit chains, reports
+  attack_graph/   # cognitive graph JSON
+  memory/         # reasoning traces, scope notes
+```
+
+4. Store **raw** HTTP where allowed under `evidence/` or `replay/`; **redact** secrets before committing or sharing.
+5. **Reasoning traces** and hypothesis updates belong in `memory/` (e.g. `reasoning_trace.md` or append JSONL).
+6. **Cognitive summaries** from autonomous workflows go in `reports/cognitive_summary.json`.
+7. **Exploit chains** go in `reports/exploit_chains.json` and `reports/exploit_chains.md`.

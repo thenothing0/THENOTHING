@@ -1,0 +1,7 @@
+{
+  "name": "cap_subdomains_offline",
+  "kind": "capability_selection",
+  "description": "Offline policy must select only the local/offline-capable subdomain sources.",
+  "input": {"capability": "discover_subdomains", "mode": "offline"},
+  "expected": {"runnable_sources": ["source.subfinder", "source.amass", "source.assetfinder", "source.findomain"]}
+}

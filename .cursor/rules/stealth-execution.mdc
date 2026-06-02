@@ -1,0 +1,20 @@
+---
+description: THENOTHING v6 — stealth engine integration and adaptive OPSEC
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Stealth and responsible execution (v6)
+
+**"Stealth" here means:** program compliance, rate discipline, and minimizing harm—not evading lawful monitoring.
+
+1. **Passive-first:** prefer CT, passive DNS, historical URLs, and crawl-derived inventory before aggressive fuzzing.
+2. **Stealth engine:** the platform includes `hydra.stealth.StealthEngine` with profiles (normal, cautious, stealth, ghost). Respect the active profile's `inter_request_delay` and `mode`.
+3. **Adaptive pacing:** backoff on 429/403 spikes, connection errors, and WAF signals; jitter delays between similar requests.
+4. **Deception detection:** before scanning, check if the target is a honeypot using `hydra.deception.DeceptionDetectionEngine`. Skip confirmed honeypots.
+5. **Throttle** directory and parameter fuzzing; avoid repetitive identical payloads in tight loops.
+6. **Human emulation:** when the stealth profile demands it, use `hydra.human_emulation.HumanEmulationEngine` for realistic browsing patterns.
+7. **OPSEC:** do not embed live credentials in commands, logs, or screenshots; redact tokens in `output/<target>/logs/`.
+8. **Production courtesy:** avoid high-volume timing attacks and destructive tests unless explicitly in ROE.
+
+Escalate intensity only when **scope** and **program rules** allow—and log the rationale in `output/<target>/memory/`.

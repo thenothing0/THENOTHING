@@ -1,0 +1,7 @@
+{
+  "name": "fusion_single_source_low",
+  "kind": "fusion_confidence",
+  "description": "A single source yields LOW confidence (Two-Signal rule).",
+  "input": {"sources": ["source.crt_sh"]},
+  "expected": {"confidence": "low"}
+}

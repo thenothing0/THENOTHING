@@ -1,0 +1,51 @@
+id: tn_oauth
+name: OAuth OIDC Abuse Patterns
+category: auth
+version: '1.0'
+severity: high
+description: THENOTHING modular skill for /oauth/ — authorized testing only.
+triggers:
+- oauth_callback
+- authorization_code_flow
+technologies:
+- OAuth2
+- OIDC
+- Clerk
+- Auth0
+objectives:
+- redirect_uri_matrix
+- state_parameter_checks
+reasoning_heuristics:
+- Start from scope and program rules; refuse out-of-scope execution.
+- Prefer correlated weak signals over single noisy scanner lines.
+- 'Branch: if WAF or CDN detected, narrow active tests and increase validation rigor.'
+exploit_hypotheses:
+- id: tn_oauth_h1
+  title: Contextual hypothesis
+  description: Derive a minimal test aligned with objectives; validate before reporting.
+  test_steps:
+  - Map entrypoint
+  - Isolate variable
+  - Replay with control
+  severity: medium
+  confidence: 0.45
+mcp_tools:
+- httpx_probe
+- katana_crawl
+stealth_mode: adaptive
+validation:
+  require_replay: true
+  require_screenshot: false
+confidence_rules:
+  minimum_score: 0.72
+false_positive_reduction:
+- Require second independent signal (header + behavior, or tool + manual).
+- Discard banner-only version claims without behavior proof.
+reporting_guidance:
+- Impact, affected assets, reproduction, remediation, and safe harbor alignment.
+adaptive_branches:
+  waf_detected: reduce_active_fuzz
+  api_heavy: prioritize_api_skill_chain
+chain_to: []
+references:
+- https://owasp.org/www-project-top-ten/

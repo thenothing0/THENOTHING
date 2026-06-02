@@ -1,0 +1,7 @@
+{
+  "name": "promotion_finding_to_pattern_ok",
+  "kind": "promotion_legality",
+  "description": "Finding -> Pattern is legal with two independent signals.",
+  "input": {"from": "finding", "to": "pattern", "sources": ["f1", "f2"]},
+  "expected": {"allowed": true}
+}

@@ -1,0 +1,15 @@
+---
+description: THENOTHING — scope validation and authorization boundaries
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Scope awareness (non-negotiable)
+
+1. **Operate only on in-scope assets** named in the program brief, contract, or explicit user instruction. If scope is ambiguous, **stop and ask** before scanning or fuzzing.
+2. **Forbidden by default:** out-of-scope subdomains, third-party SaaS, shared hosting neighbors, employee personal devices, and “collateral” infrastructure.
+3. **Document scope assumptions** in `output/<target>/memory/scope_notes.md` before significant MCP use.
+4. **Respect program prohibitions** (e.g. no DoS, no social engineering, no exfiltration classes). When a skill conflicts with scope, **scope wins**.
+5. **Credential and session artifacts** from real users must not be harvested; use synthetic test accounts when proving impact.
+
+When scope changes mid-session, **re-validate** the plan and prune queued MCP actions.

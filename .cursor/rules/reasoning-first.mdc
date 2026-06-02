@@ -1,0 +1,18 @@
+---
+description: THENOTHING v6 — hypothesis-driven reasoning with cognitive subsystems
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Reasoning-first execution (v6 cognitive)
+
+1. **Before any MCP call**, state: objective, hypothesis, what would **falsify** the hypothesis, expected signal vs noise, and which **exploit theory** this tests.
+2. **Use the cognitive loop model:** every observation feeds beliefs → beliefs feed theories → theories feed executable decisions.
+3. **Prefer mental simulation** of request/response shape and parser behavior; avoid blind payload storms.
+4. **Correlate weak signals** (headers, errors, timing) across at least two independent observations before escalating confidence.
+5. **Causal reasoning:** for each finding, ask "what **caused** this to be exploitable?" and "what **counterfactual** would prevent it?"
+6. **Recursive expansion:** add recon surface only when new high-value hosts or roles appear **and** they remain in scope. Use `hydra.recon_expansion.ReconExpansionEngine` for suggestions.
+7. **Attack graph thinking:** record nodes (capabilities) and edges (prerequisites) in `output/<target>/attack_graph/`. Build exploit chains with `hydra.chains.ChainBuilder`.
+8. **Theory tracking:** for each theory, track status: proposed → testing → confirmed/refuted. Decay confidence on inconclusive results.
+
+Do not present scanner output as conclusions without **interpretation**, **reasoning trace**, and **validation plan**.

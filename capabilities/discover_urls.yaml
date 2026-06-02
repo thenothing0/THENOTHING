@@ -1,0 +1,11 @@
+capability: discover_urls
+description: Discover historical and live URLs / endpoints for a target.
+inputs: [domain]
+outputs: [url, endpoint]
+sources:
+  - {id: source.gau,         name: gau,          category: passive, source_type: archive,   passive: true,  requires_network: true, requires_api_key: false, offline_capable: true,  trust_score: 0.45, confidence_weight: 0.45}
+  - {id: source.katana,      name: katana,       category: active,  source_type: crawler,   passive: false, requires_network: true, requires_api_key: false, offline_capable: true,  trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.hakrawler,   name: hakrawler,    category: active,  source_type: crawler,   passive: false, requires_network: true, requires_api_key: false, offline_capable: true,  trust_score: 0.45, confidence_weight: 0.45}
+  - {id: source.waybackurls, name: waybackurls,  category: passive, source_type: archive,   passive: true,  requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.4,  confidence_weight: 0.4}
+  - {id: source.commoncrawl, name: Common Crawl, category: passive, source_type: archive,   passive: true,  requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.35, confidence_weight: 0.35}
+confidence_rules: {low: [single_source], medium: [two_independent_sources], high: [three_or_more_sources]}

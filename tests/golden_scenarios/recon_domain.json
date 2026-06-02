@@ -1,0 +1,10 @@
+{
+  "name": "recon_domain",
+  "description": "Quick recon of a single domain should plan passive discovery + a light vuln pass.",
+  "input": {"workflow": "quick_recon", "goal": "quick_recon", "target": "example.com"},
+  "expected": {
+    "tasks": ["subdomain_enum", "http_probe", "nuclei_scan"],
+    "tools": ["subfinder", "httpx", "nuclei"],
+    "agents": ["recon", "vuln_research"]
+  }
+}

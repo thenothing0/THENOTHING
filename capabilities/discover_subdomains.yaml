@@ -1,0 +1,37 @@
+capability: discover_subdomains
+description: Discover and validate target subdomains across passive, enumeration, threat-intel and code-intel sources.
+inputs: [domain]
+outputs: [subdomain]
+
+# Sources declare the FULL recon knowledge space (current + future). `id` is the
+# immutable primary key. `offline_capable: true` = has a local binary or cached
+# fixtures and may run under the default offline policy; network sources are only
+# selected in online mode (and when their api key is available).
+sources:
+  # ── enumeration (local binaries; offline via fakes/cached) ──
+  - {id: source.subfinder,   name: subfinder,   category: active, source_type: enumeration, passive: false, requires_network: true,  requires_api_key: false, offline_capable: true,  trust_score: 0.55, confidence_weight: 0.5}
+  - {id: source.amass,       name: amass,       category: active, source_type: enumeration, passive: false, requires_network: true,  requires_api_key: false, offline_capable: true,  trust_score: 0.55, confidence_weight: 0.5}
+  - {id: source.assetfinder, name: assetfinder, category: active, source_type: enumeration, passive: false, requires_network: true,  requires_api_key: false, offline_capable: true,  trust_score: 0.45, confidence_weight: 0.4}
+  - {id: source.findomain,   name: findomain,   category: active, source_type: enumeration, passive: false, requires_network: true,  requires_api_key: false, offline_capable: true,  trust_score: 0.45, confidence_weight: 0.4}
+  # ── passive / certificate transparency / threat intelligence ──
+  - {id: source.crt_sh,        name: crt.sh,         category: passive,              source_type: certificate_transparency, passive: true, requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.4,  confidence_weight: 0.4, rate_limit: "60/min"}
+  - {id: source.chaos,         name: Chaos,          category: threat_intelligence,  source_type: dns_dataset,              passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.6,  confidence_weight: 0.6}
+  - {id: source.rapiddns,      name: RapidDNS,       category: passive,              source_type: dns_dataset,              passive: true, requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.35, confidence_weight: 0.35}
+  - {id: source.securitytrails,name: SecurityTrails, category: threat_intelligence,  source_type: dns_dataset,              passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.65, confidence_weight: 0.65}
+  - {id: source.virustotal,    name: VirusTotal,     category: threat_intelligence,  source_type: dns_dataset,              passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.otx,           name: AlienVault OTX, category: threat_intelligence,  source_type: dns_dataset,              passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.45, confidence_weight: 0.45}
+  - {id: source.censys,        name: Censys,         category: threat_intelligence,  source_type: certificate_dataset,      passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.6,  confidence_weight: 0.6}
+  - {id: source.shodan,        name: Shodan,         category: threat_intelligence,  source_type: host_dataset,             passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.6,  confidence_weight: 0.6}
+  - {id: source.fofa,          name: FOFA,           category: threat_intelligence,  source_type: host_dataset,             passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.zoomeye,       name: ZoomEye,        category: threat_intelligence,  source_type: host_dataset,             passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.netlas,        name: Netlas,         category: threat_intelligence,  source_type: host_dataset,             passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.binaryedge,    name: BinaryEdge,     category: threat_intelligence,  source_type: host_dataset,             passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.leakix,        name: LeakIX,         category: threat_intelligence,  source_type: exposure_dataset,         passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.5,  confidence_weight: 0.5}
+  # ── code intelligence ──
+  - {id: source.github_subdomains, name: GitHub Subdomains, category: code_intelligence, source_type: code_search, passive: true, requires_network: true, requires_api_key: true, offline_capable: false, trust_score: 0.55, confidence_weight: 0.55}
+  - {id: source.github_dorks,      name: GitHub Dorks,      category: code_intelligence, source_type: code_search, passive: true, requires_network: true, requires_api_key: true, offline_capable: false, trust_score: 0.4,  confidence_weight: 0.4}
+
+confidence_rules:
+  low:  [single_source]
+  medium: [two_independent_sources]
+  high: [three_or_more_sources]

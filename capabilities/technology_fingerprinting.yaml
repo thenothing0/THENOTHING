@@ -1,0 +1,9 @@
+capability: technology_fingerprinting
+description: Identify server software, frameworks, CMS and WAF/CDN on live hosts.
+inputs: [host]
+outputs: [technology, waf, cdn]
+sources:
+  - {id: source.whatweb, name: whatweb, category: active, source_type: fingerprinter, passive: false, requires_network: true, requires_api_key: false, offline_capable: true, trust_score: 0.55, confidence_weight: 0.55}
+  - {id: source.httpx,   name: httpx,   category: active, source_type: prober,        passive: false, requires_network: true, requires_api_key: false, offline_capable: true, trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.wafw00f, name: wafw00f, category: active, source_type: waf_detect,    passive: false, requires_network: true, requires_api_key: false, offline_capable: true, trust_score: 0.5,  confidence_weight: 0.5}
+confidence_rules: {low: [single_source], medium: [two_independent_sources], high: [three_or_more_sources]}

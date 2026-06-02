@@ -1,0 +1,8 @@
+capability: http_probe
+description: Probe hosts for live HTTP services, titles and status.
+inputs: [host]
+outputs: [live_host, status, title]
+sources:
+  - {id: source.httpx,   name: httpx,   category: active, source_type: prober,        passive: false, requires_network: true, requires_api_key: false, offline_capable: true, trust_score: 0.6, confidence_weight: 0.6}
+  - {id: source.whatweb, name: whatweb, category: active, source_type: fingerprinter, passive: false, requires_network: true, requires_api_key: false, offline_capable: true, trust_score: 0.5, confidence_weight: 0.5}
+confidence_rules: {low: [single_source], medium: [two_independent_sources], high: [three_or_more_sources]}

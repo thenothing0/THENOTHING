@@ -1,0 +1,7 @@
+{
+  "name": "fusion_three_sources_high",
+  "kind": "fusion_confidence",
+  "description": "Three independent sources yield HIGH confidence.",
+  "input": {"sources": ["source.crt_sh", "source.subfinder", "source.amass"]},
+  "expected": {"confidence": "high"}
+}

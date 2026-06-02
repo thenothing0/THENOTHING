@@ -1,0 +1,9 @@
+capability: cloud_asset_discovery
+description: Discover public cloud assets (S3/Azure Blob/GCS buckets) belonging to a target.
+inputs: [domain, keyword]
+outputs: [cloud_bucket, cloud_asset]
+sources:
+  - {id: source.s3_buckets,   name: AWS S3 Discovery,  category: cloud_intelligence, source_type: bucket_enum, passive: true, requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.45, confidence_weight: 0.45}
+  - {id: source.azure_blob,   name: Azure Blob Discovery, category: cloud_intelligence, source_type: bucket_enum, passive: true, requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.45, confidence_weight: 0.45}
+  - {id: source.gcp_storage,  name: GCP Storage Discovery, category: cloud_intelligence, source_type: bucket_enum, passive: true, requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.45, confidence_weight: 0.45}
+confidence_rules: {low: [single_source], medium: [two_independent_sources], high: [three_or_more_sources]}

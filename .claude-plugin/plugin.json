@@ -1,0 +1,8 @@
+{
+  "name": "hydra-security",
+  "description": "HYDRA Bug Bounty OS — autonomous security scanning, vulnerability hunting, and report generation",
+  "author": {
+    "name": "HYDRA",
+    "email": "hydra@security.local"
+  }
+}

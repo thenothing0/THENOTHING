@@ -1,0 +1,10 @@
+{
+  "name": "bug_bounty_flow",
+  "description": "Full assessment chains recon -> scan -> hunt -> chain-build -> validate -> report.",
+  "input": {"workflow": "full_bounty", "goal": "full_assessment", "target": "example.com"},
+  "expected": {
+    "tasks": ["subdomain_enum", "nuclei_scan", "hunt_idor", "build_chains", "consensus_vote", "build_report"],
+    "tools": ["subfinder", "httpx", "whatweb", "nmap", "katana", "nuclei"],
+    "agents": ["recon", "vuln_research", "hunt", "exploit_hypothesis", "validation", "reporting"]
+  }
+}

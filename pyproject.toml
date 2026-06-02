@@ -1,0 +1,40 @@
+[project]
+name = "thenothing"
+version = "4.0.0"
+description = "THENOTHING - Autonomous AI Security Intelligence & Orchestration Platform"
+requires-python = ">=3.10"
+dependencies = [
+    "typer", "rich", "pydantic", "python-dotenv",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hydra*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+# Default run excludes the real-tool suites so CI passes with no Kali / no network.
+# Run them explicitly with:  pytest -m integration   /   pytest -m e2e
+addopts = "-v --tb=short --strict-markers -m 'not integration and not e2e'"
+asyncio_mode = "auto"
+markers = [
+    "integration: exercises REAL security binaries; skipped unless installed and HYDRA_RUN_INTEGRATION=1",
+    "e2e: full real-tool workflow runs; opt-in only",
+    "slow: long-running tests",
+]
+
+[tool.coverage.run]
+source = ["hydra", "mcp_server"]
+omit = ["*/__pycache__/*", "tests/*"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:", "raise NotImplementedError"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E501"]

@@ -1,0 +1,10 @@
+{
+  "name": "subdomain_discovery",
+  "description": "Full recon expands the attack surface across subdomains, HTTP, tech, ports and URLs.",
+  "input": {"workflow": "recon", "goal": "recon", "target": "example.com"},
+  "expected": {
+    "tasks": ["subdomain_enum", "http_probe", "tech_detect", "port_scan", "url_discovery"],
+    "tools": ["subfinder", "httpx", "whatweb", "nmap", "katana"],
+    "agents": ["recon"]
+  }
+}

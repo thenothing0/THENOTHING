@@ -1,0 +1,12 @@
+capability: repository_intelligence
+description: Mine code hosting for leaked endpoints, internal hostnames, and credentials.
+inputs: [domain, org]
+outputs: [endpoint, internal_host, credential]
+sources:
+  - {id: source.github_subdomains, name: GitHub Subdomains,  category: code_intelligence, source_type: code_search,   passive: true, requires_network: true, requires_api_key: true, offline_capable: false, trust_score: 0.55, confidence_weight: 0.55}
+  - {id: source.github_dorks,      name: GitHub Dorks,       category: code_intelligence, source_type: code_search,   passive: true, requires_network: true, requires_api_key: true, offline_capable: false, trust_score: 0.4,  confidence_weight: 0.4}
+  - {id: source.repo_analysis,     name: Repository Analysis,category: code_intelligence, source_type: repo_scan,     passive: true, requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.leaked_config,     name: Leaked Config Analysis, category: code_intelligence, source_type: config_scan, passive: true, requires_network: true, requires_api_key: false, offline_capable: false, trust_score: 0.5, confidence_weight: 0.5}
+  # contact / identity intelligence — org emails & exposed employees complement code intel
+  - {id: source.hunter,            name: Hunter,               category: contact_intelligence, source_type: email_discovery, passive: true, requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.5, confidence_weight: 0.5}
+confidence_rules: {low: [single_source], medium: [two_independent_sources], high: [three_or_more_sources]}

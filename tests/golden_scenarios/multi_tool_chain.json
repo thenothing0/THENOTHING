@@ -1,0 +1,10 @@
+{
+  "name": "multi_tool_chain",
+  "description": "API assessment selects API discovery, auth testing and fuzzing, then validates and reports.",
+  "input": {"workflow": "api_only", "goal": "api_assessment", "target": "https://api.example.com"},
+  "expected": {
+    "tasks": ["api_discovery", "auth_testing", "api_fuzz", "consensus_vote", "build_report"],
+    "tools": ["ffuf"],
+    "agents": ["api_specialist", "vuln_research", "validation", "reporting"]
+  }
+}

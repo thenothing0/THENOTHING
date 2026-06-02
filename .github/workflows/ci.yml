@@ -1,0 +1,86 @@
+name: THENOTHING CI
+
+# ─────────────────────────────────────────────────────────────
+# Harness CI — mitigates Risk #1 (vacuous CI), #4 (py-version
+# drift) and #5 (registry drift). Every step below measures the
+# REAL package (`hydra` + `mcp_server.py`). Green CI now means:
+#   - the MCP tool contract is stable (contract tests)
+#   - the subprocess boundary rejects injection (safety tests)
+#   - the cognitive engine behaves deterministically (workflow tests)
+#   - coverage has not regressed below the floor
+# The default test run uses fake tool doubles + mocked providers,
+# so it needs NO Kali tools and NO network.
+# ─────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Syntax check (real package)
+        run: |
+          python - <<'PY'
+          import ast, pathlib, sys
+          errors = []
+          targets = list(pathlib.Path('hydra').rglob('*.py')) + [pathlib.Path('mcp_server.py')]
+          for f in targets:
+              try:
+                  ast.parse(f.read_text(encoding='utf-8'))
+              except SyntaxError as e:
+                  errors.append(f'{f}: {e}')
+          if errors:
+              for e in errors:
+                  print(e)
+              sys.exit(1)
+          print(f'Syntax OK across {len(targets)} files')
+          PY
+
+      - name: Run harness test suite (offline, no Kali)
+        run: |
+          pytest tests/ --cov=hydra --cov=mcp_server --cov-report=term-missing
+
+      - name: Enforce coverage on the production boundary
+        # The highest-risk surface is the live subprocess boundary. We gate it
+        # hard. (Whole-repo `hydra` coverage is reported above for visibility
+        # but not gated yet — 60 subsystems are still untested; ratchet later.)
+        run: |
+          coverage report \
+            --include="mcp_server.py,hydra/observability/run_recorder.py" \
+            --fail-under=70
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install ruff
+      # Enforcing on the surface the harness owns/touches (must stay clean):
+      # the MCP boundary, the tests, and the Phase-2 knowledge-OS packages.
+      - run: ruff check mcp_server.py tests hydra/knowledge hydra/capabilities hydra/recon_fusion
+      # Legacy package debt: reported, not gated (pre-existing; ratchet later).
+      - run: ruff check hydra || true

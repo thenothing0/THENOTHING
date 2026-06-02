@@ -1,0 +1,9 @@
+capability: dns_intelligence
+description: Resolve and enumerate DNS records (A/AAAA/CNAME/MX/NS/TXT) and historical DNS.
+inputs: [domain]
+outputs: [dns_record, ip]
+sources:
+  - {id: source.dnsx,          name: dnsx,          category: active,             source_type: resolver,    passive: false, requires_network: true, requires_api_key: false, offline_capable: true,  trust_score: 0.6,  confidence_weight: 0.6}
+  - {id: source.amass,         name: amass,         category: active,             source_type: enumeration, passive: false, requires_network: true, requires_api_key: false, offline_capable: true,  trust_score: 0.5,  confidence_weight: 0.5}
+  - {id: source.securitytrails,name: SecurityTrails,category: threat_intelligence, source_type: dns_history, passive: true,  requires_network: true, requires_api_key: true,  offline_capable: false, trust_score: 0.65, confidence_weight: 0.65}
+confidence_rules: {low: [single_source], medium: [two_independent_sources], high: [three_or_more_sources]}

@@ -1,0 +1,50 @@
+id: tn_kubernetes
+name: Kubernetes Exposure Patterns
+category: kubernetes
+version: '1.0'
+severity: high
+description: THENOTHING modular skill for /kubernetes/ — authorized testing only.
+triggers:
+- k8s_api
+- dashboard
+- kubeconfig_leak
+technologies:
+- Kubernetes
+objectives:
+- rbac_paths
+- exposed_control_plane
+reasoning_heuristics:
+- Start from scope and program rules; refuse out-of-scope execution.
+- Prefer correlated weak signals over single noisy scanner lines.
+- 'Branch: if WAF or CDN detected, narrow active tests and increase validation rigor.'
+exploit_hypotheses:
+- id: tn_kubernetes_h1
+  title: Contextual hypothesis
+  description: Derive a minimal test aligned with objectives; validate before reporting.
+  test_steps:
+  - Map entrypoint
+  - Isolate variable
+  - Replay with control
+  severity: medium
+  confidence: 0.45
+mcp_tools:
+- nmap_scan
+- httpx_probe
+- nuclei_scan
+stealth_mode: adaptive
+validation:
+  require_replay: true
+  require_screenshot: false
+confidence_rules:
+  minimum_score: 0.72
+false_positive_reduction:
+- Require second independent signal (header + behavior, or tool + manual).
+- Discard banner-only version claims without behavior proof.
+reporting_guidance:
+- Impact, affected assets, reproduction, remediation, and safe harbor alignment.
+adaptive_branches:
+  waf_detected: reduce_active_fuzz
+  api_heavy: prioritize_api_skill_chain
+chain_to: []
+references:
+- https://owasp.org/www-project-top-ten/

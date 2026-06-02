@@ -27,6 +27,7 @@ All tools are REAL — executed via subprocess. No mocking.
 
 import json
 import os
+import re as _re
 import shutil
 import subprocess
 import sys
@@ -62,16 +63,129 @@ for d in [WORDLISTS_DIR, RESULTS_DIR, REPORTS_DIR, DATA_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 
+# ──────────────────────────────────────────────
+#  Observability + run recording (Pillars 7 & 8)
+#  Guarded imports: the MCP server must keep working
+#  even if the `hydra` package is unavailable.
+# ──────────────────────────────────────────────
+try:
+    from hydra.observability import metrics as _metrics
+except Exception:  # pragma: no cover - optional dependency
+    _metrics = None
+
+try:
+    from hydra.observability.run_recorder import record_tool_event as _record_tool_event
+except Exception:  # pragma: no cover - optional dependency
+    _record_tool_event = None
+
+
+# ──────────────────────────────────────────────
+#  Input validation (Pillar 3 — argument-injection defense)
+#
+#  _run() executes via subprocess with a LIST and shell=False, so
+#  classic SHELL injection is already closed. The remaining risk is
+#  ARGUMENT/OPTION injection: a user-supplied value that lands in its
+#  own argv slot (the positional args of gau/whatweb/wafw00f/nmap) and
+#  starts with '-' is parsed by the tool as a FLAG (e.g. nmap
+#  "--script=evil"). Whitespace, newlines and shell metacharacters
+#  also have no place in a hostname or URL. Policy: reject such values
+#  at the boundary BEFORE the command is ever built.
+# ──────────────────────────────────────────────
+
+_HOST_RE = _re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9._:\-]*[A-Za-z0-9])?$")
+_HOST_CIDR_RE = _re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9._:\-/]*[A-Za-z0-9])?$")
+# URLs: must be http(s); '&', '?', '=' are legitimate query syntax and are
+# allowed (harmless under shell=False). Whitespace/quotes/backtick/redirection
+# characters are rejected.
+_URL_RE = _re.compile(r"^https?://[^\s`'\"\\<>|;]+$", _re.IGNORECASE)
+_DNS_RECORD_TYPES = {"a", "aaaa", "cname", "mx", "ns", "txt", "soa", "ptr", "srv", "caa", "any"}
+
+
+def _err(msg: str) -> dict:
+    """Boundary-rejection result, shaped like a _run() failure."""
+    return {"success": False, "error": msg, "output": "", "rejected": True}
+
+
+def _validate_host(value: str, allow_cidr: bool = False) -> Optional[dict]:
+    """Return an error dict if `value` is not a clean hostname/IP, else None."""
+    v = (value or "").strip()
+    if not v:
+        return _err("Empty host/domain value")
+    if v.startswith("-"):
+        return _err(f"Rejected '{value}': leading '-' looks like a command-line flag, not a host")
+    rx = _HOST_CIDR_RE if allow_cidr else _HOST_RE
+    if not rx.match(v):
+        return _err(f"Rejected '{value}': not a valid hostname/IP "
+                    "(whitespace and shell metacharacters are not allowed)")
+    return None
+
+
+def _validate_url(value: str) -> Optional[dict]:
+    """Return an error dict if `value` is not a clean http(s) URL, else None."""
+    v = (value or "").strip()
+    if not v:
+        return _err("Empty URL value")
+    if v.startswith("-"):
+        return _err(f"Rejected '{value}': leading '-' looks like a flag, not a URL")
+    if not _URL_RE.match(v):
+        return _err(f"Rejected '{value}': must be an http(s) URL with no whitespace or shell metacharacters")
+    return None
+
+
+def _validate_block(value: str, kind: str = "any") -> Optional[dict]:
+    """Validate a newline-delimited block of hosts/URLs (stdin/file inputs)."""
+    lines = [ln.strip() for ln in (value or "").splitlines() if ln.strip()]
+    if not lines:
+        return _err("Empty target list")
+    for line in lines:
+        if kind == "host":
+            e = _validate_host(line)
+        elif kind == "url":
+            e = _validate_url(line)
+        else:  # auto: URL if it has a scheme, otherwise host
+            e = _validate_url(line) if "://" in line else _validate_host(line)
+        if e:
+            return _err(f"Invalid entry '{line}': {e['error']}")
+    return None
+
+
+def _finalize(binary: str, cmd: List[str], result: dict, elapsed: float = 0.0) -> dict:
+    """Record metrics + run-event for an execution, then return the result.
+
+    Centralises Pillar 8 (observability) and Pillar 7 (replay) so every exit
+    path of _run() is instrumented exactly once. Best-effort: telemetry never
+    breaks a live operation.
+    """
+    if _metrics is not None:
+        try:
+            _metrics.inc_counter("tool_executions_total", labels={"tool": binary})
+            if not result.get("success"):
+                _metrics.inc_counter("tool_failures_total", labels={"tool": binary})
+            _metrics.observe_histogram(
+                "tool_latency_seconds",
+                float(result.get("elapsed_seconds", elapsed) or elapsed),
+                labels={"tool": binary},
+            )
+        except Exception:  # pragma: no cover
+            pass
+    if _record_tool_event is not None:
+        try:
+            _record_tool_event(binary, cmd, result)
+        except Exception:  # pragma: no cover
+            pass
+    return result
+
+
 def _run(cmd: List[str], timeout: int = 120, stdin_data: Optional[str] = None) -> dict:
-    """Execute a real system tool via subprocess. No mocking."""
+    """Execute a real system tool via subprocess. No mocking. shell=False."""
     binary = cmd[0]
     path = shutil.which(binary)
     if not path:
-        return {
+        return _finalize(binary, cmd, {
             "success": False,
             "error": f"Tool '{binary}' not installed. Install it first.",
             "output": "",
-        }
+        })
 
     if USE_TOR and PROXYCHAINS_BIN:
         cmd = [PROXYCHAINS_BIN, "-q"] + cmd
@@ -90,25 +204,29 @@ def _run(cmd: List[str], timeout: int = 120, stdin_data: Optional[str] = None) -
         elapsed = round(time.time() - start, 2)
         stdout = proc.stdout
         stderr = proc.stderr
-        
+
         # Truncate oversized output to prevent MCP protocol overload
         truncated = False
         if len(stdout) > MAX_OUTPUT_CHARS:
             stdout = stdout[:MAX_OUTPUT_CHARS] + f"\n... [TRUNCATED — {len(proc.stdout)} total chars]"
             truncated = True
-        
-        return {
+
+        return _finalize(binary, cmd, {
             "success": proc.returncode == 0,
             "output": stdout,
             "stderr": stderr[:50000] if len(stderr) > 50000 else stderr,
             "return_code": proc.returncode,
             "elapsed_seconds": elapsed,
             "truncated": truncated,
-        }
+        }, elapsed)
     except subprocess.TimeoutExpired:
-        return {"success": False, "error": f"Timeout after {timeout}s", "output": ""}
+        return _finalize(binary, cmd,
+                         {"success": False, "error": f"Timeout after {timeout}s", "output": ""},
+                         round(time.time() - start, 2))
     except Exception as e:
-        return {"success": False, "error": str(e), "output": ""}
+        return _finalize(binary, cmd,
+                         {"success": False, "error": str(e), "output": ""},
+                         round(time.time() - start, 2))
 
 
 # ══════════════════════════════════════════════
@@ -126,12 +244,15 @@ def subfinder_scan(domain: str, silent: bool = True) -> str:
         domain: Target domain (e.g., "example.com")
         silent: If True, only output subdomains
     """
+    err = _validate_host(domain)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["subfinder", "-d", domain]
     if silent:
         cmd.append("-silent")
     result = _run(cmd, timeout=180)
     if result["success"]:
-        subs = [l.strip() for l in result["output"].strip().split("\n") if l.strip()]
+        subs = [ln.strip() for ln in result["output"].strip().split("\n") if ln.strip()]
         return json.dumps({"subdomains": subs, "count": len(subs)}, indent=2)
     return json.dumps(result, indent=2)
 
@@ -146,13 +267,16 @@ def amass_enum(domain: str, passive: bool = True) -> str:
         domain: Target domain (e.g., "example.com")
         passive: If True, use passive recon only (no active DNS queries)
     """
+    err = _validate_host(domain)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["amass", "enum"]
     if passive:
         cmd.append("-passive")
     cmd.extend(["-d", domain])
     result = _run(cmd, timeout=300)
     if result["success"]:
-        subs = [l.strip() for l in result["output"].strip().split("\n") if l.strip()]
+        subs = [ln.strip() for ln in result["output"].strip().split("\n") if ln.strip()]
         return json.dumps({"subdomains": subs, "count": len(subs)}, indent=2)
     return json.dumps(result, indent=2)
 
@@ -171,6 +295,9 @@ def httpx_probe(targets: str, status_code: bool = True, title: bool = True,
         tech_detect: Detect web technologies
         follow_redirects: Follow HTTP redirects
     """
+    err = _validate_block(targets, kind="any")
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["httpx", "-silent"]
     if status_code:
         cmd.append("-sc")
@@ -196,12 +323,15 @@ def katana_crawl(target: str, depth: int = 3, js_crawl: bool = False) -> str:
         depth: Crawl depth (1-5)
         js_crawl: Also crawl JavaScript files for endpoints
     """
+    err = _validate_url(target)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["katana", "-u", target, "-silent", "-d", str(min(depth, 5))]
     if js_crawl:
         cmd.append("-jc")
     result = _run(cmd, timeout=180)
     if result["success"]:
-        urls = [l.strip() for l in result["output"].strip().split("\n") if l.strip()]
+        urls = [ln.strip() for ln in result["output"].strip().split("\n") if ln.strip()]
         return json.dumps({"endpoints": urls, "count": len(urls)}, indent=2)
     return json.dumps(result, indent=2)
 
@@ -215,10 +345,13 @@ def gau_urls(domain: str) -> str:
     Args:
         domain: Target domain (e.g., "example.com")
     """
+    err = _validate_host(domain)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["gau", domain]
     result = _run(cmd, timeout=120)
     if result["success"]:
-        urls = [l.strip() for l in result["output"].strip().split("\n") if l.strip()]
+        urls = [ln.strip() for ln in result["output"].strip().split("\n") if ln.strip()]
         return json.dumps({"urls": urls, "count": len(urls)}, indent=2)
     return json.dumps(result, indent=2)
 
@@ -244,6 +377,9 @@ def nuclei_scan(target: str, severity: str = "low,medium,high,critical",
         templates: Specific template path/ID to use
         rate_limit: Maximum requests per second
     """
+    err = _validate_url(target)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["nuclei", "-u", target, "-jsonl", "-silent",
            "-severity", severity, "-rl", str(rate_limit)]
     if tags:
@@ -291,6 +427,9 @@ def nuclei_scan_list(targets: str, severity: str = "medium,high,critical",
         tags: Template tag filter
         rate_limit: Max requests per second
     """
+    err = _validate_block(targets, kind="any")
+    if err:
+        return json.dumps(err, indent=2)
     # Write targets to temp file
     targets_file = RESULTS_DIR / f"targets_{int(time.time())}.txt"
     targets_file.write_text(targets.strip())
@@ -337,6 +476,9 @@ def ffuf_fuzz(url: str, wordlist: str = "", match_codes: str = "200,301,302,403"
         headers: Custom headers as "Header1:Value1,Header2:Value2"
         fuzz_mode: "directory" adds /FUZZ to URL, "parameter" for param fuzzing
     """
+    err = _validate_url(url)
+    if err:
+        return json.dumps(err, indent=2)
     if "FUZZ" not in url:
         if fuzz_mode == "directory":
             url = url.rstrip("/") + "/FUZZ"
@@ -369,6 +511,9 @@ def dirsearch_scan(url: str, extensions: str = "php,asp,aspx,jsp,html,js",
         extensions: File extensions to search for (comma-separated)
         threads: Number of concurrent threads
     """
+    err = _validate_url(url)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["dirsearch", "-u", url, "-e", extensions, "-t", str(threads), "-q",
            "--format=json"]
     result = _run(cmd, timeout=300)
@@ -390,6 +535,9 @@ def whatweb_detect(target: str, aggression: int = 1) -> str:
         target: Target URL (e.g., "https://example.com")
         aggression: Scan intensity (1=stealthy, 3=aggressive)
     """
+    err = _validate_url(target)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["whatweb", target, f"--aggression={aggression}", "--color=never"]
     result = _run(cmd, timeout=60)
     return json.dumps(result, indent=2)
@@ -404,6 +552,9 @@ def wafw00f_detect(target: str) -> str:
     Args:
         target: Target URL (e.g., "https://example.com")
     """
+    err = _validate_url(target)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["wafw00f", target]
     result = _run(cmd, timeout=60)
     return json.dumps(result, indent=2)
@@ -421,6 +572,11 @@ def nmap_scan(target: str, ports: str = "1-1000", scan_type: str = "service",
         scan_type: "quick" (SYN scan), "service" (version detection), "full" (all ports)
         scripts: Nmap scripts to run (e.g., "http-headers,ssl-cert")
     """
+    # nmap takes a host/IP/CIDR positional arg — a value beginning with '-'
+    # would be parsed as a flag (e.g. --script=evil), so validate strictly.
+    err = _validate_host(target, allow_cidr=True)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["nmap"]
     if scan_type == "quick":
         cmd.extend(["-sS", "-T4"])
@@ -457,6 +613,9 @@ def full_recon(domain: str) -> str:
     Args:
         domain: Target domain (e.g., "example.com")
     """
+    err = _validate_host(domain)
+    if err:
+        return json.dumps(err, indent=2)
     results = {"domain": domain, "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ")}
 
     # Step 1: Subdomain enumeration
@@ -464,8 +623,8 @@ def full_recon(domain: str) -> str:
     sub_result = _run(["subfinder", "-d", domain, "-silent"], timeout=180)
     subdomains = []
     if sub_result["success"]:
-        subdomains = [l.strip() for l in sub_result["output"].strip().split("\n")
-                      if l.strip()]
+        subdomains = [ln.strip() for ln in sub_result["output"].strip().split("\n")
+                      if ln.strip()]
     results["subdomains"] = subdomains
     results["subdomain_count"] = len(subdomains)
 
@@ -477,8 +636,8 @@ def full_recon(domain: str) -> str:
                            timeout=120, stdin_data=probe_input)
         live_hosts = []
         if probe_result["success"]:
-            live_hosts = [l.strip() for l in probe_result["output"].strip().split("\n")
-                         if l.strip()]
+            live_hosts = [ln.strip() for ln in probe_result["output"].strip().split("\n")
+                         if ln.strip()]
         results["live_hosts"] = live_hosts
         results["live_count"] = len(live_hosts)
     else:
@@ -642,7 +801,7 @@ def generate_report(target: str, findings_json: str,
 
     if report_format == "markdown":
         lines = [
-            f"# HYDRA Security Assessment Report",
+            "# HYDRA Security Assessment Report",
             f"## Target: {target}",
             f"**Generated:** {time.strftime('%Y-%m-%d %H:%M:%S UTC')}  ",
             f"**Findings:** {len(findings)}",
@@ -709,6 +868,9 @@ def sqlmap_scan(
         batch: Non-interactive mode (auto-answer Yes to all)
         timeout: Execution timeout in seconds
     """
+    err = _validate_url(target)
+    if err:
+        return json.dumps(err, indent=2)
     cmd = ["sqlmap", "-u", target, f"--level={level}", f"--risk={risk}",
            "--output-dir", str(RESULTS_DIR / "sqlmap")]
     if batch:
@@ -741,6 +903,9 @@ def dalfox_scan(
         blind: Blind XSS callback URL (your.xss.ht endpoint)
         timeout: Execution timeout in seconds
     """
+    err = _validate_block(target, kind="any") if pipe_mode else _validate_url(target)
+    if err:
+        return json.dumps(err, indent=2)
     if pipe_mode:
         cmd = ["dalfox", "pipe", "--silence", "--format", "json"]
         result = _run(cmd, timeout=timeout, stdin_data=target)
@@ -769,6 +934,9 @@ def gxss_check(
         urls: Newline-delimited URLs with parameters to check
         timeout: Execution timeout in seconds
     """
+    err = _validate_block(urls, kind="url")
+    if err:
+        return json.dumps(err, indent=2)
     # Binary ships as "Gxss" (capital G) on Kali; some installs use "gxss".
     gxss_bin = shutil.which("gxss") or shutil.which("Gxss") or "Gxss"
     cmd = [gxss_bin]
@@ -796,6 +964,15 @@ def dnsx_resolve(
         wordlist: Optional wordlist for brute-force subdomain enumeration
         timeout: Execution timeout in seconds
     """
+    # record_type is interpolated into a flag (f"-{record_type}") — constrain it
+    # to a known DNS record-type allowlist so it cannot smuggle other options.
+    if record_type.lower() not in _DNS_RECORD_TYPES:
+        return json.dumps(_err(
+            f"Rejected record_type '{record_type}': must be one of "
+            f"{sorted(_DNS_RECORD_TYPES)}"), indent=2)
+    block_err = _validate_host(target) if wordlist else _validate_block(target, kind="any")
+    if block_err:
+        return json.dumps(block_err, indent=2)
     cmd = ["dnsx", "-silent", f"-{record_type.lower()}", "-resp"]
 
     if wordlist:
@@ -832,7 +1009,10 @@ def hakrawler_crawl(
         plain: Output plain URLs only
         timeout: Execution timeout in seconds
     """
-    cmd = ["hakrawler", "-url", target, f"-depth", str(depth), "-scope", scope]
+    err = _validate_url(target)
+    if err:
+        return json.dumps(err, indent=2)
+    cmd = ["hakrawler", "-url", target, "-depth", str(depth), "-scope", scope]
     if plain:
         cmd.append("-plain")
 
@@ -841,12 +1021,239 @@ def hakrawler_crawl(
 
 
 # ══════════════════════════════════════════════
+#  KNOWLEDGE OS TOOLS (Phase A — pure-python, no subprocess, offline-first)
+#  These expose the hydra.knowledge / hydra.capabilities / hydra.recon_fusion
+#  layer. Guarded import: the security tools above keep working even if the
+#  knowledge layer is unavailable.
+# ══════════════════════════════════════════════
+
+try:
+    from hydra.capabilities import CapabilityRegistry, ExecutionPolicy
+    from hydra.knowledge.graph_index import KnowledgeGraphIndex
+    from hydra.knowledge.graph_index import rebuild as _kb_rebuild
+    from hydra.knowledge.memory import OffensiveMemory
+    from hydra.knowledge.promotion import PromotionError, apply_promotion
+    from hydra.knowledge.schema import NodeType as _NodeType
+    from hydra.knowledge.schema import Stage as _Stage
+    from hydra.knowledge.wiki_store import WikiStore
+    from hydra.recon_fusion import ReconFusionPipeline
+    _KB_OK = True
+except Exception as _kb_err:  # pragma: no cover - knowledge layer optional
+    _KB_OK = False
+    _KB_IMPORT_ERROR = str(_kb_err)
+
+
+def _kb_guard():
+    if not _KB_OK:
+        return json.dumps({"success": False, "error": f"knowledge layer unavailable: {_KB_IMPORT_ERROR}"})
+    return None
+
+
+@mcp.tool()
+def capability_list() -> str:
+    """List declared reconnaissance capabilities and their outputs (capability-first model)."""
+    if (g := _kb_guard()):
+        return g
+    reg = CapabilityRegistry().load()
+    caps = []
+    for name in reg.names():
+        c = reg.get(name)
+        caps.append({"capability": name, "outputs": c.outputs,
+                     "source_count": len(c.sources), "description": c.description})
+    return json.dumps({"capabilities": caps, "count": len(caps)}, indent=2)
+
+
+@mcp.tool()
+def capability_sources(capability: str, online: bool = False) -> str:
+    """List a capability's sources with metadata and whether each is runnable under the current policy.
+
+    Args:
+        capability: capability name (e.g. "discover_subdomains")
+        online: if True, evaluate runnability under online policy (keys from HYDRA_SOURCE_KEYS)
+    """
+    if (g := _kb_guard()):
+        return g
+    reg = CapabilityRegistry().load()
+    cap = reg.get(capability)
+    if not cap:
+        return json.dumps({"success": False, "error": f"unknown capability: {capability}"})
+    policy = _policy(online)
+    sources = [{**s.to_dict(), "runnable": s.runnable(policy)} for s in cap.sources]
+    return json.dumps({"capability": capability, "policy": policy.mode,
+                       "sources": sources, "count": len(sources)}, indent=2)
+
+
+@mcp.tool()
+def recon_fuse(domain: str, capability: str = "discover_subdomains", online: bool = False) -> str:
+    """Run the recon knowledge-fusion pipeline (offline-first) and write Asset Intelligence to the wiki.
+
+    Collects from policy-allowed sources, normalizes/dedups, scores confidence by the
+    Two-Signal rule, writes canonical wiki asset pages (with backlinks), rebuilds the
+    graph index, and attaches prior knowledge from Offensive Memory.
+
+    Args:
+        domain: target domain (validated; raw tool output never becomes knowledge directly)
+        capability: which capability to fuse (default discover_subdomains)
+        online: enable network sources (requires keys; Phase E adapters)
+    """
+    if (g := _kb_guard()):
+        return g
+    err = _validate_host(domain)
+    if err:
+        return json.dumps(err, indent=2)
+    try:
+        result = ReconFusionPipeline().run(domain, capability, _policy(online), materialize=True)
+    except KeyError as e:
+        return json.dumps({"success": False, "error": str(e)})
+    priors = [h.to_dict() for h in OffensiveMemory().recall(domain, target=domain, limit=5)]
+    return json.dumps({
+        "success": True,
+        **result.summary(),
+        "assets": [a.to_dict() for a in result.assets],
+        "materialized_pages": result.materialized,
+        "prior_knowledge": priors,
+    }, indent=2)
+
+
+@mcp.tool()
+def kb_recall(query: str, types: str = "", target: str = "", limit: int = 10) -> str:
+    """Offensive Memory: search-first recall of prior knowledge before planning.
+
+    Args:
+        query: free-text query (e.g. "waf bypass cors")
+        types: optional comma-separated node types to restrict (technique,pattern,chain,finding,intel,hypothesis)
+        target: optional target slug to boost graph-near pages
+        limit: max hits
+    """
+    if (g := _kb_guard()):
+        return g
+    type_list = None
+    if types.strip():
+        type_list = []
+        for t in types.split(","):
+            try:
+                type_list.append(_NodeType.from_str(t.strip()))
+            except ValueError:
+                pass
+    hits = OffensiveMemory().recall(query, types=type_list, target=target or None, limit=limit)
+    return json.dumps({"query": query, "hits": [h.to_dict() for h in hits], "count": len(hits)}, indent=2)
+
+
+@mcp.tool()
+def kb_lint() -> str:
+    """Wiki/graph health check: orphan pages, dangling links, and type breakdown."""
+    if (g := _kb_guard()):
+        return g
+    idx = KnowledgeGraphIndex.build(WikiStore())
+    return json.dumps({
+        "stats": idx.stats(),
+        "orphans": idx.orphans(),
+        "dangling_links": [{"from": s, "missing": d} for s, d in idx.dangling_links()],
+    }, indent=2)
+
+
+@mcp.tool()
+def kb_promote(page: str, to_stage: str, evidence_count: int = 0, sources: str = "",
+               scope_ok: bool = True) -> str:
+    """Promote a wiki page up the knowledge hierarchy with hard guardrails.
+
+    Forbidden transitions (e.g. hypothesis→pattern, hypothesis→chain) and missing
+    evidence / Two-Signal violations are rejected.
+
+    Args:
+        page: page slug
+        to_stage: target stage (intel|hypothesis|finding|pattern|chain)
+        evidence_count: number of supporting evidence items
+        sources: optional comma-separated independent source ids
+        scope_ok: whether the target is in scope (required to reach 'finding')
+    """
+    if (g := _kb_guard()):
+        return g
+    store = WikiStore()
+    wp = store.get(page)
+    if wp is None:
+        return json.dumps({"success": False, "error": f"page not found: {page}"})
+    try:
+        stage = _Stage(to_stage.strip().lower())
+    except ValueError:
+        return json.dumps({"success": False, "error": f"invalid stage: {to_stage}"})
+    src_list = [s.strip() for s in sources.split(",") if s.strip()]
+    try:
+        apply_promotion(wp, stage, sources=src_list, evidence_count=evidence_count, scope_ok=scope_ok)
+    except PromotionError as e:
+        return json.dumps({"success": False, "rejected": True, "reason": str(e)})
+    store.write_page(wp)
+    return json.dumps({"success": True, "page": page, "promoted_to": stage.value})
+
+
+@mcp.tool()
+def kb_rebuild_index() -> str:
+    """Rebuild the derived graph index from the canonical wiki (the index is disposable)."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps({"success": True, "stats": _kb_rebuild(WikiStore())}, indent=2)
+
+
+@mcp.tool()
+def asset_lookup(asset: str) -> str:
+    """Look up a discovered asset's intelligence (confidence, sources, related links) from the wiki."""
+    if (g := _kb_guard()):
+        return g
+    store = WikiStore()
+    page = store.get(asset, _NodeType.ASSET)
+    if page is None:
+        return json.dumps({"success": False, "error": f"no asset page for: {asset}"})
+    return json.dumps({
+        "success": True, "asset": asset, "path": str(page.path),
+        "confidence": page.meta.get("confidence"), "sources": page.meta.get("sources", []),
+        "scope_status": page.meta.get("scope_status"),
+        "related": [s for s in page.links],
+    }, indent=2)
+
+
+@mcp.tool()
+def graph_neighbors(page: str) -> str:
+    """Return the knowledge-graph neighbors (inbound + outbound links) of a wiki page."""
+    if (g := _kb_guard()):
+        return g
+    idx = KnowledgeGraphIndex.build(WikiStore())
+    if page not in idx.nodes:
+        return json.dumps({"success": False, "error": f"page not in graph: {page}"})
+    return json.dumps({
+        "page": page, "type": idx.nodes.get(page),
+        "neighbors": idx.neighbors(page),
+        "related_findings": idx.related_findings(page),
+        "related_patterns": idx.related_patterns(page),
+        "related_chains": idx.related_chains(page),
+    }, indent=2)
+
+
+@mcp.tool()
+def graph_path(source_page: str, target_page: str) -> str:
+    """Return the shortest path between two knowledge-graph nodes (offensive leverage discovery)."""
+    if (g := _kb_guard()):
+        return g
+    idx = KnowledgeGraphIndex.build(WikiStore())
+    path = idx.shortest_path(source_page, target_page)
+    return json.dumps({"from": source_page, "to": target_page,
+                       "path": path, "length": max(0, len(path) - 1), "reachable": bool(path)}, indent=2)
+
+
+def _policy(online: bool):
+    """Build an ExecutionPolicy. Online keys come from HYDRA_SOURCE_KEYS (comma-separated)."""
+    if not online:
+        return ExecutionPolicy.offline()
+    keys = {k.strip() for k in os.environ.get("HYDRA_SOURCE_KEYS", "").split(",") if k.strip()}
+    return ExecutionPolicy.online(available_keys=keys)
+
+
+# ══════════════════════════════════════════════
 #  SERVER ENTRY POINT
 # ══════════════════════════════════════════════
 
 if __name__ == "__main__":
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="HYDRA MCP Security Server")
     parser.add_argument(
         "--transport", choices=["stdio", "sse"], default="stdio",
@@ -854,11 +1261,11 @@ if __name__ == "__main__":
     )
     parser.add_argument("--port", type=int, default=8900, help="Port for SSE transport")
     args = parser.parse_args()
-    
+
     print("[HYDRA] MCP Security Server starting...", file=sys.stderr)
     print(f"[HYDRA] Transport: {args.transport}", file=sys.stderr)
     print("[HYDRA] Tools available for any MCP-compatible AI agent", file=sys.stderr)
-    
+
     if args.transport == "sse":
         mcp.run(transport="sse", port=args.port)
     else:
