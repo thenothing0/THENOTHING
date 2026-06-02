@@ -165,6 +165,54 @@ def test_determinism_ids_order_bands(seed_wiki):
     assert [c.proposed_slug for c in a] == [c.proposed_slug for c in b]
 
 
+# ── F-1 regression: body-text signatures must not mis-target strengthen ───────
+def test_f1_unrelated_pattern_not_strengthened(tmp_path):
+    """Audit F-1: a hand-authored pattern whose prose mentions 'broken access / idor'
+    (e.g. public-api-key-pitfall) must NOT be picked as the strengthen target for
+    unrelated IDOR findings. Pattern signatures come from structured fields only."""
+    from hydra.knowledge.discovery import PatternDiscovery
+    from hydra.knowledge.schema import NodeType
+    from hydra.knowledge.wiki_store import WikiStore
+
+    ws = WikiStore(tmp_path / "wiki")
+    ws.upsert(NodeType.TARGET, "acme", {"tags": ["t"]}, "# acme\n")
+    # meta/anti-pattern page: prose references idor/broken access but it is NOT idor
+    ws.upsert(NodeType.PATTERN, "public-api-key-pitfall",
+              {"tags": ["severity", "anti-pattern"]},
+              "# Public API Key Pitfall\nA public key is never broken access control by "
+              "itself. Do not frame an exposed key as broken access / idor.\n")
+    ws.upsert(NodeType.FINDING, "acme-idor-a",
+              {"tags": ["idor", "api"], "status": "submitted", "target": "[[acme]]"},
+              "# A\ninsecure direct object reference; privilege escalation\n")
+    ws.upsert(NodeType.FINDING, "acme-idor-b",
+              {"tags": ["idor", "api"], "status": "confirmed", "target": "[[acme]]"},
+              "# B\nbroken access idor; admin escalation\n")
+
+    idor = next(c for c in PatternDiscovery(ws).discover() if c.signature == "idor")
+    assert idor.recommendation == "create_new"
+    assert idor.existing_slug != "public-api-key-pitfall"
+    assert idor.proposed_slug == "idor-pattern"
+
+
+def test_f1_structured_signature_still_dedups_discovered_patterns(tmp_path):
+    """The fix must not break legitimate dedup: a discovered pattern (vuln_class in
+    frontmatter) is still matched for strengthen on re-discovery."""
+    from hydra.knowledge.discovery import PatternDiscovery, confirm_candidate
+    from hydra.knowledge.schema import NodeType
+    from hydra.knowledge.wiki_store import WikiStore
+
+    ws = WikiStore(tmp_path / "wiki")
+    ws.upsert(NodeType.TARGET, "acme", {"tags": ["t"]}, "# acme\n")
+    for slug, st in (("acme-idor-a", "submitted"), ("acme-idor-b", "confirmed")):
+        ws.upsert(NodeType.FINDING, slug, {"tags": ["idor", "api"], "status": st,
+                                           "target": "[[acme]]"}, "# idor\nbroken access escalation\n")
+    cid = next(c for c in PatternDiscovery(ws).discover() if c.signature == "idor").id
+    confirm_candidate("pattern", cid, ws)  # creates idor-pattern (vuln_class=idor)
+    again = next(c for c in PatternDiscovery(ws).discover() if c.signature == "idor")
+    assert again.recommendation == "strengthen_existing"
+    assert again.existing_slug == "idor-pattern"
+
+
 # ── machine-readable explainability ───────────────────────────────────────────
 def test_explain_block_is_machine_readable(seed_wiki):
     c = next(x for x in PatternDiscovery(seed_wiki).discover() if x.signature == "idor")
