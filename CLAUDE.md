@@ -168,6 +168,16 @@ modeling only — no integrations. Read-only/advisory; never writes wiki, confid
 - `rank_tools` — Rank a capability's tools by recon+verification effectiveness + exploration + trust + prior (deterministic)
 - `select_tool` — Pick the single best-ranked tool for a capability (advisory)
 
+### Multi-Agent Orchestration (Phase H — declarative agents, read-only/advisory)
+Six specialized agents (`capabilities/agent_catalog.yaml`: recon / attack_surface / cloud /
+verification / correlation / reporting) orchestrate the capability layer. Deterministic routing
+Target→Agent→Capability→Tool. Advisory only — agents never execute tools, confirm findings, write the
+wiki, or touch confidence/promotion.
+- `agent_catalog` — List agent definitions (responsibilities, allowed categories, priority, expected outputs)
+- `agent_plan` — Advisory priority-ordered multi-agent workflow for a target+type (assigned capabilities, expected value, reasoning)
+- `agent_route` — Deterministic Target→Agent→Capability→Tool routing (learning-selected tool per capability)
+- `agent_coverage` — Agent effectiveness, capability ownership (orphans/overlaps), workflow coverage, bottlenecks, under-utilized agents
+
 ## CLI workflows
 
 ```bash

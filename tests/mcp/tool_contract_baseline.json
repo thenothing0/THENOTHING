@@ -1,4 +1,31 @@
 {
+  "agent_catalog": {
+    "required": [],
+    "params": []
+  },
+  "agent_coverage": {
+    "required": [],
+    "params": []
+  },
+  "agent_plan": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "prior_findings",
+      "target",
+      "target_type"
+    ]
+  },
+  "agent_route": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "target",
+      "target_type"
+    ]
+  },
   "amass_enum": {
     "required": [
       "domain"

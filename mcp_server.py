@@ -1035,6 +1035,8 @@ try:
         PatternDiscovery,
         confirm_candidate as _confirm_candidate,
     )
+    from hydra.agents.planner import AgentIntelligence, AgentPlanner, AgentRouter
+    from hydra.agents.registry import AgentRegistry
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -1608,6 +1610,71 @@ def select_tool(capability: str) -> str:
         return json.dumps({"success": False, "error": str(e)})
     return json.dumps({"success": True, "capability": capability,
                        "tool": best.to_dict() if best else None}, indent=2)
+
+
+# ── Phase H — Multi-Agent Orchestration Layer (read-only, advisory) ──────────────
+
+@mcp.tool()
+def agent_catalog() -> str:
+    """List the specialized agent definitions (Phase H, read-only).
+
+    Each agent declares responsibilities, allowed capability categories, priority and
+    expected outputs. Agents orchestrate the capability layer — they never execute
+    tools, confirm findings, or write the wiki.
+    """
+    if (g := _kb_guard()):
+        return g
+    reg = AgentRegistry().load()
+    return json.dumps({"agent_count": reg.count(),
+                       "agents": [a.to_dict() for a in reg.all()]}, indent=2)
+
+
+@mcp.tool()
+def agent_plan(target: str, target_type: str = "web", prior_findings: int = 0) -> str:
+    """Produce an advisory, priority-ordered multi-agent workflow for a target (Phase H).
+
+    Returns the ordered agents, the capabilities assigned to each, an expected-value
+    estimate and reasoning. ADVISORY — it plans; it never executes or confirms.
+
+    Args:
+        target: target host/domain.
+        target_type: web | api | cloud | network | code | mobile.
+        prior_findings: count of existing findings (caller-supplied; keeps planning O(1)).
+    """
+    if (g := _kb_guard()):
+        return g
+    err = _validate_host(target)
+    if err:
+        return json.dumps(err, indent=2)
+    plan = AgentPlanner().plan(target, target_type=target_type, prior_findings=max(0, prior_findings))
+    return json.dumps({"success": True, **plan.to_dict()}, indent=2)
+
+
+@mcp.tool()
+def agent_route(target: str, target_type: str = "web") -> str:
+    """Deterministic Target → Agent → Capability → Tool routing (Phase H, read-only).
+
+    Shows, per applicable agent, the capabilities it owns for this target and the
+    learning-selected best tool for each. Advisory; nothing is executed.
+    """
+    if (g := _kb_guard()):
+        return g
+    err = _validate_host(target)
+    if err:
+        return json.dumps(err, indent=2)
+    return json.dumps({"success": True, **AgentRouter().route(target, target_type=target_type)}, indent=2)
+
+
+@mcp.tool()
+def agent_coverage() -> str:
+    """Agent orchestration intelligence (Phase H, read-only).
+
+    Agent effectiveness, capability ownership (orphans/overlaps), workflow coverage,
+    bottlenecks and under-utilized agents — derived from the catalog + learning stores.
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(AgentIntelligence().report(), indent=2)
 
 
 @mcp.tool()

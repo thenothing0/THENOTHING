@@ -1,0 +1,50 @@
+# Agent Catalog (Phase H) — declarative specialized agents ABOVE the capability layer.
+# Agents own capabilities (resolved from capability_catalog.yaml by allowed_categories,
+# or an explicit capability_scope). Declarative modeling + advisory orchestration only —
+# agents never execute tools, confirm findings, or write the canonical wiki.
+# Fields: id, priority (higher = earlier), allowed_categories, responsibilities,
+# expected_outputs, capability_scope (explicit capability ids; empty = all in categories),
+# knowledge_agent (operates on the wiki/learning, not catalog tools).
+agents:
+  - id: recon_agent
+    priority: 10
+    allowed_categories: [reconnaissance, infrastructure]
+    responsibilities: "Discover and map the external attack surface — subdomains, DNS, ASN/CIDR, ports, services, tech, TLS."
+    expected_outputs: [subdomain, dns_record, ip, asn, open_port, service, technology, host]
+    capability_scope: []
+    knowledge_agent: false
+  - id: attack_surface_agent
+    priority: 8
+    allowed_categories: [web, api]
+    responsibilities: "Enumerate the web/API surface and probe for vulnerability candidates (advisory)."
+    expected_outputs: [endpoint, parameter, url, xss, sqli, ssrf, graphql, vulnerability]
+    capability_scope: []
+    knowledge_agent: false
+  - id: cloud_agent
+    priority: 7
+    allowed_categories: [cloud, secrets, source_code]
+    responsibilities: "Discover cloud assets, leaked secrets, and source-code/dependency exposures."
+    expected_outputs: [cloud_bucket, cloud_misconfig, secret, credential, repository, dependency_vuln]
+    capability_scope: []
+    knowledge_agent: false
+  - id: verification_agent
+    priority: 6
+    allowed_categories: [verification]
+    responsibilities: "Validate suspected findings using verification playbooks (advisory; never auto-confirms)."
+    expected_outputs: [idor, ssrf, auth_bypass, open_redirect, csrf, xss, sqli, takeover]
+    capability_scope: []
+    knowledge_agent: false
+  - id: correlation_agent
+    priority: 5
+    allowed_categories: []
+    responsibilities: "Correlate findings and report-intel into patterns and chains (propose-only; promotion rules unchanged)."
+    expected_outputs: [pattern, chain]
+    capability_scope: []
+    knowledge_agent: true
+  - id: reporting_agent
+    priority: 3
+    allowed_categories: []
+    responsibilities: "Synthesize confirmed knowledge into bug-bounty reports."
+    expected_outputs: [report]
+    capability_scope: []
+    knowledge_agent: true

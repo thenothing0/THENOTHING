@@ -60,12 +60,17 @@ class ToolSelector:
         self.learning = learning or SourceLearningStore()
         self.verification = verification or VerificationLearningStore()
         self.now = now if now is not None else time.time()
+        self._cached_maps = None
 
-    # Load each store once → {key: stats} maps (no per-tool N+1 queries).
+    # Load each store once → {key: stats} maps. Cached per instance so repeated
+    # rank()/select() calls (e.g. AgentRouter over many capabilities) don't re-scan
+    # the learning stores. The stores are read-only for the selector's lifetime.
     def _maps(self):
-        src = {s.source_id: s for s in self.learning.all_scores()}
-        ver = {m["method"]: m for m in self.verification.method_stats()}
-        return src, ver
+        if self._cached_maps is None:
+            src = {s.source_id: s for s in self.learning.all_scores()}
+            ver = {m["method"]: m for m in self.verification.method_stats()}
+            self._cached_maps = (src, ver)
+        return self._cached_maps
 
     def _score_tool(self, tool: str, cap, src_map, ver_map) -> ToolScore:
         s = src_map.get(f"source.{tool}")
