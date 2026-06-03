@@ -35,17 +35,40 @@ from hydra.knowledge.discovery import ChainDiscovery, PatternDiscovery
 from hydra.knowledge.schema import Confidence
 from hydra.knowledge.wiki_store import WikiStore
 
+import time
+
 # Declared weights — configuration for OPPORTUNITY ranking only. NOT confidence logic.
-# (They sum to 1.0; the result is in [0, 1].)
+# (They sum to 1.0; the result is in [0, 1].) F-D3 adds an `exploration` term so
+# under-explored sources retain a path to surface against entrenched ones.
 OPPORTUNITY_WEIGHTS = {
-    "confidence": 0.35,
-    "effectiveness": 0.20,
+    "confidence": 0.32,
+    "effectiveness": 0.18,
     "chain_potential": 0.15,
-    "novelty": 0.15,
-    "evidence_diversity": 0.15,
+    "novelty": 0.12,
+    "evidence_diversity": 0.13,
+    "exploration": 0.10,
 }
 _BAND_VALUE = {"low": 0.34, "medium": 0.67, "high": 1.0}
 _DEFAULT_SOURCE_SCORE = 0.5  # neutral prior when a source has no history yet
+
+# F-D3 recency decay: a historically-effective but STALE source's effectiveness
+# contribution decays with a 30-day half-life. Applied ONLY here, during ranking —
+# trust_score formulas, confidence.py and promotion rules are untouched.
+_DECAY_HALFLIFE_S = 30 * 24 * 3600
+
+
+def _recency_factor(last_success_at, now: float) -> float:
+    """Multiplicative decay in (0, 1]; 1.0 when fresh or never-succeeded (neutral)."""
+    if not last_success_at:
+        return 1.0
+    age = max(0.0, now - float(last_success_at))
+    return 0.5 ** (age / _DECAY_HALFLIFE_S)
+
+
+def _exploration(total_events: int) -> float:
+    """Anti-monopoly bonus in (0, 1]: high for under-explored sources, →0 for
+    heavily-used ones. Deterministic given the event counts."""
+    return round(1.0 / (1.0 + total_events), 4)
 
 
 @dataclass
@@ -86,19 +109,27 @@ def candidate_source_ids(candidate, store: WikiStore) -> List[str]:
 
 class OpportunityScorer:
     def __init__(self, store: Optional[WikiStore] = None,
-                 learning: Optional[SourceLearningStore] = None):
+                 learning: Optional[SourceLearningStore] = None,
+                 now: Optional[float] = None):
         self.store = store or WikiStore()
         self.learning = learning or SourceLearningStore()
+        # `now` is injectable so decay-based ranking is DETERMINISTIC in tests while
+        # still evolving over wall-clock time in production.
+        self.now = now if now is not None else time.time()
 
     def score(self, candidate) -> OpportunityScore:
         src_ids = candidate_source_ids(candidate, self.store)
         scored = [self.learning.scores(s) for s in src_ids]
 
         conf_c = _band_value(candidate.confidence)
-        eff_c = (sum(s.effectiveness_score for s in scored) / len(scored)
-                 if scored else _DEFAULT_SOURCE_SCORE)
-        nov_c = (sum(s.novelty_score for s in scored) / len(scored)
-                 if scored else _DEFAULT_SOURCE_SCORE)
+        if scored:
+            # F-D3: decay each source's effectiveness by its recency before averaging.
+            eff_c = sum(s.effectiveness_score * _recency_factor(s.last_success_at, self.now)
+                        for s in scored) / len(scored)
+            nov_c = sum(s.novelty_score for s in scored) / len(scored)
+            exp_c = sum(_exploration(s.total_events) for s in scored) / len(scored)
+        else:
+            eff_c = nov_c = exp_c = _DEFAULT_SOURCE_SCORE
         chain_c = 1.0 if candidate.candidate_type == "chain" else 0.5
         distinct_classes = len({ev.evidence_class for ev in candidate.supporting_evidence})
         div_c = round(min(1.0, (len(src_ids) / 3.0) * 0.5 + (distinct_classes / 2.0) * 0.5), 4)
@@ -109,6 +140,7 @@ class OpportunityScorer:
             "chain_potential": round(chain_c, 4),
             "novelty": round(nov_c, 4),
             "evidence_diversity": div_c,
+            "exploration": round(exp_c, 4),
         }
         total = round(sum(OPPORTUNITY_WEIGHTS[k] * v for k, v in components.items()), 4)
         return OpportunityScore(
@@ -151,17 +183,24 @@ def record_outcome(candidate_type: str, candidate_id: str, outcome: str,
     signature = getattr(match, "signature", "") if match else ""
     combo = sorted({ev.evidence_class for ev in match.supporting_evidence}) if match else []
 
-    if outcome == OUTCOME_CONFIRMED:
-        for sid in src_ids:
-            learning.record_source_event(sid, EV_CONFIRMED)
-            learning.record_source_event(sid, EV_PATTERN if ctype == "pattern" else EV_CHAIN)
-    else:
-        for sid in src_ids:
-            learning.record_source_event(sid, EV_REJECTED)
+    # F-D1: record the outcome FIRST and atomically. Source credit happens ONLY if this
+    # (candidate, outcome) is newly recorded, so re-confirming/re-rejecting the same
+    # candidate — or two workers racing — never inflates scores. Append-only preserved.
+    newly = learning.record_outcome(ctype, candidate_id, outcome,
+                                    signature=signature, evidence_combo=combo)
+    if newly:
+        if outcome == OUTCOME_CONFIRMED:
+            for sid in src_ids:
+                learning.record_source_event(sid, EV_CONFIRMED)
+                learning.record_source_event(sid, EV_PATTERN if ctype == "pattern" else EV_CHAIN)
+        else:
+            for sid in src_ids:
+                learning.record_source_event(sid, EV_REJECTED)
 
-    learning.record_outcome(ctype, candidate_id, outcome, signature=signature, evidence_combo=combo)
-    return {"recorded": True, "candidate_type": ctype, "candidate_id": candidate_id,
-            "outcome": outcome, "sources_credited": src_ids, "resolved": match is not None}
+    return {"recorded": bool(newly), "idempotent_skip": not newly,
+            "candidate_type": ctype, "candidate_id": candidate_id,
+            "outcome": outcome, "sources_credited": src_ids if newly else [],
+            "resolved": match is not None}
 
 
 def record_fusion_discoveries(fusion_result, learning: Optional[SourceLearningStore] = None) -> int:

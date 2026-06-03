@@ -35,7 +35,7 @@ def test_opportunity_score_components_and_range(tmp_path):
     o = OpportunityScorer(ws, learn).score(cand)
     assert 0.0 <= o.score <= 1.0
     assert set(o.components) == {"confidence", "effectiveness", "chain_potential",
-                                 "novelty", "evidence_diversity"}
+                                 "novelty", "evidence_diversity", "exploration"}
     assert o.source_ids == ["source.crt_sh", "source.subfinder"]
 
 

@@ -65,10 +65,20 @@ class SourceScores:
 
     @property
     def effectiveness_score(self) -> float:
-        # Yield: how many discoveries became confirmed findings.
-        if self.discoveries <= 0:
+        # Yield: how many discoveries became confirmed findings. F-D2: the denominator
+        # is max(discoveries, confirmed) so a source credited with confirmations but no
+        # recorded discoveries is NOT permanently scored 0 (no dead-zone); still [0,1].
+        denom = max(self.discoveries, self.confirmed_findings)
+        if denom <= 0:
             return 0.0
-        return round(min(1.0, self.confirmed_findings / self.discoveries), 4)
+        return round(min(1.0, self.confirmed_findings / denom), 4)
+
+    @property
+    def total_events(self) -> int:
+        """Total observations for this source — used by ranking exploration (F-D3)."""
+        return (self.discoveries + self.confirmed_findings + self.duplicate_findings
+                + self.rejected_candidates + self.unique_patterns_created
+                + self.chain_contributions)
 
     @property
     def novelty_score(self) -> float:
@@ -101,13 +111,18 @@ class SourceLearningStore:
         self._init()
 
     def _conn(self) -> sqlite3.Connection:
-        c = sqlite3.connect(str(self.db_path), timeout=10)
+        c = sqlite3.connect(str(self.db_path), timeout=30)
         c.row_factory = sqlite3.Row
         return c
 
     def _init(self) -> None:
         c = self._conn()
         try:
+            # F-D5: WAL allows concurrent readers + one writer without "database is
+            # locked" under multi-process Phase-E orchestration. Persistent per-DB;
+            # does not affect rebuildability or deterministic scoring.
+            c.execute("PRAGMA journal_mode=WAL")
+            c.execute("PRAGMA synchronous=NORMAL")
             c.executescript("""
                 CREATE TABLE IF NOT EXISTS source_events (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -117,6 +132,8 @@ class SourceLearningStore:
                     occurred_at REAL NOT NULL
                 );
                 CREATE INDEX IF NOT EXISTS idx_se_src ON source_events(source_id);
+                -- F-D1: UNIQUE(candidate_type, candidate_id, outcome) makes outcome
+                -- attribution idempotent and concurrency-safe (INSERT OR IGNORE).
                 CREATE TABLE IF NOT EXISTS outcome_events (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     candidate_type TEXT NOT NULL,
@@ -124,7 +141,8 @@ class SourceLearningStore:
                     signature TEXT,
                     outcome TEXT NOT NULL,
                     evidence_combo TEXT,
-                    occurred_at REAL NOT NULL
+                    occurred_at REAL NOT NULL,
+                    UNIQUE(candidate_type, candidate_id, outcome)
                 );
                 CREATE INDEX IF NOT EXISTS idx_oe_sig ON outcome_events(signature);
             """)
@@ -145,14 +163,22 @@ class SourceLearningStore:
             c.close()
 
     def record_outcome(self, candidate_type: str, candidate_id: str, outcome: str,
-                       signature: str = "", evidence_combo: Optional[List[str]] = None) -> None:
+                       signature: str = "", evidence_combo: Optional[List[str]] = None) -> bool:
+        """Idempotently record a candidate outcome. Returns True iff this exact
+        (candidate_type, candidate_id, outcome) was newly recorded — callers credit
+        sources only on a True (so re-confirming/re-rejecting never inflates).
+
+        Append-only is preserved: a duplicate is simply ignored, not updated.
+        Atomic under concurrency via the UNIQUE constraint (INSERT OR IGNORE)."""
         c = self._conn()
         try:
-            c.execute("INSERT INTO outcome_events (candidate_type, candidate_id, signature, "
-                      "outcome, evidence_combo, occurred_at) VALUES (?,?,?,?,?,?)",
-                      (candidate_type, candidate_id, signature, outcome,
-                       json.dumps(sorted(evidence_combo or [])), time.time()))
+            cur = c.execute(
+                "INSERT OR IGNORE INTO outcome_events (candidate_type, candidate_id, "
+                "signature, outcome, evidence_combo, occurred_at) VALUES (?,?,?,?,?,?)",
+                (candidate_type, candidate_id, signature, outcome,
+                 json.dumps(sorted(evidence_combo or [])), time.time()))
             c.commit()
+            return cur.rowcount == 1
         finally:
             c.close()
 
@@ -182,13 +208,36 @@ class SourceLearningStore:
         )
 
     def all_scores(self) -> List[SourceScores]:
+        # F-D4: a single grouped scan instead of N+1 per-source queries. Produces
+        # byte-identical SourceScores to repeated scores() calls.
         c = self._conn()
         try:
-            ids = [r["source_id"] for r in c.execute(
-                "SELECT DISTINCT source_id FROM source_events ORDER BY source_id").fetchall()]
+            rows = c.execute(
+                "SELECT source_id, event_type, SUM(value) v, MAX(occurred_at) last "
+                "FROM source_events GROUP BY source_id, event_type").fetchall()
         finally:
             c.close()
-        return [self.scores(s) for s in ids]
+        agg: Dict[str, Dict[str, int]] = {}
+        last_success: Dict[str, float] = {}
+        for r in rows:
+            sid = r["source_id"]
+            agg.setdefault(sid, {})[r["event_type"]] = int(r["v"])
+            if r["event_type"] in _POSITIVE:
+                last_success[sid] = max(last_success.get(sid, 0.0), r["last"])
+        out = []
+        for sid in sorted(agg):
+            a = agg[sid]
+            out.append(SourceScores(
+                source_id=sid,
+                discoveries=a.get(EV_DISCOVERY, 0),
+                confirmed_findings=a.get(EV_CONFIRMED, 0),
+                duplicate_findings=a.get(EV_DUPLICATE, 0),
+                rejected_candidates=a.get(EV_REJECTED, 0),
+                unique_patterns_created=a.get(EV_PATTERN, 0),
+                chain_contributions=a.get(EV_CHAIN, 0),
+                last_success_at=last_success.get(sid),
+            ))
+        return out
 
     # ── knowledge-guided prioritization (read-only) ──────────────────────────
     def successful_patterns(self) -> List[Dict]:
