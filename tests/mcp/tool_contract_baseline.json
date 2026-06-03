@@ -550,6 +550,54 @@
     "required": [],
     "params": []
   },
+  "simulate_workflow": {
+    "required": [],
+    "params": [
+      "target",
+      "target_type",
+      "workflow_id"
+    ]
+  },
+  "simulate_strategy": {
+    "required": [],
+    "params": [
+      "target_type"
+    ]
+  },
+  "predict_outcome": {
+    "required": [],
+    "params": [
+      "target",
+      "target_type",
+      "workflow_id"
+    ]
+  },
+  "capability_impact": {
+    "required": [],
+    "params": [
+      "capability"
+    ]
+  },
+  "prediction_accuracy": {
+    "required": [],
+    "params": []
+  },
+  "agent_effectiveness": {
+    "required": [],
+    "params": []
+  },
+  "workflow_optimization": {
+    "required": [],
+    "params": [
+      "target",
+      "target_type",
+      "workflow_id"
+    ]
+  },
+  "decision_health": {
+    "required": [],
+    "params": []
+  },
   "ingest_report": {
     "required": [],
     "params": [

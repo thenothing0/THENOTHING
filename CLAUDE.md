@@ -214,6 +214,24 @@ is derived/disposable under `data/` (rebuildable); promotion.py/confidence.py un
 - `adapter_select` — Rank a capability's adapters by learning (effectiveness + reliability + verification + trust + exploration + prior); deterministic, advisory
 - `runtime_analytics` — Adapter runtime analytics: utilization, average runtime, timeout distribution, category coverage, execution-profile distribution
 
+### Autonomous Knowledge Simulation & Decision Intelligence (Phase L — derived, advisory, no execution)
+Predicts the likely outcome of proposed workflows / agent plans / capability & source selections /
+verification playbooks / adapter strategies BEFORE execution, ranks strategies, forecasts outcomes,
+measures prediction accuracy over time, and optimizes agent plans — using ONLY the historical learning
+stores (source/verification/adapter-health/runtime). Advisory-only, offline-first, deterministic
+(injected `now`), rebuildable, non-canonical. NO execution, exploitation, confirmation, promotion,
+confidence update, or wiki mutation. A single shared `SimulationContext` loads every store once (O(E));
+learning lives in `data/decision_learning.db` (event-sourced, rebuildable). Phase J governance gains a
+`decision_intelligence` block (simulation_health / prediction_quality / decision_drift).
+- `simulate_workflow` — Predict a workflow/agent-plan's expected findings, verification success, evidence/source diversity, chain & pattern generation, completion probability
+- `simulate_strategy` — Compare aggressive / balanced / verification-first strategies by predicted score + confidence + rationale + tradeoffs
+- `predict_outcome` — Forecast probabilities: success, stale results, new patterns, new chains, source bias
+- `capability_impact` — Per-capability expected value/findings/verification/chain/pattern contribution from learning + adapter health
+- `prediction_accuracy` — Forecast accuracy, false positive/negative rates, calibration error, drift (predicted vs actual)
+- `agent_effectiveness` — Multi-agent simulation: predicted effectiveness, bottlenecks, capability overlap, redundancy
+- `workflow_optimization` — Advisory recommendations (remove/reorder step, add capability/verification, increase diversity) without mutating workflows
+- `decision_health` — Decision-intelligence health: simulation health, prediction quality, decision drift, forecast accuracy, prediction/outcome counts
+
 ## CLI workflows
 
 ```bash

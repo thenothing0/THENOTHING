@@ -370,6 +370,17 @@ class GovernanceIntelligence(_GovernanceBase):
     def contradiction_report(self) -> List[Dict]:
         return KnowledgeQualityAnalyzer(**self._shared())._contradictions()
 
+    def decision_intelligence(self) -> Dict:
+        """Phase-L decision-intelligence health (simulation_health / prediction_quality /
+        decision_drift). Read-only; lazy import keeps governance robust if the layer is
+        absent. Never alters confidence/promotion."""
+        try:
+            from hydra.intelligence.simulation import PredictionAnalytics
+            return PredictionAnalytics().health()
+        except Exception:
+            return {"simulation_health": None, "prediction_quality": "unknown",
+                    "decision_drift": None, "matched_samples": 0}
+
     @staticmethod
     def _rank(components: Dict[str, float]):
         return sorted(components.items(), key=lambda kv: (kv[1], kv[0]))
@@ -398,6 +409,7 @@ class GovernanceIntelligence(_GovernanceBase):
             "healthiest_areas": [{"area": k, "score": v} for k, v in ranked[-3:][::-1]],
             "graph": {"nodes": graph["nodes"], "orphans": graph["orphan_count"],
                       "components": graph["disconnected_components"], "density": graph["density"]},
+            "decision_intelligence": self.decision_intelligence(),
             "recommendations": LifecycleAdvisor(**self._shared()).recommendations(),
         }
 

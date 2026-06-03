@@ -1051,6 +1051,16 @@ try:
         RuntimeAnalytics,
     )
     from hydra.adapters.selection import AdapterSelector
+    from hydra.intelligence.simulation import (
+        AgentSimulation,
+        CapabilityImpactAnalyzer,
+        OutcomePredictor,
+        PredictionAnalytics,
+        SimulationContext,
+        StrategyComparator,
+        WorkflowOptimizationAdvisor,
+        WorkflowSimulator,
+    )
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -1922,6 +1932,120 @@ def runtime_analytics() -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(RuntimeAnalytics(AdapterRegistry().load()).report(), indent=2)
+
+
+# ── Phase L — Autonomous Knowledge Simulation & Decision Intelligence (read-only) ────
+
+@mcp.tool()
+def simulate_workflow(workflow_id: str = "", target: str = "", target_type: str = "web") -> str:
+    """Simulate a workflow/agent-plan outcome BEFORE execution (Phase L, advisory, no execution).
+
+    Predicts expected findings, verification success, evidence/source diversity, chain &
+    pattern generation, and completion probability — purely from historical learning stores.
+
+    Args:
+        workflow_id: simulate an existing runtime workflow's capability plan
+        target: alternatively, simulate the agent plan for this target
+        target_type: web|api|cloud|mobile|network|code (default web)
+    """
+    if (g := _kb_guard()):
+        return g
+    sim = WorkflowSimulator(SimulationContext())
+    return json.dumps(sim.simulate(workflow_id=workflow_id, target=target,
+                                   target_type=target_type).to_dict(), indent=2)
+
+
+@mcp.tool()
+def simulate_strategy(target_type: str = "web") -> str:
+    """Compare recon strategies (aggressive/balanced/verification-first) by predicted score,
+    confidence, rationale and tradeoffs (Phase L, advisory, simulation only).
+
+    Args:
+        target_type: web|api|cloud|mobile|network|code (default web)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(StrategyComparator(SimulationContext()).compare(target_type), indent=2)
+
+
+@mcp.tool()
+def predict_outcome(workflow_id: str = "", target: str = "", target_type: str = "web") -> str:
+    """Forecast outcome probabilities (Phase L, read-only): success, stale results, new
+    patterns, new chains, source bias — from historical events.
+
+    Args:
+        workflow_id: an existing runtime workflow
+        target: alternatively, the agent plan for this target
+        target_type: web|api|cloud|mobile|network|code
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(OutcomePredictor(SimulationContext()).predict(
+        workflow_id=workflow_id, target=target, target_type=target_type), indent=2)
+
+
+@mcp.tool()
+def capability_impact(capability: str = "") -> str:
+    """Per-capability impact estimate (Phase L, read-only): expected value/findings/
+    verification rate/chain & pattern contribution from learning + adapter health.
+
+    Args:
+        capability: a capability_id; omit for all capabilities (ranked by expected value)
+    """
+    if (g := _kb_guard()):
+        return g
+    an = CapabilityImpactAnalyzer(SimulationContext())
+    if capability:
+        try:
+            return json.dumps(an.impact(capability).to_dict(), indent=2)
+        except KeyError as e:
+            return json.dumps({"success": False, "error": str(e)})
+    impacts = sorted((i.to_dict() for i in an.all_impacts()),
+                     key=lambda d: (-d["expected_value"], d["capability_id"]))
+    return json.dumps({"count": len(impacts), "capabilities": impacts}, indent=2)
+
+
+@mcp.tool()
+def prediction_accuracy() -> str:
+    """Prediction-accuracy framework (Phase L, read-only): forecast accuracy, false
+    positive/negative rates, calibration error and drift (predicted vs actual recorded)."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(PredictionAnalytics().report(), indent=2)
+
+
+@mcp.tool()
+def agent_effectiveness() -> str:
+    """Multi-agent simulation (Phase L, read-only): predicted agent effectiveness,
+    bottlenecks, capability overlap and redundancy."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(AgentSimulation(SimulationContext()).report(), indent=2)
+
+
+@mcp.tool()
+def workflow_optimization(workflow_id: str = "", target: str = "", target_type: str = "web") -> str:
+    """Advisory workflow-optimization recommendations (Phase L): remove/reorder steps, add
+    capability/verification, increase diversity — WITHOUT mutating any workflow.
+
+    Args:
+        workflow_id: an existing runtime workflow
+        target: alternatively, the agent plan for this target
+        target_type: web|api|cloud|mobile|network|code
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(WorkflowOptimizationAdvisor(SimulationContext()).recommend(
+        workflow_id=workflow_id, target=target, target_type=target_type), indent=2)
+
+
+@mcp.tool()
+def decision_health() -> str:
+    """Decision-intelligence health (Phase L, read-only): simulation health, prediction
+    quality, decision drift, forecast accuracy, and prediction/outcome counts."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(PredictionAnalytics().health(), indent=2)
 
 
 @mcp.tool()
