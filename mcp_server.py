@@ -1039,6 +1039,11 @@ try:
     from hydra.agents.registry import AgentRegistry
     from hydra.runtime.engine import RuntimeEngine, RuntimeIntelligence
     from hydra.runtime.workflows import WorkflowStateError, WorkflowStore
+    from hydra.knowledge.governance import (
+        DriftDetector,
+        GovernanceIntelligence,
+        KnowledgeQualityAnalyzer,
+    )
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -1738,6 +1743,73 @@ def runtime_summary() -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(RuntimeIntelligence().report(), indent=2)
+
+
+# ── Phase J — Knowledge Governance, Drift Detection & QA (read-only, advisory) ───
+
+@mcp.tool()
+def governance_summary() -> str:
+    """Knowledge governance summary (Phase J, read-only, advisory).
+
+    Knowledge health score (0-100) + components, drift counts, weakest/healthiest
+    areas, graph health, and advisory lifecycle recommendations. Derived from the
+    canonical wiki + learning stores; writes nothing and never alters
+    confidence/promotion.
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(GovernanceIntelligence().governance_summary(), indent=2)
+
+
+@mcp.tool()
+def drift_report() -> str:
+    """Knowledge drift report (Phase J, read-only): stale patterns/chains/findings/sources,
+    declining source/verification effectiveness, and capability drift — each with
+    severity, confidence, rationale and a suggested (advisory) action."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(DriftDetector().report(), indent=2)
+
+
+@mcp.tool()
+def knowledge_health() -> str:
+    """Deterministic knowledge health score 0-100 with quality metrics (Phase J, read-only)."""
+    if (g := _kb_guard()):
+        return g
+    qa = KnowledgeQualityAnalyzer()
+    health = qa.health_score()
+    metrics = qa.metrics()
+    return json.dumps({
+        "score": health.score, "components": health.components,
+        "metrics": {k: v for k, v in metrics.items()
+                    if k not in ("duplicate_groups", "contradictions")},
+    }, indent=2)
+
+
+@mcp.tool()
+def stale_entities() -> str:
+    """List stale knowledge entities (patterns/chains/findings/sources) — advisory (Phase J)."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps({"stale_entities": GovernanceIntelligence().stale_entities()}, indent=2)
+
+
+@mcp.tool()
+def duplicate_patterns() -> str:
+    """Report candidate duplicate patterns (same derived signature) for review (Phase J, read-only)."""
+    if (g := _kb_guard()):
+        return g
+    groups = GovernanceIntelligence().duplicate_patterns()
+    return json.dumps({"duplicate_groups": groups, "group_count": len(groups)}, indent=2)
+
+
+@mcp.tool()
+def contradiction_report() -> str:
+    """Report contradiction candidates — hosts with both validated and rejected findings (Phase J)."""
+    if (g := _kb_guard()):
+        return g
+    contradictions = GovernanceIntelligence().contradiction_report()
+    return json.dumps({"contradictions": contradictions, "count": len(contradictions)}, indent=2)
 
 
 @mcp.tool()

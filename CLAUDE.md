@@ -188,6 +188,17 @@ closing capability ownership to 87/87.)
 - `workflow_history` — List workflows, or one workflow's task history
 - `runtime_summary` — Runtime intelligence: workflow/agent/failure/retry stats + capability runtime coverage
 
+### Knowledge Governance, Drift & QA (Phase J — derived, read-only/advisory)
+Continuously evaluates knowledge health/freshness/consistency from the canonical wiki + derived learning
+stores. Derived/disposable governance snapshots under `data/knowledge_governance.db` (WAL). Read-only —
+writes nothing canonical, never alters confidence/promotion; all outputs advisory and deterministic.
+- `governance_summary` — Health score (0-100) + drift + weakest/healthiest areas + graph health + advisory recommendations
+- `drift_report` — Stale patterns/chains/findings/sources, declining source/verification effectiveness, capability drift (severity/confidence/rationale/action)
+- `knowledge_health` — Deterministic 0-100 health score with quality metrics (duplication/contradiction/stale/coverage/diversity/graph)
+- `stale_entities` — Stale knowledge entities (advisory)
+- `duplicate_patterns` — Candidate duplicate patterns (same derived signature) for review
+- `contradiction_report` — Hosts with both validated and rejected findings (contradiction candidates)
+
 ## CLI workflows
 
 ```bash

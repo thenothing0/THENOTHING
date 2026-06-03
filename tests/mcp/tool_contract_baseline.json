@@ -80,6 +80,10 @@
       "candidate_type"
     ]
   },
+  "contradiction_report": {
+    "required": [],
+    "params": []
+  },
   "dalfox_scan": {
     "required": [
       "target"
@@ -123,6 +127,14 @@
       "timeout",
       "wordlist"
     ]
+  },
+  "drift_report": {
+    "required": [],
+    "params": []
+  },
+  "duplicate_patterns": {
+    "required": [],
+    "params": []
   },
   "ffuf_fuzz": {
     "required": [
@@ -170,6 +182,10 @@
       "limit",
       "severity"
     ]
+  },
+  "governance_summary": {
+    "required": [],
+    "params": []
   },
   "graph_neighbors": {
     "required": [
@@ -273,6 +289,10 @@
       "target",
       "types"
     ]
+  },
+  "knowledge_health": {
+    "required": [],
+    "params": []
   },
   "list_reports": {
     "required": [],
@@ -447,6 +467,10 @@
       "technique",
       "timeout"
     ]
+  },
+  "stale_entities": {
+    "required": [],
+    "params": []
   },
   "subfinder_scan": {
     "required": [
