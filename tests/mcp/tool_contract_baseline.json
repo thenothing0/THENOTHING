@@ -320,6 +320,22 @@
       "outcome"
     ]
   },
+  "record_verification": {
+    "required": [
+      "method",
+      "outcome",
+      "vuln_class"
+    ],
+    "params": [
+      "dedup_key",
+      "evidence_strength",
+      "evidence_type",
+      "method",
+      "outcome",
+      "source_ids",
+      "vuln_class"
+    ]
+  },
   "report_lookup": {
     "required": [
       "slug"
@@ -382,6 +398,24 @@
       "domain",
       "silent"
     ]
+  },
+  "tool_capabilities": {
+    "required": [],
+    "params": [
+      "category"
+    ]
+  },
+  "verification_playbook": {
+    "required": [
+      "vuln_class"
+    ],
+    "params": [
+      "vuln_class"
+    ]
+  },
+  "verification_stats": {
+    "required": [],
+    "params": []
   },
   "wafw00f_detect": {
     "required": [

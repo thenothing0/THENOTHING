@@ -1037,6 +1037,12 @@ try:
     )
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
+    from hydra.capabilities.tool_capabilities import ToolCapabilityRegistry
+    from hydra.knowledge.verification import (
+        ValidationIntelligence,
+        VerificationLearningStore,
+        VerificationPlaybookGenerator,
+    )
     from hydra.recon_fusion.recon_planner import ReconPlanner
     from hydra.knowledge.graph_index import KnowledgeGraphIndex
     from hydra.knowledge.graph_index import rebuild as _kb_rebuild
@@ -1445,6 +1451,94 @@ def recon_plan(target: str, target_type: str = "web", prior_findings: int = 0,
     plan = ReconPlanner().plan(target, target_type=target_type,
                                prior_findings=max(0, prior_findings), exec_policy=_policy(online))
     return json.dumps({"success": True, **plan.to_dict()}, indent=2)
+
+
+# ── Phase F — Verification Learning & Validation Intelligence (advisory) ─────────
+
+@mcp.tool()
+def record_verification(vuln_class: str, method: str, outcome: str,
+                        evidence_type: str = "", evidence_strength: float = 0.0,
+                        source_ids: str = "", dedup_key: str = "") -> str:
+    """Record how a finding was verified (Phase F — learning only).
+
+    `outcome` = "success" or "failure". Appends to the DERIVED verification-learning
+    store. A non-empty `dedup_key` makes the record idempotent. Learning only — never
+    confirms a finding, executes a verification, writes the wiki, or alters confidence.
+
+    Args:
+        vuln_class: vulnerability class (e.g. "idor").
+        method: verification method/tool (e.g. "idor_verifier").
+        outcome: "success" | "failure".
+        evidence_type: type of evidence used (e.g. "auth_swap_response").
+        evidence_strength: 0..1 strength of the evidence.
+        source_ids: comma-separated contributing recon source.ids.
+        dedup_key: optional idempotency key.
+    """
+    if (g := _kb_guard()):
+        return g
+    sids = [s.strip() for s in source_ids.split(",") if s.strip()]
+    try:
+        newly = VerificationLearningStore().record_verification(
+            vuln_class, method, outcome, evidence_type=evidence_type,
+            evidence_strength=evidence_strength, source_ids=sids,
+            dedup_key=dedup_key or None)
+    except ValueError as e:
+        return json.dumps({"success": False, "error": str(e)})
+    return json.dumps({"success": True, "recorded": bool(newly), "idempotent_skip": not newly,
+                       "vuln_class": vuln_class, "method": method, "outcome": outcome}, indent=2)
+
+
+@mcp.tool()
+def verification_stats() -> str:
+    """Validation intelligence (Phase F, read-only): how findings get verified.
+
+    Returns per-method / per-vuln-class / per-evidence-type / per-source-category
+    success statistics, derived deterministically from the verification event log.
+    """
+    if (g := _kb_guard()):
+        return g
+    reg = CapabilityRegistry().load()
+    category_of = {}
+    for name in reg.names():
+        for s in reg.get(name).sources:
+            category_of.setdefault(s.id, s.category.value)
+    return json.dumps(ValidationIntelligence().summary(category_of), indent=2)
+
+
+@mcp.tool()
+def verification_playbook(vuln_class: str) -> str:
+    """Generate an advisory verification playbook for a vulnerability class (Phase F).
+
+    Ranked verification steps (learned methods merged with a static default catalog),
+    an expected-verification-value and a confidence-of-success. ADVISORY — it never
+    executes a verification or confirms a finding.
+    """
+    if (g := _kb_guard()):
+        return g
+    pb = VerificationPlaybookGenerator().generate(vuln_class)
+    return json.dumps({"success": True, **pb.to_dict()}, indent=2)
+
+
+@mcp.tool()
+def tool_capabilities(category: str = "") -> str:
+    """List the modelled tool-capability catalog (Phase F) — recon/web/cloud/verification.
+
+    Capability modeling for future tool expansion (no integrations). Verification tools
+    include their historical effectiveness, read from the derived verification store.
+
+    Args:
+        category: optional filter (recon | web | cloud | verification).
+    """
+    if (g := _kb_guard()):
+        return g
+    reg = ToolCapabilityRegistry().load()
+    vstore = VerificationLearningStore()
+    tools = reg.by_category(category) if category else reg.all()
+    out = []
+    for t in tools:
+        eff = reg.effectiveness(t.id, vstore) if t.is_verifier else None
+        out.append(t.to_dict(effectiveness=eff))
+    return json.dumps({"count": len(out), "categories": reg.categories(), "tools": out}, indent=2)
 
 
 @mcp.tool()

@@ -1,0 +1,32 @@
+# Tool capability catalog (Phase F) — capability MODELING only; no integrations yet.
+# Declares the tool-expansion space by category so future tools slot in without
+# redesign. `verifies` lists vulnerability classes a verification tool can validate;
+# historical effectiveness is read from the (derived) verification-learning store and
+# is never stored here.
+tools:
+  # ── recon ──
+  - {id: tool.dnsx,        name: dnsx,        category: recon, capability: dns_intelligence,    supported_finding_types: [dns_record, ip],        verifies: []}
+  - {id: tool.naabu,       name: naabu,       category: recon, capability: http_probe,          supported_finding_types: [open_port],             verifies: []}
+  - {id: tool.uncover,     name: uncover,     category: recon, capability: attack_surface_mapping, supported_finding_types: [host, service],      verifies: []}
+  - {id: tool.chaos,       name: chaos,       category: recon, capability: discover_subdomains,  supported_finding_types: [subdomain],             verifies: []}
+  - {id: tool.shuffledns,  name: shuffledns,  category: recon, capability: discover_subdomains,  supported_finding_types: [subdomain],             verifies: []}
+  - {id: tool.haktrails,   name: haktrails,   category: recon, capability: dns_intelligence,     supported_finding_types: [dns_record, subdomain], verifies: []}
+  # ── web ──
+  - {id: tool.arjun,       name: arjun,       category: web,   capability: discover_urls,        supported_finding_types: [parameter],             verifies: []}
+  - {id: tool.x8,          name: x8,          category: web,   capability: discover_urls,        supported_finding_types: [parameter],             verifies: []}
+  - {id: tool.kxss,        name: kxss,        category: web,   capability: technology_fingerprinting, supported_finding_types: [xss],              verifies: [xss]}
+  - {id: tool.crlfuzz,     name: crlfuzz,     category: web,   capability: technology_fingerprinting, supported_finding_types: [crlf, open_redirect], verifies: [open_redirect]}
+  - {id: tool.jwt_tool,    name: jwt-tool,    category: web,   capability: technology_fingerprinting, supported_finding_types: [auth_bypass, jwt], verifies: [auth_bypass]}
+  # ── cloud ──
+  - {id: tool.trufflehog,  name: trufflehog,  category: cloud, capability: repository_intelligence, supported_finding_types: [secret, credential], verifies: []}
+  - {id: tool.gitleaks,    name: gitleaks,    category: cloud, capability: repository_intelligence, supported_finding_types: [secret, credential], verifies: []}
+  - {id: tool.cloud_enum,  name: cloud_enum,  category: cloud, capability: cloud_asset_discovery, supported_finding_types: [cloud_bucket],          verifies: []}
+  - {id: tool.scoutsuite,  name: scoutsuite,  category: cloud, capability: cloud_asset_discovery, supported_finding_types: [cloud_misconfig],       verifies: []}
+  - {id: tool.prowler,     name: prowler,     category: cloud, capability: cloud_asset_discovery, supported_finding_types: [cloud_misconfig],       verifies: []}
+  # ── verification ──
+  - {id: tool.oauth_verifier,          name: oauth_verifier,          category: verification, capability: verify, supported_finding_types: [auth_bypass], verifies: [auth_bypass]}
+  - {id: tool.open_redirect_verifier,  name: open_redirect_verifier,  category: verification, capability: verify, supported_finding_types: [open_redirect], verifies: [open_redirect]}
+  - {id: tool.cors_verifier,           name: cors_verifier,           category: verification, capability: verify, supported_finding_types: [csrf, cors],  verifies: [csrf]}
+  - {id: tool.ssrf_verifier,           name: ssrf_verifier,           category: verification, capability: verify, supported_finding_types: [ssrf],        verifies: [ssrf]}
+  - {id: tool.jwt_verifier,            name: jwt_verifier,            category: verification, capability: verify, supported_finding_types: [auth_bypass, jwt], verifies: [auth_bypass]}
+  - {id: tool.idor_verifier,           name: idor_verifier,           category: verification, capability: verify, supported_finding_types: [idor],        verifies: [idor]}

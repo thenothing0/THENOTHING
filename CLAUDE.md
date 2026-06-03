@@ -150,6 +150,15 @@ given a fixed timestamp; bounded (capabilities × sources, O(1) in #findings).
 - `select_sources` — Rank a capability's sources by trust/effectiveness(decayed)/novelty/exploration/prior; runnable flag reflects offline/online policy
 - `recon_plan` — Ordered, learning-driven recon plan for a target+type: per-capability ranked sources, expected-value estimate, and opportunity-driven emphasis
 
+### Verification Learning & Validation Intelligence (Phase F — advisory, derived)
+Learns how findings get validated and generates advisory verification playbooks. Derived/disposable
+under `data/` (event-sourced, rebuildable, WAL, idempotent). Advisory only — never auto-confirms,
+auto-exploits, writes the wiki, or alters confidence/promotion.
+- `record_verification` — Record a verification outcome (success/failure) for a vuln class + method (learning only; idempotent via dedup_key)
+- `verification_stats` — Validation intelligence: success stats per method / vuln-class / evidence-type / source-category
+- `verification_playbook` — Advisory ranked verification steps for a vuln class + expected value + confidence
+- `tool_capabilities` — Modelled tool-capability catalog (recon/web/cloud/verification) with verifier effectiveness; capability modeling for future tool expansion (no integrations)
+
 ## CLI workflows
 
 ```bash
