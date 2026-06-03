@@ -1035,9 +1035,11 @@ try:
         PatternDiscovery,
         confirm_candidate as _confirm_candidate,
     )
+    from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
     from hydra.capabilities.tool_capabilities import ToolCapabilityRegistry
+    from hydra.capabilities.tool_selection import CapabilityCoverage, ToolSelector
     from hydra.knowledge.verification import (
         ValidationIntelligence,
         VerificationLearningStore,
@@ -1539,6 +1541,73 @@ def tool_capabilities(category: str = "") -> str:
         eff = reg.effectiveness(t.id, vstore) if t.is_verifier else None
         out.append(t.to_dict(effectiveness=eff))
     return json.dumps({"count": len(out), "categories": reg.categories(), "tools": out}, indent=2)
+
+
+# ── Phase G — Capability Expansion & Tool Orchestration (read-only) ──────────────
+
+@mcp.tool()
+def capability_catalog(category: str = "") -> str:
+    """List the capability-centric orchestration catalog v2 (Phase G, read-only).
+
+    Each entry is a CAPABILITY (mapping to interchangeable tools) with its category,
+    supported target/finding types, verification coverage, offline-runnable flag and
+    confidence weight. Capability modeling only — no integrations/execution.
+
+    Args:
+        category: optional filter (reconnaissance|web|api|cloud|source_code|secrets|mobile|infrastructure|verification).
+    """
+    if (g := _kb_guard()):
+        return g
+    cat = CapabilityCatalog().load()
+    entries = cat.by_category(category) if category else cat.all()
+    return json.dumps({
+        "count": len(entries), "total_capabilities": cat.count(),
+        "categories": cat.categories(), "category_counts": cat.category_counts(),
+        "distinct_tools": len(cat.all_tools()),
+        "capabilities": [e.to_dict() for e in entries],
+    }, indent=2)
+
+
+@mcp.tool()
+def capability_coverage() -> str:
+    """Capability coverage intelligence (Phase G, read-only).
+
+    Reports uncovered capabilities, weakest capability areas, over-used tools and
+    under-explored tools — derived from the catalog + learning stores. Advisory.
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(CapabilityCoverage().report(), indent=2)
+
+
+@mcp.tool()
+def rank_tools(capability: str, limit: int = 10) -> str:
+    """Rank a capability's interchangeable tools by accumulated learning (Phase G, read-only).
+
+    Blends recon effectiveness (recency-decayed) + verification effectiveness +
+    exploration + trust + the capability's prior. Deterministic given the current time.
+    """
+    if (g := _kb_guard()):
+        return g
+    try:
+        ranked = ToolSelector().rank(capability, limit=max(1, limit))
+    except KeyError as e:
+        return json.dumps({"success": False, "error": str(e)})
+    return json.dumps({"success": True, "capability": capability,
+                       "tools": [t.to_dict() for t in ranked]}, indent=2)
+
+
+@mcp.tool()
+def select_tool(capability: str) -> str:
+    """Select the single best-ranked tool for a capability (Phase G, read-only, advisory)."""
+    if (g := _kb_guard()):
+        return g
+    try:
+        best = ToolSelector().select(capability)
+    except KeyError as e:
+        return json.dumps({"success": False, "error": str(e)})
+    return json.dumps({"success": True, "capability": capability,
+                       "tool": best.to_dict() if best else None}, indent=2)
 
 
 @mcp.tool()

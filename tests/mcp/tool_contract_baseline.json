@@ -16,6 +16,16 @@
       "asset"
     ]
   },
+  "capability_catalog": {
+    "required": [],
+    "params": [
+      "category"
+    ]
+  },
+  "capability_coverage": {
+    "required": [],
+    "params": []
+  },
   "capability_list": {
     "required": [],
     "params": []
@@ -287,6 +297,15 @@
       "limit"
     ]
   },
+  "rank_tools": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability",
+      "limit"
+    ]
+  },
   "recon_fuse": {
     "required": [
       "domain"
@@ -368,6 +387,14 @@
       "capability",
       "limit",
       "online"
+    ]
+  },
+  "select_tool": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability"
     ]
   },
   "source_scores": {

@@ -159,6 +159,15 @@ auto-exploits, writes the wiki, or alters confidence/promotion.
 - `verification_playbook` — Advisory ranked verification steps for a vuln class + expected value + confidence
 - `tool_capabilities` — Modelled tool-capability catalog (recon/web/cloud/verification) with verifier effectiveness; capability modeling for future tool expansion (no integrations)
 
+### Capability Expansion & Tool Orchestration (Phase G — capability-centric, read-only)
+A capability-centric catalog v2 (`capabilities/capability_catalog.yaml`, 87 capabilities across 9
+categories, each mapping to interchangeable tools) plus a learning-driven tool selector. Capability
+modeling only — no integrations. Read-only/advisory; never writes wiki, confidence, or promotion.
+- `capability_catalog` — List capability-centric entries (category, target/finding types, verification coverage, offline_runnable, confidence_weight, tools)
+- `capability_coverage` — Read-only coverage analysis: uncovered capabilities, weak areas, over-used / under-explored tools
+- `rank_tools` — Rank a capability's tools by recon+verification effectiveness + exploration + trust + prior (deterministic)
+- `select_tool` — Pick the single best-ranked tool for a capability (advisory)
+
 ## CLI workflows
 
 ```bash

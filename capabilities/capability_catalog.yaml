@@ -1,0 +1,103 @@
+# Capability Catalog v2 (Phase G) — capability-CENTRIC orchestration modeling.
+# Each entry is a CAPABILITY (not a tool); a capability maps to many interchangeable
+# tools. Capability modeling only — NO integrations/execution here. Tools are names.
+# Fields: id, category, target_types, finding_types, verification_coverage (count of
+# finding types this capability can validate; 0 for non-verification), offline_runnable,
+# confidence_weight (static prior), tools[].
+capabilities:
+  # ── reconnaissance ──
+  - {id: subdomain_discovery,        category: reconnaissance, target_types: [domain],      finding_types: [subdomain],           verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.5,  tools: [subfinder, amass, assetfinder, findomain, chaos]}
+  - {id: passive_subdomain_intel,    category: reconnaissance, target_types: [domain],      finding_types: [subdomain],           verification_coverage: 0, offline_runnable: false, confidence_weight: 0.5,  tools: [crt_sh, chaos, securitytrails, virustotal]}
+  - {id: dns_resolution,             category: reconnaissance, target_types: [domain],      finding_types: [dns_record, ip],      verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.6,  tools: [dnsx, massdns]}
+  - {id: dns_bruteforce,             category: reconnaissance, target_types: [domain],      finding_types: [subdomain],           verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [shuffledns, puredns, dnsx]}
+  - {id: reverse_dns,                category: reconnaissance, target_types: [ip],          finding_types: [host],                verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [dnsx, hakrevdns]}
+  - {id: asn_mapping,                category: reconnaissance, target_types: [domain, ip],  finding_types: [asn, cidr],           verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.5,  tools: [asnmap, amass]}
+  - {id: cidr_discovery,             category: reconnaissance, target_types: [asn],         finding_types: [cidr, ip],            verification_coverage: 0, offline_runnable: false, confidence_weight: 0.5,  tools: [asnmap, mapcidr]}
+  - {id: port_scanning,              category: reconnaissance, target_types: [host, ip],    finding_types: [open_port],           verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.6,  tools: [naabu, nmap, masscan]}
+  - {id: service_detection,          category: reconnaissance, target_types: [host, ip],    finding_types: [service],             verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.6,  tools: [nmap, httpx]}
+  - {id: http_probing,               category: reconnaissance, target_types: [host],        finding_types: [live_host, status],   verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.6,  tools: [httpx]}
+  - {id: web_crawling,               category: reconnaissance, target_types: [url],         finding_types: [url, endpoint],       verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.5,  tools: [katana, hakrawler, gospider]}
+  - {id: historical_urls,            category: reconnaissance, target_types: [domain],      finding_types: [url],                 verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [gau, waybackurls, gauplus]}
+  - {id: vhost_discovery,            category: reconnaissance, target_types: [host],        finding_types: [vhost],               verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [ffuf, gobuster]}
+  - {id: favicon_hashing,            category: reconnaissance, target_types: [url],         finding_types: [technology],          verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [fav-up, httpx]}
+  - {id: cert_transparency,          category: reconnaissance, target_types: [domain],      finding_types: [subdomain, cert],     verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [crt_sh, certspotter]}
+  - {id: whois_lookup,               category: reconnaissance, target_types: [domain],      finding_types: [whois],               verification_coverage: 0, offline_runnable: false, confidence_weight: 0.35, tools: [whois, rdap]}
+  - {id: tech_fingerprinting,        category: reconnaissance, target_types: [host],        finding_types: [technology],          verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.55, tools: [whatweb, httpx, wappalyzer]}
+  - {id: waf_detection,              category: reconnaissance, target_types: [host],        finding_types: [waf],                 verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.5,  tools: [wafw00f]}
+  - {id: cdn_detection,              category: reconnaissance, target_types: [host],        finding_types: [cdn],                 verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.45, tools: [cdncheck, httpx]}
+  - {id: subdomain_takeover_check,   category: reconnaissance, target_types: [subdomain],   finding_types: [takeover],            verification_coverage: 1, offline_runnable: true,  confidence_weight: 0.5,  tools: [subjack, nuclei, dnsx]}
+  - {id: email_harvesting,           category: reconnaissance, target_types: [domain],      finding_types: [email],               verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [hunter, theharvester]}
+  - {id: cloud_ownership_mapping,    category: reconnaissance, target_types: [domain, ip],  finding_types: [cloud_asset],         verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [cdncheck, asnmap]}
+  # ── web ──
+  - {id: parameter_discovery,        category: web, target_types: [url], finding_types: [parameter],        verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [arjun, x8, paramspider]}
+  - {id: hidden_param_mining,        category: web, target_types: [url], finding_types: [parameter],        verification_coverage: 0, offline_runnable: true, confidence_weight: 0.4,  tools: [x8, arjun, param-miner]}
+  - {id: directory_bruteforce,       category: web, target_types: [url], finding_types: [path],             verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [ffuf, feroxbuster, dirsearch, gobuster]}
+  - {id: xss_probing,                category: web, target_types: [url], finding_types: [xss],              verification_coverage: 1, offline_runnable: true, confidence_weight: 0.5,  tools: [dalfox, kxss, gxss]}
+  - {id: sqli_probing,               category: web, target_types: [url], finding_types: [sqli],             verification_coverage: 1, offline_runnable: true, confidence_weight: 0.5,  tools: [sqlmap]}
+  - {id: crlf_probing,               category: web, target_types: [url], finding_types: [crlf],             verification_coverage: 1, offline_runnable: true, confidence_weight: 0.4,  tools: [crlfuzz]}
+  - {id: ssti_probing,               category: web, target_types: [url], finding_types: [ssti],             verification_coverage: 1, offline_runnable: true, confidence_weight: 0.4,  tools: [tplmap, nuclei]}
+  - {id: open_redirect_probing,      category: web, target_types: [url], finding_types: [open_redirect],    verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [openredirex, nuclei]}
+  - {id: lfi_probing,                category: web, target_types: [url], finding_types: [path_traversal],   verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [ffuf, nuclei]}
+  - {id: ssrf_probing,               category: web, target_types: [url], finding_types: [ssrf],             verification_coverage: 1, offline_runnable: true, confidence_weight: 0.5,  tools: [interactsh, nuclei]}
+  - {id: cors_probing,               category: web, target_types: [url], finding_types: [csrf, cors],       verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [corsy, nuclei]}
+  - {id: header_analysis,            category: web, target_types: [url], finding_types: [info_disclosure],  verification_coverage: 0, offline_runnable: true, confidence_weight: 0.4,  tools: [httpx, nuclei]}
+  - {id: cookie_audit,               category: web, target_types: [url], finding_types: [info_disclosure],  verification_coverage: 0, offline_runnable: true, confidence_weight: 0.4,  tools: [httpx]}
+  - {id: graphql_introspection,      category: web, target_types: [url], finding_types: [graphql],          verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [graphw00f, inql]}
+  - {id: jwt_analysis,               category: web, target_types: [url], finding_types: [auth_bypass, jwt], verification_coverage: 1, offline_runnable: true, confidence_weight: 0.5,  tools: [jwt_tool]}
+  - {id: request_smuggling_probe,    category: web, target_types: [url], finding_types: [smuggling],        verification_coverage: 1, offline_runnable: true, confidence_weight: 0.4,  tools: [smuggler, nuclei]}
+  - {id: cache_poisoning_probe,      category: web, target_types: [url], finding_types: [cache_poison],     verification_coverage: 1, offline_runnable: true, confidence_weight: 0.4,  tools: [nuclei, param-miner]}
+  - {id: nuclei_templating,          category: web, target_types: [url], finding_types: [vulnerability],    verification_coverage: 0, offline_runnable: true, confidence_weight: 0.6,  tools: [nuclei]}
+  # ── api ──
+  - {id: api_endpoint_discovery,     category: api, target_types: [domain, url], finding_types: [endpoint],       verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [katana, gau, arjun]}
+  - {id: api_schema_discovery,       category: api, target_types: [url],         finding_types: [api_schema],     verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [katana, nuclei]}
+  - {id: swagger_discovery,          category: api, target_types: [url],         finding_types: [api_schema],     verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [nuclei, ffuf]}
+  - {id: graphql_discovery,          category: api, target_types: [url],         finding_types: [graphql],        verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [graphw00f, nuclei]}
+  - {id: rest_fuzzing,               category: api, target_types: [url],         finding_types: [endpoint],       verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [ffuf, restler]}
+  - {id: auth_flow_mapping,          category: api, target_types: [url],         finding_types: [auth_flow],      verification_coverage: 0, offline_runnable: true, confidence_weight: 0.4,  tools: [mitmproxy, httpx]}
+  - {id: rate_limit_testing,         category: api, target_types: [url],         finding_types: [rate_limit],     verification_coverage: 0, offline_runnable: true, confidence_weight: 0.4,  tools: [ffuf]}
+  - {id: mass_assignment_probe,      category: api, target_types: [url],         finding_types: [mass_assignment],verification_coverage: 1, offline_runnable: true, confidence_weight: 0.4,  tools: [nuclei]}
+  # ── cloud ──
+  - {id: s3_bucket_discovery,        category: cloud, target_types: [domain, keyword], finding_types: [cloud_bucket],    verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [cloud_enum, s3scanner]}
+  - {id: azure_blob_discovery,       category: cloud, target_types: [domain, keyword], finding_types: [cloud_bucket],    verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [cloud_enum]}
+  - {id: gcp_storage_discovery,      category: cloud, target_types: [domain, keyword], finding_types: [cloud_bucket],    verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [cloud_enum, gcpbucketbrute]}
+  - {id: cloud_metadata_probe,       category: cloud, target_types: [url],             finding_types: [cloud_metadata],  verification_coverage: 1, offline_runnable: true,  confidence_weight: 0.5,  tools: [interactsh, nuclei]}
+  - {id: iam_misconfig_scan,         category: cloud, target_types: [cloud],           finding_types: [cloud_misconfig], verification_coverage: 0, offline_runnable: false, confidence_weight: 0.5,  tools: [scoutsuite, prowler]}
+  - {id: cloud_posture_scan,         category: cloud, target_types: [cloud],           finding_types: [cloud_misconfig], verification_coverage: 0, offline_runnable: false, confidence_weight: 0.5,  tools: [prowler, scoutsuite]}
+  - {id: k8s_exposure_scan,          category: cloud, target_types: [host, ip],        finding_types: [k8s_exposure],    verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.5,  tools: [kube-hunter, nuclei]}
+  - {id: container_registry_scan,    category: cloud, target_types: [host],            finding_types: [container_image], verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [trivy, grype]}
+  # ── source_code ──
+  - {id: repo_discovery,                  category: source_code, target_types: [org],              finding_types: [repository],            verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [github-search, gitdorks]}
+  - {id: github_dorking,                  category: source_code, target_types: [org, domain],      finding_types: [secret, endpoint],      verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [gitdorks, github-subdomains]}
+  - {id: code_secret_scan,                category: source_code, target_types: [repository],       finding_types: [secret, credential],    verification_coverage: 0, offline_runnable: false, confidence_weight: 0.55, tools: [trufflehog, gitleaks]}
+  - {id: dependency_audit,                category: source_code, target_types: [repository],       finding_types: [dependency_vuln],       verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.5,  tools: [osv-scanner, retire-js]}
+  - {id: ci_config_audit,                 category: source_code, target_types: [repository],       finding_types: [ci_misconfig],          verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [semgrep]}
+  - {id: hardcoded_endpoint_extraction,   category: source_code, target_types: [repository, js],   finding_types: [endpoint, internal_host], verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [linkfinder, getjs]}
+  # ── secrets ──
+  - {id: secret_scanning,            category: secrets, target_types: [repository, fs], finding_types: [secret, credential], verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.55, tools: [trufflehog, gitleaks, noseyparker]}
+  - {id: api_key_validation,         category: secrets, target_types: [secret],         finding_types: [credential],         verification_coverage: 0, offline_runnable: false, confidence_weight: 0.5,  tools: [keyhacks, key-checker]}
+  - {id: credential_leak_search,     category: secrets, target_types: [email, domain],  finding_types: [credential],         verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [dehashed, h8mail]}
+  - {id: token_entropy_analysis,     category: secrets, target_types: [secret],         finding_types: [secret],             verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [entropy-scan]}
+  # ── mobile ──
+  - {id: apk_static_analysis,        category: mobile, target_types: [apk], finding_types: [mobile_finding],           verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [mobsf, apktool, jadx]}
+  - {id: apk_secret_extraction,      category: mobile, target_types: [apk], finding_types: [secret, credential],       verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [apkleaks, mobsf]}
+  - {id: mobile_endpoint_extraction, category: mobile, target_types: [apk], finding_types: [endpoint, internal_host],  verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [apkleaks, jadx]}
+  - {id: deeplink_analysis,          category: mobile, target_types: [apk], finding_types: [deeplink],                 verification_coverage: 0, offline_runnable: true, confidence_weight: 0.4,  tools: [jadx]}
+  - {id: mobile_cert_pinning_check,  category: mobile, target_types: [apk], finding_types: [cert_pinning],             verification_coverage: 0, offline_runnable: true, confidence_weight: 0.35, tools: [mobsf]}
+  # ── infrastructure ──
+  - {id: tls_audit,                  category: infrastructure, target_types: [host],      finding_types: [tls_finding],   verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.45, tools: [sslyze, testssl, tlsx]}
+  - {id: ssl_cipher_scan,            category: infrastructure, target_types: [host],      finding_types: [tls_finding],   verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [sslscan, testssl]}
+  - {id: smtp_audit,                 category: infrastructure, target_types: [host],      finding_types: [smtp_finding],  verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [smtp-user-enum, swaks]}
+  - {id: dns_zone_transfer,          category: infrastructure, target_types: [domain],    finding_types: [dns_record],    verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [dig, dnsrecon]}
+  - {id: network_mapping,            category: infrastructure, target_types: [cidr, ip],  finding_types: [host, service], verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.5,  tools: [nmap, naabu]}
+  - {id: ip_geolocation,             category: infrastructure, target_types: [ip],        finding_types: [geolocation],   verification_coverage: 0, offline_runnable: false, confidence_weight: 0.3,  tools: [ipinfo]}
+  - {id: banner_grabbing,            category: infrastructure, target_types: [host, ip],  finding_types: [banner],        verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [nmap, netcat]}
+  # ── verification ──
+  - {id: idor_verification,          category: verification, target_types: [idor],          finding_types: [idor],            verification_coverage: 1, offline_runnable: true, confidence_weight: 0.6,  tools: [idor_verifier]}
+  - {id: ssrf_verification,          category: verification, target_types: [ssrf],          finding_types: [ssrf],            verification_coverage: 1, offline_runnable: true, confidence_weight: 0.6,  tools: [ssrf_verifier, interactsh]}
+  - {id: oauth_verification,         category: verification, target_types: [auth_bypass],   finding_types: [auth_bypass],     verification_coverage: 1, offline_runnable: true, confidence_weight: 0.6,  tools: [oauth_verifier]}
+  - {id: open_redirect_verification, category: verification, target_types: [open_redirect], finding_types: [open_redirect],   verification_coverage: 1, offline_runnable: true, confidence_weight: 0.55, tools: [open_redirect_verifier]}
+  - {id: cors_verification,          category: verification, target_types: [csrf],          finding_types: [csrf, cors],      verification_coverage: 1, offline_runnable: true, confidence_weight: 0.55, tools: [cors_verifier]}
+  - {id: jwt_verification,           category: verification, target_types: [auth_bypass],   finding_types: [auth_bypass, jwt],verification_coverage: 1, offline_runnable: true, confidence_weight: 0.6,  tools: [jwt_verifier, jwt_tool]}
+  - {id: xss_verification,           category: verification, target_types: [xss],           finding_types: [xss],             verification_coverage: 1, offline_runnable: true, confidence_weight: 0.55, tools: [xss_verifier, dalfox]}
+  - {id: sqli_verification,          category: verification, target_types: [sqli],          finding_types: [sqli],            verification_coverage: 1, offline_runnable: true, confidence_weight: 0.55, tools: [sqli_verifier, sqlmap]}
+  - {id: takeover_verification,      category: verification, target_types: [takeover],      finding_types: [takeover],        verification_coverage: 1, offline_runnable: true, confidence_weight: 0.55, tools: [takeover_verifier, nuclei]}
