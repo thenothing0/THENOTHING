@@ -44,6 +44,24 @@ _POSITIVE = {EV_CONFIRMED, EV_PATTERN, EV_CHAIN}
 OUTCOME_CONFIRMED = "confirmed"
 OUTCOME_REJECTED = "rejected"
 
+# Shared ranking math (used by opportunity scoring AND adaptive source selection).
+# Pure, deterministic given `now`. NOT confidence logic — these only shape advisory
+# ranking; trust/effectiveness/novelty formulas and confidence.py are untouched.
+DECAY_HALFLIFE_S = 30 * 24 * 3600  # 30-day half-life for recency decay
+
+
+def recency_factor(last_success_at, now: float) -> float:
+    """Multiplicative recency decay in (0, 1]; 1.0 when fresh or never-succeeded."""
+    if not last_success_at:
+        return 1.0
+    age = max(0.0, now - float(last_success_at))
+    return 0.5 ** (age / DECAY_HALFLIFE_S)
+
+
+def exploration_bonus(total_events: int) -> float:
+    """Anti-monopoly bonus in (0, 1]: high for under-explored sources, →0 for heavy ones."""
+    return round(1.0 / (1.0 + max(0, total_events)), 4)
+
 
 @dataclass
 class SourceScores:

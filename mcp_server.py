@@ -1036,6 +1036,8 @@ try:
         confirm_candidate as _confirm_candidate,
     )
     from hydra.capabilities.source_learning import SourceLearningStore
+    from hydra.capabilities.source_selection import AdaptiveSourceSelector
+    from hydra.recon_fusion.recon_planner import ReconPlanner
     from hydra.knowledge.graph_index import KnowledgeGraphIndex
     from hydra.knowledge.graph_index import rebuild as _kb_rebuild
     from hydra.knowledge.memory import OffensiveMemory
@@ -1392,6 +1394,57 @@ def prioritization_report() -> str:
         "effective_source_types": learn.effective_source_types(category_of),
         "accepted_evidence_combos": learn.accepted_evidence_combos(),
     }, indent=2)
+
+
+# ── Phase E — Adaptive Recon & Autonomous Source Selection (advisory) ────────────
+
+@mcp.tool()
+def select_sources(capability: str, online: bool = False, limit: int = 10) -> str:
+    """Rank a capability's recon sources using accumulated learning (Phase E — advisory).
+
+    Blends trust / effectiveness (recency-decayed) / novelty / exploration / declared
+    prior into a deterministic ranking. Read-only over the derived learning store;
+    never modifies confidence, promotion, or the wiki. `runnable` reflects the current
+    offline/online policy.
+
+    Args:
+        capability: e.g. "discover_subdomains".
+        online: evaluate runnability under online policy (keys from HYDRA_SOURCE_KEYS).
+        limit: max sources to return.
+    """
+    if (g := _kb_guard()):
+        return g
+    try:
+        ranked = AdaptiveSourceSelector().select(capability, _policy(online), limit=max(1, limit))
+    except KeyError as e:
+        return json.dumps({"success": False, "error": str(e)})
+    return json.dumps({"success": True, "capability": capability,
+                       "sources": [s.to_dict() for s in ranked]}, indent=2)
+
+
+@mcp.tool()
+def recon_plan(target: str, target_type: str = "web", prior_findings: int = 0,
+               online: bool = False) -> str:
+    """Produce an advisory, learning-driven reconnaissance plan (Phase E).
+
+    Returns an ordered capability plan with learning-ranked sources, an expected-value
+    estimate, and opportunity-driven emphasis. ADVISORY ONLY — it recommends; it never
+    executes recon, confirms findings, writes the wiki, or alters confidence/promotion.
+
+    Args:
+        target: target host/domain.
+        target_type: web | api | cloud | network | code (selects relevant capabilities).
+        prior_findings: count of existing findings for the target (caller-supplied; keeps planning O(1)).
+        online: plan against online-runnable sources too.
+    """
+    if (g := _kb_guard()):
+        return g
+    err = _validate_host(target)
+    if err:
+        return json.dumps(err, indent=2)
+    plan = ReconPlanner().plan(target, target_type=target_type,
+                               prior_findings=max(0, prior_findings), exec_policy=_policy(online))
+    return json.dumps({"success": True, **plan.to_dict()}, indent=2)
 
 
 @mcp.tool()

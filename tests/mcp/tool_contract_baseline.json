@@ -297,6 +297,17 @@
       "online"
     ]
   },
+  "recon_plan": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "online",
+      "prior_findings",
+      "target",
+      "target_type"
+    ]
+  },
   "record_outcome": {
     "required": [
       "candidate_id",
@@ -331,6 +342,16 @@
       "severity",
       "target",
       "title"
+    ]
+  },
+  "select_sources": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability",
+      "limit",
+      "online"
     ]
   },
   "source_scores": {

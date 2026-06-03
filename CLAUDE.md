@@ -143,6 +143,13 @@ It improves prioritization over time; it NEVER touches the wiki, promotion rules
 - `rank_opportunities` — Rank discovery candidates by a non-canonical OpportunityScore (confidence band + source effectiveness + chain potential + novelty + evidence diversity)
 - `prioritization_report` — Read-only: which pattern signatures historically succeed, which source categories yield confirmed findings, which evidence combinations get accepted
 
+### Adaptive Recon & Source Selection (Phase E — advisory, learning-driven)
+Uses the Phase-D learning to influence reconnaissance planning. Advisory only — recommends, never
+executes recon, confirms findings, writes the wiki, or alters confidence/promotion. Deterministic
+given a fixed timestamp; bounded (capabilities × sources, O(1) in #findings).
+- `select_sources` — Rank a capability's sources by trust/effectiveness(decayed)/novelty/exploration/prior; runnable flag reflects offline/online policy
+- `recon_plan` — Ordered, learning-driven recon plan for a target+type: per-capability ranked sources, expected-value estimate, and opportunity-driven emphasis
+
 ## CLI workflows
 
 ```bash

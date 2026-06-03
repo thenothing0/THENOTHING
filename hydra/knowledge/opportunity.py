@@ -30,6 +30,8 @@ from hydra.capabilities.source_learning import (
     OUTCOME_CONFIRMED,
     OUTCOME_REJECTED,
     SourceLearningStore,
+    exploration_bonus,
+    recency_factor,
 )
 from hydra.knowledge.discovery import ChainDiscovery, PatternDiscovery
 from hydra.knowledge.schema import Confidence
@@ -51,24 +53,11 @@ OPPORTUNITY_WEIGHTS = {
 _BAND_VALUE = {"low": 0.34, "medium": 0.67, "high": 1.0}
 _DEFAULT_SOURCE_SCORE = 0.5  # neutral prior when a source has no history yet
 
-# F-D3 recency decay: a historically-effective but STALE source's effectiveness
-# contribution decays with a 30-day half-life. Applied ONLY here, during ranking —
+# F-D3 recency decay + exploration are shared with adaptive source selection and live
+# in source_learning (single source of truth). Applied ONLY during ranking —
 # trust_score formulas, confidence.py and promotion rules are untouched.
-_DECAY_HALFLIFE_S = 30 * 24 * 3600
-
-
-def _recency_factor(last_success_at, now: float) -> float:
-    """Multiplicative decay in (0, 1]; 1.0 when fresh or never-succeeded (neutral)."""
-    if not last_success_at:
-        return 1.0
-    age = max(0.0, now - float(last_success_at))
-    return 0.5 ** (age / _DECAY_HALFLIFE_S)
-
-
-def _exploration(total_events: int) -> float:
-    """Anti-monopoly bonus in (0, 1]: high for under-explored sources, →0 for
-    heavily-used ones. Deterministic given the event counts."""
-    return round(1.0 / (1.0 + total_events), 4)
+_recency_factor = recency_factor
+_exploration = exploration_bonus
 
 
 @dataclass
