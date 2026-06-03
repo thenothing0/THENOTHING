@@ -13,13 +13,13 @@ from hydra.capabilities.source_learning import (
 from hydra.knowledge.verification import VerificationLearningStore
 
 _EXPECTED_AGENTS = {"recon_agent", "attack_surface_agent", "cloud_agent",
-                    "verification_agent", "correlation_agent", "reporting_agent"}
+                    "verification_agent", "mobile_agent", "correlation_agent", "reporting_agent"}
 
 
 # ── registry ──────────────────────────────────────────────────────────────────
-def test_agent_catalog_has_six_agents():
+def test_agent_catalog_has_seven_agents():
     reg = AgentRegistry().load()
-    assert reg.count() == 6
+    assert reg.count() == 7
     assert {a.agent_id for a in reg.all()} == _EXPECTED_AGENTS
     # ordered by priority desc
     prios = [a.priority for a in reg.all()]
@@ -53,7 +53,7 @@ def test_plan_target_type_changes_agents():
     # verification}); cloud_agent still applies via its secrets capabilities.
     mobile = [s.agent_id for s in AgentPlanner().plan("acme.com", "mobile").steps]
     assert "recon_agent" not in mobile and "attack_surface_agent" not in mobile
-    assert "verification_agent" in mobile
+    assert "mobile_agent" in mobile and "verification_agent" in mobile
 
 
 def test_plan_deterministic():
@@ -94,21 +94,22 @@ def test_agent_intelligence_report(tmp_path):
     for _ in range(30):
         learn.record_source_event("source.subfinder", EV_DISCOVERY)
     intel = AgentIntelligence(learning=learn, verification=ver).report()
-    assert intel["agent_count"] == 6
+    assert intel["agent_count"] == 7
     cov = intel["workflow_coverage"]
-    assert 0 < cov["coverage_pct"] <= 100
-    assert "mobile" in cov["uncovered_categories"]   # no agent owns mobile
+    # mobile_agent (Phase I) closes coverage to 100% — no orphan categories
+    assert cov["coverage_pct"] == 100.0
+    assert cov["uncovered_categories"] == []
     # recon_agent (subfinder events) is most effective
     assert intel["agent_effectiveness"][0]["agent_id"] == "recon_agent"
     assert "attack_surface_agent" in intel["under_utilized_agents"]
 
 
-def test_capability_ownership_orphans_and_overlaps(tmp_path):
+def test_capability_ownership_full(tmp_path):
     intel = AgentIntelligence().report()
     own = intel["capability_ownership"]
-    assert own["owned"] <= own["total"]
-    # mobile capabilities are orphans (no agent owns the mobile category)
-    assert any("mobile" in AgentIntelligence().catalog.get(c).category for c in own["orphan_capabilities"])
+    # full ownership after mobile_agent — every capability owned, no orphans
+    assert own["owned"] == own["total"]
+    assert own["orphan_capabilities"] == []
 
 
 def test_rebuild_identical_intelligence(tmp_path):

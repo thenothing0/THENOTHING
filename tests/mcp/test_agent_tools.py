@@ -23,8 +23,8 @@ def _by_type():
 
 def test_agent_catalog_tool():
     out = json.loads(mcp_server.agent_catalog())
-    assert out["agent_count"] == 6
-    assert {a["agent_id"] for a in out["agents"]} >= {"recon_agent", "verification_agent"}
+    assert out["agent_count"] == 7
+    assert {a["agent_id"] for a in out["agents"]} >= {"recon_agent", "verification_agent", "mobile_agent"}
 
 
 def test_agent_plan_tool():
@@ -47,8 +47,9 @@ def test_agent_route_tool():
 
 def test_agent_coverage_tool():
     out = json.loads(mcp_server.agent_coverage())
-    assert out["agent_count"] == 6
+    assert out["agent_count"] == 7
     assert "workflow_coverage" in out and "bottlenecks" in out
+    assert out["workflow_coverage"]["coverage_pct"] == 100.0  # mobile_agent closed the gap
 
 
 def test_agent_tools_are_read_only():

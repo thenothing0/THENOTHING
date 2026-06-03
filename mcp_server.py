@@ -1037,6 +1037,8 @@ try:
     )
     from hydra.agents.planner import AgentIntelligence, AgentPlanner, AgentRouter
     from hydra.agents.registry import AgentRegistry
+    from hydra.runtime.engine import RuntimeEngine, RuntimeIntelligence
+    from hydra.runtime.workflows import WorkflowStateError, WorkflowStore
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -1675,6 +1677,67 @@ def agent_coverage() -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(AgentIntelligence().report(), indent=2)
+
+
+# ── Phase I — Execution Runtime & Workflow Engine (state only; no execution) ─────
+
+@mcp.tool()
+def workflow_create(target: str, target_type: str = "web", prior_findings: int = 0) -> str:
+    """Create a deterministic PENDING workflow from the agent plan (Phase I).
+
+    Builds the agent→capability→tool plan and persists it as a workflow + tasks in the
+    DERIVED runtime store (data/workflows.db). Idempotent (deterministic workflow_id).
+    Executes NOTHING — it only records workflow state. Never writes the wiki, confirms
+    findings, or runs tools.
+
+    Args:
+        target: target host/domain.
+        target_type: web | api | cloud | network | code | mobile.
+        prior_findings: count of existing findings (caller-supplied; keeps planning O(1)).
+    """
+    if (g := _kb_guard()):
+        return g
+    err = _validate_host(target)
+    if err:
+        return json.dumps(err, indent=2)
+    eng = RuntimeEngine()
+    wf_id = eng.create_workflow(target, target_type=target_type, prior_findings=max(0, prior_findings))
+    st = eng.workflow_status(wf_id)
+    return json.dumps({"success": True, "workflow_id": wf_id,
+                       "status": st["workflow"]["status"], "task_count": len(st["tasks"])}, indent=2)
+
+
+@mcp.tool()
+def workflow_status(workflow_id: str) -> str:
+    """Read a workflow's current state and its task states (Phase I, read-only)."""
+    if (g := _kb_guard()):
+        return g
+    try:
+        return json.dumps({"success": True, **RuntimeEngine().workflow_status(workflow_id)}, indent=2)
+    except WorkflowStateError as e:
+        return json.dumps({"success": False, "error": str(e)})
+
+
+@mcp.tool()
+def workflow_history(workflow_id: str = "") -> str:
+    """List workflows, or one workflow's task history (Phase I, read-only)."""
+    if (g := _kb_guard()):
+        return g
+    store = WorkflowStore()
+    if workflow_id:
+        wf = store.get_workflow(workflow_id)
+        if wf is None:
+            return json.dumps({"success": False, "error": f"unknown workflow: {workflow_id}"})
+        return json.dumps({"success": True, "workflow": wf, "tasks": store.get_tasks(workflow_id)}, indent=2)
+    return json.dumps({"success": True, "workflows": store.list_workflows()}, indent=2)
+
+
+@mcp.tool()
+def runtime_summary() -> str:
+    """Runtime intelligence (Phase I, read-only): workflow/agent/failure/retry/coverage stats."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(RuntimeIntelligence().report(), indent=2)
 
 
 @mcp.tool()

@@ -178,6 +178,16 @@ wiki, or touch confidence/promotion.
 - `agent_route` — Deterministic Target→Agent→Capability→Tool routing (learning-selected tool per capability)
 - `agent_coverage` — Agent effectiveness, capability ownership (orphans/overlaps), workflow coverage, bottlenecks, under-utilized agents
 
+### Execution Runtime & Workflow Engine (Phase I — deterministic state, no execution)
+A deterministic runtime above the agent layer that coordinates workflow STATE (transitions, retries,
+history) in a derived/disposable store (`data/workflows.db`, WAL). Executes no tools, confirms no
+findings, materializes nothing into the wiki. Advisory by default. (Phase I also adds `mobile_agent`,
+closing capability ownership to 87/87.)
+- `workflow_create` — Build a deterministic PENDING workflow (agent→capability→tool plan) in the runtime store; idempotent; executes nothing
+- `workflow_status` — Read a workflow + its task states
+- `workflow_history` — List workflows, or one workflow's task history
+- `runtime_summary` — Runtime intelligence: workflow/agent/failure/retry stats + capability runtime coverage
+
 ## CLI workflows
 
 ```bash

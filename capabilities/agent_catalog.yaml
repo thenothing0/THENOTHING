@@ -34,6 +34,13 @@ agents:
     expected_outputs: [idor, ssrf, auth_bypass, open_redirect, csrf, xss, sqli, takeover]
     capability_scope: []
     knowledge_agent: false
+  - id: mobile_agent
+    priority: 6
+    allowed_categories: [mobile]
+    responsibilities: "Analyze mobile apps (APKs) — static analysis, secret/endpoint extraction, deeplink and cert-pinning checks."
+    expected_outputs: [mobile_finding, secret, credential, endpoint, internal_host, deeplink, cert_pinning]
+    capability_scope: []
+    knowledge_agent: false
   - id: correlation_agent
     priority: 5
     allowed_categories: []

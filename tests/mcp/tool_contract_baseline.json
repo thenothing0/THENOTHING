@@ -390,6 +390,10 @@
       "slug"
     ]
   },
+  "runtime_summary": {
+    "required": [],
+    "params": []
+  },
   "save_finding": {
     "required": [
       "description",
@@ -486,6 +490,30 @@
     "params": [
       "aggression",
       "target"
+    ]
+  },
+  "workflow_create": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "prior_findings",
+      "target",
+      "target_type"
+    ]
+  },
+  "workflow_history": {
+    "required": [],
+    "params": [
+      "workflow_id"
+    ]
+  },
+  "workflow_status": {
+    "required": [
+      "workflow_id"
+    ],
+    "params": [
+      "workflow_id"
     ]
   }
 }
