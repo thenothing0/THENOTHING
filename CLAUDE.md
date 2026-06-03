@@ -132,8 +132,16 @@ multi-step paths → `chain` candidates. Evidence is weighted (validated finding
 hypotheses never count) and scored by the existing confidence engine. Discovery is **dry-run**;
 canonical pages are created only via an explicit `confirm_candidate`.
 - `discover_patterns` — Propose recurring-pattern candidates (≥2 independent weighted evidence, two-signal); ranked, with a machine-readable `explain` block; writes nothing
-- `discover_chains` — Propose chain candidates (shared-target / shared-asset / explicit graph-path only; no semantic guessing); writes nothing
+- `discover_chains` — Propose chain candidates (shared target / asset / program / root-report; bounded, no semantic guessing); writes nothing
 - `confirm_candidate` — The only Phase-C write path: concurrency-safe materialization of a candidate into a canonical `pattern`/`chain` page (`status: candidate`, full provenance), or strengthen the existing one
+
+### Source Performance Learning & Opportunity Ranking (Phase D — derived, non-canonical)
+An event-sourced learning layer under `data/` (rebuildable, keyed by stable `source.id`).
+It improves prioritization over time; it NEVER touches the wiki, promotion rules, or confidence bands.
+- `record_outcome` — Verification feedback: attribute a confirmed/rejected candidate to its contributing recon sources (learning only)
+- `source_scores` — Read derived per-source `trust` / `novelty` / `effectiveness` scores (rebuildable from raw events)
+- `rank_opportunities` — Rank discovery candidates by a non-canonical OpportunityScore (confidence band + source effectiveness + chain potential + novelty + evidence diversity)
+- `prioritization_report` — Read-only: which pattern signatures historically succeed, which source categories yield confirmed findings, which evidence combinations get accepted
 
 ## CLI workflows
 

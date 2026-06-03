@@ -1035,9 +1035,15 @@ try:
         PatternDiscovery,
         confirm_candidate as _confirm_candidate,
     )
+    from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.knowledge.graph_index import KnowledgeGraphIndex
     from hydra.knowledge.graph_index import rebuild as _kb_rebuild
     from hydra.knowledge.memory import OffensiveMemory
+    from hydra.knowledge.opportunity import (
+        OpportunityScorer,
+        record_fusion_discoveries as _record_fusion_discoveries,
+    )
+    from hydra.knowledge.opportunity import record_outcome as _record_outcome
     from hydra.knowledge.promotion import PromotionError, apply_promotion
     from hydra.knowledge.report_intel import ReportIntelligencePipeline, ReportSource
     from hydra.knowledge.schema import NodeType as _NodeType
@@ -1112,6 +1118,12 @@ def recon_fuse(domain: str, capability: str = "discover_subdomains", online: boo
         result = ReconFusionPipeline().run(domain, capability, _policy(online), materialize=True)
     except KeyError as e:
         return json.dumps({"success": False, "error": str(e)})
+    # Phase D: credit contributing sources (discovery side of effectiveness). Derived
+    # learning store only — never the wiki; best-effort so fusion never fails on it.
+    try:
+        _record_fusion_discoveries(result)
+    except Exception:
+        pass
     priors = [h.to_dict() for h in OffensiveMemory().recall(domain, target=domain, limit=5)]
     return json.dumps({
         "success": True,
@@ -1302,6 +1314,84 @@ def confirm_candidate(candidate_type: str, candidate_id: str) -> str:
     except DiscoveryError as e:
         return json.dumps({"success": False, "rejected": True, "reason": str(e)})
     return json.dumps({"success": True, **result}, indent=2)
+
+
+# ── Phase D — Source Performance Learning & Opportunity Ranking ──────────────────
+
+@mcp.tool()
+def record_outcome(candidate_type: str, candidate_id: str, outcome: str) -> str:
+    """Record verification feedback for a candidate (Phase D — learning only).
+
+    `outcome` = "confirmed" or "rejected". Attributes the result to the candidate's
+    contributing recon sources and appends events to the DERIVED source-learning store.
+    Affects source-performance learning ONLY — it never alters promotion rules,
+    confidence, or any canonical wiki content.
+
+    Args:
+        candidate_type: "pattern" or "chain".
+        candidate_id: id from discover_patterns / discover_chains.
+        outcome: "confirmed" or "rejected".
+    """
+    if (g := _kb_guard()):
+        return g
+    try:
+        res = _record_outcome(candidate_type, candidate_id, outcome, WikiStore())
+    except ValueError as e:
+        return json.dumps({"success": False, "error": str(e)})
+    return json.dumps({"success": True, **res}, indent=2)
+
+
+@mcp.tool()
+def source_scores(source_id: str = "") -> str:
+    """Read derived per-source learning scores (trust / novelty / effectiveness).
+
+    Rebuildable from the raw event log; never canonical. Pass a `source_id` for one
+    source, or omit for all sources with recorded history.
+    """
+    if (g := _kb_guard()):
+        return g
+    learn = SourceLearningStore()
+    if source_id:
+        return json.dumps({"source": source_id, "scores": learn.scores(source_id).to_dict()}, indent=2)
+    return json.dumps({"sources": [s.to_dict() for s in learn.all_scores()]}, indent=2)
+
+
+@mcp.tool()
+def rank_opportunities(limit: int = 20) -> str:
+    """Rank current discovery candidates as investigation opportunities (Phase D).
+
+    Non-canonical OpportunityScore = weighted blend of the candidate's (already-assigned)
+    confidence band, contributing-source effectiveness/novelty, chain potential and
+    evidence diversity. Read-only; deterministic; confidence.py is never modified.
+    """
+    if (g := _kb_guard()):
+        return g
+    ranked = OpportunityScorer(WikiStore()).rank(limit=max(1, limit))
+    return json.dumps({"count": len(ranked), "opportunities": [o.to_dict() for o in ranked]}, indent=2)
+
+
+@mcp.tool()
+def prioritization_report() -> str:
+    """Knowledge-guided prioritization (Phase D, read-only) — powers future Adaptive Recon.
+
+    Answers: which pattern signatures historically succeed, which source CATEGORIES
+    generate confirmed findings, and which evidence-class combinations get accepted.
+    All derived from the learning event log; nothing canonical is read or written.
+    """
+    if (g := _kb_guard()):
+        return g
+    learn = SourceLearningStore()
+    # source.id → category, from the capability registry (kept out of the store).
+    reg = CapabilityRegistry().load()
+    category_of = {}
+    for name in reg.names():
+        for s in reg.get(name).sources:
+            category_of.setdefault(s.id, s.category.value)
+    return json.dumps({
+        "successful_patterns": learn.successful_patterns(),
+        "effective_source_types": learn.effective_source_types(category_of),
+        "accepted_evidence_combos": learn.accepted_evidence_combos(),
+    }, indent=2)
 
 
 @mcp.tool()

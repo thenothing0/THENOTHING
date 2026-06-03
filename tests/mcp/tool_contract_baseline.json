@@ -277,6 +277,16 @@
       "targets"
     ]
   },
+  "prioritization_report": {
+    "required": [],
+    "params": []
+  },
+  "rank_opportunities": {
+    "required": [],
+    "params": [
+      "limit"
+    ]
+  },
   "recon_fuse": {
     "required": [
       "domain"
@@ -285,6 +295,18 @@
       "capability",
       "domain",
       "online"
+    ]
+  },
+  "record_outcome": {
+    "required": [
+      "candidate_id",
+      "candidate_type",
+      "outcome"
+    ],
+    "params": [
+      "candidate_id",
+      "candidate_type",
+      "outcome"
     ]
   },
   "report_lookup": {
@@ -309,6 +331,12 @@
       "severity",
       "target",
       "title"
+    ]
+  },
+  "source_scores": {
+    "required": [],
+    "params": [
+      "source_id"
     ]
   },
   "sqlmap_scan": {
