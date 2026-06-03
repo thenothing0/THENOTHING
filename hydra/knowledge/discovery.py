@@ -27,6 +27,7 @@ Invariants (enforced here, asserted by tests):
 from __future__ import annotations
 
 import hashlib
+import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
@@ -44,6 +45,25 @@ CONFLICTING_STATUSES = frozenset({"na", "rejected", "duplicate"})
 
 _MIN_SUPPORT = 2
 _MIN_SIGNALS = 2
+# Bounded chain size — a target with many findings yields a readable chain, not a bag.
+_MAX_CHAIN_STEPS = 12
+
+
+@dataclass(frozen=True)
+class DiscoveryLimits:
+    """Operational guardrails for discovery (Phase C.5).
+
+    `max_groups`/`max_candidates` are **deterministic** caps applied after a stable
+    sort, so truncation is reproducible. `timeout_seconds` is a best-effort wall-clock
+    safety valve (non-deterministic; generous default so it rarely fires) that stops
+    adding groups if a run runs long on a very large corpus.
+    """
+    max_groups: int = 5000
+    max_candidates: int = 1000
+    timeout_seconds: float = 30.0
+
+
+DEFAULT_LIMITS = DiscoveryLimits()
 
 
 class DiscoveryError(Exception):
@@ -176,7 +196,9 @@ class PatternDiscovery:
         self.index = index or KnowledgeGraphIndex.build(self.store)
         self.provider = provider or DEFAULT_PROVIDER
 
-    def discover(self, min_support: int = _MIN_SUPPORT) -> List[PatternCandidate]:
+    def discover(self, min_support: int = _MIN_SUPPORT,
+                 limits: DiscoveryLimits = DEFAULT_LIMITS) -> List[PatternCandidate]:
+        start = time.perf_counter()
         # Collect evidence pages grouped by signature (read-only).
         groups: Dict[str, List[tuple]] = {}     # signature -> [(page, Evidence)]
         conflicts: Dict[str, List[str]] = {}
@@ -196,7 +218,13 @@ class PatternDiscovery:
         existing_pattern_sigs = self._existing_signatures(NodeType.PATTERN)
 
         candidates: List[PatternCandidate] = []
-        for sig, items in groups.items():
+        # Deterministic, bounded iteration: signatures sorted, capped by max_groups.
+        for gi, sig in enumerate(sorted(groups)):
+            if gi >= limits.max_groups:
+                break
+            if limits.timeout_seconds and (time.perf_counter() - start) > limits.timeout_seconds:
+                break
+            items = groups[sig]
             evidence = self._dedup_by_root([e for _, e in items])
             if len(evidence) < min_support or not meets_two_signal([e.root_source for e in evidence]):
                 continue
@@ -232,7 +260,7 @@ class PatternDiscovery:
             cand.rationale = self._rationale(cand)
             candidates.append(cand)
 
-        return _rank(candidates)
+        return _apply_limits(candidates, limits)
 
     def _classify(self, page: WikiPage) -> Optional[Evidence]:
         """Map a page to discovery Evidence, or None if it isn't pattern evidence."""
@@ -295,43 +323,55 @@ class ChainDiscovery:
         self.store = store or WikiStore()
         self.index = index or KnowledgeGraphIndex.build(self.store)
 
-    def discover(self, min_support: int = _MIN_SUPPORT) -> List[ChainCandidate]:
+    # Bases are STRUCTURED and bounded — every chain comes from a group keyed by a
+    # concrete shared attribute. There is NO pairwise path scan (the old O(F²) cliff).
+    _BASES = ("shared_target", "shared_asset", "shared_program", "shared_root_report")
+
+    def discover(self, min_support: int = _MIN_SUPPORT,
+                 limits: DiscoveryLimits = DEFAULT_LIMITS) -> List[ChainCandidate]:
+        start = time.perf_counter()
         findings = [p for p in self.store.iter_pages(NodeType.FINDING)
                     if str(p.meta.get("status", "")).lower() in VALIDATED_STATUSES]
         existing = self._existing_chain_nodes()
+
+        # Build every grouping in single linear passes — total O(F · avg_degree).
+        buckets: Dict[str, Dict[str, List[WikiPage]]] = {
+            "shared_target": _bucket_by(findings, _target_slug),
+            "shared_program": _bucket_by(findings, self._program_key),
+            "shared_asset": self._group_by_shared_asset(findings),
+            "shared_root_report": self._bucket_by_linked_type(findings, NodeType.REPORT),
+        }
+
+        # Deterministic, bounded iteration order: fixed basis order, sorted keys.
+        ordered: List[tuple] = []
+        for basis in self._BASES:
+            for key in sorted(buckets[basis]):
+                ordered.append((basis, key, buckets[basis][key]))
+
         candidates: List[ChainCandidate] = []
-
-        # (a) shared target, (b) shared asset — the two robust, non-speculative bases.
-        by_target: Dict[str, List[WikiPage]] = {}
-        for f in findings:
-            t = _target_slug(f)
-            if t:
-                by_target.setdefault(t, []).append(f)
-        for tgt, group in by_target.items():
+        for idx, (basis, key, group) in enumerate(ordered):
+            if idx >= limits.max_groups:
+                break
+            if limits.timeout_seconds and (time.perf_counter() - start) > limits.timeout_seconds:
+                break
             if len(group) >= min_support:
-                candidates.append(self._build(group, "shared_target", tgt, existing))
+                candidates.append(self._build(group, basis, key, existing))
 
-        for asset, group in self._group_by_shared_asset(findings).items():
-            if len(group) >= min_support:
-                candidates.append(self._build(group, "shared_asset", asset, existing))
-
-        # (c) explicit graph path between two validated findings (no semantic guessing).
-        for i in range(len(findings)):
-            for j in range(i + 1, len(findings)):
-                a, b = findings[i], findings[j]
-                path = self.index.shortest_path(a.slug, b.slug)
-                if path and 2 <= len(path) <= 5 and _target_slug(a) != _target_slug(b):
-                    candidates.append(self._build([a, b], "graph_path", "-".join(path), existing))
-
-        # de-duplicate identical step sets, keep deterministic order
-        seen: Dict[str, ChainCandidate] = {}
+        # De-duplicate identical step sets (first basis in priority order wins) — deterministic.
+        seen_steps: Dict[frozenset, ChainCandidate] = {}
         for c in candidates:
-            seen.setdefault(c.id, c)
-        return _rank(list(seen.values()))
+            seen_steps.setdefault(frozenset(c.steps), c)
+        return _apply_limits(list(seen_steps.values()), limits)
+
+    @staticmethod
+    def _program_key(page: WikiPage) -> str:
+        return slugify(str(page.meta.get("program") or page.meta.get("platform") or ""))
 
     def _build(self, group: List[WikiPage], basis: str, key: str,
                existing: Dict[frozenset, str]) -> ChainCandidate:
-        ordered = sorted(group, key=lambda p: (_severity_rank(p), p.slug))
+        # Cap steps deterministically (highest-severity first) so a target with many
+        # findings yields a bounded, readable chain rather than an unbounded bag.
+        ordered = sorted(group, key=lambda p: (_severity_rank(p), p.slug))[:_MAX_CHAIN_STEPS]
         steps = [p.slug for p in ordered]
         evidence = [Evidence(ref=p.slug, evidence_class=policy.CLASS_VALIDATED_FINDING,
                              root_source=p.slug) for p in ordered]
@@ -360,6 +400,19 @@ class ChainDiscovery:
                 if nb in asset_nodes:
                     asset_to_findings.setdefault(nb, []).append(f)
         return asset_to_findings
+
+    def _bucket_by_linked_type(self, findings: List[WikiPage],
+                               ntype: NodeType) -> Dict[str, List[WikiPage]]:
+        """Group findings by a linked page of `ntype` (e.g. the same root report).
+
+        O(F · avg_degree) via the prebuilt graph index — no pairwise traversal."""
+        type_nodes = {n for n, t in self.index.nodes.items() if t == ntype.value}
+        out: Dict[str, List[WikiPage]] = {}
+        for f in findings:
+            for nb in self.index.neighbors(f.slug):
+                if nb in type_nodes:
+                    out.setdefault(nb, []).append(f)
+        return out
 
     def _existing_chain_nodes(self) -> Dict[frozenset, str]:
         out: Dict[frozenset, str] = {}
@@ -393,17 +446,24 @@ def _rank(candidates: List[Candidate]) -> List[Candidate]:
         c.id))
 
 
-def confirm_candidate(candidate_type: str, candidate_id: str,
-                      store: Optional[WikiStore] = None) -> Dict:
-    """The explicit, concurrency-safe materialization step.
+def _apply_limits(candidates: List[Candidate], limits: DiscoveryLimits) -> List[Candidate]:
+    """Rank deterministically, then truncate to max_candidates (deterministic truncation)."""
+    return _rank(candidates)[:limits.max_candidates]
 
-    Re-runs discovery deterministically, re-validates the candidate by id (the guard
-    must still hold), and materializes the canonical page. The pre-write existence
-    check lives in `bridge.materialize_*`, so a concurrent confirm merges instead of
-    duplicating. Returns a result dict; raises DiscoveryError for an unknown id.
-    """
-    store = store or WikiStore()
-    ctype = candidate_type.strip().lower()
+
+def _bucket_by(findings: List[WikiPage], key_fn) -> Dict[str, List[WikiPage]]:
+    """Single-pass O(F) bucketing of findings by a structured key (empty keys dropped)."""
+    out: Dict[str, List[WikiPage]] = {}
+    for f in findings:
+        k = key_fn(f)
+        if k:
+            out.setdefault(k, []).append(f)
+    return out
+
+
+def _resolve_and_validate(ctype: str, candidate_id: str, store: WikiStore):
+    """Re-run discovery, find the candidate by id, re-validate the two-signal guard.
+    Returns (match, materialize_fn_name). Raises DiscoveryError on miss/invalid."""
     if ctype == "pattern":
         candidates = PatternDiscovery(store).discover()
         materialize = "materialize_pattern"
@@ -411,24 +471,65 @@ def confirm_candidate(candidate_type: str, candidate_id: str,
         candidates = ChainDiscovery(store).discover()
         materialize = "materialize_chain"
     else:
-        raise DiscoveryError(f"unknown candidate_type: {candidate_type}")
+        raise DiscoveryError(f"unknown candidate_type: {ctype}")
 
     match = next((c for c in candidates if c.id == candidate_id), None)
     if match is None:
         raise DiscoveryError(
             f"candidate id '{candidate_id}' not found among current {ctype} candidates "
             "(it may have been superseded by newer evidence — re-run discovery)")
-
-    # Re-validate the two-signal guard at confirm time (evidence may have changed).
     refs = [e.root_source for e in match.supporting_evidence
             if not policy.is_excluded(e.evidence_class)]
     if not meets_two_signal(refs):
         raise DiscoveryError(f"candidate '{candidate_id}' no longer meets the two-signal gate")
+    return match, materialize
+
+
+def confirm_candidate(candidate_type: str, candidate_id: str,
+                      store: Optional[WikiStore] = None, rebuild: bool = False) -> Dict:
+    """The explicit materialization step. Single-writer.
+
+    Re-runs discovery deterministically, re-validates the candidate by id (the guard
+    must still hold), and materializes the canonical page. Duplicate canonical pages
+    are prevented by the deterministic slug → identical path (the pre-write existence
+    check in `bridge.materialize_*` decides create-vs-merge); this is NOT locking, so
+    confirms must run single-threaded.
+
+    Phase C.5: `rebuild` defaults to **False** — a single confirm no longer triggers a
+    full graph-index rebuild (the index is rebuilt fresh from the canonical wiki on the
+    next read, so per-write rebuilds were pure amplification). For many confirms use
+    `confirm_candidates(...)`, which rebuilds the persisted index **once** at the end.
+    """
+    store = store or WikiStore()
+    ctype = candidate_type.strip().lower()
+    match, materialize = _resolve_and_validate(ctype, candidate_id, store)
 
     from hydra.knowledge import bridge  # lazy: discovery stays import-cycle-free
-    path = getattr(bridge, materialize)(match, store=store)
+    path = getattr(bridge, materialize)(match, store=store, rebuild=rebuild)
     return {
         "confirmed": True, "candidate_type": ctype, "candidate_id": candidate_id,
         "recommendation": match.recommendation,
         "page": path, "confidence": match.confidence.value,
     }
+
+
+def confirm_candidates(pairs, store: Optional[WikiStore] = None) -> Dict:
+    """Batch confirm. Materializes each (candidate_type, candidate_id) with the
+    per-write index rebuild **deferred**, then rebuilds the persisted index **once**.
+
+    Turns N full rebuilds into 1 (eliminates write amplification). Skips ids that no
+    longer resolve/validate and reports them rather than aborting the batch.
+    """
+    store = store or WikiStore()
+    confirmed, skipped = [], []
+    for candidate_type, candidate_id in pairs:
+        try:
+            res = confirm_candidate(candidate_type, candidate_id, store=store, rebuild=False)
+            confirmed.append(res)
+        except DiscoveryError as e:
+            skipped.append({"candidate_id": candidate_id, "reason": str(e)})
+
+    from hydra.knowledge import bridge
+    stats = bridge.rebuild_index(store)  # single rebuild for the whole batch
+    return {"confirmed": confirmed, "skipped": skipped,
+            "count": len(confirmed), "index": stats}
