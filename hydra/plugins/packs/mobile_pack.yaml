@@ -1,0 +1,23 @@
+# Mobile Security tool pack (Phase M reference plugin). Declarative only.
+plugin_id: mobile_pack
+plugin_name: Mobile Security Pack
+version: 1.0.0
+author: hydra
+description: Android/iOS static & dynamic analysis, mobile API, deep links and storage.
+capabilities:
+  - {id: mobile_android_static,    category: mobile, target_types: [artifact], finding_types: [mobile_finding],  verification_coverage: 0, offline_runnable: true, confidence_weight: 0.55, tools: [mobsf, apktool, jadx, apkleaks]}
+  - {id: mobile_ios_static,        category: mobile, target_types: [artifact], finding_types: [mobile_finding],  verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [mobsf, class_dump, otool, frida_ios_dump]}
+  - {id: mobile_api_analysis,      category: mobile, target_types: [artifact], finding_types: [endpoint],        verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [mobsf, mitmproxy, apkleaks, jadx]}
+  - {id: mobile_deeplink_audit,    category: mobile, target_types: [artifact], finding_types: [deeplink],        verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [deeplink_scan, drozer, apktool, mobsf]}
+  - {id: mobile_storage_audit,     category: mobile, target_types: [artifact], finding_types: [mobile_finding],  verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [mobsf, objection, frida, apktool]}
+  - {id: mobile_pinning_audit,     category: mobile, target_types: [artifact], finding_types: [cert_pinning],    verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [objection, frida, mobsf, ssl_kill_switch]}
+  - {id: mobile_secret_extraction, category: mobile, target_types: [artifact], finding_types: [secret],          verification_coverage: 1, offline_runnable: true, confidence_weight: 0.55, tools: [apkleaks, mobsf, trufflehog, jadx]}
+  - {id: mobile_native_lib_audit,  category: mobile, target_types: [artifact], finding_types: [mobile_finding],  verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [radare2, ghidra, jadx, nm]}
+  - {id: mobile_dynamic_analysis,  category: mobile, target_types: [artifact], finding_types: [mobile_finding],  verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [frida, objection, drozer, mitmproxy]}
+  - {id: mobile_manifest_audit,    category: mobile, target_types: [artifact], finding_types: [mobile_finding],  verification_coverage: 1, offline_runnable: true, confidence_weight: 0.5,  tools: [apktool, mobsf, aapt, manifest_lint]}
+  - {id: mobile_webview_audit,     category: mobile, target_types: [artifact], finding_types: [mobile_finding],  verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [mobsf, drozer, jadx, webview_audit]}
+dependencies:
+  - {from: mobile_api_analysis,      relation: requires, to: mobile_android_static}
+  - {from: mobile_secret_extraction, relation: enhances, to: mobile_android_static}
+  - {from: mobile_dynamic_analysis,  relation: enhances, to: mobile_android_static}
+  - {from: mobile_pinning_audit,     relation: related_to, to: mobile_dynamic_analysis}

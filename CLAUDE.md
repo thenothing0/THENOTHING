@@ -232,6 +232,29 @@ learning lives in `data/decision_learning.db` (event-sourced, rebuildable). Phas
 - `workflow_optimization` — Advisory recommendations (remove/reorder step, add capability/verification, increase diversity) without mutating workflows
 - `decision_health` — Decision-intelligence health: simulation health, prediction quality, decision drift, forecast accuracy, prediction/outcome counts
 
+### Capability Marketplace & Plugin Ecosystem (Phase M — declarative plugins, read-only/advisory)
+Turns Hydra into an extensible ecosystem: new capabilities/adapters/agents/verification coverage/tool
+packs are added through DECLARATIVE plugins (`hydra/plugins/packs/*.yaml`) without modifying core code.
+`core_capabilities + plugin_capabilities = effective_capability_catalog` with globally-unique ids
+(duplicates rejected). Six reference packs (cloud/mobile/container/iot/supply_chain/osint) → 153
+effective capabilities / 439 adapters. A capability dependency graph (requires/enhances/related_to,
+acyclic-validated) and automatic agent ownership round it out. Offline-first, deterministic, rebuildable,
+advisory-only, non-canonical; NO plugin execution / network / code injection / runtime mutation;
+promotion.py/confidence.py and canonical wiki behavior untouched. Plugin usage learning lives in
+`data/plugin_health.db` (event-sourced, rebuildable).
+- `plugin_catalog` — List installed/available declarative plugins (counts, enabled flag, validation errors)
+- `plugin_summary` — Effective capability/adapter composition (core vs plugin) + installed-plugin count
+- `plugin_health` — Derived plugin adoption/diversity/effectiveness/health (rebuildable)
+- `plugin_dependencies` — Capability dependency edges + plugin version deps a plugin contributes
+- `plugin_capabilities` — Capabilities a plugin adds to the effective catalog
+- `plugin_coverage` — Capabilities/adapters/agents/verification coverage added + composition + per-plugin
+- `capability_graph` — Dependency-graph intelligence: edges by relation, acyclicity/cycles, critical/isolated, coverage gaps
+- `dependency_paths` — Shortest directed dependency path source→target (requires+enhances)
+- `critical_capabilities` — Most-depended-upon and isolated capabilities
+- `agent_ownership` — Automatic agent ownership of capabilities (owner/candidates/confidence)
+- `ownership_conflicts` — Agent ownership conflicts and gaps
+- `ecosystem_summary` — Full ecosystem intelligence + marketplace recommendations (missing plugins, weak areas, gaps)
+
 ## CLI workflows
 
 ```bash

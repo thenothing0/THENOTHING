@@ -1,0 +1,23 @@
+# OSINT tool pack (Phase M reference plugin). Declarative only.
+plugin_id: osint_pack
+plugin_name: OSINT Pack
+version: 1.0.0
+author: hydra
+description: Social, domain, breach-data and metadata open-source intelligence capabilities.
+capabilities:
+  - {id: osint_social_recon,        category: reconnaissance, target_types: [domain], finding_types: [osint_profile], verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [sherlock, social_analyzer, maigret, holehe]}
+  - {id: osint_domain_intel,        category: reconnaissance, target_types: [domain], finding_types: [whois],         verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [amass, whoisxml, securitytrails, viewdns]}
+  - {id: osint_breach_data_lookup,  category: reconnaissance, target_types: [domain], finding_types: [credential],    verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [dehashed, h8mail, breach_parse, pwndb]}
+  - {id: osint_metadata_extraction, category: reconnaissance, target_types: [domain], finding_types: [metadata],      verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [exiftool, metagoofil, foca, pdfinfo]}
+  - {id: osint_email_intel,         category: reconnaissance, target_types: [domain], finding_types: [email],         verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [theharvester, hunter, h8mail, emailrep]}
+  - {id: osint_company_intel,       category: reconnaissance, target_types: [domain], finding_types: [osint_profile], verification_coverage: 0, offline_runnable: false, confidence_weight: 0.35, tools: [theharvester, crunchbase_scrape, builtwith, spiderfoot]}
+  - {id: osint_github_intel,        category: reconnaissance, target_types: [domain], finding_types: [secret],        verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [gitdorks, github_search, trufflehog, gitleaks]}
+  - {id: osint_paste_monitoring,    category: reconnaissance, target_types: [domain], finding_types: [secret],        verification_coverage: 0, offline_runnable: false, confidence_weight: 0.35, tools: [pastehunter, psbdmp, scavenger, dumpmon]}
+  - {id: osint_dns_history,         category: reconnaissance, target_types: [domain], finding_types: [dns_record],    verification_coverage: 0, offline_runnable: false, confidence_weight: 0.4,  tools: [securitytrails, viewdns, dnshistory, passivetotal]}
+  - {id: osint_certificate_intel,   category: reconnaissance, target_types: [domain], finding_types: [cert],          verification_coverage: 0, offline_runnable: false, confidence_weight: 0.45, tools: [crt_sh, censys, certspotter, tlsx]}
+  - {id: osint_people_search,       category: reconnaissance, target_types: [domain], finding_types: [osint_profile], verification_coverage: 0, offline_runnable: false, confidence_weight: 0.35, tools: [maigret, sherlock, holehe, whatsmyname]}
+dependencies:
+  - {from: osint_email_intel,       relation: requires,   to: osint_domain_intel}
+  - {from: osint_breach_data_lookup, relation: enhances,  to: osint_email_intel}
+  - {from: osint_people_search,     relation: related_to, to: osint_social_recon}
+  - {from: osint_dns_history,       relation: enhances,   to: osint_domain_intel}

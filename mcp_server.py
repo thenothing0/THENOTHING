@@ -1061,6 +1061,15 @@ try:
         WorkflowOptimizationAdvisor,
         WorkflowSimulator,
     )
+    from hydra.capabilities.dependency_graph import (
+        CapabilityDependencyGraph,
+        DependencyIntelligence,
+    )
+    from hydra.plugins.ecosystem import CapabilityMarketplace, EcosystemAnalyzer
+    from hydra.plugins.health import PluginHealthAnalyzer
+    from hydra.plugins.ownership import AgentOwnershipResolver
+    from hydra.plugins.plugin_catalog import EffectiveCapabilityCatalog
+    from hydra.plugins.plugin_registry import PluginRegistry as _PluginRegistry
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -2046,6 +2055,182 @@ def decision_health() -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(PredictionAnalytics().health(), indent=2)
+
+
+# ── Phase M — Capability Marketplace & Plugin Ecosystem (read-only, advisory) ────────
+
+def _effective_catalog(registry):
+    return EffectiveCapabilityCatalog(registry).load()
+
+
+def _preferred_map(registry):
+    return {c["id"]: c["preferred_agent"] for c in registry.plugin_capabilities()
+            if c.get("id") and c.get("preferred_agent")}
+
+
+@mcp.tool()
+def plugin_catalog() -> str:
+    """List installed/available declarative plugins (Phase M, read-only, no execution).
+
+    Each entry shows id/version/author, capability & tool counts, enabled flag and any
+    validation errors. Plugins are declarative data only — never executed."""
+    if (g := _kb_guard()):
+        return g
+    plugins = _PluginRegistry().list_plugins()
+    return json.dumps({"count": len(plugins),
+                       "enabled": sum(1 for p in plugins if p["enabled"]),
+                       "plugins": plugins}, indent=2)
+
+
+@mcp.tool()
+def plugin_summary() -> str:
+    """Plugin ecosystem at-a-glance (Phase M, read-only): effective capability/adapter
+    composition (core vs plugin) and installed-plugin count."""
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    eff = _effective_catalog(reg)
+    return json.dumps({"installed_plugins": len(reg.enabled_plugins()),
+                       "composition": eff.composition(),
+                       "plugin_ids": sorted(p.plugin_id for p in reg.enabled_plugins())}, indent=2)
+
+
+@mcp.tool()
+def plugin_health() -> str:
+    """Derived plugin health (Phase M, read-only, rebuildable): adoption / diversity /
+    effectiveness / health from the event-sourced data/plugin_health.db."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps({"plugins": PluginHealthAnalyzer(_PluginRegistry()).report()}, indent=2)
+
+
+@mcp.tool()
+def plugin_dependencies(plugin_id: str = "") -> str:
+    """Capability dependency edges contributed by plugins (Phase M, read-only).
+
+    Args:
+        plugin_id: optional — only this plugin's declared edges + plugin version deps
+    """
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    if plugin_id:
+        pd = reg.get_plugin(plugin_id)
+        if pd is None:
+            return json.dumps({"success": False, "error": f"unknown plugin: {plugin_id}"})
+        return json.dumps({"plugin_id": plugin_id, "dependencies": pd.dependencies,
+                           "requires_plugins": pd.requires_plugins}, indent=2)
+    return json.dumps({"dependency_edges": reg.plugin_dependency_edges()}, indent=2)
+
+
+@mcp.tool()
+def plugin_capabilities(plugin_id: str = "") -> str:
+    """Capabilities a plugin adds to the effective catalog (Phase M, read-only).
+
+    Args:
+        plugin_id: optional — only this plugin's capabilities; omit for all plugin capabilities
+    """
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    if plugin_id:
+        pd = reg.get_plugin(plugin_id)
+        if pd is None:
+            return json.dumps({"success": False, "error": f"unknown plugin: {plugin_id}"})
+        return json.dumps({"plugin_id": plugin_id, "capabilities": pd.capabilities}, indent=2)
+    caps = reg.plugin_capabilities()
+    return json.dumps({"count": len(caps), "capabilities": caps}, indent=2)
+
+
+@mcp.tool()
+def plugin_coverage() -> str:
+    """What the plugin ecosystem adds (Phase M, read-only): capabilities/adapters/agents/
+    verification coverage added, plus effective-catalog composition and per-plugin breakdown."""
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    eff = _effective_catalog(reg)
+    return json.dumps(EcosystemAnalyzer(reg, eff).report(), indent=2)
+
+
+@mcp.tool()
+def capability_graph() -> str:
+    """Capability dependency graph intelligence (Phase M, read-only): edge counts by
+    relation, requires-acyclicity + cycles, critical/isolated capabilities, coverage gaps."""
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    eff = _effective_catalog(reg)
+    graph = CapabilityDependencyGraph(eff, reg.plugin_dependency_edges()).load()
+    return json.dumps(DependencyIntelligence(graph).report(), indent=2)
+
+
+@mcp.tool()
+def dependency_paths(source: str, target: str) -> str:
+    """Shortest directed dependency path source→target over requires+enhances (Phase M).
+
+    Args:
+        source: starting capability_id
+        target: destination capability_id
+    """
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    eff = _effective_catalog(reg)
+    graph = CapabilityDependencyGraph(eff, reg.plugin_dependency_edges()).load()
+    path = graph.dependency_paths(source, target)
+    return json.dumps({"source": source, "target": target,
+                       "path": path, "reachable": bool(path)}, indent=2)
+
+
+@mcp.tool()
+def critical_capabilities() -> str:
+    """Most-depended-upon (critical) capabilities by `requires` in-degree (Phase M, read-only)."""
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    eff = _effective_catalog(reg)
+    graph = CapabilityDependencyGraph(eff, reg.plugin_dependency_edges()).load()
+    return json.dumps({"critical_capabilities": graph.critical_capabilities(),
+                       "isolated_capabilities": graph.isolated_capabilities()}, indent=2)
+
+
+@mcp.tool()
+def agent_ownership() -> str:
+    """Automatic agent ownership of (plugin) capabilities (Phase M, read-only, advisory):
+    per-capability owner, candidates and ownership confidence."""
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    eff = _effective_catalog(reg)
+    return json.dumps(AgentOwnershipResolver(eff, preferred=_preferred_map(reg)).resolve(), indent=2)
+
+
+@mcp.tool()
+def ownership_conflicts() -> str:
+    """Agent ownership conflicts and gaps (Phase M, read-only, advisory)."""
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    eff = _effective_catalog(reg)
+    res = AgentOwnershipResolver(eff, preferred=_preferred_map(reg)).resolve()
+    return json.dumps({"ownership_conflicts": res["ownership_conflicts"],
+                       "ownership_conflict_count": res["ownership_conflict_count"],
+                       "ownership_gaps": res["ownership_gaps"],
+                       "ownership_gap_count": res["ownership_gap_count"]}, indent=2)
+
+
+@mcp.tool()
+def ecosystem_summary() -> str:
+    """Full ecosystem intelligence (Phase M, read-only, advisory): what plugins add +
+    marketplace recommendations (missing plugins, weak areas, ecosystem gaps)."""
+    if (g := _kb_guard()):
+        return g
+    reg = _PluginRegistry()
+    eff = _effective_catalog(reg)
+    ad = AdapterRegistry(catalog=eff).load()
+    return json.dumps({"ecosystem": EcosystemAnalyzer(reg, eff, ad).report(),
+                       "marketplace": CapabilityMarketplace(reg, eff, ad).recommend()}, indent=2)
 
 
 @mcp.tool()

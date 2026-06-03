@@ -598,6 +598,64 @@
     "required": [],
     "params": []
   },
+  "plugin_catalog": {
+    "required": [],
+    "params": []
+  },
+  "plugin_summary": {
+    "required": [],
+    "params": []
+  },
+  "plugin_health": {
+    "required": [],
+    "params": []
+  },
+  "plugin_dependencies": {
+    "required": [],
+    "params": [
+      "plugin_id"
+    ]
+  },
+  "plugin_capabilities": {
+    "required": [],
+    "params": [
+      "plugin_id"
+    ]
+  },
+  "plugin_coverage": {
+    "required": [],
+    "params": []
+  },
+  "capability_graph": {
+    "required": [],
+    "params": []
+  },
+  "dependency_paths": {
+    "required": [
+      "source",
+      "target"
+    ],
+    "params": [
+      "source",
+      "target"
+    ]
+  },
+  "critical_capabilities": {
+    "required": [],
+    "params": []
+  },
+  "agent_ownership": {
+    "required": [],
+    "params": []
+  },
+  "ownership_conflicts": {
+    "required": [],
+    "params": []
+  },
+  "ecosystem_summary": {
+    "required": [],
+    "params": []
+  },
   "ingest_report": {
     "required": [],
     "params": [

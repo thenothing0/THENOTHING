@@ -1,0 +1,23 @@
+# Supply-Chain Security tool pack (Phase M reference plugin). Declarative only.
+plugin_id: supply_chain_pack
+plugin_name: Supply Chain Security Pack
+version: 1.0.0
+author: hydra
+description: Dependency, SBOM, package-ecosystem and artifact-security capabilities.
+capabilities:
+  - {id: sc_dependency_audit,       category: source_code, target_types: [repo], finding_types: [dependency_vuln],  verification_coverage: 1, offline_runnable: true, confidence_weight: 0.55, tools: [dependency_check, osv_scanner, snyk, grype]}
+  - {id: sc_sbom_generation,        category: source_code, target_types: [repo], finding_types: [sbom],             verification_coverage: 0, offline_runnable: true, confidence_weight: 0.5,  tools: [syft, cyclonedx, spdx_tools, tern]}
+  - {id: sc_package_ecosystem_scan, category: source_code, target_types: [repo], finding_types: [dependency_vuln],  verification_coverage: 1, offline_runnable: true, confidence_weight: 0.5,  tools: [osv_scanner, npm_audit, pip_audit, bundler_audit]}
+  - {id: sc_artifact_signing_audit, category: source_code, target_types: [repo], finding_types: [supply_chain_risk], verification_coverage: 1, offline_runnable: true, confidence_weight: 0.5,  tools: [cosign, in_toto, slsa_verifier, sigstore]}
+  - {id: sc_typosquat_detection,    category: source_code, target_types: [repo], finding_types: [supply_chain_risk], verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [typosquat_scan, confusion_check, ossgadget, guarddog]}
+  - {id: sc_license_audit,          category: source_code, target_types: [repo], finding_types: [license_risk],      verification_coverage: 0, offline_runnable: true, confidence_weight: 0.4,  tools: [licensee, scancode, fossa, askalono]}
+  - {id: sc_transitive_dep_analysis, category: source_code, target_types: [repo], finding_types: [dependency_vuln], verification_coverage: 0, offline_runnable: true, confidence_weight: 0.45, tools: [osv_scanner, dependency_check, depscan, snyk]}
+  - {id: sc_build_provenance,       category: source_code, target_types: [repo], finding_types: [supply_chain_risk], verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [slsa_verifier, in_toto, cosign, witness]}
+  - {id: sc_vuln_correlation,       category: source_code, target_types: [repo], finding_types: [dependency_vuln],  verification_coverage: 1, offline_runnable: true, confidence_weight: 0.5,  tools: [osv_scanner, grype, trivy, vulncheck]}
+  - {id: sc_repo_secret_scan,       category: secrets,     target_types: [repo], finding_types: [secret],            verification_coverage: 1, offline_runnable: true, confidence_weight: 0.55, tools: [trufflehog, gitleaks, gitdorks, detect_secrets]}
+  - {id: sc_ci_pipeline_audit,      category: source_code, target_types: [repo], finding_types: [supply_chain_risk], verification_coverage: 1, offline_runnable: true, confidence_weight: 0.45, tools: [checkov, kics, semgrep, poutine]}
+dependencies:
+  - {from: sc_package_ecosystem_scan,  relation: requires, to: sc_dependency_audit}
+  - {from: sc_transitive_dep_analysis, relation: requires, to: sc_dependency_audit}
+  - {from: sc_vuln_correlation,        relation: enhances, to: sc_sbom_generation}
+  - {from: sc_build_provenance,        relation: related_to, to: sc_artifact_signing_audit}

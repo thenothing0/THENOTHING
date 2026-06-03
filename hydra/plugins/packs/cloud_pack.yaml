@@ -1,0 +1,25 @@
+# Cloud Security tool pack (Phase M reference plugin). Declarative only — no executable
+# code, no integrations. Capabilities map to interchangeable tools (names), exactly like
+# the core capability catalog. Loaded into the EFFECTIVE catalog; core stays untouched.
+plugin_id: cloud_pack
+plugin_name: Cloud Security Pack
+version: 1.0.0
+author: hydra
+description: AWS/Azure/GCP enumeration, IAM, storage, serverless and cloud posture capabilities.
+capabilities:
+  - {id: cloud_aws_enum,                category: cloud, target_types: [domain, ip], finding_types: [cloud_asset],     verification_coverage: 0, offline_runnable: false, confidence_weight: 0.5,  tools: [prowler, scoutsuite, pacu, cloudmapper]}
+  - {id: cloud_azure_enum,              category: cloud, target_types: [domain, ip], finding_types: [cloud_asset],     verification_coverage: 0, offline_runnable: false, confidence_weight: 0.5,  tools: [scoutsuite, azucar, microburst, roadtools]}
+  - {id: cloud_gcp_enum,                category: cloud, target_types: [domain, ip], finding_types: [cloud_asset],     verification_coverage: 0, offline_runnable: false, confidence_weight: 0.5,  tools: [scoutsuite, gcp_scanner, g_scout, gcloud_audit]}
+  - {id: cloud_iam_analysis,            category: cloud, target_types: [cloud_asset], finding_types: [iam_misconfig],  verification_coverage: 1, offline_runnable: true,  confidence_weight: 0.55, tools: [pmapper, cloudsplaining, policy_sentry, iam_lint]}
+  - {id: cloud_storage_exposure,        category: cloud, target_types: [domain],     finding_types: [cloud_bucket],   verification_coverage: 1, offline_runnable: false, confidence_weight: 0.5,  tools: [s3scanner, cloud_enum, gcpbucketbrute, blob_finder]}
+  - {id: cloud_serverless_audit,        category: cloud, target_types: [cloud_asset], finding_types: [cloud_misconfig], verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.45, tools: [lambdaguard, serverless_scan, func_audit, prowler]}
+  - {id: cloud_secret_exposure,         category: secrets, target_types: [cloud_asset], finding_types: [secret],       verification_coverage: 1, offline_runnable: true,  confidence_weight: 0.5,  tools: [trufflehog, gitleaks, cloud_secrets, detect_secrets]}
+  - {id: cloud_network_mapping,         category: cloud, target_types: [cloud_asset], finding_types: [cloud_asset],    verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.45, tools: [cloudmapper, scoutsuite, aws_recon, steampipe]}
+  - {id: cloud_registry_scan,           category: cloud, target_types: [cloud_asset], finding_types: [cloud_misconfig], verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.45, tools: [trivy, grype, skopeo, registry_scan]}
+  - {id: cloud_logging_audit,           category: cloud, target_types: [cloud_asset], finding_types: [cloud_misconfig], verification_coverage: 0, offline_runnable: true,  confidence_weight: 0.4,  tools: [scoutsuite, cloudtrail_audit, steampipe, prowler]}
+  - {id: cloud_misconfig_scan,          category: cloud, target_types: [cloud_asset], finding_types: [cloud_misconfig], verification_coverage: 1, offline_runnable: true,  confidence_weight: 0.55, tools: [prowler, cloudsploit, steampipe, scoutsuite]}
+dependencies:
+  - {from: cloud_iam_analysis,     relation: requires, to: cloud_aws_enum}
+  - {from: cloud_serverless_audit, relation: enhances, to: cloud_aws_enum}
+  - {from: cloud_misconfig_scan,   relation: enhances, to: cloud_aws_enum}
+  - {from: cloud_secret_exposure,  relation: related_to, to: cloud_storage_exposure}

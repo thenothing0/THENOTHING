@@ -1,0 +1,38 @@
+# Core capability dependency edges (Phase M). Declarative data only (like the capability
+# catalog) — NOT executable, NOT canonical. Relations: requires | enhances | related_to.
+# Plugins contribute additional edges; the CapabilityDependencyGraph merges core + plugins.
+# `requires` edges must stay acyclic (validated). All ids must exist in the effective catalog.
+dependencies:
+  # ── requires (hard prerequisites) ──
+  - {from: subdomain_discovery,        relation: requires, to: dns_resolution}
+  - {from: dns_bruteforce,             relation: requires, to: dns_resolution}
+  - {from: subdomain_takeover_check,   relation: requires, to: subdomain_discovery}
+  - {from: http_probing,               relation: requires, to: subdomain_discovery}
+  - {from: web_crawling,               relation: requires, to: http_probing}
+  - {from: parameter_discovery,        relation: requires, to: web_crawling}
+  - {from: hidden_param_mining,        relation: requires, to: parameter_discovery}
+  - {from: directory_bruteforce,       relation: requires, to: http_probing}
+  - {from: xss_probing,                relation: requires, to: parameter_discovery}
+  - {from: sqli_probing,               relation: requires, to: parameter_discovery}
+  - {from: ssrf_probing,               relation: requires, to: parameter_discovery}
+  - {from: service_detection,          relation: requires, to: port_scanning}
+  - {from: banner_grabbing,            relation: requires, to: port_scanning}
+  - {from: cidr_discovery,             relation: requires, to: asn_mapping}
+  - {from: api_endpoint_discovery,     relation: requires, to: http_probing}
+  - {from: graphql_introspection,      relation: requires, to: api_endpoint_discovery}
+  - {from: xss_verification,           relation: requires, to: xss_probing}
+  - {from: sqli_verification,          relation: requires, to: sqli_probing}
+  - {from: ssrf_verification,          relation: requires, to: ssrf_probing}
+  - {from: open_redirect_verification, relation: requires, to: open_redirect_probing}
+  - {from: takeover_verification,      relation: requires, to: subdomain_takeover_check}
+  # ── enhances (improves quality/coverage) ──
+  - {from: historical_urls,            relation: enhances, to: web_crawling}
+  - {from: tech_fingerprinting,        relation: enhances, to: http_probing}
+  - {from: api_schema_discovery,       relation: enhances, to: api_endpoint_discovery}
+  - {from: favicon_hashing,            relation: enhances, to: tech_fingerprinting}
+  - {from: passive_subdomain_intel,    relation: enhances, to: subdomain_discovery}
+  - {from: cert_transparency,          relation: enhances, to: subdomain_discovery}
+  # ── related_to (lateral association) ──
+  - {from: waf_detection,              relation: related_to, to: tech_fingerprinting}
+  - {from: cdn_detection,              relation: related_to, to: waf_detection}
+  - {from: secret_scanning,            relation: related_to, to: code_secret_scan}
