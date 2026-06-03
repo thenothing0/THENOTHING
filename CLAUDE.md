@@ -199,6 +199,21 @@ writes nothing canonical, never alters confidence/promotion; all outputs advisor
 - `duplicate_patterns` — Candidate duplicate patterns (same derived signature) for review
 - `contradiction_report` — Hosts with both validated and rejected findings (contradiction candidates)
 
+### Adapter Framework & Sandboxed Tool Integrations (Phase K — derived, advisory, no execution)
+Transforms the capability catalog into deterministic, executable **adapter definitions** (one per
+capability×tool, 175 total / 87 capabilities) with a sandboxed runtime, event-sourced tool-health
+learning, capability exercise metrics, and learning-driven adapter selection. Infrastructure +
+orchestration + observability ONLY: NO offensive execution, NO exploitation, NO autonomous actions,
+NO wiki mutation. Only SAFE execution profiles (offline/passive/validation/simulation) are permitted;
+unsupported (exploitation/persistence/destructive/weaponized) profiles are rejected at load. All state
+is derived/disposable under `data/` (rebuildable); promotion.py/confidence.py untouched.
+- `adapter_catalog` — List synthesized adapter definitions (execution_profile, timeouts, I/O schemas, offline/validation/simulation flags); filter by capability or category
+- `adapter_coverage` — Adapter coverage (by category/profile) + capability EXERCISE metrics (declared/owned/has-adapter/exercised/verified — closes the Phase-J blind spot)
+- `adapter_health` — Adapter tool-health (reliability/runtime/success/failure/timeout); one adapter, or healthiest/weakest/failures/timeouts
+- `adapter_summary` — Adapter ecosystem summary: totals, utilization, mean reliability, execution/validation/simulation/success/failure/timeout counts
+- `adapter_select` — Rank a capability's adapters by learning (effectiveness + reliability + verification + trust + exploration + prior); deterministic, advisory
+- `runtime_analytics` — Adapter runtime analytics: utilization, average runtime, timeout distribution, category coverage, execution-profile distribution
+
 ## CLI workflows
 
 ```bash

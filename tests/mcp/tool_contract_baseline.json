@@ -1,29 +1,11 @@
 {
-  "agent_catalog": {
-    "required": [],
-    "params": []
-  },
-  "agent_coverage": {
-    "required": [],
-    "params": []
-  },
-  "agent_plan": {
+  "subfinder_scan": {
     "required": [
-      "target"
+      "domain"
     ],
     "params": [
-      "prior_findings",
-      "target",
-      "target_type"
-    ]
-  },
-  "agent_route": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "target",
-      "target_type"
+      "domain",
+      "silent"
     ]
   },
   "amass_enum": {
@@ -33,197 +15,6 @@
     "params": [
       "domain",
       "passive"
-    ]
-  },
-  "asset_lookup": {
-    "required": [
-      "asset"
-    ],
-    "params": [
-      "asset"
-    ]
-  },
-  "capability_catalog": {
-    "required": [],
-    "params": [
-      "category"
-    ]
-  },
-  "capability_coverage": {
-    "required": [],
-    "params": []
-  },
-  "capability_list": {
-    "required": [],
-    "params": []
-  },
-  "capability_sources": {
-    "required": [
-      "capability"
-    ],
-    "params": [
-      "capability",
-      "online"
-    ]
-  },
-  "check_tools": {
-    "required": [],
-    "params": []
-  },
-  "confirm_candidate": {
-    "required": [
-      "candidate_id",
-      "candidate_type"
-    ],
-    "params": [
-      "candidate_id",
-      "candidate_type"
-    ]
-  },
-  "contradiction_report": {
-    "required": [],
-    "params": []
-  },
-  "dalfox_scan": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "blind",
-      "pipe_mode",
-      "target",
-      "timeout"
-    ]
-  },
-  "dirsearch_scan": {
-    "required": [
-      "url"
-    ],
-    "params": [
-      "extensions",
-      "threads",
-      "url"
-    ]
-  },
-  "discover_chains": {
-    "required": [],
-    "params": [
-      "min_support"
-    ]
-  },
-  "discover_patterns": {
-    "required": [],
-    "params": [
-      "min_support"
-    ]
-  },
-  "dnsx_resolve": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "record_type",
-      "target",
-      "timeout",
-      "wordlist"
-    ]
-  },
-  "drift_report": {
-    "required": [],
-    "params": []
-  },
-  "duplicate_patterns": {
-    "required": [],
-    "params": []
-  },
-  "ffuf_fuzz": {
-    "required": [
-      "url"
-    ],
-    "params": [
-      "fuzz_mode",
-      "headers",
-      "match_codes",
-      "method",
-      "url",
-      "wordlist"
-    ]
-  },
-  "full_recon": {
-    "required": [
-      "domain"
-    ],
-    "params": [
-      "domain"
-    ]
-  },
-  "gau_urls": {
-    "required": [
-      "domain"
-    ],
-    "params": [
-      "domain"
-    ]
-  },
-  "generate_report": {
-    "required": [
-      "findings_json",
-      "target"
-    ],
-    "params": [
-      "findings_json",
-      "report_format",
-      "target"
-    ]
-  },
-  "get_findings": {
-    "required": [],
-    "params": [
-      "limit",
-      "severity"
-    ]
-  },
-  "governance_summary": {
-    "required": [],
-    "params": []
-  },
-  "graph_neighbors": {
-    "required": [
-      "page"
-    ],
-    "params": [
-      "page"
-    ]
-  },
-  "graph_path": {
-    "required": [
-      "source_page",
-      "target_page"
-    ],
-    "params": [
-      "source_page",
-      "target_page"
-    ]
-  },
-  "gxss_check": {
-    "required": [
-      "urls"
-    ],
-    "params": [
-      "timeout",
-      "urls"
-    ]
-  },
-  "hakrawler_crawl": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "depth",
-      "plain",
-      "scope",
-      "target",
-      "timeout"
     ]
   },
   "httpx_probe": {
@@ -238,16 +29,6 @@
       "title"
     ]
   },
-  "ingest_report": {
-    "required": [],
-    "params": [
-      "path",
-      "source_url",
-      "target",
-      "text",
-      "title"
-    ]
-  },
   "katana_crawl": {
     "required": [
       "target"
@@ -258,57 +39,12 @@
       "target"
     ]
   },
-  "kb_lint": {
-    "required": [],
-    "params": []
-  },
-  "kb_promote": {
+  "gau_urls": {
     "required": [
-      "page",
-      "to_stage"
+      "domain"
     ],
     "params": [
-      "evidence_count",
-      "page",
-      "scope_ok",
-      "sources",
-      "to_stage"
-    ]
-  },
-  "kb_rebuild_index": {
-    "required": [],
-    "params": []
-  },
-  "kb_recall": {
-    "required": [
-      "query"
-    ],
-    "params": [
-      "limit",
-      "query",
-      "target",
-      "types"
-    ]
-  },
-  "knowledge_health": {
-    "required": [],
-    "params": []
-  },
-  "list_reports": {
-    "required": [],
-    "params": [
-      "min_learning_score"
-    ]
-  },
-  "nmap_scan": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "ports",
-      "scan_type",
-      "scripts",
-      "target"
+      "domain"
     ]
   },
   "nuclei_scan": {
@@ -334,83 +70,66 @@
       "targets"
     ]
   },
-  "prioritization_report": {
-    "required": [],
-    "params": []
-  },
-  "rank_opportunities": {
-    "required": [],
-    "params": [
-      "limit"
-    ]
-  },
-  "rank_tools": {
+  "ffuf_fuzz": {
     "required": [
-      "capability"
+      "url"
     ],
     "params": [
-      "capability",
-      "limit"
+      "fuzz_mode",
+      "headers",
+      "match_codes",
+      "method",
+      "url",
+      "wordlist"
     ]
   },
-  "recon_fuse": {
+  "dirsearch_scan": {
     "required": [
-      "domain"
+      "url"
     ],
     "params": [
-      "capability",
-      "domain",
-      "online"
+      "extensions",
+      "threads",
+      "url"
     ]
   },
-  "recon_plan": {
+  "whatweb_detect": {
     "required": [
       "target"
     ],
     "params": [
-      "online",
-      "prior_findings",
-      "target",
-      "target_type"
+      "aggression",
+      "target"
     ]
   },
-  "record_outcome": {
+  "wafw00f_detect": {
     "required": [
-      "candidate_id",
-      "candidate_type",
-      "outcome"
+      "target"
     ],
     "params": [
-      "candidate_id",
-      "candidate_type",
-      "outcome"
+      "target"
     ]
   },
-  "record_verification": {
+  "nmap_scan": {
     "required": [
-      "method",
-      "outcome",
-      "vuln_class"
+      "target"
     ],
     "params": [
-      "dedup_key",
-      "evidence_strength",
-      "evidence_type",
-      "method",
-      "outcome",
-      "source_ids",
-      "vuln_class"
+      "ports",
+      "scan_type",
+      "scripts",
+      "target"
     ]
   },
-  "report_lookup": {
+  "full_recon": {
     "required": [
-      "slug"
+      "domain"
     ],
     "params": [
-      "slug"
+      "domain"
     ]
   },
-  "runtime_summary": {
+  "check_tools": {
     "required": [],
     "params": []
   },
@@ -430,28 +149,22 @@
       "title"
     ]
   },
-  "select_sources": {
-    "required": [
-      "capability"
-    ],
-    "params": [
-      "capability",
-      "limit",
-      "online"
-    ]
-  },
-  "select_tool": {
-    "required": [
-      "capability"
-    ],
-    "params": [
-      "capability"
-    ]
-  },
-  "source_scores": {
+  "get_findings": {
     "required": [],
     "params": [
-      "source_id"
+      "limit",
+      "severity"
+    ]
+  },
+  "generate_report": {
+    "required": [
+      "findings_json",
+      "target"
+    ],
+    "params": [
+      "findings_json",
+      "report_format",
+      "target"
     ]
   },
   "sqlmap_scan": {
@@ -468,24 +181,220 @@
       "timeout"
     ]
   },
-  "stale_entities": {
+  "dalfox_scan": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "blind",
+      "pipe_mode",
+      "target",
+      "timeout"
+    ]
+  },
+  "gxss_check": {
+    "required": [
+      "urls"
+    ],
+    "params": [
+      "timeout",
+      "urls"
+    ]
+  },
+  "dnsx_resolve": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "record_type",
+      "target",
+      "timeout",
+      "wordlist"
+    ]
+  },
+  "hakrawler_crawl": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "depth",
+      "plain",
+      "scope",
+      "target",
+      "timeout"
+    ]
+  },
+  "capability_list": {
     "required": [],
     "params": []
   },
-  "subfinder_scan": {
+  "capability_sources": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability",
+      "online"
+    ]
+  },
+  "recon_fuse": {
     "required": [
       "domain"
     ],
     "params": [
+      "capability",
       "domain",
-      "silent"
+      "online"
     ]
   },
-  "tool_capabilities": {
+  "kb_recall": {
+    "required": [
+      "query"
+    ],
+    "params": [
+      "limit",
+      "query",
+      "target",
+      "types"
+    ]
+  },
+  "kb_lint": {
+    "required": [],
+    "params": []
+  },
+  "kb_promote": {
+    "required": [
+      "page",
+      "to_stage"
+    ],
+    "params": [
+      "evidence_count",
+      "page",
+      "scope_ok",
+      "sources",
+      "to_stage"
+    ]
+  },
+  "kb_rebuild_index": {
+    "required": [],
+    "params": []
+  },
+  "asset_lookup": {
+    "required": [
+      "asset"
+    ],
+    "params": [
+      "asset"
+    ]
+  },
+  "graph_neighbors": {
+    "required": [
+      "page"
+    ],
+    "params": [
+      "page"
+    ]
+  },
+  "graph_path": {
+    "required": [
+      "source_page",
+      "target_page"
+    ],
+    "params": [
+      "source_page",
+      "target_page"
+    ]
+  },
+  "discover_patterns": {
     "required": [],
     "params": [
-      "category"
+      "min_support"
     ]
+  },
+  "discover_chains": {
+    "required": [],
+    "params": [
+      "min_support"
+    ]
+  },
+  "confirm_candidate": {
+    "required": [
+      "candidate_id",
+      "candidate_type"
+    ],
+    "params": [
+      "candidate_id",
+      "candidate_type"
+    ]
+  },
+  "record_outcome": {
+    "required": [
+      "candidate_id",
+      "candidate_type",
+      "outcome"
+    ],
+    "params": [
+      "candidate_id",
+      "candidate_type",
+      "outcome"
+    ]
+  },
+  "source_scores": {
+    "required": [],
+    "params": [
+      "source_id"
+    ]
+  },
+  "rank_opportunities": {
+    "required": [],
+    "params": [
+      "limit"
+    ]
+  },
+  "prioritization_report": {
+    "required": [],
+    "params": []
+  },
+  "select_sources": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability",
+      "limit",
+      "online"
+    ]
+  },
+  "recon_plan": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "online",
+      "prior_findings",
+      "target",
+      "target_type"
+    ]
+  },
+  "record_verification": {
+    "required": [
+      "method",
+      "outcome",
+      "vuln_class"
+    ],
+    "params": [
+      "dedup_key",
+      "evidence_strength",
+      "evidence_type",
+      "method",
+      "outcome",
+      "source_ids",
+      "vuln_class"
+    ]
+  },
+  "verification_stats": {
+    "required": [],
+    "params": []
   },
   "verification_playbook": {
     "required": [
@@ -495,26 +404,65 @@
       "vuln_class"
     ]
   },
-  "verification_stats": {
+  "tool_capabilities": {
+    "required": [],
+    "params": [
+      "category"
+    ]
+  },
+  "capability_catalog": {
+    "required": [],
+    "params": [
+      "category"
+    ]
+  },
+  "capability_coverage": {
     "required": [],
     "params": []
   },
-  "wafw00f_detect": {
+  "rank_tools": {
     "required": [
-      "target"
+      "capability"
     ],
     "params": [
-      "target"
+      "capability",
+      "limit"
     ]
   },
-  "whatweb_detect": {
+  "select_tool": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability"
+    ]
+  },
+  "agent_catalog": {
+    "required": [],
+    "params": []
+  },
+  "agent_plan": {
     "required": [
       "target"
     ],
     "params": [
-      "aggression",
-      "target"
+      "prior_findings",
+      "target",
+      "target_type"
     ]
+  },
+  "agent_route": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "target",
+      "target_type"
+    ]
+  },
+  "agent_coverage": {
+    "required": [],
+    "params": []
   },
   "workflow_create": {
     "required": [
@@ -526,18 +474,104 @@
       "target_type"
     ]
   },
-  "workflow_history": {
-    "required": [],
-    "params": [
-      "workflow_id"
-    ]
-  },
   "workflow_status": {
     "required": [
       "workflow_id"
     ],
     "params": [
       "workflow_id"
+    ]
+  },
+  "workflow_history": {
+    "required": [],
+    "params": [
+      "workflow_id"
+    ]
+  },
+  "runtime_summary": {
+    "required": [],
+    "params": []
+  },
+  "governance_summary": {
+    "required": [],
+    "params": []
+  },
+  "drift_report": {
+    "required": [],
+    "params": []
+  },
+  "knowledge_health": {
+    "required": [],
+    "params": []
+  },
+  "stale_entities": {
+    "required": [],
+    "params": []
+  },
+  "duplicate_patterns": {
+    "required": [],
+    "params": []
+  },
+  "contradiction_report": {
+    "required": [],
+    "params": []
+  },
+  "adapter_catalog": {
+    "required": [],
+    "params": [
+      "capability",
+      "category"
+    ]
+  },
+  "adapter_coverage": {
+    "required": [],
+    "params": []
+  },
+  "adapter_health": {
+    "required": [],
+    "params": [
+      "adapter_id"
+    ]
+  },
+  "adapter_summary": {
+    "required": [],
+    "params": []
+  },
+  "adapter_select": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability",
+      "limit"
+    ]
+  },
+  "runtime_analytics": {
+    "required": [],
+    "params": []
+  },
+  "ingest_report": {
+    "required": [],
+    "params": [
+      "path",
+      "source_url",
+      "target",
+      "text",
+      "title"
+    ]
+  },
+  "report_lookup": {
+    "required": [
+      "slug"
+    ],
+    "params": [
+      "slug"
+    ]
+  },
+  "list_reports": {
+    "required": [],
+    "params": [
+      "min_learning_score"
     ]
   }
 }

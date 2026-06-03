@@ -1044,6 +1044,13 @@ try:
         GovernanceIntelligence,
         KnowledgeQualityAnalyzer,
     )
+    from hydra.adapters.adapter_registry import AdapterRegistry
+    from hydra.adapters.intelligence import (
+        AdapterIntelligence,
+        CapabilityExerciseAnalyzer,
+        RuntimeAnalytics,
+    )
+    from hydra.adapters.selection import AdapterSelector
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -1810,6 +1817,111 @@ def contradiction_report() -> str:
         return g
     contradictions = GovernanceIntelligence().contradiction_report()
     return json.dumps({"contradictions": contradictions, "count": len(contradictions)}, indent=2)
+
+
+# ── Phase K — Adapter Framework & Sandboxed Tool Integrations (read-only, advisory) ──
+
+@mcp.tool()
+def adapter_catalog(capability: str = "", category: str = "") -> str:
+    """List synthesized adapter definitions (Phase K, read-only, no execution).
+
+    Adapters are derived deterministically from the capability catalog (one per
+    capability×tool). Each carries an execution_profile (safe profiles only),
+    timeouts, I/O schemas, and offline/validation/simulation support flags.
+
+    Args:
+        capability: optional — only adapters for this capability_id
+        category:   optional — only adapters in this category
+    """
+    if (g := _kb_guard()):
+        return g
+    reg = AdapterRegistry().load()
+    if capability:
+        adapters = reg.adapters_for_capability(capability)
+    elif category:
+        adapters = reg.adapters_for_category(category)
+    else:
+        adapters = reg.all_adapters()
+    return json.dumps({"count": len(adapters), "supported_profiles": reg.supported_profiles(),
+                       "adapters": [a.to_dict() for a in adapters]}, indent=2)
+
+
+@mcp.tool()
+def adapter_coverage() -> str:
+    """Adapter + capability-exercise coverage (Phase K, read-only).
+
+    Reports adapter coverage over the capability catalog (by category/profile) plus
+    capability EXERCISE metrics (declared/owned/has-adapter/exercised/verified) — the
+    governance blind spot identified in Phase J."""
+    if (g := _kb_guard()):
+        return g
+    reg = AdapterRegistry().load()
+    exercise = CapabilityExerciseAnalyzer(registry=reg).report().to_dict()
+    return json.dumps({"adapter_coverage": reg.adapter_coverage(),
+                       "capability_exercise": exercise}, indent=2)
+
+
+@mcp.tool()
+def adapter_health(adapter_id: str = "") -> str:
+    """Adapter tool-health metrics (Phase K, read-only, derived/rebuildable).
+
+    With an adapter_id: that adapter's health. Without: healthiest + weakest adapters,
+    failures and timeouts. Metrics (reliability/runtime/success/failure/timeout) are
+    pure functions of the event log under data/tool_health.db.
+
+    Args:
+        adapter_id: optional — "<capability_id>::<tool>" (e.g. "port_scanning::nmap")
+    """
+    if (g := _kb_guard()):
+        return g
+    from hydra.adapters.tool_health import ToolHealthStore
+    if adapter_id:
+        return json.dumps(ToolHealthStore().health(adapter_id).to_dict(), indent=2)
+    ai = AdapterIntelligence(AdapterRegistry().load())
+    return json.dumps({
+        "healthiest": ai.healthiest_adapters(), "weakest": ai.weakest_adapters(),
+        "failures": ai.adapter_failures(), "timeouts": ai.adapter_timeouts(),
+    }, indent=2)
+
+
+@mcp.tool()
+def adapter_summary() -> str:
+    """Adapter ecosystem summary (Phase K, read-only): totals, utilization, mean
+    reliability, and execution/validation/simulation/success/failure/timeout counts."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(AdapterIntelligence(AdapterRegistry().load()).adapter_summary(), indent=2)
+
+
+@mcp.tool()
+def adapter_select(capability: str, limit: int = 5) -> str:
+    """Rank a capability's adapters by learning (Phase K, advisory, no execution).
+
+    Combines source-learning effectiveness (recency-decayed), tool-health reliability,
+    verification success, trust, an anti-monopoly exploration bonus, and the capability
+    prior. Deterministic; ADVISORY — selects, never executes.
+
+    Args:
+        capability: capability_id whose adapters to rank
+        limit: max adapters to return (default 5)
+    """
+    if (g := _kb_guard()):
+        return g
+    try:
+        ranked = AdapterSelector(AdapterRegistry().load()).rank(capability, limit=max(1, limit))
+    except KeyError as e:
+        return json.dumps({"success": False, "error": str(e)})
+    return json.dumps({"capability": capability, "count": len(ranked),
+                       "ranked_adapters": [s.to_dict() for s in ranked]}, indent=2)
+
+
+@mcp.tool()
+def runtime_analytics() -> str:
+    """Adapter runtime analytics (Phase K, read-only): utilization, average runtime,
+    timeout distribution, per-category coverage, and execution-profile distribution."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(RuntimeAnalytics(AdapterRegistry().load()).report(), indent=2)
 
 
 @mcp.tool()

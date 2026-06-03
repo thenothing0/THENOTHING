@@ -1,0 +1,56 @@
+# Adapter Catalog (Phase K) — declarative config that drives DETERMINISTIC adapter synthesis.
+#
+# Adapters are SYNTHESIZED from the capability catalog (one per capability×tool pair); this
+# file supplies the execution profile rules, timeouts, and I/O schema templates per category,
+# plus optional per-adapter overrides. This is MODELING + ORCHESTRATION config only — NOTHING
+# here executes a tool, exploits a target, or mutates the wiki. Only SAFE profiles are allowed;
+# any unsupported (offensive) profile is rejected at load time.
+
+profiles:
+  safe: [offline, passive, validation, simulation]
+  unsupported: [exploitation, persistence, destructive, weaponized]
+
+# Per-category defaults applied to every synthesized adapter in that category.
+# input_schema / output_schema are field→type templates (declarative; not executed).
+category_defaults:
+  reconnaissance:
+    timeout_seconds: 120
+    input_schema: {target: str, scope: list}
+    output_schema: {assets: list, count: int}
+  web:
+    timeout_seconds: 180
+    input_schema: {url: str, params: list}
+    output_schema: {findings: list, count: int}
+  api:
+    timeout_seconds: 180
+    input_schema: {base_url: str, spec: str}
+    output_schema: {endpoints: list, findings: list}
+  cloud:
+    timeout_seconds: 150
+    input_schema: {target: str, provider: str}
+    output_schema: {assets: list, exposures: list}
+  source_code:
+    timeout_seconds: 200
+    input_schema: {repo: str, ref: str}
+    output_schema: {matches: list, secrets: list}
+  secrets:
+    timeout_seconds: 120
+    input_schema: {target: str}
+    output_schema: {secrets: list, count: int}
+  mobile:
+    timeout_seconds: 240
+    input_schema: {artifact: str}
+    output_schema: {findings: list, endpoints: list}
+  infrastructure:
+    timeout_seconds: 150
+    input_schema: {target: str}
+    output_schema: {services: list, exposures: list}
+  verification:
+    timeout_seconds: 90
+    input_schema: {target: str, finding: str, evidence: list}
+    output_schema: {verified: bool, evidence: list, confidence: float}
+
+# Optional per-adapter overrides, keyed by adapter_id "<capability_id>::<tool>".
+# An execution_profile override MUST be one of profiles.safe (else load fails).
+# Example: { "port_scanning::nmap": { execution_profile: validation, timeout_seconds: 300 } }
+overrides: {}
