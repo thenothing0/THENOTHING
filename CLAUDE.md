@@ -255,6 +255,31 @@ promotion.py/confidence.py and canonical wiki behavior untouched. Plugin usage l
 - `ownership_conflicts` — Agent ownership conflicts and gaps
 - `ecosystem_summary` — Full ecosystem intelligence + marketplace recommendations (missing plugins, weak areas, gaps)
 
+### Federated Knowledge Exchange & Intelligence Mesh (Phase N — derived, advisory, metadata-only)
+A fully derived, offline-first federation layer (`hydra/federation/`) that lets multiple Hydra
+instances exchange ANONYMIZED, AGGREGATED intelligence digests — capability effectiveness,
+source-category trends, verification intelligence, plugin/ecosystem metadata — WITHOUT ever
+sharing canonical wiki content, evidence, findings, targets, source identities, or secrets. An
+append-only ledger (`data/federation.db`, WAL, rebuildable, disposable, idempotent exchange ids)
+records peer announcements + imported/exported digests; every write is guarded by a
+metadata-only `assert_safe()` that rejects raw knowledge (so federation exchanges metadata only).
+A `FederationRegistry` tracks trusted peers (deterministic ids, semantic-version compatibility,
+derived trust/health — never credentials); an `IntelligenceMesh` folds imported digests into
+ecosystem-wide trends (O(E), grouped aggregation, no O(N²)); a `ConsensusEngine` and
+`FederationMarketplace` are ADVISORY ONLY. NO peer execution, NO federation-driven promotion or
+confidence adjustment, NO wiki mutation; promotion.py / confidence.py untouched. All deterministic
+and rebuild-identical.
+- `federation_peers` — Trusted peers: advertised version/protocol, capability/adapter counts, derived trust/health, semver compatibility (metadata only)
+- `federation_summary` — Federation ledger at-a-glance: event counts by type, distinct peers, imported/exported digest counts
+- `export_digest` — Generate this node's anonymized, deterministic knowledge digest (capability/source/verification/plugin digests; metadata only)
+- `import_digest` — Import a peer's digest into the derived ledger (metadata-only guarded, idempotent; never canonical, never promotion/confidence)
+- `capability_trends` — Federation-wide capability popularity & effectiveness (adopting peers, total exercise, mean effectiveness)
+- `verification_trends` — Federation-wide method / evidence-class success-rate trends
+- `source_trends` — Federation-wide source-CATEGORY trends (effectiveness/trust/novelty; no source identities)
+- `federation_consensus` — Advisory consensus confidence / disagreement / diversity / federation confidence (one capability or full report)
+- `ecosystem_opportunities` — Advisory marketplace: capabilities popular elsewhere but missing locally, popular plugins, underrepresented categories
+- `federation_health` — Federation-wide health: contributing peers, ecosystem/verification effectiveness, registry trust + mean federation confidence
+
 ## CLI workflows
 
 ```bash

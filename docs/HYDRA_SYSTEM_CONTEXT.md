@@ -1,0 +1,433 @@
+# HYDRA — System Context (Permanent Architecture Memory)
+
+> Authoritative architecture memory for the Hydra Offensive Knowledge OS.
+> Maintained by the Architecture Steward. Updated automatically after every phase.
+> If this file and code disagree, the **code + wiki + CLAUDE.md** win — reconcile here.
+
+---
+
+## Project Overview
+
+| Field | Value |
+|-------|-------|
+| Current Phase | **Phase N — Federated Knowledge Exchange & Intelligence Mesh** (finalized & released) |
+| Latest Commit | Phase N finalization commit on branch `phase-n-federation` (see `git log`) |
+| Latest Tag | `phase-n-federation` |
+| Active Branch | `phase-n-federation` |
+| Last Updated | 2026-06-05 (Phase N finalization & release) |
+
+> ✅ **Release note:** Phase N (`hydra/federation/` + tests + 10 MCP tools) finalized on branch
+> `phase-n-federation` and tagged `phase-n-federation`. Pre-existing unrelated `wiki/` edits were
+> intentionally **excluded** from the Phase-N commit. MCP count **102**; 476 tests pass.
+
+---
+
+## Architecture Lineage
+
+Build order is **locked A → N**. Every phase is derived/advisory unless noted; none mutate
+`promotion.py`, `confidence.py`, or the canonical wiki schema behavior.
+
+### Phase A — Offensive Knowledge OS Foundations
+- **Purpose:** Capability-first recon + machine-operable wiki as the single canonical store.
+- **Components:** CapabilityRegistry, WikiStore, recon-fusion (Two-Signal confidence), graph index, `promotion.py`, `confidence.py`, safety/test harness.
+- **Learning stores:** — · **Runtime stores:** — · **Governance:** —
+- **MCP Δ:** +10 (`capability_list`, `capability_sources`, `recon_fuse`, `kb_recall`, `kb_lint`, `kb_promote`, `kb_rebuild_index`, `asset_lookup`, `graph_neighbors`, `graph_path`)
+- **Benchmarks:** offline recon fusion; index rebuild from canonical wiki.
+- **Tests:** `tests/knowledge/*`, `tests/capabilities/test_registry.py`, `tests/recon_fusion/*`.
+- **Invariants:** Wiki canonical; promotion/confidence introduced here and frozen thereafter.
+
+### Phase B — Report Intelligence
+- **Purpose:** Distill disclosed reports/writeups into reusable, scored attacker knowledge.
+- **Components:** ReportIntelligencePipeline; only `report`+`intel` pages; `unresolved_references` (never auto-created links); deterministic 1–10 learning score.
+- **MCP Δ:** +3 (`ingest_report`, `report_lookup`, `list_reports`)
+- **Tests:** `tests/knowledge/test_report_intel.py`, `test_learning_score.py`.
+- **Invariants:** No findings/patterns/chains created; LLM-free deterministic scoring.
+
+### Phase C — Pattern & Chain Discovery (propose-only)
+- **Purpose:** Cross-document synthesis → `pattern`/`chain` candidates.
+- **Components:** PatternDiscovery, ChainDiscovery, evidence weighting (validated > report-intel; hypotheses never count), `confirm_candidate` as the only write path.
+- **MCP Δ:** +3 (`discover_patterns`, `discover_chains`, `confirm_candidate`)
+- **Tests:** `tests/knowledge/test_discovery.py`, `test_signatures.py`.
+- **Invariants:** Discovery is dry-run; canonical pages only via explicit confirm.
+
+### Phase C.5 — Scalability Hardening
+- **Purpose:** Remove O(F²) ChainDiscovery; rebuild amplification fixes.
+- **Components:** Bounded chain discovery; canonical signatures from structured fields only (Fix F-1).
+- **MCP Δ:** 0 · **Tests:** `tests/knowledge/test_scalability.py`.
+- **Invariants:** Determinism preserved; complexity reduced to O(E).
+
+### Phase D — Source Performance Learning & Opportunity Ranking
+- **Purpose:** Event-sourced learning to prioritize without touching canonical state.
+- **Components:** SourceLearningStore, OpportunityScorer, prioritization report.
+- **Learning stores:** `source_learning.db`, `source_metrics.db`
+- **MCP Δ:** +4 (`record_outcome`, `source_scores`, `rank_opportunities`, `prioritization_report`)
+- **Tests:** `tests/capabilities/test_source_learning.py`, `test_source_metrics.py`, `test_opportunity.py`.
+- **Invariants:** Learning derived/rebuildable; never touches wiki/promotion/confidence bands.
+
+### Phase D.1 — Learning Hardening (F-D1…F-D5)
+- **Purpose:** Robustness of derived scores (no dead-zones, stable cold-start).
+- **MCP Δ:** 0 · **Tests:** `tests/knowledge/test_learning_hardening.py`.
+- **Invariants:** Pure functions of the event log; idempotent.
+
+### Phase E — Adaptive Recon & Autonomous Source Selection
+- **Purpose:** Use Phase-D learning to advise recon planning.
+- **Components:** AdaptiveSourceSelector, ReconPlanner.
+- **MCP Δ:** +2 (`select_sources`, `recon_plan`)
+- **Tests:** `tests/capabilities/test_source_selection.py`.
+- **Invariants:** Advisory; recommends, never executes/confirms/writes.
+
+### Phase F — Verification Learning & Validation Intelligence
+- **Purpose:** Learn how findings get validated; advisory verification playbooks.
+- **Components:** VerificationLearningStore, ValidationIntelligence, PlaybookGenerator, ToolCapabilityRegistry.
+- **Learning stores:** `verification_learning.db`
+- **MCP Δ:** +4 (`record_verification`, `verification_stats`, `verification_playbook`, `tool_capabilities`)
+- **Tests:** `tests/knowledge/test_verification.py`.
+- **Invariants:** Never auto-confirms/auto-exploits; WAL, idempotent.
+
+### Phase G — Capability Expansion & Tool Orchestration
+- **Purpose:** Capability-centric catalog v2 (87 caps / 9 categories) + learning tool selector.
+- **Components:** CapabilityCatalog, CapabilityCoverage, ToolSelector.
+- **MCP Δ:** +4 (`capability_catalog`, `capability_coverage`, `rank_tools`, `select_tool`)
+- **Tests:** `tests/capabilities/test_tool_orchestration.py`.
+- **Invariants:** Capability modeling only; no integrations; read-only.
+
+### Phase H — Multi-Agent Orchestration
+- **Purpose:** Declarative agents over the capability layer; deterministic routing.
+- **Components:** AgentRegistry (6 agents), AgentPlanner; Target→Agent→Capability→Tool.
+- **MCP Δ:** +4 (`agent_catalog`, `agent_plan`, `agent_route`, `agent_coverage`)
+- **Tests:** `tests/agents/*`.
+- **Invariants:** Agents never execute/confirm/write; advisory.
+
+### Phase I — Execution Runtime & Workflow Engine
+- **Purpose:** Deterministic workflow STATE coordination (no execution). Adds `mobile_agent` → 87/87 owned.
+- **Components:** RuntimeEngine, WorkflowStore.
+- **Runtime stores:** `workflows.db`
+- **MCP Δ:** +4 (`workflow_create`, `workflow_status`, `workflow_history`, `runtime_summary`)
+- **Tests:** `tests/runtime/*`, `tests/workflows/*`.
+- **Invariants:** Executes no tools; materializes nothing canonical.
+
+### Phase J — Knowledge Governance, Drift & QA
+- **Purpose:** Derived health/freshness/consistency evaluation.
+- **Components:** DriftDetector, KnowledgeQualityAnalyzer, GovernanceIntelligence.
+- **Governance stores:** `knowledge_governance.db`
+- **MCP Δ:** +6 (`governance_summary`, `drift_report`, `knowledge_health`, `stale_entities`, `duplicate_patterns`, `contradiction_report`)
+- **Tests:** `tests/knowledge/test_governance.py`.
+- **Invariants:** Read-only; writes nothing canonical.
+
+### Phase K — Adapter Framework & Sandboxed Tool Integrations
+- **Purpose:** Capability×tool adapter definitions (175 core) + sandboxed runtime + tool-health learning.
+- **Components:** AdapterRegistry, ToolHealthStore, AdapterIntelligence, CapabilityExerciseAnalyzer, RuntimeAnalytics, AdapterSelector.
+- **Learning stores:** `tool_health.db`
+- **MCP Δ:** +6 (`adapter_catalog`, `adapter_coverage`, `adapter_health`, `adapter_summary`, `adapter_select`, `runtime_analytics`)
+- **Benchmarks:** 175 adapters / 87 caps; SAFE profiles only (offline/passive/validation/simulation).
+- **Tests:** `tests/adapters/*`.
+- **Invariants:** No offensive execution; unsupported profiles rejected at load.
+
+### Phase L — Autonomous Knowledge Simulation & Decision Intelligence
+- **Purpose:** Predict workflow/plan/strategy outcomes from historical learning before execution.
+- **Components:** SimulationContext (load-once O(E)), WorkflowSimulator, StrategyComparator, OutcomePredictor, CapabilityImpactAnalyzer, PredictionAnalytics, AgentSimulation, WorkflowOptimizationAdvisor.
+- **Learning stores:** `decision_learning.db`
+- **MCP Δ:** +8 (`simulate_workflow`, `simulate_strategy`, `predict_outcome`, `capability_impact`, `prediction_accuracy`, `agent_effectiveness`, `workflow_optimization`, `decision_health`)
+- **Tests:** `tests/intelligence/*`.
+- **Invariants:** Advisory; Phase-J gains a `decision_intelligence` block; no execution/promotion/confidence.
+
+### Phase M — Capability Marketplace & Plugin Ecosystem
+- **Purpose:** Declarative plugins extend capabilities/adapters/agents without core code change. core(87)+plugins(66) = **153 effective**, **439 adapters**.
+- **Components:** PluginRegistry, EffectiveCapabilityCatalog, CapabilityDependencyGraph, AgentOwnershipResolver, EcosystemAnalyzer, CapabilityMarketplace, PluginHealthStore.
+- **Learning stores:** `plugin_health.db`
+- **MCP Δ:** +12 (`plugin_catalog`, `plugin_summary`, `plugin_health`, `plugin_dependencies`, `plugin_capabilities`, `plugin_coverage`, `capability_graph`, `dependency_paths`, `critical_capabilities`, `agent_ownership`, `ownership_conflicts`, `ecosystem_summary`)
+- **Benchmarks:** 6 reference packs (cloud/mobile/container/iot/supply_chain/osint); acyclic dependency graph; O(C) incremental loading.
+- **Tests:** `tests/plugins/*` (18).
+- **Invariants:** Globally-unique capability ids; no plugin execution; promotion/confidence untouched.
+
+### Phase N — Federated Knowledge Exchange & Intelligence Mesh
+- **Purpose:** Exchange anonymized, aggregated intelligence digests between Hydra instances — metadata only.
+- **Components:** `hydra/federation/`: `safety.py` (metadata-only guard), KnowledgeExchangeStore, FederationRegistry/PeerRecord, KnowledgeDigestGenerator (+4 digest types), IntelligenceMesh, ConsensusEngine, FederationMarketplace.
+- **Federation stores:** `federation.db` (WAL, append-only, idempotent, rebuildable)
+- **MCP Δ:** +10 (`federation_peers`, `federation_summary`, `export_digest`, `import_digest`, `capability_trends`, `verification_trends`, `source_trends`, `federation_consensus`, `ecosystem_opportunities`, `federation_health`)
+- **Benchmarks:** read cost flat **~1.6–2.0 µs/event** across 2k→40k events ⇒ **O(E) confirmed**; rebuild-identical digests.
+- **Tests:** `tests/federation/test_federation.py` (19) + `tests/mcp/test_federation_tools.py` (7) = **26**.
+- **Invariants:** Metadata-only (`assert_safe` on export+import); no wiki/evidence/finding/target/source/secret exchange; advisory; promotion/confidence untouched.
+
+### Current Phase
+**N (implemented, uncommitted).** Next: **Phase O** (see Roadmap) — design pending approval.
+
+---
+
+## Architecture Invariants (Registry)
+
+### Canonical Knowledge
+- Wiki is the **only** canonical source of truth.
+- No second canonical source.
+- No dual-write.
+
+### Protected Core
+- `hydra/knowledge/promotion.py` immutable (last changed Phase A, `9bfec0c`).
+- `hydra/knowledge/confidence.py` immutable (last changed Phase A, `9bfec0c`).
+
+### Discovery Rules
+- Discovery is propose-only.
+- No autonomous confirmation.
+- No autonomous promotion.
+
+### Execution Rules
+- No autonomous exploitation.
+- No offensive execution.
+- No hidden execution paths. (Adapters permit only SAFE profiles: offline/passive/validation/simulation.)
+
+### Learning Rules
+- Learning is derived.
+- Learning is disposable.
+- Learning is rebuildable (pure function of event logs).
+
+### System Rules
+- Offline-first.
+- Deterministic (injected clocks; sorted outputs).
+- Rebuild-identical.
+- Advisory-only decision systems.
+- MCP backward compatibility (contract baseline + CLAUDE.md doc-sync enforced in CI).
+
+### Federation Rules
+- Metadata-only exchange.
+- No knowledge leakage.
+- No evidence exchange.
+- No target exchange.
+- No source disclosure (`source_id` is an exact-forbidden key).
+- No secret sharing.
+
+---
+
+## System Inventory
+
+### Core
+| Item | Count |
+|------|-------|
+| Capabilities (core) | 87 |
+| Capabilities (effective: core + plugins) | 153 |
+| Adapters (core) | 175 |
+| Adapters (effective) | 439 |
+| Agents | 7 (recon, attack_surface, cloud, verification, mobile, correlation, reporting) |
+| Plugins (reference packs) | 6 (cloud, mobile, container, iot, supply_chain, osint) |
+| MCP Tools (live registry) | 102 |
+
+### Stores (by layer — v2 taxonomy)
+| Class | Stores |
+|-------|--------|
+| Learning | `source_learning.db`, `source_metrics.db`, `verification_learning.db`, `tool_health.db`, `plugin_health.db` |
+| Intelligence | `decision_learning.db` (simulation / forecasting / strategy) |
+| Runtime | `workflows.db` |
+| Governance | `knowledge_governance.db` |
+| Federation | `federation.db` |
+| Canonical Index | `knowledge_index.db` (derived graph index, rebuildable from wiki) |
+
+### Coverage Snapshot (live, 2026-06-05)
+| Dimension | Value |
+|-----------|-------|
+| Effective capability ownership | **153 / 153** owned · 0 gaps · 0 conflicts |
+| Agent workflow coverage (core) | **87 / 87** (100%) · 0 uncovered categories |
+| Adapter ownership | 87 / 87 core have adapters; **439** effective adapters |
+| Plugin contribution | +66 capabilities · +264 adapters |
+| Verification-capable capabilities | **50 / 153** effective (32.7%) |
+| Adapter **exercise** (cold-start) | exercised 2 / 87 (2.3%), verified 0 — reflects near-empty learning stores, not a structural gap |
+
+### Databases (all derived/disposable under `data/`, gitignored)
+1. `knowledge_index.db` — derived graph index (rebuild from canonical wiki)
+2. `source_learning.db` — Phase D source performance learning
+3. `source_metrics.db` — Phase D source run metrics
+4. `verification_learning.db` — Phase F verification learning
+5. `tool_health.db` — Phase K adapter tool-health
+6. `decision_learning.db` — Phase L decision/simulation learning
+7. `plugin_health.db` — Phase M plugin usage learning (on-demand)
+8. `knowledge_governance.db` — Phase J governance snapshots (on-demand)
+9. `workflows.db` — Phase I workflow runtime state
+10. `federation.db` — Phase N federation ledger (on-demand)
+
+---
+
+## Data Flow Map
+
+### Canonical
+- **Wiki** (`wiki/`) — the single source of truth. Pages: target / technique / asset / report / intel / pattern / chain / finding.
+
+### Derived (rebuildable; never canonical)
+- Learning stores (source / verification / tool-health / decision / plugin)
+- Governance store
+- Simulation/decision store
+- Federation ledger
+- Adapter health store
+- Knowledge graph index
+
+### Runtime
+- Workflow runtime (`workflows.db`) — deterministic state, no execution.
+- Runtime analytics (derived from adapter + workflow stores).
+
+```
+                        ┌──────────────────────────┐
+        recon-fusion ──▶│   CANONICAL WIKI (only)  │◀── ingest_report / confirm_candidate
+                        │  promotion.py confidence  │     (explicit, propose-only)
+                        └─────────────┬────────────┘
+                                      │ rebuild (one-way, read)
+                                      ▼
+                        ┌──────────────────────────┐
+                        │   knowledge_index.db     │  (derived graph index)
+                        └─────────────┬────────────┘
+                                      │ read-only
+        ┌─────────────────────────────┼──────────────────────────────┐
+        ▼                             ▼                               ▼
+ LEARNING stores              GOVERNANCE store                 RUNTIME store
+ (source/verif/tool/          (knowledge_governance.db)        (workflows.db)
+  decision/plugin)                    │                               │
+        │                             ▼                               ▼
+        ▼                     governance/drift                  runtime_analytics
+ SIMULATION (decision_learning.db) ──▶ predictions (advisory)
+        │
+        ▼
+ ADAPTERS (tool_health.db) ──▶ adapter intelligence (advisory)
+        │
+        ▼
+ FEDERATION (federation.db) ──▶ digests (metadata-only) ──▶ IntelligenceMesh / Consensus / Marketplace (advisory)
+
+ RULE: every arrow below the wiki is READ-ONLY derived; no arrow writes back to the wiki
+       except the explicit propose-only paths at the top.
+```
+
+---
+
+## Architecture Graph
+
+```
+Capabilities (catalog, 87 core / 153 effective)
+   ├── owned by ──▶ Agents (7)            [Phase H/I, deterministic routing]
+   ├── realized by ──▶ Adapters (175/439) [Phase K, SAFE profiles only]
+   │                       └── health ──▶ Adapter Intelligence (advisory)
+   ├── extended by ──▶ Plugins (6 packs)  [Phase M, declarative]
+   │                       └── dependency graph (acyclic) + ownership
+   ├── planned by ──▶ Runtime Engine (workflows.db) [Phase I, state only]
+   ├── predicted by ──▶ Simulation (decision_learning.db) [Phase L, advisory]
+   ├── evaluated by ──▶ Governance (knowledge_governance.db) [Phase J, read-only]
+   └── shared by ──▶ Federation (federation.db) [Phase N, metadata-only]
+                          ├── Registry (peers, trust/health)
+                          ├── IntelligenceMesh (trends, O(E))
+                          ├── ConsensusEngine (advisory)
+                          └── Marketplace (advisory discovery)
+
+All derived subsystems read the canonical wiki/index; none write it.
+```
+
+---
+
+## Performance History
+
+| Phase | Capabilities | Adapters | Agents | MCP (cum.) | New store | Scaling characteristic |
+|-------|-------------|----------|--------|-----------|-----------|------------------------|
+| A | 87 | — | — | 10 | index | recon fusion; index rebuild |
+| B | 87 | — | — | 13 | — | deterministic scoring |
+| C | 87 | — | — | 16 | — | propose-only synthesis |
+| C.5 | 87 | — | — | 16 | — | **removed O(F²)** → O(E) |
+| D / D.1 | 87 | — | — | 20 | source_learning, source_metrics | O(E) event-sourced |
+| E | 87 | — | — | 22 | — | O(caps×sources) |
+| F | 87 | — | — | 26 | verification_learning | O(E), WAL |
+| G | 87 | — | — | 30 | — | read-only catalog |
+| H | 87 | — | 6 | 34 | — | deterministic routing |
+| I | 87 | — | 7 | 38 | workflows | O(steps) state |
+| J | 87 | — | 7 | 44 | knowledge_governance | O(pages+events) |
+| K | 87 | 175 | 7 | 50 | tool_health | O(E) health |
+| L | 87 | 175 | 7 | 58 | decision_learning | O(E) load-once |
+| M | 153 | 439 | 7 | 70 | plugin_health | O(C) incremental |
+| N | 153 | 439 | 7 | **102**¹ | federation | **O(E), ~2µs/event reads** |
+
+¹ Live registry total includes ~22 legacy operational tools (subfinder/httpx/nuclei/sqlmap/…) +
+base tools (save_finding/get_findings/generate_report/full_recon/check_tools) alongside the
+80 Knowledge-OS phase tools (A–N).
+
+---
+
+## Open Risks
+
+### Architectural Debt
+- Branch name `phase-c-discovery` and uncommitted Phase N create **process/version drift** (not an architecture violation). Recommend committing Phase N + tagging `phase-n-federation` and renaming the branch.
+- No root `INDEX.md` (the spec's STEP-1 input). Only `wiki/index.md` (wiki catalog) and `docs/adr/` exist.
+
+### Scaling Risks
+- IntelligenceMesh/Consensus re-materialize the imported-digest log per public method (constant multiplier, still O(E)); at very large ledgers a single shared load-once context (à la Phase-L `SimulationContext`) would cut the constant.
+- Federation read latency is O(E) but absolute cost grows with total events; periodic snapshot compaction may be wanted beyond ~10⁶ events.
+
+### Performance Risks
+- Multiple independent SQLite stores each open their own connections; no shared pool. Fine offline, but many-store fan-out per MCP call adds fixed overhead.
+
+### Coverage Gaps
+- Temporal evolution of knowledge/scores is **not** tracked (no time-series layer) — governance sees "stale" but not trend trajectories.
+- No unified cross-store query/correlation layer; callers wire stores individually.
+
+### Future Bottlenecks
+- `SimulationContext`-style single-load pattern not yet applied to federation.
+- Plugin dependency graph is acyclic-validated but not yet versioned across federation peers.
+
+### Dependency Concerns
+- `mcp_server.py` is a single large module importing every phase; import-time failure is guarded (`_kb_guard`) but the file is a growing coupling point.
+
+---
+
+## Future Roadmap (Phase O → Phase Z)
+
+> Updated automatically after every completed phase. All future phases inherit every invariant
+> A–N: derived, deterministic, offline-first, advisory-only, rebuildable, canonical-wiki-centered.
+
+### Phase O — Temporal Knowledge Intelligence & Evolution Tracking *(next; design pending)*
+- **Goal:** Derived, event-sourced time-series over existing stores: how capability effectiveness, source trust, verification success, and knowledge health evolve; advisory trend/forecast & regression detection.
+- **Dependencies:** D/F/J/K/L learning stores; governance.
+- **Expected MCP impact:** +~6 (e.g. `knowledge_timeline`, `trend_report`, `effectiveness_history`, `regression_alerts`, `forecast_metric`, `temporal_health`).
+- **Expected performance impact:** O(E) event scan, grouped by time-bucket; load-once context.
+- **Risks:** time-bucket nondeterminism (mitigate with injected `now` + fixed bucketing).
+- **Invariants affected:** none broken; new `temporal.db` derived store.
+
+### Phase P — Unified Intelligence & Cross-Store Correlation Layer
+- **Goal:** Single read-only advisory query/correlation API over all derived stores (one load-once context).
+- **Dependencies:** all derived stores. **MCP:** +~4. **Perf:** O(E), shared context. **Risks:** read amplification. **Invariants:** read-only.
+
+### Phase Q — Federated Trust Graph & Reputation Hardening
+- **Goal:** Multi-peer trust propagation, Sybil-resistance heuristics, reputation decay (advisory).
+- **Dependencies:** N. **MCP:** +~4. **Perf:** O(E). **Risks:** trust gaming (advisory-only mitigates). **Invariants:** metadata-only preserved.
+
+### Phase R — Reporting & Deliverable Synthesis Intelligence
+- **Goal:** Advisory assembly of report drafts from canonical wiki + intel (no new canonical source).
+- **Dependencies:** A/B. **MCP:** +~3. **Perf:** O(pages). **Risks:** hallucinated claims (cite-only). **Invariants:** read-only over wiki.
+
+### Phase S — Knowledge Compaction & Snapshotting
+- **Goal:** Deterministic event-log compaction/snapshots for all derived stores at scale.
+- **Dependencies:** all stores. **MCP:** +~2. **Perf:** turns O(E) reads into O(snapshot+Δ). **Risks:** snapshot/replay divergence (rebuild-identical tests). **Invariants:** rebuildable preserved.
+
+### Phase T — Multi-Tenant Scope & Isolation
+- **Goal:** Per-program/tenant isolation of derived stores + scope-aware federation.
+- **MCP:** +~3. **Perf:** O(E) per tenant. **Risks:** cross-tenant leakage (hard isolation). **Invariants:** scope discipline.
+
+### Phase U — Observability & Audit Intelligence
+- **Goal:** Derived audit/replay analytics over the immutable chain-of-thought log.
+- **MCP:** +~3. **Perf:** O(events). **Invariants:** read-only.
+
+### Phase V — Capability Confidence Calibration (advisory)
+- **Goal:** Calibrate advisory predictions vs. outcomes (Brier/calibration), never altering canonical confidence bands.
+- **MCP:** +~2. **Invariants:** `confidence.py` untouched.
+
+### Phase W — Federated Simulation Exchange
+- **Goal:** Exchange anonymized simulation/prediction-accuracy digests (metadata-only).
+- **Dependencies:** L, N. **MCP:** +~3. **Invariants:** federation rules.
+
+### Phase X — Adaptive Roadmap & Self-Planning Intelligence
+- **Goal:** Advisory recommendation of the next capability/plugin/agent investments from all learning.
+- **MCP:** +~2. **Invariants:** advisory.
+
+### Phase Y — Cross-Ecosystem Interop & Schema Federation
+- **Goal:** Versioned schema negotiation across federation protocol versions.
+- **Dependencies:** N, W. **MCP:** +~2. **Invariants:** backward-compatible contracts.
+
+### Phase Z — Architecture Self-Audit & Invariant Enforcement Engine
+- **Goal:** Automated, continuous invariant verification (promotion/confidence immutability, no dual-write, determinism, federation-safety) as a first-class subsystem + steward automation.
+- **Dependencies:** all. **MCP:** +~3. **Invariants:** enforces the entire registry.
+
+---
+
+## Maintenance Protocol
+After any future phase completes, automatically update: **INDEX.md** (if/when created), **this file**,
+and **CLAUDE.md** — with architecture changes, MCP count, capability/adapter counts, benchmarks,
+tests, risks, and the roadmap. No manual reminder required.

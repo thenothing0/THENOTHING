@@ -1,79 +1,245 @@
 {
-  "subfinder_scan": {
-    "required": [
-      "domain"
-    ],
+  "adapter_catalog": {
     "params": [
-      "domain",
-      "silent"
+      "capability",
+      "category"
+    ],
+    "required": []
+  },
+  "adapter_coverage": {
+    "params": [],
+    "required": []
+  },
+  "adapter_health": {
+    "params": [
+      "adapter_id"
+    ],
+    "required": []
+  },
+  "adapter_select": {
+    "params": [
+      "capability",
+      "limit"
+    ],
+    "required": [
+      "capability"
+    ]
+  },
+  "adapter_summary": {
+    "params": [],
+    "required": []
+  },
+  "agent_catalog": {
+    "params": [],
+    "required": []
+  },
+  "agent_coverage": {
+    "params": [],
+    "required": []
+  },
+  "agent_effectiveness": {
+    "params": [],
+    "required": []
+  },
+  "agent_ownership": {
+    "params": [],
+    "required": []
+  },
+  "agent_plan": {
+    "params": [
+      "prior_findings",
+      "target",
+      "target_type"
+    ],
+    "required": [
+      "target"
+    ]
+  },
+  "agent_route": {
+    "params": [
+      "target",
+      "target_type"
+    ],
+    "required": [
+      "target"
     ]
   },
   "amass_enum": {
-    "required": [
-      "domain"
-    ],
     "params": [
       "domain",
       "passive"
-    ]
-  },
-  "httpx_probe": {
-    "required": [
-      "targets"
     ],
-    "params": [
-      "follow_redirects",
-      "status_code",
-      "targets",
-      "tech_detect",
-      "title"
-    ]
-  },
-  "katana_crawl": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "depth",
-      "js_crawl",
-      "target"
-    ]
-  },
-  "gau_urls": {
     "required": [
       "domain"
-    ],
-    "params": [
-      "domain"
     ]
   },
-  "nuclei_scan": {
-    "required": [
-      "target"
-    ],
+  "asset_lookup": {
     "params": [
-      "rate_limit",
-      "severity",
-      "tags",
+      "asset"
+    ],
+    "required": [
+      "asset"
+    ]
+  },
+  "capability_catalog": {
+    "params": [
+      "category"
+    ],
+    "required": []
+  },
+  "capability_coverage": {
+    "params": [],
+    "required": []
+  },
+  "capability_graph": {
+    "params": [],
+    "required": []
+  },
+  "capability_impact": {
+    "params": [
+      "capability"
+    ],
+    "required": []
+  },
+  "capability_list": {
+    "params": [],
+    "required": []
+  },
+  "capability_sources": {
+    "params": [
+      "capability",
+      "online"
+    ],
+    "required": [
+      "capability"
+    ]
+  },
+  "capability_trends": {
+    "params": [],
+    "required": []
+  },
+  "check_tools": {
+    "params": [],
+    "required": []
+  },
+  "confirm_candidate": {
+    "params": [
+      "candidate_id",
+      "candidate_type"
+    ],
+    "required": [
+      "candidate_id",
+      "candidate_type"
+    ]
+  },
+  "contradiction_report": {
+    "params": [],
+    "required": []
+  },
+  "critical_capabilities": {
+    "params": [],
+    "required": []
+  },
+  "dalfox_scan": {
+    "params": [
+      "blind",
+      "pipe_mode",
       "target",
-      "templates"
-    ]
-  },
-  "nuclei_scan_list": {
-    "required": [
-      "targets"
+      "timeout"
     ],
-    "params": [
-      "rate_limit",
-      "severity",
-      "tags",
-      "targets"
+    "required": [
+      "target"
     ]
   },
-  "ffuf_fuzz": {
+  "decision_health": {
+    "params": [],
+    "required": []
+  },
+  "dependency_paths": {
+    "params": [
+      "source",
+      "target"
+    ],
     "required": [
+      "source",
+      "target"
+    ]
+  },
+  "dirsearch_scan": {
+    "params": [
+      "extensions",
+      "threads",
       "url"
     ],
+    "required": [
+      "url"
+    ]
+  },
+  "discover_chains": {
+    "params": [
+      "min_support"
+    ],
+    "required": []
+  },
+  "discover_patterns": {
+    "params": [
+      "min_support"
+    ],
+    "required": []
+  },
+  "dnsx_resolve": {
+    "params": [
+      "record_type",
+      "target",
+      "timeout",
+      "wordlist"
+    ],
+    "required": [
+      "target"
+    ]
+  },
+  "drift_report": {
+    "params": [],
+    "required": []
+  },
+  "duplicate_patterns": {
+    "params": [],
+    "required": []
+  },
+  "ecosystem_opportunities": {
+    "params": [],
+    "required": []
+  },
+  "ecosystem_summary": {
+    "params": [],
+    "required": []
+  },
+  "export_digest": {
+    "params": [
+      "node_name",
+      "record"
+    ],
+    "required": []
+  },
+  "federation_consensus": {
+    "params": [
+      "capability_id"
+    ],
+    "required": []
+  },
+  "federation_health": {
+    "params": [],
+    "required": []
+  },
+  "federation_peers": {
+    "params": [],
+    "required": []
+  },
+  "federation_summary": {
+    "params": [],
+    "required": []
+  },
+  "ffuf_fuzz": {
     "params": [
       "fuzz_mode",
       "headers",
@@ -81,307 +247,302 @@
       "method",
       "url",
       "wordlist"
-    ]
-  },
-  "dirsearch_scan": {
+    ],
     "required": [
       "url"
-    ],
-    "params": [
-      "extensions",
-      "threads",
-      "url"
-    ]
-  },
-  "whatweb_detect": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "aggression",
-      "target"
-    ]
-  },
-  "wafw00f_detect": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "target"
-    ]
-  },
-  "nmap_scan": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "ports",
-      "scan_type",
-      "scripts",
-      "target"
     ]
   },
   "full_recon": {
-    "required": [
+    "params": [
       "domain"
     ],
-    "params": [
+    "required": [
       "domain"
     ]
   },
-  "check_tools": {
-    "required": [],
-    "params": []
-  },
-  "save_finding": {
-    "required": [
-      "description",
-      "severity",
-      "target",
-      "title"
+  "gau_urls": {
+    "params": [
+      "domain"
     ],
-    "params": [
-      "description",
-      "evidence",
-      "finding_type",
-      "severity",
-      "target",
-      "title"
-    ]
-  },
-  "get_findings": {
-    "required": [],
-    "params": [
-      "limit",
-      "severity"
+    "required": [
+      "domain"
     ]
   },
   "generate_report": {
-    "required": [
-      "findings_json",
-      "target"
-    ],
     "params": [
       "findings_json",
       "report_format",
       "target"
+    ],
+    "required": [
+      "findings_json",
+      "target"
     ]
   },
-  "sqlmap_scan": {
-    "required": [
-      "target"
-    ],
+  "get_findings": {
     "params": [
-      "batch",
-      "level",
-      "risk",
-      "tamper",
-      "target",
-      "technique",
-      "timeout"
+      "limit",
+      "severity"
+    ],
+    "required": []
+  },
+  "governance_summary": {
+    "params": [],
+    "required": []
+  },
+  "graph_neighbors": {
+    "params": [
+      "page"
+    ],
+    "required": [
+      "page"
     ]
   },
-  "dalfox_scan": {
-    "required": [
-      "target"
-    ],
+  "graph_path": {
     "params": [
-      "blind",
-      "pipe_mode",
-      "target",
-      "timeout"
+      "source_page",
+      "target_page"
+    ],
+    "required": [
+      "source_page",
+      "target_page"
     ]
   },
   "gxss_check": {
-    "required": [
-      "urls"
-    ],
     "params": [
       "timeout",
       "urls"
-    ]
-  },
-  "dnsx_resolve": {
-    "required": [
-      "target"
     ],
-    "params": [
-      "record_type",
-      "target",
-      "timeout",
-      "wordlist"
+    "required": [
+      "urls"
     ]
   },
   "hakrawler_crawl": {
-    "required": [
-      "target"
-    ],
     "params": [
       "depth",
       "plain",
       "scope",
       "target",
       "timeout"
+    ],
+    "required": [
+      "target"
     ]
   },
-  "capability_list": {
-    "required": [],
-    "params": []
-  },
-  "capability_sources": {
-    "required": [
-      "capability"
-    ],
+  "httpx_probe": {
     "params": [
-      "capability",
-      "online"
+      "follow_redirects",
+      "status_code",
+      "targets",
+      "tech_detect",
+      "title"
+    ],
+    "required": [
+      "targets"
     ]
   },
-  "recon_fuse": {
-    "required": [
-      "domain"
-    ],
+  "import_digest": {
     "params": [
-      "capability",
-      "domain",
-      "online"
+      "digest_json",
+      "peer_id"
+    ],
+    "required": [
+      "digest_json"
     ]
   },
-  "kb_recall": {
-    "required": [
-      "query"
-    ],
+  "ingest_report": {
     "params": [
-      "limit",
-      "query",
+      "path",
+      "source_url",
       "target",
-      "types"
+      "text",
+      "title"
+    ],
+    "required": []
+  },
+  "katana_crawl": {
+    "params": [
+      "depth",
+      "js_crawl",
+      "target"
+    ],
+    "required": [
+      "target"
     ]
   },
   "kb_lint": {
-    "required": [],
-    "params": []
+    "params": [],
+    "required": []
   },
   "kb_promote": {
-    "required": [
-      "page",
-      "to_stage"
-    ],
     "params": [
       "evidence_count",
       "page",
       "scope_ok",
       "sources",
       "to_stage"
+    ],
+    "required": [
+      "page",
+      "to_stage"
     ]
   },
   "kb_rebuild_index": {
-    "required": [],
-    "params": []
+    "params": [],
+    "required": []
   },
-  "asset_lookup": {
-    "required": [
-      "asset"
+  "kb_recall": {
+    "params": [
+      "limit",
+      "query",
+      "target",
+      "types"
     ],
-    "params": [
-      "asset"
-    ]
-  },
-  "graph_neighbors": {
     "required": [
-      "page"
-    ],
-    "params": [
-      "page"
+      "query"
     ]
   },
-  "graph_path": {
+  "knowledge_health": {
+    "params": [],
+    "required": []
+  },
+  "list_reports": {
+    "params": [
+      "min_learning_score"
+    ],
+    "required": []
+  },
+  "nmap_scan": {
+    "params": [
+      "ports",
+      "scan_type",
+      "scripts",
+      "target"
+    ],
     "required": [
-      "source_page",
-      "target_page"
+      "target"
+    ]
+  },
+  "nuclei_scan": {
+    "params": [
+      "rate_limit",
+      "severity",
+      "tags",
+      "target",
+      "templates"
     ],
-    "params": [
-      "source_page",
-      "target_page"
-    ]
-  },
-  "discover_patterns": {
-    "required": [],
-    "params": [
-      "min_support"
-    ]
-  },
-  "discover_chains": {
-    "required": [],
-    "params": [
-      "min_support"
-    ]
-  },
-  "confirm_candidate": {
     "required": [
-      "candidate_id",
-      "candidate_type"
-    ],
-    "params": [
-      "candidate_id",
-      "candidate_type"
+      "target"
     ]
   },
-  "record_outcome": {
+  "nuclei_scan_list": {
+    "params": [
+      "rate_limit",
+      "severity",
+      "tags",
+      "targets"
+    ],
     "required": [
-      "candidate_id",
-      "candidate_type",
-      "outcome"
+      "targets"
+    ]
+  },
+  "ownership_conflicts": {
+    "params": [],
+    "required": []
+  },
+  "plugin_capabilities": {
+    "params": [
+      "plugin_id"
     ],
-    "params": [
-      "candidate_id",
-      "candidate_type",
-      "outcome"
-    ]
+    "required": []
   },
-  "source_scores": {
-    "required": [],
-    "params": [
-      "source_id"
-    ]
+  "plugin_catalog": {
+    "params": [],
+    "required": []
   },
-  "rank_opportunities": {
-    "required": [],
+  "plugin_coverage": {
+    "params": [],
+    "required": []
+  },
+  "plugin_dependencies": {
     "params": [
-      "limit"
-    ]
+      "plugin_id"
+    ],
+    "required": []
+  },
+  "plugin_health": {
+    "params": [],
+    "required": []
+  },
+  "plugin_summary": {
+    "params": [],
+    "required": []
+  },
+  "predict_outcome": {
+    "params": [
+      "target",
+      "target_type",
+      "workflow_id"
+    ],
+    "required": []
+  },
+  "prediction_accuracy": {
+    "params": [],
+    "required": []
   },
   "prioritization_report": {
-    "required": [],
-    "params": []
+    "params": [],
+    "required": []
   },
-  "select_sources": {
-    "required": [
-      "capability"
+  "rank_opportunities": {
+    "params": [
+      "limit"
     ],
+    "required": []
+  },
+  "rank_tools": {
     "params": [
       "capability",
-      "limit",
+      "limit"
+    ],
+    "required": [
+      "capability"
+    ]
+  },
+  "recon_fuse": {
+    "params": [
+      "capability",
+      "domain",
       "online"
+    ],
+    "required": [
+      "domain"
     ]
   },
   "recon_plan": {
-    "required": [
-      "target"
-    ],
     "params": [
       "online",
       "prior_findings",
       "target",
       "target_type"
+    ],
+    "required": [
+      "target"
+    ]
+  },
+  "record_outcome": {
+    "params": [
+      "candidate_id",
+      "candidate_type",
+      "outcome"
+    ],
+    "required": [
+      "candidate_id",
+      "candidate_type",
+      "outcome"
     ]
   },
   "record_verification": {
-    "required": [
-      "method",
-      "outcome",
-      "vuln_class"
-    ],
     "params": [
       "dedup_key",
       "evidence_strength",
@@ -390,294 +551,183 @@
       "outcome",
       "source_ids",
       "vuln_class"
-    ]
-  },
-  "verification_stats": {
-    "required": [],
-    "params": []
-  },
-  "verification_playbook": {
+    ],
     "required": [
+      "method",
+      "outcome",
       "vuln_class"
-    ],
-    "params": [
-      "vuln_class"
-    ]
-  },
-  "tool_capabilities": {
-    "required": [],
-    "params": [
-      "category"
-    ]
-  },
-  "capability_catalog": {
-    "required": [],
-    "params": [
-      "category"
-    ]
-  },
-  "capability_coverage": {
-    "required": [],
-    "params": []
-  },
-  "rank_tools": {
-    "required": [
-      "capability"
-    ],
-    "params": [
-      "capability",
-      "limit"
-    ]
-  },
-  "select_tool": {
-    "required": [
-      "capability"
-    ],
-    "params": [
-      "capability"
-    ]
-  },
-  "agent_catalog": {
-    "required": [],
-    "params": []
-  },
-  "agent_plan": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "prior_findings",
-      "target",
-      "target_type"
-    ]
-  },
-  "agent_route": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "target",
-      "target_type"
-    ]
-  },
-  "agent_coverage": {
-    "required": [],
-    "params": []
-  },
-  "workflow_create": {
-    "required": [
-      "target"
-    ],
-    "params": [
-      "prior_findings",
-      "target",
-      "target_type"
-    ]
-  },
-  "workflow_status": {
-    "required": [
-      "workflow_id"
-    ],
-    "params": [
-      "workflow_id"
-    ]
-  },
-  "workflow_history": {
-    "required": [],
-    "params": [
-      "workflow_id"
-    ]
-  },
-  "runtime_summary": {
-    "required": [],
-    "params": []
-  },
-  "governance_summary": {
-    "required": [],
-    "params": []
-  },
-  "drift_report": {
-    "required": [],
-    "params": []
-  },
-  "knowledge_health": {
-    "required": [],
-    "params": []
-  },
-  "stale_entities": {
-    "required": [],
-    "params": []
-  },
-  "duplicate_patterns": {
-    "required": [],
-    "params": []
-  },
-  "contradiction_report": {
-    "required": [],
-    "params": []
-  },
-  "adapter_catalog": {
-    "required": [],
-    "params": [
-      "capability",
-      "category"
-    ]
-  },
-  "adapter_coverage": {
-    "required": [],
-    "params": []
-  },
-  "adapter_health": {
-    "required": [],
-    "params": [
-      "adapter_id"
-    ]
-  },
-  "adapter_summary": {
-    "required": [],
-    "params": []
-  },
-  "adapter_select": {
-    "required": [
-      "capability"
-    ],
-    "params": [
-      "capability",
-      "limit"
-    ]
-  },
-  "runtime_analytics": {
-    "required": [],
-    "params": []
-  },
-  "simulate_workflow": {
-    "required": [],
-    "params": [
-      "target",
-      "target_type",
-      "workflow_id"
-    ]
-  },
-  "simulate_strategy": {
-    "required": [],
-    "params": [
-      "target_type"
-    ]
-  },
-  "predict_outcome": {
-    "required": [],
-    "params": [
-      "target",
-      "target_type",
-      "workflow_id"
-    ]
-  },
-  "capability_impact": {
-    "required": [],
-    "params": [
-      "capability"
-    ]
-  },
-  "prediction_accuracy": {
-    "required": [],
-    "params": []
-  },
-  "agent_effectiveness": {
-    "required": [],
-    "params": []
-  },
-  "workflow_optimization": {
-    "required": [],
-    "params": [
-      "target",
-      "target_type",
-      "workflow_id"
-    ]
-  },
-  "decision_health": {
-    "required": [],
-    "params": []
-  },
-  "plugin_catalog": {
-    "required": [],
-    "params": []
-  },
-  "plugin_summary": {
-    "required": [],
-    "params": []
-  },
-  "plugin_health": {
-    "required": [],
-    "params": []
-  },
-  "plugin_dependencies": {
-    "required": [],
-    "params": [
-      "plugin_id"
-    ]
-  },
-  "plugin_capabilities": {
-    "required": [],
-    "params": [
-      "plugin_id"
-    ]
-  },
-  "plugin_coverage": {
-    "required": [],
-    "params": []
-  },
-  "capability_graph": {
-    "required": [],
-    "params": []
-  },
-  "dependency_paths": {
-    "required": [
-      "source",
-      "target"
-    ],
-    "params": [
-      "source",
-      "target"
-    ]
-  },
-  "critical_capabilities": {
-    "required": [],
-    "params": []
-  },
-  "agent_ownership": {
-    "required": [],
-    "params": []
-  },
-  "ownership_conflicts": {
-    "required": [],
-    "params": []
-  },
-  "ecosystem_summary": {
-    "required": [],
-    "params": []
-  },
-  "ingest_report": {
-    "required": [],
-    "params": [
-      "path",
-      "source_url",
-      "target",
-      "text",
-      "title"
     ]
   },
   "report_lookup": {
-    "required": [
+    "params": [
       "slug"
     ],
-    "params": [
+    "required": [
       "slug"
     ]
   },
-  "list_reports": {
-    "required": [],
+  "runtime_analytics": {
+    "params": [],
+    "required": []
+  },
+  "runtime_summary": {
+    "params": [],
+    "required": []
+  },
+  "save_finding": {
     "params": [
-      "min_learning_score"
+      "description",
+      "evidence",
+      "finding_type",
+      "severity",
+      "target",
+      "title"
+    ],
+    "required": [
+      "description",
+      "severity",
+      "target",
+      "title"
+    ]
+  },
+  "select_sources": {
+    "params": [
+      "capability",
+      "limit",
+      "online"
+    ],
+    "required": [
+      "capability"
+    ]
+  },
+  "select_tool": {
+    "params": [
+      "capability"
+    ],
+    "required": [
+      "capability"
+    ]
+  },
+  "simulate_strategy": {
+    "params": [
+      "target_type"
+    ],
+    "required": []
+  },
+  "simulate_workflow": {
+    "params": [
+      "target",
+      "target_type",
+      "workflow_id"
+    ],
+    "required": []
+  },
+  "source_scores": {
+    "params": [
+      "source_id"
+    ],
+    "required": []
+  },
+  "source_trends": {
+    "params": [],
+    "required": []
+  },
+  "sqlmap_scan": {
+    "params": [
+      "batch",
+      "level",
+      "risk",
+      "tamper",
+      "target",
+      "technique",
+      "timeout"
+    ],
+    "required": [
+      "target"
+    ]
+  },
+  "stale_entities": {
+    "params": [],
+    "required": []
+  },
+  "subfinder_scan": {
+    "params": [
+      "domain",
+      "silent"
+    ],
+    "required": [
+      "domain"
+    ]
+  },
+  "tool_capabilities": {
+    "params": [
+      "category"
+    ],
+    "required": []
+  },
+  "verification_playbook": {
+    "params": [
+      "vuln_class"
+    ],
+    "required": [
+      "vuln_class"
+    ]
+  },
+  "verification_stats": {
+    "params": [],
+    "required": []
+  },
+  "verification_trends": {
+    "params": [],
+    "required": []
+  },
+  "wafw00f_detect": {
+    "params": [
+      "target"
+    ],
+    "required": [
+      "target"
+    ]
+  },
+  "whatweb_detect": {
+    "params": [
+      "aggression",
+      "target"
+    ],
+    "required": [
+      "target"
+    ]
+  },
+  "workflow_create": {
+    "params": [
+      "prior_findings",
+      "target",
+      "target_type"
+    ],
+    "required": [
+      "target"
+    ]
+  },
+  "workflow_history": {
+    "params": [
+      "workflow_id"
+    ],
+    "required": []
+  },
+  "workflow_optimization": {
+    "params": [
+      "target",
+      "target_type",
+      "workflow_id"
+    ],
+    "required": []
+  },
+  "workflow_status": {
+    "params": [
+      "workflow_id"
+    ],
+    "required": [
+      "workflow_id"
     ]
   }
 }

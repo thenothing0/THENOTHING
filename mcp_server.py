@@ -1070,6 +1070,13 @@ try:
     from hydra.plugins.ownership import AgentOwnershipResolver
     from hydra.plugins.plugin_catalog import EffectiveCapabilityCatalog
     from hydra.plugins.plugin_registry import PluginRegistry as _PluginRegistry
+    from hydra.federation.consensus import ConsensusEngine as _ConsensusEngine
+    from hydra.federation.digest import KnowledgeDigestGenerator as _DigestGenerator
+    from hydra.federation.intelligence import IntelligenceMesh as _IntelligenceMesh
+    from hydra.federation.marketplace import FederationMarketplace as _FederationMarketplace
+    from hydra.federation.registry import FederationRegistry as _FederationRegistry
+    from hydra.federation.safety import FederationSafetyError as _FederationSafetyError
+    from hydra.federation.store import KnowledgeExchangeStore as _ExchangeStore
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -2231,6 +2238,159 @@ def ecosystem_summary() -> str:
     ad = AdapterRegistry(catalog=eff).load()
     return json.dumps({"ecosystem": EcosystemAnalyzer(reg, eff, ad).report(),
                        "marketplace": CapabilityMarketplace(reg, eff, ad).recommend()}, indent=2)
+
+
+# ── Phase N — Federated Knowledge Exchange & Intelligence Mesh ──────────────────
+# All ten tools are read-only/deterministic/advisory and exchange AGGREGATED METADATA
+# ONLY. They never share wiki pages, evidence, findings, targets, source identities or
+# secrets; never execute peers; and never touch promotion.py / confidence.py / the wiki.
+# The derived federation ledger lives in data/federation.db (WAL, rebuildable, disposable).
+
+@mcp.tool()
+def federation_peers() -> str:
+    """List trusted peer Hydra instances (Phase N, read-only, advisory).
+
+    Federation metadata only — peer name, advertised version/protocol, capability &
+    adapter counts, categories, plus DERIVED trust score, health and semantic-version
+    compatibility. No credentials or secrets are ever stored."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_FederationRegistry().summary(), indent=2)
+
+
+@mcp.tool()
+def federation_summary() -> str:
+    """Federation ledger at-a-glance (Phase N, read-only): event counts by type, distinct
+    peers, imported/exported digest counts. Pure function of the append-only data/federation.db."""
+    if (g := _kb_guard()):
+        return g
+    store = _ExchangeStore()
+    return json.dumps({**store.summary(),
+                       "registry": _FederationRegistry(store).summary()["total_peers"]}, indent=2)
+
+
+@mcp.tool()
+def export_digest(node_name: str = "local", record: bool = False) -> str:
+    """Generate this node's anonymized, exchangeable knowledge digest (Phase N, read-only).
+
+    Bundles Capability / Source / Verification / Plugin digests — AGGREGATE METADATA ONLY
+    (capability ids and abstract category/method labels + derived scores). Deterministic
+    (generated_at fixed) so it is rebuild-identical. No raw knowledge ever leaves the node.
+
+    Args:
+        node_name: local node identity used to derive the anonymous origin_peer_id
+        record: if True, also append a (derived) digest_export event to data/federation.db
+    """
+    if (g := _kb_guard()):
+        return g
+    digest = _DigestGenerator(node_name=node_name).generate(now=0.0)
+    if record:
+        _ExchangeStore().record("digest_export", digest, peer_id=digest["origin_peer_id"])
+    return json.dumps({"success": True, "digest": digest}, indent=2)
+
+
+@mcp.tool()
+def import_digest(digest_json: str, peer_id: str = "") -> str:
+    """Import a peer's knowledge digest into the derived federation ledger (Phase N).
+
+    The payload is validated to be aggregated metadata only (raw knowledge is rejected) and
+    appended idempotently to data/federation.db — NEVER to the canonical wiki, and never
+    influencing promotion or confidence. Re-importing an identical digest is a no-op.
+
+    Args:
+        digest_json: the peer's digest envelope as a JSON string (from their export_digest)
+        peer_id: optional peer id to attribute the import to (else taken from the envelope)
+    """
+    if (g := _kb_guard()):
+        return g
+    try:
+        digest = json.loads(digest_json)
+    except (ValueError, TypeError) as e:
+        return json.dumps({"success": False, "error": f"invalid digest JSON: {e}"})
+    if not isinstance(digest, dict):
+        return json.dumps({"success": False, "error": "digest must be a JSON object"})
+    pid = peer_id or str(digest.get("origin_peer_id", ""))
+    try:
+        inserted = _ExchangeStore().record("digest_import", digest, peer_id=pid)
+    except _FederationSafetyError as e:
+        return json.dumps({"success": False, "error": f"rejected (not metadata-only): {e}"})
+    return json.dumps({"success": True, "imported": inserted,
+                       "deduplicated": not inserted, "peer_id": pid}, indent=2)
+
+
+@mcp.tool()
+def capability_trends() -> str:
+    """Federation-wide capability popularity & effectiveness (Phase N, read-only, advisory):
+    per-capability adopting-peer count, total exercise, and mean effectiveness across peers."""
+    if (g := _kb_guard()):
+        return g
+    mesh = _IntelligenceMesh()
+    return json.dumps({"capabilities": mesh.capability_popularity(),
+                       "ecosystem_effectiveness": mesh.ecosystem_effectiveness()}, indent=2)
+
+
+@mcp.tool()
+def verification_trends() -> str:
+    """Federation-wide verification trends (Phase N, read-only, advisory): mean method and
+    evidence-class success rates aggregated across all imported digests."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_IntelligenceMesh().verification_trends(), indent=2)
+
+
+@mcp.tool()
+def source_trends() -> str:
+    """Federation-wide source-CATEGORY trends (Phase N, read-only, advisory): mean
+    effectiveness/trust/novelty per source category. No source identities are exchanged."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps({"source_categories": _IntelligenceMesh().source_category_trends()}, indent=2)
+
+
+@mcp.tool()
+def federation_consensus(capability_id: str = "") -> str:
+    """Advisory federation consensus (Phase N, read-only): consensus confidence, disagreement,
+    diversity and blended federation confidence — for one capability or the whole federation.
+
+    ADVISORY ONLY — never influences promotion, confidence bands, or wiki state.
+
+    Args:
+        capability_id: optional — score just this capability; omit for the full report
+    """
+    if (g := _kb_guard()):
+        return g
+    ce = _ConsensusEngine()
+    if capability_id:
+        return json.dumps(ce.capability_consensus(capability_id), indent=2)
+    return json.dumps(ce.consensus_report(), indent=2)
+
+
+@mcp.tool()
+def ecosystem_opportunities() -> str:
+    """Advisory federation marketplace (Phase N, read-only): capabilities popular elsewhere
+    but missing locally, widely-adopted plugins, underrepresented categories + recommendations.
+    Discovery only — nothing is installed, executed, or written."""
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_FederationMarketplace().ecosystem_opportunities(), indent=2)
+
+
+@mcp.tool()
+def federation_health() -> str:
+    """Federation-wide health (Phase N, read-only, advisory): contributing peers, imported
+    digests, ecosystem effectiveness, verification effectiveness, registry trust + consensus."""
+    if (g := _kb_guard()):
+        return g
+    store = _ExchangeStore()
+    mesh = _IntelligenceMesh(store)
+    reg = _FederationRegistry(store)
+    consensus = _ConsensusEngine(store).consensus_report(top=5)
+    return json.dumps({
+        "mesh": mesh.federation_health(),
+        "registry": {k: v for k, v in reg.summary().items() if k != "peers"},
+        "mean_federation_confidence": consensus["mean_federation_confidence"],
+        "advisory": True,
+    }, indent=2)
 
 
 @mcp.tool()
