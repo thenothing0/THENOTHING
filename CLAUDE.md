@@ -280,6 +280,27 @@ and rebuild-identical.
 - `ecosystem_opportunities` — Advisory marketplace: capabilities popular elsewhere but missing locally, popular plugins, underrepresented categories
 - `federation_health` — Federation-wide health: contributing peers, ecosystem/verification effectiveness, registry trust + mean federation confidence
 
+### Temporal Knowledge Intelligence (Phase O — derived, advisory, deterministic)
+A fully derived, offline-first temporal layer (`hydra/temporal_intel/`) that understands how
+Hydra's knowledge EVOLVES over time — trends, momentum, decay, emerging/declining areas, bounded
+forecasts, and temporal anomalies. Built ENTIRELY from the existing derived event logs
+(source/verification/tool-health/plugin-health/decision/federation) via a load-once
+`TemporalContext` (O(E), no repeated scans). A `TemporalStore` (`data/temporal.db`, WAL,
+event-sourced, idempotent, rebuildable) persists observations/snapshots. `TrendAnalyzer`,
+`MomentumAnalyzer`, `TemporalForecastEngine` (moving-average + linear slope, bounded,
+NON-stochastic), `DecayAnalyzer` (advisory `TemporalDecayFinding`s), `TemporalAnomalyDetector`
+(spike/drop/inactivity/concentration), `TemporalAdvisor` (bounded recommendations) and
+`TemporalIntelligence` compose the views. Phase-J `governance_summary` gains a read-only
+`temporal_intelligence` block (lazy import, no cycle). Deterministic (injected `now`),
+rebuild-identical, advisory only; NO execution, NO wiki mutation, promotion.py/confidence.py
+untouched. This is a NEW package — it does not reuse/modify the legacy `hydra/temporal/` subsystem.
+- `temporal_summary` — Overview: temporal-health, strongest/weakest trends, emerging/declining capabilities, decay & anomaly counts, recommendations
+- `temporal_trends` — Rising/stable/declining + momentum per entity (capability/adapter/agent/plugin/source/verification) with slope and bucket series
+- `temporal_forecast` — Deterministic bounded forecasts: capability utilization, verification coverage, source diversity, plugin adoption
+- `temporal_decay` — Stale capabilities/adapters/plugins/verification methods ranked by severity with rationale + suggested action
+- `temporal_anomalies` — Spikes, drops, inactivity and concentration across domains (advisory findings; no alerts)
+- `temporal_health` — 0-100 temporal-health score (rewards rising/active knowledge, penalizes decay + anomalies)
+
 ## CLI workflows
 
 ```bash

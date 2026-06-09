@@ -381,6 +381,16 @@ class GovernanceIntelligence(_GovernanceBase):
             return {"simulation_health": None, "prediction_quality": "unknown",
                     "decision_drift": None, "matched_samples": 0}
 
+    def temporal_intelligence(self) -> Dict:
+        """Phase-O temporal-intelligence health (temporal_health_score / rising vs declining
+        trends / decay / anomalies). Read-only; lazy import keeps governance robust if the
+        layer is absent. Never alters confidence/promotion or the wiki."""
+        try:
+            from hydra.temporal_intel.intelligence import TemporalIntelligence
+            return TemporalIntelligence().temporal_health()
+        except Exception:
+            return {"temporal_health_score": None, "status": "unknown", "total_events": 0}
+
     @staticmethod
     def _rank(components: Dict[str, float]):
         return sorted(components.items(), key=lambda kv: (kv[1], kv[0]))
@@ -410,6 +420,7 @@ class GovernanceIntelligence(_GovernanceBase):
             "graph": {"nodes": graph["nodes"], "orphans": graph["orphan_count"],
                       "components": graph["disconnected_components"], "density": graph["density"]},
             "decision_intelligence": self.decision_intelligence(),
+            "temporal_intelligence": self.temporal_intelligence(),
             "recommendations": LifecycleAdvisor(**self._shared()).recommendations(),
         }
 

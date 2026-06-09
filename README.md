@@ -1,524 +1,372 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/THENOTHING-v7.1-00ff88?style=for-the-badge&labelColor=000000" alt="THENOTHING v7.1"/>
-  <img src="https://img.shields.io/badge/Cognitive_Subsystems-22-blueviolet?style=for-the-badge&labelColor=000000" alt="Subsystems"/>
-  <img src="https://img.shields.io/badge/Security_Tools-22-orange?style=for-the-badge&labelColor=000000" alt="Tools"/>
-  <img src="https://img.shields.io/badge/Attack_Skills-228-red?style=for-the-badge&labelColor=000000" alt="Skills"/>
-  <img src="https://img.shields.io/badge/Researcher_Profiles-10-ff6600?style=for-the-badge&labelColor=000000" alt="Profiles"/>
-  <img src="https://img.shields.io/badge/Kali_Native-🐧-00aaff?style=for-the-badge&labelColor=000000" alt="Kali"/>
+  <img src="https://img.shields.io/badge/HYDRA-Offensive_Knowledge_OS-00ff88?style=for-the-badge&labelColor=000000" alt="HYDRA"/>
+  <img src="https://img.shields.io/badge/Phase-O_·_Temporal_Intelligence-blueviolet?style=for-the-badge&labelColor=000000" alt="Phase O"/>
+  <img src="https://img.shields.io/badge/MCP_Tools-108-orange?style=for-the-badge&labelColor=000000" alt="MCP Tools"/>
+  <img src="https://img.shields.io/badge/Capabilities-153_effective-ff6600?style=for-the-badge&labelColor=000000" alt="Capabilities"/>
+  <img src="https://img.shields.io/badge/Adapters-439-00aaff?style=for-the-badge&labelColor=000000" alt="Adapters"/>
+  <img src="https://img.shields.io/badge/Tests-499_green-brightgreen?style=for-the-badge&labelColor=000000" alt="Tests"/>
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge&labelColor=000000" alt="License"/>
 </p>
 
-<h1 align="center">👁️‍🗨️ THENOTHING</h1>
-<h3 align="center">Cognitive Autonomous Red Team Platform</h3>
+<h1 align="center">👁️‍🗨️ HYDRA — Offensive Knowledge Operating System</h1>
+<h3 align="center">A cognitive, capability-first, <em>advisory</em> red-team knowledge platform</h3>
 
 <p align="center">
-  <b>The most advanced open-source AI-native offensive security research platform.</b><br/>
-  22 cognitive subsystems · 228 attack skills · 10 researcher profiles · Kali-native tool chaining ·<br/>
-  Advanced 403 WAF bypass · GitHub intelligence · Smart research strategy · Multi-agent swarm
-</p>
-
-<p align="center">
-  THENOTHING doesn't just scan — it <b>reasons</b>, <b>simulates</b>, <b>hunts</b>, <b>debates</b>, <b>validates</b>, and <b>learns</b>.<br/>
-  An autonomous cognitive red team that thinks several steps ahead.
+  <b>Deterministic · Offline-first · Rebuild-identical · Canonical-wiki-centered · Federation-safe</b><br/>
+  <sub>THENOTHING v7.1 — Claude Code Mode · Knowledge OS Phases A → O</sub>
 </p>
 
 ---
 
-## 🧠 What is THENOTHING?
+> **HYDRA** turns offensive-security research into a *machine-operable, self-improving knowledge system*.
+> It **reasons before it executes**, **simulates before it interacts**, learns from every outcome, and
+> now — with **Phase O** — understands **how its own knowledge evolves over time**. Every intelligence
+> layer is **derived, deterministic, and advisory**: the canonical wiki, the promotion rules, and the
+> confidence engine are never silently mutated.
+>
+> 📄 A full, comprehensive design document is available as **`HYDRA_Project_Documentation.pdf`**.
 
-THENOTHING is an **autonomous AI-native offensive security research platform** built for elite bug bounty hunters and red team operators. It operates as a cognitive red team — reasoning through a 9-phase loop, chaining Kali Linux tools intelligently, bypassing WAFs systematically, and building exploit chains that connect findings into high-impact attack scenarios.
+## 📑 Table of Contents
 
-**Key differentiators:**
-- 🧠 **Cognitive reasoning** — not a scanner, but a thinking attacker
-- 🐧 **Kali-native** — chains subfinder, nuclei, ffuf, sqlmap, and 18+ tools automatically
-- 🛡️ **403 WAF bypass engine** — systematic path/method/header/encoding bypass testing
-- 🐙 **GitHub intelligence** — hunts leaked keys, credentials, and internal tools
-- 🎯 **Smart strategy** — adapts approach based on target type (API, WordPress, Cloud, K8s)
-- ⚔️ **4-agent debate** — adversarial validation eliminates false positives
-- 📋 **Full explainability** — immutable audit trail for every decision
-
----
-
-## 🆕 What's New in v7.1
-
-| Engine | Description |
-|--------|-------------|
-| 🐧 **Kali Linux Tool Integration** | Full access to all Kali tools with intelligent chaining — automatically selects and sequences the best tools for each target |
-| 🛡️ **Advanced 403 WAF Bypass** | Systematic bypass testing: path manipulation, HTTP method bypass, header injection, host header override, encoding tricks, root-only protection detection |
-| 🐙 **GitHub Intelligence Engine** | Proactively hunts leaked keys, credentials, internal tools, and scripts; discovers new open-source tools to enhance research |
-| 🎯 **Smart Research Strategy** | Adapts methodology based on target type — API, Web App, Cloud, Kubernetes, WordPress, CDN — thinking several steps ahead |
-| 🎯 **Autonomous Bounty Hunter** | Crawls HackerOne/Bugcrowd, scores programs (5-factor analysis), auto-selects targets, launches hunting campaigns |
-| 🎭 **Researcher Profile Engine** | 10 dynamic personas (Stealth, Aggressive, Cloud, API, Business Logic, Exploit Chain, Mobile, Web3, Recon, Balanced) with auto-switching |
-| 📋 **Explainability & Audit Layer** | Immutable chain-of-thought logging, evidence chains, confidence tracking, exportable audit trails (JSON + Markdown) |
-| 🔒 **Ethical Guardrails Engine** | Scope enforcement, blast radius control, absolute safety prohibitions, justification chains for all actions |
-| 🧠 **9-Phase Cognitive Loop** | Observe → Understand → Reason → Simulate → Plan → Execute → Validate → Learn → Replan |
-| 🔮 **Environment Simulator** | Pre-execution attack simulation with WAF/IDS defense modeling, feasibility forecasting, risk/reward scoring |
-| ⚔️ **4-Agent Debate System** | Hypothesis + Skeptic + Validator + Risk agents with weighted scoring — eliminates false positives |
-| 🕵️ **Stealth OPSEC Engine** | 5 stealth modes (Ghost→Aggressive), adaptive WAF/IDS evasion, human-like timing, header rotation |
+- [Project Overview](#-project-overview)
+- [Architecture Highlights](#-architecture-highlights)
+- [Current Phase — O: Temporal Knowledge Intelligence](#-current-phase--o-temporal-knowledge-intelligence)
+- [Key Features](#-key-features)
+- [The Seven Agents](#-the-seven-agents)
+- [MCP Tools (108)](#-mcp-tools-108)
+- [Architecture Invariants](#-architecture-invariants)
+- [System Inventory](#-system-inventory)
+- [Data Flow](#-data-flow)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Project Layout](#-project-layout)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
-## ⚡ Quick Start
+## 🌐 Project Overview
+
+HYDRA is an **Offensive Knowledge Operating System** — a layered, pure-Python platform that an LLM
+operator (via the **Model Context Protocol**) uses to perform high-quality bug-bounty and offensive
+security **research within explicit authorization**.
+
+The system is built bottom-up across **15 locked phases (A → O)**. Each phase adds a *derived,
+advisory* intelligence layer on top of a single **canonical knowledge store** (the wiki). Nothing
+below the wiki ever writes back to it except through explicit, propose-only paths.
+
+| | |
+|---|---|
+| **Current Phase** | **O — Temporal Knowledge Intelligence** |
+| **Capabilities** | 87 core · **153 effective** (with plugins) |
+| **Adapters** | 175 core · **439 effective** |
+| **Agents** | **7** specialized agents |
+| **Plugins** | **6** reference packs |
+| **MCP Tools** | **108** |
+| **Tests** | **499 passing** (6 integration deselected) |
+| **License** | MIT |
+
+---
+
+## 🏗 Architecture Highlights
+
+HYDRA's nine-phase reasoning loop —
+`Observe → Understand → Reason → Simulate → Plan → Execute → Validate → Learn → Replan` —
+sits on top of a stack of **derived, deterministic** subsystems:
+
+```
+                ┌──────────────────────────────────────────┐
+                │   CANONICAL WIKI  (single source of truth) │  ← promotion.py / confidence.py (frozen)
+                └───────────────────┬──────────────────────┘
+                                    │ rebuild (read-only, one-way)
+        ┌──────────────┬────────────┼────────────┬──────────────┬──────────────┐
+        ▼              ▼            ▼            ▼              ▼              ▼
+   LEARNING        GOVERNANCE    RUNTIME    SIMULATION     FEDERATION     TEMPORAL (Phase O)
+   (source,        (health,      (workflow  (forecast,     (metadata-     (trends, decay,
+    verif, tool,    drift, QA)    state)     strategy)      only digests)  momentum, anomaly)
+    plugin)
+```
+
+- **Capability-first** — everything is a *capability* (e.g. `subdomain_discovery`), realized by
+  interchangeable *tools* via *adapters*.
+- **Derived & rebuildable** — every learning/intelligence store is a pure function of an append-only
+  event log; delete it and it rebuilds identically.
+- **Advisory-only** — simulation, governance, federation, and temporal layers *recommend*; they never
+  execute, confirm, promote, or exploit.
+- **Offline-first & deterministic** — given a fixed injected clock, outputs are byte-identical.
+
+---
+
+## 🕒 Current Phase — O: Temporal Knowledge Intelligence
+
+Phase O (package `hydra/temporal_intel/`) makes HYDRA understand **how its knowledge changes over
+time**, built entirely from the existing derived event logs — no new canonical data.
+
+| Capability | What it does |
+|---|---|
+| **Trends** | rising / stable / declining per capability, adapter, agent, plugin, source, verification |
+| **Momentum** | growth/decline momentum + acceleration/deceleration |
+| **Decay** | stale capabilities/adapters/plugins/verification methods, severity-ranked, with suggested actions |
+| **Forecasts** | bounded, **non-stochastic** projections of utilization, verification coverage, source diversity, plugin adoption |
+| **Anomalies** | spikes, drops, inactivity, concentration (advisory findings, no alerts) |
+| **Health** | a 0–100 temporal-health score, surfaced read-only inside governance |
+
+> ⚡ **Performance:** O(E), **9.35 s at 1,000,000 rows (2M derived events)** — under the 10 s target,
+> with a load-once `TemporalContext` and memoized bucketing. Deterministic and rebuild-identical.
+
+---
+
+## ✨ Key Features
+
+- 🧠 **Cognitive reasoning loop** — observe → … → replan, with simulation before execution.
+- 📚 **Machine-operable wiki** — the single canonical knowledge store (targets, techniques, assets, reports, intel, patterns, chains, findings).
+- 🔭 **Recon fusion** — multi-source Asset Intelligence with a Two-Signal confidence rule.
+- 🧩 **Capability + Adapter framework** — 153 capabilities × interchangeable tools = 439 SAFE-profile adapters.
+- 🤖 **Multi-agent orchestration** — 7 agents route `Target → Agent → Capability → Tool`.
+- 🔁 **Self-improving learning** — source/verification/tool/plugin learning stores improve prioritization over time.
+- 🔮 **Decision simulation** — forecast a plan's outcome *before* running it.
+- 🩺 **Governance & drift** — continuous health/freshness/consistency scoring.
+- 🛰 **Federation** — exchange anonymized, **metadata-only** intelligence digests between HYDRA instances.
+- 🕒 **Temporal intelligence** — trends, decay, momentum, forecasts, anomalies (Phase O).
+- 🔒 **Invariant-preserving** — promotion/confidence are immutable; discovery is propose-only; no autonomous exploitation.
+
+---
+
+## 🤖 The Seven Agents
+
+Introduced in **Phase H** (declarative agents) and made executable-as-*state* in **Phase I**
+(runtime), the agents form a deterministic routing layer: a target is routed to the right
+**agent**, which owns a set of capability **categories**, each realized by a learning-selected
+**tool/adapter**. Agents **never execute tools, confirm findings, or write the wiki** — they plan
+and route; the runtime tracks state only.
+
+| Agent | Priority | Owns categories | Responsibility | Expected outputs |
+|---|---|---|---|---|
+| 🛰 **recon_agent** | 10 | reconnaissance, infrastructure | Discover & map the external attack surface — subdomains, DNS, ASN/CIDR, ports, services, tech, TLS. | subdomain, dns_record, ip, asn, open_port, service, technology, host |
+| 🕸 **attack_surface_agent** | 8 | web, api | Enumerate the web/API surface and probe for vulnerability *candidates* (advisory). | endpoint, parameter, url, xss, sqli, ssrf, graphql, vulnerability |
+| ☁️ **cloud_agent** | 7 | cloud, secrets, source_code | Discover cloud assets, leaked secrets, and source-code / dependency exposures. | cloud_bucket, cloud_misconfig, secret, credential, repository, dependency_vuln |
+| ✅ **verification_agent** | 6 | verification | Validate suspected findings using verification playbooks — **never auto-confirms**. | idor, ssrf, auth_bypass, open_redirect, csrf, xss, sqli, takeover |
+| 📱 **mobile_agent** | 6 | mobile | Static-analyze mobile apps (APKs): secret/endpoint extraction, deeplink & cert-pinning checks. *(Added in Phase I — closes capability ownership to 87/87.)* | mobile_finding, secret, credential, endpoint, internal_host, deeplink, cert_pinning |
+| 🔗 **correlation_agent** | 5 | *(cross-cutting)* | Correlate findings + report-intel into **patterns and chains** — propose-only; promotion rules unchanged. | pattern, chain |
+| 📝 **reporting_agent** | 3 | *(cross-cutting)* | Synthesize **confirmed** knowledge into structured bug-bounty reports. | report |
+
+**How they interact with the stack:**
+
+```
+Target ──▶ agent_route ──▶ Agent ──▶ Capability (category-owned) ──▶ Tool (learning-selected)
+                                          │                              │
+                                          ▼                              ▼
+                                   Adapter (SAFE profile)        tool_health learning
+                                          │
+                                          ▼
+                                  Runtime Engine (workflow STATE only — no execution)
+```
+
+Agent quality is observable via `agent_coverage` (orphans/overlaps/bottlenecks) and
+`agent_effectiveness` (Phase-L multi-agent simulation). Ownership of the full effective catalog is
+**153/153 with zero gaps or conflicts**.
+
+---
+
+## 🛠 MCP Tools (108)
+
+All tooling is exposed to the LLM operator through the **`hydra-security`** MCP server
+(`python mcp_server.py`). Highlights by layer:
+
+| Layer (Phase) | Example tools |
+|---|---|
+| **Recon & Surface** | `subfinder_scan`, `httpx_probe`, `katana_crawl`, `gau_urls`, `dnsx_resolve`, `full_recon` |
+| **Vuln / Fuzz** | `nuclei_scan`, `sqlmap_scan`, `dalfox_scan`, `ffuf_fuzz`, `dirsearch_scan` |
+| **Knowledge OS (A–C)** | `recon_fuse`, `kb_recall`, `ingest_report`, `discover_patterns`, `discover_chains`, `confirm_candidate` |
+| **Learning & Ranking (D–F)** | `source_scores`, `rank_opportunities`, `select_sources`, `recon_plan`, `verification_playbook` |
+| **Capabilities & Agents (G–H)** | `capability_catalog`, `rank_tools`, `agent_plan`, `agent_route`, `agent_coverage` |
+| **Runtime & Governance (I–J)** | `workflow_create`, `runtime_summary`, `governance_summary`, `drift_report`, `knowledge_health` |
+| **Adapters & Simulation (K–L)** | `adapter_catalog`, `adapter_select`, `simulate_workflow`, `predict_outcome`, `decision_health` |
+| **Marketplace (M)** | `plugin_catalog`, `capability_graph`, `agent_ownership`, `ecosystem_summary` |
+| **Federation (N)** | `federation_peers`, `export_digest`, `import_digest`, `capability_trends`, `federation_consensus` |
+| **Temporal (O)** | `temporal_summary`, `temporal_trends`, `temporal_forecast`, `temporal_decay`, `temporal_anomalies`, `temporal_health` |
+
+> A committed contract baseline (`tests/mcp/tool_contract_baseline.json`) and a CLAUDE.md doc-sync
+> test guard against tool-registry drift — code and docs cannot diverge silently.
+
+---
+
+## 🔒 Architecture Invariants
+
+These are **enforced and continuously verified**:
+
+- 📖 **Wiki is the single canonical source** — no second canonical source, **no dual-write**.
+- 🧊 **`promotion.py` and `confidence.py` are immutable** (last touched in Phase A).
+- 🔍 **Discovery is propose-only** — no autonomous confirmation or promotion.
+- ♻️ **Learning is derived, disposable, event-sourced, rebuild-identical.**
+- 🌐 **Offline-first & deterministic.**
+- 🧭 **Advisory-only intelligence** — no autonomous exploitation, no offensive execution, no hidden confidence changes.
+- 🧩 **SAFE adapter profiles only** (offline / passive / validation / simulation).
+- 🛰 **Federation exchanges metadata only** — never findings, evidence, targets, sources, or secrets.
+- 🔌 **Plugins are declarative** — no plugin execution.
+- ➕ **MCP is additive & backward-compatible.**
+
+---
+
+## 📦 System Inventory
+
+| Class | Items |
+|---|---|
+| **Core capabilities** | 87 |
+| **Effective capabilities** | 153 (core + 6 plugin packs) |
+| **Adapters** | 175 core · 439 effective |
+| **Agents** | 7 |
+| **Plugins** | cloud, mobile, container, iot, supply_chain, osint |
+| **Learning stores** | `source_learning`, `source_metrics`, `verification_learning`, `tool_health`, `plugin_health` |
+| **Intelligence stores** | `decision_learning`, `temporal` *(Phase O)* |
+| **Runtime store** | `workflows` |
+| **Governance store** | `knowledge_governance` |
+| **Federation store** | `federation` |
+| **Canonical index** | `knowledge_index` (rebuildable from the wiki) |
+
+All `data/*.db` stores are **derived, disposable, gitignored**, and rebuildable from their event logs.
+
+---
+
+## 🔀 Data Flow
+
+```
+recon-fusion ─┐                                   ┌─ ingest_report / confirm_candidate
+              ▼                                   ▼   (explicit, propose-only writers)
+        ┌──────────────────────── CANONICAL WIKI ───────────────────────┐
+        │            promotion.py · confidence.py  (frozen)             │
+        └───────────────────────────────┬──────────────────────────────┘
+                                         │ rebuild (read-only)
+                                         ▼
+                              knowledge_index.db (graph)
+                                         │ read-only
+   ┌───────────────┬───────────────┬─────┴─────────┬───────────────┬───────────────┐
+   ▼               ▼               ▼               ▼               ▼               ▼
+LEARNING       GOVERNANCE       RUNTIME        SIMULATION      FEDERATION       TEMPORAL
+ stores         snapshots        state          forecasts       digests          trends/decay
+   └─ every arrow below the wiki is READ-ONLY derived; nothing writes back to canonical
+```
+
+---
+
+## ⚙️ Installation
+
+> **Requirements:** Python ≥ 3.10 (3.13 recommended), Kali-style tooling optional for live recon.
 
 ```bash
-# Clone and setup (Linux/macOS/Kali)
-git clone https://github.com/thenothing0/THENOTHING.git && cd THENOTHING && ./setup.sh
+# 1) clone
+git clone <your-fork-url> hydra && cd hydra
 
-# Windows (PowerShell)
-git clone https://github.com/thenothing0/THENOTHING.git; cd THENOTHING; .\setup.ps1
+# 2) install
+pip install -r requirements.txt
+pip install -r requirements-dev.txt      # tests, linters
 
-# Docker (production stack)
-docker compose up -d
-
-# Verify tools
-python -m hydra.main --check-tools
+# 3) sanity check
+python -m pytest -q                       # 499 passing (6 integration deselected)
+python mcp_server.py --help               # MCP server entrypoint
 ```
 
-### 🚀 Run Your First Hunt
-
-```bash
-# ── v7.1 Flagship — Autonomous bounty hunting campaign ──
-python -m hydra.main -t example.com -w bounty_hunt
-
-# ── Cognitive autonomous pipeline (9-phase reasoning) ──
-python -m hydra.main -t example.com -w cognitive_auto
-
-# ── Quick recon (5 min) ──
-python -m hydra.main -t example.com -w quick_recon
-
-# ── Full assessment with scope enforcement ──
-python -m hydra.main -t example.com -w full_bounty --scope-url https://hackerone.com/example
-```
-
-All outputs saved to `output/<target>/` → `recon/`, `osint/`, `scans/`, `reports/`, `evidence/`, `attack_graph/`, `audit/`
-
----
-
-## 🏗️ Architecture
-
-```mermaid
-graph TB
-    subgraph IDE["🖥️ Any MCP-Compatible IDE"]
-        CC[Claude Code]
-        CR[Cursor]
-        GM[Gemini]
-        WS[Windsurf]
-        CX[Codex]
-    end
-
-    subgraph MCP["🔌 MCP Protocol Layer (22 tools)"]
-        MTS["Tool Server — 22 security tools"]
-        MBS["Bounty Server — H1 + BC + Intigriti"]
-        MWS["Writeup RAG Server"]
-    end
-
-    subgraph BRAIN["🧠 Cognitive Brain (v7.1)"]
-        CL["9-Phase Cognitive Loop"]
-        WM["World Model Engine"]
-        CR2["Causal Reasoning"]
-        SE["Simulation Engine"]
-        DE["4-Agent Debate System"]
-        HD["Hallucination Defense"]
-    end
-
-    subgraph V71["⚡ v7.1 Specialized Engines"]
-        KL["🐧 Kali Tool Chaining"]
-        WB["🛡️ 403 WAF Bypass Engine"]
-        GI["🐙 GitHub Intelligence"]
-        SS["🎯 Smart Research Strategy"]
-    end
-
-    subgraph SWARM["🐝 Multi-Agent Swarm"]
-        RA[Recon Agent]
-        OA["OSINT Agent"]
-        VR[Vuln Research]
-        EH[Exploit Hypothesis]
-        VA[Validation Agent]
-        RP[Reporting Agent]
-    end
-
-    subgraph AUTO["🤖 Autonomous Layer (v7)"]
-        BH["Bounty Hunter Engine"]
-        RPE["Researcher Profiles (10)"]
-        AT["Audit Trail"]
-        GR["Ethical Guardrails"]
-    end
-
-    subgraph INTEL["📊 Intelligence Layer"]
-        FP["Tech Fingerprinter — 80+ sigs"]
-        IP["Intelligence Packs — 11"]
-        SK["Universal Skills — 228"]
-        PE["Payload Engine — adaptive"]
-        AG["Attack Graph — risk propagation"]
-        JS["JS Intelligence — 15+ patterns"]
-    end
-
-    subgraph STEALTH["🕵️ OPSEC Layer"]
-        ST["Stealth Engine (5 modes)"]
-        DD["Deception Detection"]
-        HE["Human Emulation"]
-    end
-
-    IDE --> MCP
-    MCP --> BRAIN
-    CL --> SE & CR2 & WM & DE
-    BRAIN --> V71
-    V71 --> MCP
-    BRAIN --> SWARM
-    SWARM --> MCP
-    AUTO --> BRAIN
-    INTEL --> BRAIN
-    STEALTH --> SWARM
-    BH --> RPE --> CL
-    HD --> RP
-    AT --> GR
-```
-
----
-
-## 🛡️ Advanced 403 WAF Bypass Engine
-
-When THENOTHING encounters a `403 Forbidden`, it doesn't stop — it systematically tests **7 bypass categories**:
-
-| Category | Techniques | Example |
-|----------|-----------|---------|
-| **Path-based** | Path traversal, dot segments, semicolons | `/%2e/admin`, `/admin/..;/`, `/./admin` |
-| **Method-based** | Alternative HTTP methods | `OPTIONS`, `PUT`, `PATCH`, `TRACE`, `HEAD` |
-| **Header-based** | Forwarding headers, URL overrides | `X-Forwarded-For: 127.0.0.1`, `X-Original-URL: /admin` |
-| **Host header** | Internal host bypass | `Host: localhost`, `Host: 127.0.0.1` |
-| **Encoding** | URL/double/Unicode encoding | `%2fadmin`, `%252fadmin`, Unicode normalization |
-| **Root-only** | Protection scope testing | Test `/` vs `/*` vs `/specific-path` |
-| **CDN/Origin** | Layer inconsistency | Different responses between WAF, CDN, and origin |
-
-Every bypass attempt documents **WAF response vs Backend response** — distinguishing real protection from misconfiguration.
-
----
-
-## 🐙 GitHub Intelligence Engine
-
-Proactive hunting for target-related intelligence on GitHub:
-
-- **20+ secret patterns** — AWS keys, GitHub tokens, Slack webhooks, JWTs, private keys, database URLs, Stripe keys, Firebase config
-- **Endpoint extraction** — API routes, GraphQL endpoints, webhooks from source code
-- **Internal domain discovery** — staging/dev/internal subdomains leaked in repos
-- **Employee correlation** — `employee → repository → secret → infrastructure → attack path`
-- **Tool discovery** — finds new open-source tools relevant to the current target and suggests installation
-
----
-
-## 🔧 Tool Palette (22 MCP Tools)
-
-| Category | Tools |
-|----------|-------|
-| **Recon & Discovery** | `subfinder_scan`, `amass_enum`, `httpx_probe`, `katana_crawl`, `gau_urls`, `hakrawler_crawl`, `dnsx_resolve` |
-| **Vulnerability Scanning** | `nuclei_scan`, `nuclei_scan_list`, `sqlmap_scan`, `dalfox_scan`, `gxss_check` |
-| **Fuzzing** | `ffuf_fuzz`, `dirsearch_scan` |
-| **Fingerprinting** | `whatweb_detect`, `wafw00f_detect`, `nmap_scan` |
-| **Knowledge & Reporting** | `save_finding`, `get_findings`, `generate_report`, `full_recon`, `check_tools` |
-
-All tools are chained intelligently by the **Smart Research Strategy** engine based on target type and detected technology stack.
-
----
-
-## 📋 Workflow Templates (10)
-
-| Workflow | Duration | Description |
-|----------|----------|-------------|
-| **`bounty_hunt`** | ~60 min | **v7.1 Flagship** — Autonomous program discovery → scoring → target selection → profiling → cognitive hunt → learning |
-| **`cognitive_auto`** | ~45 min | 9-phase cognitive loop with simulation, debate, and continuous learning |
-| `full_auto` | ~40 min | Full autonomous: OSINT → fingerprint → crawl → deep scan → validate |
-| `full_bounty` | ~30 min | Complete assessment with exploit chains |
-| `blackbox` | ~25 min | Black-box aggressive reconnaissance |
-| `osint_recon` | ~10 min | OSINT → fingerprint → pack activation → heuristic-guided scan |
-| `api_only` | ~15 min | API endpoint discovery + auth testing |
-| `quick_recon` | ~5 min | Fast subdomain + tech + nuclei scan |
-| `web3_audit` | ~20 min | Smart contract vulnerability analysis |
-| `code_review` | ~15 min | Source code security review |
-
----
-
-## 🎯 Universal Skills Engine (228 Skills)
-
-<details>
-<summary><b>17 attack categories with full coverage</b></summary>
-
-| Category | Skills | Coverage |
-|----------|--------|----------|
-| **Web** | 28 | XSS (reflected/stored/DOM/blind/mutation), SQLi (error/blind/time/stacked/second-order), NoSQLi, LDAP injection, command injection, SSRF, SSTI, XXE, CSRF, path traversal, LFI/RFI, deserialization, request smuggling, HTTP desync, cache poisoning, race conditions |
-| **Auth** | 23 | JWT (none/KID/JWK/confusion), OAuth (redirect/PKCE/scope/token leak), SAML (wrapping/XXE), session fixation/hijacking, MFA bypass, IDOR, privilege escalation, RBAC/ACL bypass, password reset poisoning |
-| **API** | 18 | BOLA, BFLA, mass assignment, rate limit, GraphQL (introspection/depth/IDOR/batching/alias/field-suggest), gRPC reflection, SOAP injection, WebSocket hijack |
-| **Cloud** | 17 | AWS (S3/IAM/Lambda/Cognito/EC2 SSRF), Azure (blob/AD/functions), GCP (buckets/Firebase/metadata) |
-| **Business Logic** | 15 | Payment/refund/coupon/checkout/trial abuse, workflow state, trust boundaries, file upload bypass, 2FA bypass |
-| **Frontend** | 16 | DOM XSS, CSP bypass, postMessage, service workers, React/Vue/Angular/Next.js-specific XSS, source maps |
-| **CI/CD** | 14 | GitHub Actions, GitLab CI, Jenkins, dependency confusion, artifact poisoning, Terraform, PR injection |
-| **Mobile** | 14 | Android/iOS storage, cert pinning, API key extraction, deep links, Electron, WebView, biometric bypass |
-| **OSINT** | 16 | Subdomain takeover, ASN mapping, GitHub leaks, employee intel, DNS history, CT logs, Wayback secrets |
-| **AI/LLM** | 12 | Prompt injection (direct/indirect/multimodal), RAG poisoning, memory poisoning, tool abuse, jailbreaks |
-| **Misconfiguration** | 12 | Debug mode, default creds, directory listing, backup files, admin panels, security headers, exposed metrics |
-| **Kubernetes** | 8 | Dashboard exposure, RBAC bypass, container escape, Docker socket, secret exposure, lateral movement |
-| **Network** | 8 | DNS rebinding, CORS misconfig, subdomain takeover, TLS weakness, DNS zone transfer, email spoofing |
-| **Cryptography** | 7 | Weak hashing, padding oracle, ECB detection, weak randomness, hardcoded keys, timing attacks |
-| **Supply Chain** | 6 | Typosquatting, dependency confusion, lockfile injection, build script RCE, unpinned dependencies |
-| **IoT** | 6 | Firmware extraction, UART/JTAG debug, MQTT/CoAP, BLE sniffing, default credentials |
-| **Exploit Chains** | 8 | XSS→ATO, SSRF→Cloud, SQLi→RCE, IDOR→ATO, OAuth→ATO, CI→Production, SSTI→RCE |
-
-Each skill includes: exploit hypotheses, payloads, validation rules, chain links, and learning metrics.
-
-</details>
-
----
-
-## 📦 Intelligence Packs (11 Built-in)
-
-| Pack | Focus Areas | Key Checks |
-|------|------------|------------|
-| **WordPress** | User enum, XML-RPC brute, plugin vulns | xmlrpc, wp-json, debug.log |
-| **Next.js** | SSRF, auth bypass, env exposure | `__NEXT_DATA__`, API routes, source maps |
-| **GraphQL** | IDOR, injection, DoS | Introspection, GraphiQL, depth limits |
-| **AWS** | SSRF to metadata, S3 misconfig | 169.254.169.254, bucket perms |
-| **Laravel** | Debug RCE, deserialization | .env, Telescope, Ignition |
-| **OAuth** | Redirect steal, state bypass | redirect_uri, state param |
-| **Kubernetes** | Unauth API, dashboard exposure | /api/v1, privileged pods |
-| **API Security** | BOLA/IDOR, mass assignment | CORS, Swagger, auth endpoints |
-| **Firebase** | Unauth read/write | .json endpoint, storage bucket |
-| **Supabase** | RLS bypass, anon key exposure | PostgREST, service role key |
-| **Cloudflare** | Origin IP leak, WAF bypass | DNS history, direct origin |
-
-Packs activate automatically based on **Technology Fingerprinting** (80+ Wappalyzer-style signatures).
-
----
-
-## 🧠 Cognitive Subsystems (22)
-
-<details>
-<summary><b>Complete subsystem inventory</b></summary>
-
-| Layer | Subsystem | Purpose |
-|-------|-----------|---------|
-| **Core** | Cognitive Loop | 9-phase autonomous reasoning engine |
-| **Core** | World Model | Target environment comprehension |
-| **Core** | Causal Reasoning | Counterfactual exploit hypothesis generation |
-| **Core** | Simulation Engine | Pre-execution attack path forecasting |
-| **Core** | Stealth Engine | OPSEC-aware adaptive pacing (5 modes) |
-| **Core** | Deception Detection | Honeypot/canary scoring |
-| **Core** | Hallucination Defense | Evidence verification before reporting |
-| **Core** | Red Team Critic | Adversarial self-critique |
-| **Core** | Debate Engine | 4-agent adversarial validation |
-| **Core** | Payload Engine | Adaptive payload generation with WAF profiling |
-| **Core** | Continuous Learning | Self-improving methodology |
-| **Core** | Cognitive Graph | Attack surface memory graph |
-| **Core** | Recon Expansion | Recursive asset discovery |
-| **Core** | Temporal Intelligence | Infrastructure history tracking |
-| **Core** | Human Emulation | Realistic traffic patterns |
-| **Core** | Collaborative Swarm | Multi-agent coordination |
-| **Autonomous** | Bounty Hunter Engine | Target discovery and campaign orchestration |
-| **Autonomous** | Researcher Profiles | 10 dynamic personas with auto-switching |
-| **Autonomous** | Audit Trail | Immutable chain-of-thought logging |
-| **Autonomous** | Guardrails Engine | Ethical safety enforcement |
-| **v7.1** | Kali Tool Integration | Intelligent Kali tool chaining |
-| **v7.1** | 403 WAF Bypass Engine | Systematic WAF bypass testing |
-
-</details>
-
----
-
-## 🔌 Multi-IDE Support (MCP)
-
-THENOTHING works with **any MCP-compatible AI coding agent**. The `mcp_server.py` exposes all 22 security tools via the Model Context Protocol.
-
-<details>
-<summary><b>Claude Code</b> (auto-detected)</summary>
-
-```bash
-cd THENOTHING && claude
-# or manually:
-claude mcp add hydra-security python mcp_server.py
-```
-</details>
-
-<details>
-<summary><b>Cursor</b></summary>
-
-Already configured via `.cursor/mcp.json`. Open the project in Cursor and tools are available.
-```json
-{
-  "mcpServers": {
-    "hydra-security": {
-      "command": "python",
-      "args": ["mcp_server.py"]
-    }
-  }
-}
-```
-</details>
-
-<details>
-<summary><b>Cline / Windsurf / Codex / Any MCP Client</b></summary>
+**MCP server registration** (already provided as `.mcp.json` for Claude Code):
 
 ```json
-{
-  "mcpServers": {
-    "hydra-security": {
-      "command": "python",
-      "args": ["/path/to/THENOTHING/mcp_server.py"]
-    }
-  }
-}
+{ "mcpServers": { "hydra-security": { "command": "python", "args": ["mcp_server.py"] } } }
 ```
 
-For HTTP-based clients: `python mcp_server.py --transport sse --port 8900`
-</details>
+For **remote / SSE** transport: `python mcp_server.py --transport sse --port 8900`.
 
 ---
 
-## 📦 Project Structure
+## 🚀 Usage
+
+### Via MCP (recommended)
+Point any MCP-compatible client (Claude Code, Cursor, Cline) at `hydra-security`, then call tools:
+
+```text
+temporal_summary                  # how is knowledge evolving?
+temporal_forecast domain=capability
+agent_plan target=example.com type=web_app
+recon_plan target=example.com
+governance_summary                # now includes a temporal_intelligence block
+```
+
+### Via CLI workflows
+
+```bash
+python -m hydra.main -t example.com -w bounty_hunt        # autonomous campaign
+python -m hydra.main -t example.com -w cognitive_auto     # full cognitive pipeline
+python -m hydra.main -t example.com -w quick_recon        # fast recon
+python -m hydra.main -t example.com -w cognitive_auto --scope-url https://hackerone.com/example
+```
+
+> ⚖️ **Authorization required.** HYDRA performs research only within explicit program scope / written
+> authorization. Out-of-scope testing is prohibited (`scope.txt` is checked first).
+
+---
+
+## 🗂 Project Layout
 
 ```
 hydra/
-├── main.py                        # 🚀 Entry point — HydraEngine v7.1
-├── config.py                      # ⚙️  Environment-driven configuration
-│
-├── cognitive/                     # 🧠 9-Phase Cognitive Loop
-├── world_model/                   # 🌍 Target environment modeling
-├── causal/                        # 🔍 Causal reasoning engine
-├── simulation/                    # 🔮 Pre-execution simulation
-├── debate/                        # ⚔️  4-Agent adversarial debate
-├── stealth/                       # 🕵️ Stealth OPSEC (5 modes)
-├── deception/                     # 🛡️ Honeypot/canary detection
-├── hallucination/                 # 🛡️ Evidence-first verification
-├── red_team_critic/               # ⚔️  Adversarial self-critique
-├── payload_engine/                # 💣 Adaptive payload generation
-├── continuous_learning/           # 📚 Self-improvement engine
-├── cognitive_graph/               # 🕸️ Attack surface memory
-├── recon_expansion/               # 🔄 Recursive asset discovery
-├── temporal/                      # ⏰ Infrastructure history
-├── human_emulation/               # 🤖 Realistic traffic patterns
-├── swarm_intelligence/            # 🐝 Collaborative swarm
-│
-├── bounty_hunter/                 # 🎯 Autonomous bounty campaigns
-├── researcher_profiles/           # 🎭 10 dynamic personas
-├── audit/                         # 📋 Immutable audit trail
-├── guardrails/                    # 🔒 Ethical safety engine
-│
-├── swarm/                         # 🐝 Agent swarm (7 agents)
-│   ├── coordinator.py             #     Orchestration engine
-│   ├── recon_agent.py             #     Asset discovery
-│   ├── osint_agent.py             #     Passive intelligence
-│   ├── vuln_research_agent.py     #     Vulnerability research
-│   ├── exploit_hypothesis_agent.py#     Attack hypothesis
-│   ├── validation_agent.py        #     Finding verification
-│   └── reporting_agent.py         #     Report generation
-│
-├── osint/                         # 🔍 OSINT (crt.sh, Shodan, Wayback)
-├── fingerprint/                   # 🔬 80+ tech signatures
-├── packs/                         # 📦 11 intelligence packs
-├── heuristics/                    # 🧠 Bayesian reasoning
-├── skills/                        # 🎯 228 attack skills
-├── js_intel/                      # 📜 JavaScript analysis
-├── api_security/                  # 🔐 API security agent
-├── cloud_security/                # ☁️  Multi-cloud detection
-├── secret_lineage/                # 🔗 Credential tracking
-│
-├── mcp/                           # 🔧 MCP tool server (22 tools)
-├── graph/                         # 📊 Attack graph engine
-├── memory/                        # 💾 Memory bus
-├── scope/                         # 🎯 Scope enforcement
-├── chains/                        # ⛓️  Exploit chain builder
-├── hunt/                          # 🎯 Autonomous hunt loops
-├── browser/                       # 🌐 Playwright intelligence
-├── execution_graph/               # 🔀 DAG execution engine
-├── dashboard/                     # 📈 Real-time web dashboard
-└── plugins/                       # 🔌 Plugin system
+├── knowledge/        # canonical wiki, promotion.py, confidence.py, governance, verification
+├── capabilities/     # capability catalog, source/tool learning, selection
+├── adapters/         # adapter framework + tool-health learning (Phase K)
+├── agents/           # 7 agents + planner/registry (Phase H)
+├── runtime/          # workflow engine — STATE only, no execution (Phase I)
+├── intelligence/     # decision simulation & forecasting (Phase L)
+├── plugins/          # declarative plugin ecosystem (Phase M)
+├── federation/       # metadata-only knowledge exchange (Phase N)
+└── temporal_intel/   # temporal knowledge intelligence (Phase O)  ← NEW
+capabilities/         # YAML catalogs (capabilities, agents, tools, dependencies)
+mcp_server.py         # 108 MCP tools
+docs/                 # ADRs + HYDRA_SYSTEM_CONTEXT.md (architecture memory)
+tests/                # 499 tests
 ```
 
 ---
 
-## ⚙️ Configuration
+## 🗺 Roadmap
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `OPENAI_API_KEY` | | OpenAI API key |
-| `ANTHROPIC_API_KEY` | | Anthropic API key |
-| `OLLAMA_URL` | `http://127.0.0.1:11434` | Ollama endpoint |
-| `SHODAN_API_KEY` | | Shodan API key (OSINT) |
-| `GITHUB_TOKEN` | | GitHub token (OSINT + Intel) |
-| `ST_API_KEY` | | SecurityTrails API key |
-| `CENSYS_ID` / `CENSYS_SECRET` | | Censys credentials |
-| `HYDRA_MONTHLY_CAP` | `100` | Monthly AI budget (USD) |
-| `HYDRA_RATE_LIMIT` | `50` | Max requests/second |
+| Phase | Theme | Status |
+|---|---|---|
+| A–G | Knowledge OS foundations → capability orchestration | ✅ |
+| H–J | Multi-agent · runtime · governance | ✅ |
+| K–M | Adapters · simulation · marketplace | ✅ |
+| **N** | Federated knowledge exchange | ✅ |
+| **O** | **Temporal knowledge intelligence** | ✅ **current** |
+| P | Unified cross-store correlation layer | 🔜 next |
+| Q–Z | Trust graph · reporting synthesis · compaction · multi-tenant · self-audit | 🧭 planned |
 
-> **Note**: OSINT API keys are optional. crt.sh, Wayback Machine, and DNS work without any keys. THENOTHING operates with zero external infrastructure (no Redis, no ChromaDB required).
-
----
-
-## 🐋 Deployment
-
-```bash
-# Standalone (zero external deps)
-pip install -r requirements.txt
-python -m hydra.main -t example.com -w cognitive_auto
-
-# Docker Compose (full stack: Redis, ChromaDB, Prometheus, Grafana)
-docker compose up -d
-# Dashboard: http://localhost:8080
-
-# Kubernetes (production)
-kubectl apply -f k8s/manifests/
-```
-
----
-
-## 🛡️ Safety & Ethics
-
-| Rule | Enforcement |
-|------|-------------|
-| No scan without scope validation | MCP layer blocks every out-of-scope target |
-| No finding without evidence | Validation-first filter rejects unsupported findings |
-| No hallucinated reports | Hallucination defense + 4-agent debate blocks vague claims |
-| No uncontrolled execution | Security sandbox + scope policy engine + guardrails |
-| No unauthorized actions | Ethical guardrails with justification chains |
-| Full explainability | Immutable audit trail for every cognitive decision |
-| Budget protection | Automatic model downgrading when thresholds hit |
-
----
-
-## 🧪 Tests
-
-```bash
-python -m pytest tests/ -v --tb=short
-```
-
----
-
-## ⚠️ Legal Disclaimer
-
-**THENOTHING is designed for authorized security testing only.**
-
-- Only test targets within approved bug bounty program scopes
-- Always verify scope before scanning
-- The guardrails engine blocks out-of-scope targets, but **you are ultimately responsible**
-- Unauthorized scanning is illegal and unethical
+See [`docs/HYDRA_SYSTEM_CONTEXT.md`](docs/HYDRA_SYSTEM_CONTEXT.md) for the full lineage, risk
+registry, and Phase-P→Z roadmap.
 
 ---
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. We welcome:
-- New intelligence packs (add to `hydra/packs/`)
-- Attack skill contributions (add to `hydra/skills/`)
-- Tool integrations (add to `TOOL_REGISTRY` in MCP server)
-- Bug bounty platform adapters
-- Fingerprint signatures
+Contributions are welcome! Before opening a PR:
+
+1. **Read** [`CONTRIBUTING.md`](CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and
+   [`docs/HYDRA_SYSTEM_CONTEXT.md`](docs/HYDRA_SYSTEM_CONTEXT.md).
+2. **Preserve every invariant** — never modify `promotion.py`/`confidence.py`, never introduce a
+   dual-write, never add autonomous execution/exploitation, keep new intelligence layers
+   *derived + advisory + deterministic*.
+3. **Test** — `python -m pytest -q` must stay green; new MCP tools require a regenerated contract
+   baseline **and** a CLAUDE.md entry (doc-sync is enforced).
+4. **Stay deterministic & rebuildable** — inject clocks, sort outputs, key learning by stable ids.
+
+New phases follow the **Architecture Steward protocol**: design review → invariant/safety gate →
+implementation → benchmarks → memory update.
+
+> The original THENOTHING marketing README is preserved as [`README.thenothing.md`](README.thenothing.md).
 
 ---
 
 ## 📜 License
 
-MIT License — see [LICENSE](LICENSE) for details.
+Released under the **MIT License** — see [`LICENSE`](LICENSE).
 
----
+> **Ethical use only.** HYDRA is for authorized security testing, bug-bounty research, CTFs, and
+> defensive work. You are responsible for operating within the law and within program scope.
 
-<p align="center">
-  <b>Built for elite offensive security researchers, by elite offensive security researchers.</b><br/>
-  <sub>THENOTHING v7.1 — Cognitive Autonomous Red Team Platform | 22 subsystems | 228 attack skills | 10 researcher profiles | 10 workflows | Kali Native</sub>
-</p>
+<p align="center"><sub>HYDRA · THENOTHING v7.1 — cognitive, deterministic, advisory, canonical-wiki-centered offensive <b>research</b>.</sub></p>

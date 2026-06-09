@@ -659,6 +659,45 @@
       "domain"
     ]
   },
+  "temporal_anomalies": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "temporal_decay": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "temporal_forecast": {
+    "params": [
+      "domain",
+      "horizon",
+      "now"
+    ],
+    "required": []
+  },
+  "temporal_health": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "temporal_summary": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "temporal_trends": {
+    "params": [
+      "domain",
+      "now"
+    ],
+    "required": []
+  },
   "tool_capabilities": {
     "params": [
       "category"

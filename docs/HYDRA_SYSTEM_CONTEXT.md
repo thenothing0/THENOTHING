@@ -10,21 +10,25 @@
 
 | Field | Value |
 |-------|-------|
-| Current Phase | **Phase N — Federated Knowledge Exchange & Intelligence Mesh** (finalized & released) |
-| Latest Commit | Phase N finalization commit on branch `phase-n-federation` (see `git log`) |
-| Latest Tag | `phase-n-federation` |
+| Current Phase | **Phase O — Temporal Knowledge Intelligence** (released & tagged) |
+| Latest Commit | Phase O finalization commit on branch `phase-n-federation`, tagged `phase-o-temporal` (supersedes Phase N `172b1d4`) |
+| Latest Tag | `phase-o-temporal` |
 | Active Branch | `phase-n-federation` |
-| Last Updated | 2026-06-05 (Phase N finalization & release) |
+| Last Updated | 2026-06-09 (Phase O release; Phase P — Offensive Capability Intelligence designed) |
+| MCP Tools | **108** (Phase O added +6 temporal tools) |
 
-> ✅ **Release note:** Phase N (`hydra/federation/` + tests + 10 MCP tools) finalized on branch
-> `phase-n-federation` and tagged `phase-n-federation`. Pre-existing unrelated `wiki/` edits were
-> intentionally **excluded** from the Phase-N commit. MCP count **102**; 476 tests pass.
+> ✅ **Release note (Phase O):** `hydra/temporal_intel/` + `tests/temporal/` + `tests/mcp/test_temporal_tools.py`
+> + 6 MCP tools finalized on branch `phase-n-federation`, tagged `phase-o-temporal`. Unrelated `wiki/`
+> recon-fusion edits (donationalerts/ptcloud) and PDF/artifact files were intentionally **excluded** from
+> the Phase-O commit (same discipline as Phase N). MCP count **108**; **499 tests pass**, 6 deselected
+> (integration/e2e); ruff clean; promotion.py/confidence.py untouched; legacy `hydra/temporal/` untouched.
+> Phase N remains tagged `phase-n-federation` (MCP 102; 476 tests).
 
 ---
 
 ## Architecture Lineage
 
-Build order is **locked A → N**. Every phase is derived/advisory unless noted; none mutate
+Build order is **locked A → O**. Every phase is derived/advisory unless noted; none mutate
 `promotion.py`, `confidence.py`, or the canonical wiki schema behavior.
 
 ### Phase A — Offensive Knowledge OS Foundations
@@ -149,8 +153,18 @@ Build order is **locked A → N**. Every phase is derived/advisory unless noted;
 - **Tests:** `tests/federation/test_federation.py` (19) + `tests/mcp/test_federation_tools.py` (7) = **26**.
 - **Invariants:** Metadata-only (`assert_safe` on export+import); no wiki/evidence/finding/target/source/secret exchange; advisory; promotion/confidence untouched.
 
+### Phase O — Temporal Knowledge Intelligence
+- **Purpose:** Understand how knowledge EVOLVES over time — trends, momentum, decay, emerging/declining areas, bounded forecasts, temporal anomalies. Built entirely from existing derived event logs.
+- **Components (`hydra/temporal_intel/`, NEW package — legacy `hydra/temporal/` untouched):** `util` (deterministic math/bucketing), `TemporalStore` (`data/temporal.db`), `TemporalContext` (load-once, memoized bucketing, single scan per physical table), `TrendAnalyzer`, `MomentumAnalyzer`, `TemporalForecastEngine` (MA + linear slope, bounded, non-stochastic), `DecayAnalyzer`+`TemporalDecayFinding`, `TemporalAnomalyDetector`, `TemporalAdvisor`, `TemporalIntelligence`.
+- **Intelligence/derived stores:** `temporal.db` (WAL, event-sourced, idempotent, rebuildable).
+- **MCP Δ:** +6 (108 total) — `temporal_summary`, `temporal_trends`, `temporal_forecast`, `temporal_decay`, `temporal_anomalies`, `temporal_health`.
+- **Governance:** Phase-J `governance_summary` gains a read-only `temporal_intelligence` block (lazy import, no cycle).
+- **Benchmarks:** O(E); **9.35 s at 1M rows (2M derived events)** — under the 10 s target; per-event cost flattens (61→15→9 µs).
+- **Tests:** `tests/temporal/test_temporal.py` (18) + `tests/mcp/test_temporal_tools.py` (5) = **23**.
+- **Invariants:** derived/advisory/deterministic/rebuild-identical; no wiki mutation; promotion.py/confidence.py untouched; no execution.
+
 ### Current Phase
-**N (implemented, uncommitted).** Next: **Phase O** (see Roadmap) — design pending approval.
+**O (released & tagged `phase-o-temporal` on branch `phase-n-federation`).** Next: **Phase P — Offensive Capability Intelligence** (design complete; see Roadmap).
 
 ---
 
@@ -208,13 +222,13 @@ Build order is **locked A → N**. Every phase is derived/advisory unless noted;
 | Adapters (effective) | 439 |
 | Agents | 7 (recon, attack_surface, cloud, verification, mobile, correlation, reporting) |
 | Plugins (reference packs) | 6 (cloud, mobile, container, iot, supply_chain, osint) |
-| MCP Tools (live registry) | 102 |
+| MCP Tools (live registry) | 108 |
 
 ### Stores (by layer — v2 taxonomy)
 | Class | Stores |
 |-------|--------|
 | Learning | `source_learning.db`, `source_metrics.db`, `verification_learning.db`, `tool_health.db`, `plugin_health.db` |
-| Intelligence | `decision_learning.db` (simulation / forecasting / strategy) |
+| Intelligence | `decision_learning.db` (simulation / forecasting / strategy), `temporal.db` (Phase O temporal evolution) |
 | Runtime | `workflows.db` |
 | Governance | `knowledge_governance.db` |
 | Federation | `federation.db` |
@@ -371,19 +385,29 @@ base tools (save_finding/get_findings/generate_report/full_recon/check_tools) al
 ## Future Roadmap (Phase O → Phase Z)
 
 > Updated automatically after every completed phase. All future phases inherit every invariant
-> A–N: derived, deterministic, offline-first, advisory-only, rebuildable, canonical-wiki-centered.
+> A–O: derived, deterministic, offline-first, advisory-only, rebuildable, canonical-wiki-centered.
 
-### Phase O — Temporal Knowledge Intelligence & Evolution Tracking *(next; design pending)*
-- **Goal:** Derived, event-sourced time-series over existing stores: how capability effectiveness, source trust, verification success, and knowledge health evolve; advisory trend/forecast & regression detection.
-- **Dependencies:** D/F/J/K/L learning stores; governance.
-- **Expected MCP impact:** +~6 (e.g. `knowledge_timeline`, `trend_report`, `effectiveness_history`, `regression_alerts`, `forecast_metric`, `temporal_health`).
-- **Expected performance impact:** O(E) event scan, grouped by time-bucket; load-once context.
-- **Risks:** time-bucket nondeterminism (mitigate with injected `now` + fixed bucketing).
-- **Invariants affected:** none broken; new `temporal.db` derived store.
+### Phase O — Temporal Knowledge Intelligence & Evolution Tracking ✅ **DELIVERED**
+- Implemented as `hydra/temporal_intel/` (+6 MCP tools → 108; `temporal.db`; governance block).
+  O(E), 9.35 s @ 1M rows. See Architecture Lineage → Phase O. Next is Phase P.
 
-### Phase P — Unified Intelligence & Cross-Store Correlation Layer
-- **Goal:** Single read-only advisory query/correlation API over all derived stores (one load-once context).
-- **Dependencies:** all derived stores. **MCP:** +~4. **Perf:** O(E), shared context. **Risks:** read amplification. **Invariants:** read-only.
+### Phase P — Offensive Capability Intelligence *(designed — READY_FOR_IMPLEMENTATION)*
+- **Goal:** Bring the OFFENSIVE layer to parity with Knowledge / Decision / Simulation / Marketplace /
+  Federation / Temporal intelligence. Derived, advisory analytics answering: which offensive capabilities
+  produce the most findings & highest verification rates; which capability chains / workflows / attack paths
+  are strongest; which capability combinations are redundant; which techniques are underutilized; which
+  offensive strategies trend up/down; which categories have weak coverage; which adapters provide the most
+  offensive value.
+- **Package:** `hydra/offensive_intelligence/` (OffensiveContext load-once · CapabilityEffectivenessEngine ·
+  AttackPathAnalyzer · WorkflowEffectivenessAnalyzer · AdapterContributionAnalyzer · OffensiveTrendAnalyzer ·
+  OffensiveCoverageAnalyzer · OffensiveRecommendationEngine · OffensiveHealthStore · OffensiveIntelligenceSummary).
+- **Store:** `offensive_intel.db` (derived, event-sourced, WAL, rebuildable). **MCP:** +~10. **Perf:** O(E),
+  single shared load-once context. **Integrations:** Capability Catalog, Effective Plugin Catalog, Phase L
+  Simulation, Phase M Marketplace, Phase N Federation, Phase O Temporal — read-only, no coupling cycles.
+- **Invariants:** advisory-only · deterministic · offline-first · rebuild-identical · no autonomous
+  exploitation/execution · no auto-confirm/promote · promotion.py/confidence.py & canonical wiki untouched.
+- *(The earlier "Unified Intelligence & Cross-Store Correlation" concept is partially realized by
+  `OffensiveContext`'s shared load-once reads; a general cross-domain correlation layer is deferred to a later phase.)*
 
 ### Phase Q — Federated Trust Graph & Reputation Hardening
 - **Goal:** Multi-peer trust propagation, Sybil-resistance heuristics, reputation decay (advisory).

@@ -1077,6 +1077,11 @@ try:
     from hydra.federation.registry import FederationRegistry as _FederationRegistry
     from hydra.federation.safety import FederationSafetyError as _FederationSafetyError
     from hydra.federation.store import KnowledgeExchangeStore as _ExchangeStore
+    from hydra.temporal_intel.context import TemporalContext as _TemporalContext
+    from hydra.temporal_intel.forecast import TemporalForecastEngine as _TemporalForecast
+    from hydra.temporal_intel.intelligence import TemporalIntelligence as _TemporalIntelligence
+    from hydra.temporal_intel.trends import MomentumAnalyzer as _MomentumAnalyzer
+    from hydra.temporal_intel.trends import TrendAnalyzer as _TrendAnalyzer
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -2391,6 +2396,109 @@ def federation_health() -> str:
         "mean_federation_confidence": consensus["mean_federation_confidence"],
         "advisory": True,
     }, indent=2)
+
+
+# ── Phase O — Temporal Knowledge Intelligence (derived, advisory, deterministic) ──
+# All six tools are read-only/deterministic/advisory and built ENTIRELY from the existing
+# derived event logs (source/verification/tool-health/plugin-health/decision/federation).
+# They never read or write the canonical wiki and never touch promotion.py / confidence.py.
+# `now` is an optional injected reference time for determinism; <=0 means "use newest event".
+def _temporal_now(now: float):
+    return None if now is None or now <= 0 else float(now)
+
+
+@mcp.tool()
+def temporal_summary(now: float = 0.0) -> str:
+    """Temporal knowledge overview (Phase O, read-only, advisory): temporal-health, strongest/
+    weakest trends, emerging/declining capabilities, decay & anomaly counts, recommendations.
+
+    Args:
+        now: optional reference timestamp for deterministic bucketing (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_TemporalIntelligence().temporal_summary(_temporal_now(now)), indent=2)
+
+
+@mcp.tool()
+def temporal_trends(domain: str = "", now: float = 0.0) -> str:
+    """Temporal trends + momentum (Phase O, read-only, advisory): rising/stable/declining per
+    entity with slope, momentum and the bucket series, for capability/adapter/agent/plugin/
+    source/verification.
+
+    Args:
+        domain: optional single domain (e.g. "capability"); omit for all trend domains
+        now: optional reference timestamp for deterministic bucketing (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    ref = _temporal_now(now)
+    ctx = _TemporalContext().load()
+    trend, mom = _TrendAnalyzer(ctx), _MomentumAnalyzer(ctx)
+    if domain:
+        return json.dumps({"domain": domain, "trends": trend.domain_trends(domain, ref),
+                           "momentum": mom.domain_momentum(domain, ref)}, indent=2)
+    return json.dumps({"trends": trend.trends(ref), "momentum": mom.momentum(ref)}, indent=2)
+
+
+@mcp.tool()
+def temporal_forecast(domain: str = "", now: float = 0.0, horizon: int = 3) -> str:
+    """Deterministic bounded forecasts (Phase O, read-only, advisory): future capability
+    utilization, verification coverage, source diversity, plugin adoption. Moving-average +
+    linear slope; never stochastic.
+
+    Args:
+        domain: optional single domain to forecast; omit for the four standard signals
+        now: optional reference timestamp (<=0 = newest event)
+        horizon: number of future buckets to project (default 3)
+    """
+    if (g := _kb_guard()):
+        return g
+    ref = _temporal_now(now)
+    fc = _TemporalForecast(_TemporalContext().load())
+    if domain:
+        return json.dumps({"domain_forecast": fc.domain_forecast(domain, ref, horizon),
+                           "entity_forecast": fc.entity_forecast(domain, ref, horizon)}, indent=2)
+    return json.dumps(fc.report(ref, horizon), indent=2)
+
+
+@mcp.tool()
+def temporal_decay(now: float = 0.0) -> str:
+    """Temporal decay findings (Phase O, read-only, advisory): stale capabilities/adapters/
+    plugins/verification methods ranked by severity, each with rationale + suggested action.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_TemporalIntelligence().decay_forecast(_temporal_now(now)), indent=2)
+
+
+@mcp.tool()
+def temporal_anomalies(now: float = 0.0) -> str:
+    """Temporal anomalies (Phase O, read-only, advisory): spikes, drops, inactivity and
+    concentration across domains. Findings only — no alerts, no side effects.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_TemporalIntelligence().anomaly_report(_temporal_now(now)), indent=2)
+
+
+@mcp.tool()
+def temporal_health(now: float = 0.0) -> str:
+    """Temporal-health score (Phase O, read-only, advisory): 0-100 blend rewarding rising/active
+    knowledge and penalizing decay + anomalies. Never alters confidence/promotion.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_TemporalIntelligence().temporal_health(_temporal_now(now)), indent=2)
 
 
 @mcp.tool()
