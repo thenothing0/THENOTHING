@@ -301,6 +301,25 @@ untouched. This is a NEW package — it does not reuse/modify the legacy `hydra/
 - `temporal_anomalies` — Spikes, drops, inactivity and concentration across domains (advisory findings; no alerts)
 - `temporal_health` — 0-100 temporal-health score (rewards rising/active knowledge, penalizes decay + anomalies)
 
+### Offensive Capability Intelligence (Phase P — derived, advisory, NON-executing)
+A fully derived, offline-first offensive-intelligence layer (`hydra/offensive_intel/`) that scores the
+EFFECTIVENESS, COVERAGE, composition, OVERLAP and ATTACK-PATH value of capabilities, workflows, agents,
+plugins and skills — built from the existing derived learning logs (tool-health / verification) plus the
+static declarative catalogs (effective capabilities, dependency graph, adapters, agent ownership, skills)
+via a load-once `OffensiveContext` (O(E)). Cold-start falls back to the catalog `confidence_weight`
+priors. Deterministic (injected `now`), rebuild-identical, advisory only; **NON-executing** — it SCORES
+and ADVISES over the capability/skill MODEL and never exploits, validates, confirms, promotes, or
+executes. Phase-J `governance_summary` gains a read-only `offensive_intelligence` block.
+promotion.py/confidence.py and the canonical wiki are untouched.
+- `offensive_summary` — Overview: offensive-health, top/underutilized capabilities, strongest chains, weak categories, redundant pairs, skill bridge, recommendations
+- `offensive_effectiveness` — Per-capability effectiveness/utility/contribution/uniqueness/redundancy (+ explain); ranked or single capability
+- `offensive_coverage` — Category / workflow (agent) / attack-path coverage
+- `offensive_chains` — Capability attack chains scored by effectiveness/diversity/popularity (bounded, NON-executing)
+- `offensive_overlap` — Redundant capability pairs + clusters (interchangeable capabilities)
+- `offensive_gaps` — Weak categories, weakly-covered finding types, weak chains
+- `offensive_skills` — Capability→Skill→Workflow→Agent bridge with skill effectiveness/quality
+- `offensive_health` — 0-100 offensive-health score (effectiveness + structural coverage quality; advisory)
+
 ## CLI workflows
 
 ```bash

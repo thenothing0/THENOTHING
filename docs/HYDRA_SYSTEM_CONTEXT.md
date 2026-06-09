@@ -10,25 +10,25 @@
 
 | Field | Value |
 |-------|-------|
-| Current Phase | **Phase O — Temporal Knowledge Intelligence** (released & tagged) |
-| Latest Commit | Phase O finalization commit on branch `phase-n-federation`, tagged `phase-o-temporal` (supersedes Phase N `172b1d4`) |
-| Latest Tag | `phase-o-temporal` |
-| Active Branch | `phase-n-federation` |
-| Last Updated | 2026-06-09 (Phase O release; Phase P — Offensive Capability Intelligence designed) |
-| MCP Tools | **108** (Phase O added +6 temporal tools) |
+| Current Phase | **Phase P — Offensive Capability Intelligence** (implemented & released) |
+| Latest Commit | Phase P commit on branch `phase-p-offensive-intelligence`, tagged `phase-p-offensive-intelligence` (supersedes Phase O `f8ffdf0`) |
+| Latest Tag | `phase-p-offensive-intelligence` |
+| Active Branch | `phase-p-offensive-intelligence` (cut from `phase-o-temporal`) |
+| Last Updated | 2026-06-09 (Phase P released — Offensive Capability Intelligence; Harness V4.1) |
+| MCP Tools | **116** (Phase P added +8 offensive tools) |
 
-> ✅ **Release note (Phase O):** `hydra/temporal_intel/` + `tests/temporal/` + `tests/mcp/test_temporal_tools.py`
-> + 6 MCP tools finalized on branch `phase-n-federation`, tagged `phase-o-temporal`. Unrelated `wiki/`
-> recon-fusion edits (donationalerts/ptcloud) and PDF/artifact files were intentionally **excluded** from
-> the Phase-O commit (same discipline as Phase N). MCP count **108**; **499 tests pass**, 6 deselected
-> (integration/e2e); ruff clean; promotion.py/confidence.py untouched; legacy `hydra/temporal/` untouched.
-> Phase N remains tagged `phase-n-federation` (MCP 102; 476 tests).
+> ✅ **Release note (Phase P):** `hydra/offensive_intel/` (10 modules, **store-free**) + `tests/offensive/`
+> + `tests/mcp/test_offensive_tools.py` + 8 MCP tools, committed on branch `phase-p-offensive-intelligence`,
+> tagged `phase-p-offensive-intelligence`. Unrelated `wiki/` recon-fusion edits and PDF/artifact files were
+> intentionally **excluded** (same discipline as N/O). MCP count **116**; **531 tests pass**, 6 deselected
+> (integration/e2e); ruff clean; promotion.py/confidence.py untouched; **NON-executing**. Benchmark O(E),
+> ~3.6 µs/event (≈3.6 s @ 1M). Phase O remains tagged `phase-o-temporal` (`f8ffdf0`, MCP 108).
 
 ---
 
 ## Architecture Lineage
 
-Build order is **locked A → O**. Every phase is derived/advisory unless noted; none mutate
+Build order is **locked A → P**. Every phase is derived/advisory unless noted; none mutate
 `promotion.py`, `confidence.py`, or the canonical wiki schema behavior.
 
 ### Phase A — Offensive Knowledge OS Foundations
@@ -163,8 +163,18 @@ Build order is **locked A → O**. Every phase is derived/advisory unless noted;
 - **Tests:** `tests/temporal/test_temporal.py` (18) + `tests/mcp/test_temporal_tools.py` (5) = **23**.
 - **Invariants:** derived/advisory/deterministic/rebuild-identical; no wiki mutation; promotion.py/confidence.py untouched; no execution.
 
+### Phase P — Offensive Capability Intelligence
+- **Purpose:** Score the EFFECTIVENESS / COVERAGE / composition / OVERLAP / ATTACK-PATH value of capabilities, workflows, agents, plugins and skills — the offensive analog of the knowledge-intelligence layers.
+- **Components (`hydra/offensive_intel/`, NEW package, store-free):** `util`, `OffensiveContext` (load-once O(E) over tool-health + verification logs ⊕ static catalogs / dependency-graph / adapters / ownership / skills), `CapabilityEffectivenessEngine`, `OffensiveCoverageAnalyzer`, `AttackChainIntelligence`, `OverlapAnalyzer`, `OffensiveGapAnalyzer`, `SkillIntelligence` (Capability→Skill→Workflow→Agent bridge), `OffensiveAdvisor`, `OffensiveIntelligence`.
+- **Stores:** **none** — store-free, pure function of upstream derived logs + static catalogs (rebuild-identical by construction).
+- **MCP Δ:** +8 (116 total) — `offensive_summary`, `offensive_effectiveness`, `offensive_coverage`, `offensive_chains`, `offensive_overlap`, `offensive_gaps`, `offensive_skills`, `offensive_health`.
+- **Governance:** Phase-J `governance_summary` gains a read-only `offensive_intelligence` block (lazy import, no cycle).
+- **Benchmarks:** O(E); **3.6 µs/event** (300k events in ~1.1 s ⇒ ≈3.6 s @ 1M); cold-start = catalog priors.
+- **Tests:** `tests/offensive/test_offensive.py` (17) + `tests/mcp/test_offensive_tools.py` (15) = **32**; full suite **531**.
+- **Invariants:** derived/advisory/deterministic/rebuild-identical; **NON-executing**; no exploitation/validation/confirmation/promotion; no wiki mutation; promotion.py/confidence.py untouched.
+
 ### Current Phase
-**O (released & tagged `phase-o-temporal` on branch `phase-n-federation`).** Next: **Phase P — Offensive Capability Intelligence** (design complete; see Roadmap).
+**P (implemented & released: tag + branch `phase-p-offensive-intelligence`, cut from `phase-o-temporal` `f8ffdf0`).** Next: **Phase Q** (see Roadmap).
 
 ---
 
@@ -222,7 +232,7 @@ Build order is **locked A → O**. Every phase is derived/advisory unless noted;
 | Adapters (effective) | 439 |
 | Agents | 7 (recon, attack_surface, cloud, verification, mobile, correlation, reporting) |
 | Plugins (reference packs) | 6 (cloud, mobile, container, iot, supply_chain, osint) |
-| MCP Tools (live registry) | 108 |
+| MCP Tools (live registry) | 116 |
 
 ### Stores (by layer — v2 taxonomy)
 | Class | Stores |
@@ -359,8 +369,8 @@ base tools (save_finding/get_findings/generate_report/full_recon/check_tools) al
 ## Open Risks
 
 ### Architectural Debt
-- Branch name `phase-c-discovery` and uncommitted Phase N create **process/version drift** (not an architecture violation). Recommend committing Phase N + tagging `phase-n-federation` and renaming the branch.
-- No root `INDEX.md` (the spec's STEP-1 input). Only `wiki/index.md` (wiki catalog) and `docs/adr/` exist.
+- ~~Branch/version drift (Phase N uncommitted, `phase-c-discovery` name)~~ **RESOLVED (2026-06-09):** Phase N tagged `phase-n-federation`; Phase O committed `f8ffdf0`, tagged **and** branched `phase-o-temporal` (dedicated release branch). History preserved.
+- ~~No root `INDEX.md` (the spec's STEP-1 input)~~ **RESOLVED (2026-06-09):** root `INDEX.md` created as the navigational STEP-1 input, alongside `wiki/index.md` (wiki catalog) and `docs/adr/`.
 
 ### Scaling Risks
 - IntelligenceMesh/Consensus re-materialize the imported-digest log per public method (constant multiplier, still O(E)); at very large ledgers a single shared load-once context (à la Phase-L `SimulationContext`) would cut the constant.
@@ -391,23 +401,22 @@ base tools (save_finding/get_findings/generate_report/full_recon/check_tools) al
 - Implemented as `hydra/temporal_intel/` (+6 MCP tools → 108; `temporal.db`; governance block).
   O(E), 9.35 s @ 1M rows. See Architecture Lineage → Phase O. Next is Phase P.
 
-### Phase P — Offensive Capability Intelligence *(designed — READY_FOR_IMPLEMENTATION)*
+### Phase P — Offensive Capability Intelligence ✅ **DELIVERED** (Harness V4.1)
+- Implemented as `hydra/offensive_intel/` (store-free; +8 MCP tools → 116; governance block). O(E), 3.6 µs/event. 531 tests. See Architecture Lineage → Phase P. Next is Phase Q.
 - **Goal:** Bring the OFFENSIVE layer to parity with Knowledge / Decision / Simulation / Marketplace /
-  Federation / Temporal intelligence. Derived, advisory analytics answering: which offensive capabilities
-  produce the most findings & highest verification rates; which capability chains / workflows / attack paths
-  are strongest; which capability combinations are redundant; which techniques are underutilized; which
-  offensive strategies trend up/down; which categories have weak coverage; which adapters provide the most
-  offensive value.
-- **Package:** `hydra/offensive_intelligence/` (OffensiveContext load-once · CapabilityEffectivenessEngine ·
-  AttackPathAnalyzer · WorkflowEffectivenessAnalyzer · AdapterContributionAnalyzer · OffensiveTrendAnalyzer ·
-  OffensiveCoverageAnalyzer · OffensiveRecommendationEngine · OffensiveHealthStore · OffensiveIntelligenceSummary).
-- **Store:** `offensive_intel.db` (derived, event-sourced, WAL, rebuildable). **MCP:** +~10. **Perf:** O(E),
-  single shared load-once context. **Integrations:** Capability Catalog, Effective Plugin Catalog, Phase L
-  Simulation, Phase M Marketplace, Phase N Federation, Phase O Temporal — read-only, no coupling cycles.
-- **Invariants:** advisory-only · deterministic · offline-first · rebuild-identical · no autonomous
-  exploitation/execution · no auto-confirm/promote · promotion.py/confidence.py & canonical wiki untouched.
-- *(The earlier "Unified Intelligence & Cross-Store Correlation" concept is partially realized by
-  `OffensiveContext`'s shared load-once reads; a general cross-domain correlation layer is deferred to a later phase.)*
+  Federation / Temporal intelligence. Derived, advisory analytics on the **effectiveness, coverage, composition,
+  overlap and attack-path value** of capabilities, workflows, agents, plugins and **skills**.
+- **Package:** `hydra/offensive_intel/` — `context` (load-once O(E)) · `effectiveness` · `coverage` · `chains`
+  (AttackChainIntelligence) · `overlap` · `gaps` · `skills` (Capability→Skill→Workflow→Agent bridge) · `advisor`
+  (bounded) · `intelligence` (unified surface).
+- **Store:** `offensive_intel.db` (derived, event-sourced, WAL, rebuildable). **MCP:** +~8 → **116**. **Perf:** O(E),
+  single shared load-once context. **Integrations (read-only, no cycles):** Effective Capability Catalog, Adapter
+  Registry, Dependency Graph, Agent ownership, Phase L Simulation, Phase M Marketplace, Phase N Federation, Phase O Temporal.
+- **Invariants:** advisory-only · deterministic · offline-first · rebuild-identical · **NON-executing** · no
+  exploitation/validation/confirmation/promotion · promotion.py/confidence.py & canonical wiki untouched.
+- *(Earlier "Unified Intelligence & Cross-Store Correlation" is partially realized by `OffensiveContext`'s shared
+  load-once reads; a general cross-domain correlation layer is deferred.)*
+- **Full design:** `docs/PHASE_P_DESIGN.md`.
 
 ### Phase Q — Federated Trust Graph & Reputation Hardening
 - **Goal:** Multi-peer trust propagation, Sybil-resistance heuristics, reputation decay (advisory).

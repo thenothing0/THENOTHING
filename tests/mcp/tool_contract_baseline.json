@@ -446,6 +446,58 @@
       "targets"
     ]
   },
+  "offensive_chains": {
+    "params": [
+      "limit",
+      "now",
+      "target_type"
+    ],
+    "required": []
+  },
+  "offensive_coverage": {
+    "params": [
+      "category",
+      "now"
+    ],
+    "required": []
+  },
+  "offensive_effectiveness": {
+    "params": [
+      "capability_id",
+      "now"
+    ],
+    "required": []
+  },
+  "offensive_gaps": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "offensive_health": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "offensive_overlap": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "offensive_skills": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "offensive_summary": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
   "ownership_conflicts": {
     "params": [],
     "required": []

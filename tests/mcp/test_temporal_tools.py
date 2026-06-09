@@ -43,9 +43,11 @@ def _by_type():
     return json.loads(mcp_server.kb_lint())["stats"]["by_type"]
 
 
-def test_mcp_count_is_108():
+def test_mcp_count_at_least_108():
+    # Phase O brought the registry to 108; later phases only add (exact count is pinned by the
+    # contract baseline in test_tool_contract.py). Here we assert the temporal tools are present.
     live = {t.name for t in asyncio.run(mcp_server.mcp.list_tools())}
-    assert len(live) == 108
+    assert len(live) >= 108
     for t in ("temporal_summary", "temporal_trends", "temporal_forecast",
               "temporal_decay", "temporal_anomalies", "temporal_health"):
         assert t in live

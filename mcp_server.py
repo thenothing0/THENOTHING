@@ -1082,6 +1082,7 @@ try:
     from hydra.temporal_intel.intelligence import TemporalIntelligence as _TemporalIntelligence
     from hydra.temporal_intel.trends import MomentumAnalyzer as _MomentumAnalyzer
     from hydra.temporal_intel.trends import TrendAnalyzer as _TrendAnalyzer
+    from hydra.offensive_intel.intelligence import OffensiveIntelligence as _OffensiveIntelligence
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -2499,6 +2500,129 @@ def temporal_health(now: float = 0.0) -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(_TemporalIntelligence().temporal_health(_temporal_now(now)), indent=2)
+
+
+# ── Phase P — Offensive Capability Intelligence (derived, advisory, NON-executing) ──
+# All eight tools are read-only/deterministic/advisory. They SCORE and ADVISE over the
+# capability/skill MODEL using the existing derived learning logs + the static declarative
+# catalogs; they never exploit, validate, confirm, promote, or execute, and never touch the
+# canonical wiki / promotion.py / confidence.py. `now` is optional (<=0 = newest event).
+def _offensive_now(now: float):
+    return None if now is None or now <= 0 else float(now)
+
+
+@mcp.tool()
+def offensive_summary(now: float = 0.0) -> str:
+    """Offensive intelligence overview (Phase P, read-only, advisory): offensive-health, top &
+    underutilized capabilities, strongest attack chains, weak categories, redundant pairs, the
+    skill bridge, and bounded recommendations.
+
+    Args:
+        now: optional reference timestamp for determinism (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OffensiveIntelligence().offensive_summary(_offensive_now(now)), indent=2)
+
+
+@mcp.tool()
+def offensive_effectiveness(capability_id: str = "", now: float = 0.0) -> str:
+    """Per-capability offensive effectiveness (Phase P, read-only, advisory): effectiveness,
+    utility, contribution, uniqueness, redundancy + explain rationale; ranked, or one capability.
+
+    Args:
+        capability_id: optional single capability id; omit for the full ranked list
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OffensiveIntelligence().offensive_effectiveness(
+        capability_id, _offensive_now(now)), indent=2)
+
+
+@mcp.tool()
+def offensive_coverage(category: str = "", now: float = 0.0) -> str:
+    """Offensive coverage (Phase P, read-only, advisory): per-category effectiveness / verification
+    / exercise, workflow (agent) coverage, and attack-path coverage.
+
+    Args:
+        category: optional single category (e.g. "web"); omit for all categories
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OffensiveIntelligence().offensive_coverage(
+        category, _offensive_now(now)), indent=2)
+
+
+@mcp.tool()
+def offensive_chains(target_type: str = "", limit: int = 10, now: float = 0.0) -> str:
+    """Attack-chain intelligence (Phase P, read-only, advisory): capability chains scored by
+    effectiveness, diversity and popularity from the dependency graph. Bounded; NON-executing —
+    it scores the model, it never runs a chain.
+
+    Args:
+        target_type: optional seed target-type filter (e.g. "url", "domain")
+        limit: max chains to return (default 10)
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OffensiveIntelligence().attack_chains(
+        target_type, max(1, limit), _offensive_now(now)), indent=2)
+
+
+@mcp.tool()
+def offensive_overlap(now: float = 0.0) -> str:
+    """Capability overlap / redundancy (Phase P, read-only, advisory): redundant capability pairs
+    and clusters (interchangeable capabilities sharing finding types / tools).
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OffensiveIntelligence().offensive_overlap(_offensive_now(now)), indent=2)
+
+
+@mcp.tool()
+def offensive_gaps(now: float = 0.0) -> str:
+    """Offensive coverage gaps (Phase P, read-only, advisory): weak categories, weakly-covered
+    finding types, and weak chains (a low-effectiveness link or no verifying terminal).
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OffensiveIntelligence().offensive_gaps(_offensive_now(now)), indent=2)
+
+
+@mcp.tool()
+def offensive_skills(now: float = 0.0) -> str:
+    """Skill intelligence bridge (Phase P, read-only, advisory): Capability→Skill→Workflow→Agent
+    mapping with skill effectiveness/quality. It MAPS and SCORES skills — it never executes them.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OffensiveIntelligence().offensive_skills(_offensive_now(now)), indent=2)
+
+
+@mcp.tool()
+def offensive_health(now: float = 0.0) -> str:
+    """Offensive-health score (Phase P, read-only, advisory): 0-100 blend of mean effectiveness +
+    structural coverage quality, rewarding learned evidence and lightly penalizing redundancy.
+    Never alters confidence / promotion.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OffensiveIntelligence().offensive_health(_offensive_now(now)), indent=2)
 
 
 @mcp.tool()
