@@ -10,25 +10,26 @@
 
 | Field | Value |
 |-------|-------|
-| Current Phase | **Phase P — Offensive Capability Intelligence** (implemented & released) |
-| Latest Commit | Phase P commit on branch `phase-p-offensive-intelligence`, tagged `phase-p-offensive-intelligence` (supersedes Phase O `f8ffdf0`) |
-| Latest Tag | `phase-p-offensive-intelligence` |
-| Active Branch | `phase-p-offensive-intelligence` (cut from `phase-o-temporal`) |
-| Last Updated | 2026-06-09 (Phase P released — Offensive Capability Intelligence; Harness V4.1) |
-| MCP Tools | **116** (Phase P added +8 offensive tools) |
+| Current Phase | **Phase Q — Offensive Campaign Reasoning Engine** (implemented & released) |
+| Latest Commit | Phase Q commit on branch `phase-q-campaign-reasoning`, tagged `phase-q-campaign-reasoning` (supersedes Phase P `3cf2b0d`) |
+| Latest Tag | `phase-q-campaign-reasoning` |
+| Active Branch | `phase-q-campaign-reasoning` (cut from `phase-p-offensive-intelligence`) |
+| Last Updated | 2026-06-10 (Phase Q released — Offensive Campaign Reasoning Engine) |
+| MCP Tools | **124** (Phase Q added +8 campaign tools) |
 
-> ✅ **Release note (Phase P):** `hydra/offensive_intel/` (10 modules, **store-free**) + `tests/offensive/`
-> + `tests/mcp/test_offensive_tools.py` + 8 MCP tools, committed on branch `phase-p-offensive-intelligence`,
-> tagged `phase-p-offensive-intelligence`. Unrelated `wiki/` recon-fusion edits and PDF/artifact files were
-> intentionally **excluded** (same discipline as N/O). MCP count **116**; **531 tests pass**, 6 deselected
-> (integration/e2e); ruff clean; promotion.py/confidence.py untouched; **NON-executing**. Benchmark O(E),
-> ~3.6 µs/event (≈3.6 s @ 1M). Phase O remains tagged `phase-o-temporal` (`f8ffdf0`, MCP 108).
+> ✅ **Release note (Phase Q):** `hydra/campaigns/` (12 modules, **store-free**) + `tests/campaigns/`
+> + `tests/mcp/test_campaign_tools.py` + 8 MCP tools, committed on branch `phase-q-campaign-reasoning`,
+> tagged `phase-q-campaign-reasoning`. Campaign-level reasoning reusing the Phase-P `OffensiveContext`;
+> **skills first-class** (dual capability + skill graphs); **post-exploitation tactics model-only**. Unrelated
+> wiki/PDF/artifact files **excluded**. MCP count **124**; **569 tests pass**, 6 deselected; ruff clean;
+> promotion.py/confidence.py untouched; **NON-executing**. Benchmark: campaign reasoning O(C+D) ~2.6 ms warm,
+> 0.378 s cold-start; path 0.3 ms; sim 0.1 s. Phase P remains tagged `phase-p-offensive-intelligence` (`3cf2b0d`, MCP 116).
 
 ---
 
 ## Architecture Lineage
 
-Build order is **locked A → P**. Every phase is derived/advisory unless noted; none mutate
+Build order is **locked A → Q**. Every phase is derived/advisory unless noted; none mutate
 `promotion.py`, `confidence.py`, or the canonical wiki schema behavior.
 
 ### Phase A — Offensive Knowledge OS Foundations
@@ -173,8 +174,18 @@ Build order is **locked A → P**. Every phase is derived/advisory unless noted;
 - **Tests:** `tests/offensive/test_offensive.py` (17) + `tests/mcp/test_offensive_tools.py` (15) = **32**; full suite **531**.
 - **Invariants:** derived/advisory/deterministic/rebuild-identical; **NON-executing**; no exploitation/validation/confirmation/promotion; no wiki mutation; promotion.py/confidence.py untouched.
 
+### Phase Q — Offensive Campaign Reasoning Engine
+- **Purpose:** Lift Hydra from capability intelligence (P) to CAMPAIGN-level reasoning — attack objectives, the 12 attack-tactic phases, capability sequencing, skill composition, attack-path generation, gaps, alternative strategies. Skills are first-class; a campaign is explainable as BOTH a Capability Graph and a Skill Graph.
+- **Components (`hydra/campaigns/`, NEW package, store-free):** `util`, `CampaignContext` (load-once, reuses the Phase-P OffensiveIntelligence), `CampaignModel` (12 tactic phases; post-exploitation = model-only), `CampaignSkillBridge` (4 campaign facets + dual graphs), `WorkflowGraph`, `ObjectiveMapping` (Objective→Skills→Capabilities→Adapters→Agents), `PlaybookGenerator` (5 templates), `PathGeneration`, `StrategyComparator`, `CampaignSimulator` (counterfactual), `CampaignAdvisor`, `CampaignIntelligence`.
+- **Stores:** **none** — store-free (pure function of static catalogs + Phase-P offensive intelligence + declarative templates).
+- **MCP Δ:** +8 (124 total) — `campaign_summary`, `campaign_objectives`, `campaign_playbooks`, `campaign_paths`, `campaign_strategies`, `campaign_simulation`, `campaign_gaps`, `campaign_health`.
+- **Governance:** Phase-J `governance_summary` gains a read-only `campaign_intelligence` block (lazy import, no cycle).
+- **Benchmarks:** campaign reasoning **O(C+D)** ~2.6 ms warm / 0.378 s cold-start; path 0.3 ms; simulation 0.1 s.
+- **Tests:** `tests/campaigns/test_campaigns.py` (22) + `tests/mcp/test_campaign_tools.py` (16) = **38**; full suite **569**.
+- **Invariants:** derived/advisory/deterministic/rebuild-identical; store-free; **NON-executing**; no exploitation/validation/confirmation/promotion; no wiki mutation; promotion.py/confidence.py untouched. **Post-exploitation guard:** persistence/privilege_escalation/defense_evasion/lateral_movement/collection/exfiltration are model-only (`hydra_capability_coverage=none`, `advisory_model_only=true`).
+
 ### Current Phase
-**P (implemented & released: tag + branch `phase-p-offensive-intelligence`, cut from `phase-o-temporal` `f8ffdf0`).** Next: **Phase Q** (see Roadmap).
+**Q (implemented & released: tag + branch `phase-q-campaign-reasoning`, cut from `phase-p-offensive-intelligence` `3cf2b0d`).** Next: **Phase R** (see Roadmap).
 
 ---
 
@@ -232,7 +243,7 @@ Build order is **locked A → P**. Every phase is derived/advisory unless noted;
 | Adapters (effective) | 439 |
 | Agents | 7 (recon, attack_surface, cloud, verification, mobile, correlation, reporting) |
 | Plugins (reference packs) | 6 (cloud, mobile, container, iot, supply_chain, osint) |
-| MCP Tools (live registry) | 116 |
+| MCP Tools (live registry) | 124 |
 
 ### Stores (by layer — v2 taxonomy)
 | Class | Stores |
@@ -418,9 +429,9 @@ base tools (save_finding/get_findings/generate_report/full_recon/check_tools) al
   load-once reads; a general cross-domain correlation layer is deferred.)*
 - **Full design:** `docs/PHASE_P_DESIGN.md`.
 
-### Phase Q — Federated Trust Graph & Reputation Hardening
-- **Goal:** Multi-peer trust propagation, Sybil-resistance heuristics, reputation decay (advisory).
-- **Dependencies:** N. **MCP:** +~4. **Perf:** O(E). **Risks:** trust gaming (advisory-only mitigates). **Invariants:** metadata-only preserved.
+### Phase Q — Offensive Campaign Reasoning Engine ✅ **DELIVERED**
+- Implemented as `hydra/campaigns/` (store-free; +8 MCP tools → 124; governance block). Campaign-level reasoning over the 12 attack-tactic phases; skills first-class (dual capability+skill graphs); post-exploitation model-only; NON-executing. O(C+D). 569 tests. See Architecture Lineage → Phase Q. Next is Phase R.
+- *(The earlier "Federated Trust Graph & Reputation Hardening" concept is deferred to a later federation-track phase.)*
 
 ### Phase R — Reporting & Deliverable Synthesis Intelligence
 - **Goal:** Advisory assembly of report drafts from canonical wiki + intel (no new canonical source).

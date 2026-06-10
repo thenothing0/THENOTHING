@@ -401,6 +401,16 @@ class GovernanceIntelligence(_GovernanceBase):
         except Exception:
             return {"offensive_health_score": None, "status": "unknown", "total_events": 0}
 
+    def campaign_intelligence(self) -> Dict:
+        """Phase-Q campaign-intelligence health (campaign_health_score / phase & playbook
+        effectiveness / coverage). Read-only; lazy import keeps governance robust if the layer is
+        absent. Never alters confidence/promotion or the wiki; NON-executing."""
+        try:
+            from hydra.campaigns.intelligence import CampaignIntelligence
+            return CampaignIntelligence().campaign_health()
+        except Exception:
+            return {"campaign_health_score": None, "status": "unknown", "total_events": 0}
+
     @staticmethod
     def _rank(components: Dict[str, float]):
         return sorted(components.items(), key=lambda kv: (kv[1], kv[0]))
@@ -432,6 +442,7 @@ class GovernanceIntelligence(_GovernanceBase):
             "decision_intelligence": self.decision_intelligence(),
             "temporal_intelligence": self.temporal_intelligence(),
             "offensive_intelligence": self.offensive_intelligence(),
+            "campaign_intelligence": self.campaign_intelligence(),
             "recommendations": LifecycleAdvisor(**self._shared()).recommendations(),
         }
 

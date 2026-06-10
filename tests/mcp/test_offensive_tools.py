@@ -18,9 +18,11 @@ OFFENSIVE_TOOLS = [
 ]
 
 
-def test_mcp_count_is_116():
+def test_mcp_count_at_least_116():
+    # Phase P brought the registry to 116; later phases only add (exact count is pinned by the
+    # contract baseline in test_tool_contract.py). Here we assert the offensive tools are present.
     live = {t.name for t in asyncio.run(mcp_server.mcp.list_tools())}
-    assert len(live) == 116
+    assert len(live) >= 116
     for t in OFFENSIVE_TOOLS:
         assert t in live
 

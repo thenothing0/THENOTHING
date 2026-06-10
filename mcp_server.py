@@ -1083,6 +1083,7 @@ try:
     from hydra.temporal_intel.trends import MomentumAnalyzer as _MomentumAnalyzer
     from hydra.temporal_intel.trends import TrendAnalyzer as _TrendAnalyzer
     from hydra.offensive_intel.intelligence import OffensiveIntelligence as _OffensiveIntelligence
+    from hydra.campaigns.intelligence import CampaignIntelligence as _CampaignIntelligence
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -2623,6 +2624,132 @@ def offensive_health(now: float = 0.0) -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(_OffensiveIntelligence().offensive_health(_offensive_now(now)), indent=2)
+
+
+# ── Phase Q — Offensive Campaign Reasoning Engine (derived, advisory, NON-executing) ──
+# All eight tools are read-only/deterministic/advisory and reason about campaign STRUCTURE only.
+# Post-exploitation tactics are MODEL-ONLY (no capabilities, no execution). They never execute,
+# touch targets, launch tools, confirm findings, or modify promotion/confidence, and never touch
+# the canonical wiki. `now` is optional (<=0 = newest event).
+def _campaign_now(now: float):
+    return None if now is None or now <= 0 else float(now)
+
+
+@mcp.tool()
+def campaign_summary(now: float = 0.0) -> str:
+    """Campaign intelligence overview (Phase Q, read-only, advisory): campaign-health, the 12-phase
+    model (post-exploitation = model-only), workflow graph, playbooks, objectives, recommendations.
+
+    Args:
+        now: optional reference timestamp for determinism (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_CampaignIntelligence().campaign_summary(_campaign_now(now)), indent=2)
+
+
+@mcp.tool()
+def campaign_objectives(objective: str = "", now: float = 0.0) -> str:
+    """Objective mapping (Phase Q, read-only, advisory): Objective → Skills → Capabilities →
+    Adapters → Agents, as explainable chains; one objective or all.
+
+    Args:
+        objective: optional objective id (e.g. "web_vuln_candidates"); omit for all
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_CampaignIntelligence().campaign_objectives(objective, _campaign_now(now)), indent=2)
+
+
+@mcp.tool()
+def campaign_playbooks(playbook: str = "", now: float = 0.0) -> str:
+    """Campaign playbooks (Phase Q, read-only, advisory): generated playbooks scored by effectiveness;
+    a single playbook also exposes campaign_capabilities/skills/agents/dependencies + dual graphs.
+
+    Args:
+        playbook: optional playbook id (e.g. "web_application_assessment"); omit for the summary
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_CampaignIntelligence().campaign_playbooks(playbook, _campaign_now(now)), indent=2)
+
+
+@mcp.tool()
+def campaign_paths(playbook: str = "", target_type: str = "", limit: int = 10, now: float = 0.0) -> str:
+    """Capability sequencing / attack-path generation (Phase Q, read-only, advisory): per-playbook
+    execution-order sequence + dual graphs, or bounded Phase-P attack chains. NON-executing.
+
+    Args:
+        playbook: optional playbook id to sequence; omit for bounded attack chains
+        target_type: optional seed target-type filter for chains
+        limit: max chains (default 10)
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_CampaignIntelligence().campaign_paths(
+        playbook, target_type, max(1, limit), _campaign_now(now)), indent=2)
+
+
+@mcp.tool()
+def campaign_strategies(strategy_a: str = "", strategy_b: str = "", now: float = 0.0) -> str:
+    """Strategy comparison (Phase Q, read-only, advisory): two strategies (playbook ids or capability
+    categories) scored on coverage / diversity / effectiveness / dependency-risk / redundancy.
+
+    Args:
+        strategy_a: first playbook id or category (default: top playbook)
+        strategy_b: second playbook id or category (default: 2nd playbook)
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_CampaignIntelligence().campaign_strategies(
+        strategy_a, strategy_b, _campaign_now(now)), indent=2)
+
+
+@mcp.tool()
+def campaign_simulation(scenario: str = "remove_capability", subject: str = "", now: float = 0.0) -> str:
+    """Counterfactual campaign simulation (Phase Q, read-only, advisory, NON-executing): project the
+    campaign impact of remove_capability / remove_plugin / verification_drop / category_change. No
+    runtime execution, no target interaction.
+
+    Args:
+        scenario: one of remove_capability | remove_plugin | verification_drop | category_change
+        subject: the capability / plugin / category the scenario applies to
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_CampaignIntelligence().campaign_simulation(
+        scenario, subject, _campaign_now(now)), indent=2)
+
+
+@mcp.tool()
+def campaign_gaps(now: float = 0.0) -> str:
+    """Campaign gaps (Phase Q, read-only, advisory): weak campaign phases + the Phase-P offensive
+    gaps, with the model-only (post-exploitation) phases listed explicitly.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_CampaignIntelligence().campaign_gaps(_campaign_now(now)), indent=2)
+
+
+@mcp.tool()
+def campaign_health(now: float = 0.0) -> str:
+    """Campaign-health score (Phase Q, read-only, advisory): 0-100 blend of phase effectiveness,
+    playbook effectiveness and phase coverage. Never alters confidence / promotion.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_CampaignIntelligence().campaign_health(_campaign_now(now)), indent=2)
 
 
 @mcp.tool()

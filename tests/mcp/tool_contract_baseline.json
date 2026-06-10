@@ -81,6 +81,63 @@
       "asset"
     ]
   },
+  "campaign_gaps": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "campaign_health": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "campaign_objectives": {
+    "params": [
+      "now",
+      "objective"
+    ],
+    "required": []
+  },
+  "campaign_paths": {
+    "params": [
+      "limit",
+      "now",
+      "playbook",
+      "target_type"
+    ],
+    "required": []
+  },
+  "campaign_playbooks": {
+    "params": [
+      "now",
+      "playbook"
+    ],
+    "required": []
+  },
+  "campaign_simulation": {
+    "params": [
+      "now",
+      "scenario",
+      "subject"
+    ],
+    "required": []
+  },
+  "campaign_strategies": {
+    "params": [
+      "now",
+      "strategy_a",
+      "strategy_b"
+    ],
+    "required": []
+  },
+  "campaign_summary": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
   "capability_catalog": {
     "params": [
       "category"

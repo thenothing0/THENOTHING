@@ -320,6 +320,28 @@ promotion.py/confidence.py and the canonical wiki are untouched.
 - `offensive_skills` — Capability→Skill→Workflow→Agent bridge with skill effectiveness/quality
 - `offensive_health` — 0-100 offensive-health score (effectiveness + structural coverage quality; advisory)
 
+### Offensive Campaign Reasoning Engine (Phase Q — derived, advisory, NON-executing)
+A store-free, offline-first campaign-reasoning layer (`hydra/campaigns/`) that lifts Hydra from capability
+intelligence to CAMPAIGN-level reasoning: attack objectives, the 12 attack-tactic phases, capability
+sequencing, skill composition, attack-path generation, gaps, and alternative strategies. Built over ONE shared
+`CampaignContext` that reuses the Phase-P `OffensiveIntelligence` (load-once). **Skills are first-class** — a
+campaign is explainable as BOTH a Capability Graph and a Skill Graph, and every generated campaign exposes
+`campaign_capabilities` / `campaign_skills` / `campaign_agents` / `campaign_dependencies`. Deterministic
+(injected `now`), rebuild-identical, advisory only; **NON-executing** — it reasons about campaign STRUCTURE and
+never executes, touches targets, launches tools, confirms findings, or modifies promotion/confidence.
+**Post-exploitation guard:** persistence / privilege_escalation / defense_evasion / lateral_movement /
+collection / exfiltration are **model-only** (`hydra_capability_coverage = none`, `advisory_model_only = true`).
+Phase-J `governance_summary` gains a read-only `campaign_intelligence` block. promotion.py/confidence.py and the
+canonical wiki are untouched.
+- `campaign_summary` — Overview: campaign-health, 12-phase model, workflow graph, playbooks, objectives, recommendations
+- `campaign_objectives` — Objective → Skills → Capabilities → Adapters → Agents (explainable chains)
+- `campaign_playbooks` — Scored playbooks; a single playbook exposes the 4 campaign facets + dual graphs
+- `campaign_paths` — Per-playbook execution-order sequence + dual graphs, or bounded attack chains (NON-executing)
+- `campaign_strategies` — Compare two strategies on coverage / diversity / effectiveness / dependency-risk / redundancy
+- `campaign_simulation` — Counterfactual impact (remove capability/plugin, verification drop, category change); NON-executing
+- `campaign_gaps` — Weak campaign phases + offensive gaps; model-only phases listed explicitly
+- `campaign_health` — 0-100 campaign-health score (phase + playbook effectiveness + coverage; advisory)
+
 ## CLI workflows
 
 ```bash
