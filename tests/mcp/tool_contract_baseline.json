@@ -731,6 +731,55 @@
     ],
     "required": []
   },
+  "skill_bundles": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "skill_coverage": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "skill_dependencies": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "skill_effectiveness": {
+    "params": [
+      "now",
+      "skill_id"
+    ],
+    "required": []
+  },
+  "skill_gaps": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "skill_graph": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "skill_marketplace": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "skill_summary": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
   "source_scores": {
     "params": [
       "source_id"

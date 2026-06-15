@@ -1084,6 +1084,7 @@ try:
     from hydra.temporal_intel.trends import TrendAnalyzer as _TrendAnalyzer
     from hydra.offensive_intel.intelligence import OffensiveIntelligence as _OffensiveIntelligence
     from hydra.campaigns.intelligence import CampaignIntelligence as _CampaignIntelligence
+    from hydra.skill_intel.intelligence import SkillGraphIntelligence as _SkillGraphIntelligence
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -2750,6 +2751,121 @@ def campaign_health(now: float = 0.0) -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(_CampaignIntelligence().campaign_health(_campaign_now(now)), indent=2)
+
+
+# ── Phase R — Skill Composition & Skill Graph Intelligence (derived, advisory, NON-executing) ──
+# All eight tools are read-only/deterministic/advisory. They promote Skills to first-class entities
+# (skill dependency + composition graph, bundles, effectiveness, coverage, gaps, marketplace) over a
+# load-once SkillContext that reuses the Phase-P OffensiveIntelligence. Store-free. Skills never
+# execute, never modify capability/promotion/confidence state, never become a canonical source.
+# `now` is optional (<=0 = newest event).
+def _skill_now(now: float):
+    return None if now is None or now <= 0 else float(now)
+
+
+@mcp.tool()
+def skill_summary(now: float = 0.0) -> str:
+    """Skill intelligence overview (Phase R, read-only, advisory): skill-health, graph stats, top
+    skills, bundles, coverage, critical skills, gaps, recommendations.
+
+    Args:
+        now: optional reference timestamp for determinism (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_SkillGraphIntelligence().skill_summary(_skill_now(now)), indent=2)
+
+
+@mcp.tool()
+def skill_graph(now: float = 0.0) -> str:
+    """Skill graph (Phase R, read-only, advisory): the skill dependency graph (derived from the
+    capability dependency graph) + the skill composition graph (shared capabilities) + clusters.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_SkillGraphIntelligence().skill_graph(_skill_now(now)), indent=2)
+
+
+@mcp.tool()
+def skill_dependencies(now: float = 0.0) -> str:
+    """Skill dependency intelligence (Phase R, read-only, advisory): dependency edges, critical
+    skills (most depended-upon), isolated skills, and directed cycles.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_SkillGraphIntelligence().skill_dependencies(_skill_now(now)), indent=2)
+
+
+@mcp.tool()
+def skill_bundles(now: float = 0.0) -> str:
+    """Skill bundles (Phase R, read-only, advisory): coherent skill bundles (by category) with their
+    union of capabilities/agents and a mean effectiveness.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_SkillGraphIntelligence().skill_bundles(_skill_now(now)), indent=2)
+
+
+@mcp.tool()
+def skill_effectiveness(skill_id: str = "", now: float = 0.0) -> str:
+    """Per-skill effectiveness (Phase R, read-only, advisory): effectiveness, utility, uniqueness,
+    redundancy; ranked, or a single skill.
+
+    Args:
+        skill_id: optional single skill id (e.g. "tn_xss"); omit for the full ranked list
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_SkillGraphIntelligence().skill_effectiveness(skill_id, _skill_now(now)), indent=2)
+
+
+@mcp.tool()
+def skill_coverage(now: float = 0.0) -> str:
+    """Skill coverage (Phase R, read-only, advisory): per-category skill coverage + overall
+    capability coverage (capabilities covered by >=1 skill vs uncovered).
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_SkillGraphIntelligence().skill_coverage(_skill_now(now)), indent=2)
+
+
+@mcp.tool()
+def skill_gaps(now: float = 0.0) -> str:
+    """Skill gaps (Phase R, read-only, advisory): capabilities with no skill, weak skills, and
+    broken chain_to references.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_SkillGraphIntelligence().skill_gaps(_skill_now(now)), indent=2)
+
+
+@mcp.tool()
+def skill_marketplace(now: float = 0.0) -> str:
+    """Skill marketplace (Phase R, read-only, advisory): where the skill ecosystem could grow —
+    low-coverage categories and weak skills to strengthen. Advisory only; authors nothing.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_SkillGraphIntelligence().skill_marketplace(_skill_now(now)), indent=2)
 
 
 @mcp.tool()

@@ -17,9 +17,11 @@ CAMPAIGN_TOOLS = [
 ]
 
 
-def test_mcp_count_is_124():
+def test_mcp_count_at_least_124():
+    # Phase Q brought the registry to 124; later phases only add (exact count is pinned by the
+    # contract baseline in test_tool_contract.py). Here we assert the campaign tools are present.
     live = {t.name for t in asyncio.run(mcp_server.mcp.list_tools())}
-    assert len(live) == 124
+    assert len(live) >= 124
     for t in CAMPAIGN_TOOLS:
         assert t in live
 

@@ -10,26 +10,28 @@
 
 | Field | Value |
 |-------|-------|
-| Current Phase | **Phase Q — Offensive Campaign Reasoning Engine** (implemented & released) |
-| Latest Commit | Phase Q commit on branch `phase-q-campaign-reasoning`, tagged `phase-q-campaign-reasoning` (supersedes Phase P `3cf2b0d`) |
-| Latest Tag | `phase-q-campaign-reasoning` |
-| Active Branch | `phase-q-campaign-reasoning` (cut from `phase-p-offensive-intelligence`) |
-| Last Updated | 2026-06-10 (Phase Q released — Offensive Campaign Reasoning Engine) |
-| MCP Tools | **124** (Phase Q added +8 campaign tools) |
+| Current Phase | **Phase R — Skill Composition & Skill Graph Intelligence** (implemented & released) |
+| Latest Commit | Phase R commit on branch `phase-r-skill-intelligence`, tagged `phase-r-skill-intelligence` (supersedes Phase Q `45e05d1`) |
+| Latest Tag | `phase-r-skill-intelligence` |
+| Active Branch | `phase-r-skill-intelligence` (cut from `phase-q-campaign-reasoning`) |
+| Last Updated | 2026-06-10 (Phase R released — Skill Composition & Skill Graph Intelligence) |
+| MCP Tools | **132** (Phase R added +8 skill tools) |
 
-> ✅ **Release note (Phase Q):** `hydra/campaigns/` (12 modules, **store-free**) + `tests/campaigns/`
-> + `tests/mcp/test_campaign_tools.py` + 8 MCP tools, committed on branch `phase-q-campaign-reasoning`,
-> tagged `phase-q-campaign-reasoning`. Campaign-level reasoning reusing the Phase-P `OffensiveContext`;
-> **skills first-class** (dual capability + skill graphs); **post-exploitation tactics model-only**. Unrelated
-> wiki/PDF/artifact files **excluded**. MCP count **124**; **569 tests pass**, 6 deselected; ruff clean;
-> promotion.py/confidence.py untouched; **NON-executing**. Benchmark: campaign reasoning O(C+D) ~2.6 ms warm,
-> 0.378 s cold-start; path 0.3 ms; sim 0.1 s. Phase P remains tagged `phase-p-offensive-intelligence` (`3cf2b0d`, MCP 116).
+> ✅ **Release note (Phase R):** `hydra/skill_intel/` (12 modules, **store-free**) + `tests/skill_intel/`
+> + `tests/mcp/test_skill_tools.py` + 8 MCP tools, committed on branch `phase-r-skill-intelligence`,
+> tagged `phase-r-skill-intelligence`. Promotes Skills to first-class entities — skill dependency graph
+> **DERIVED from the capability graph** (declarative `chain_to` is unpopulated), composition graph, bundles,
+> effectiveness, coverage, gaps, marketplace. Reuses the Phase-P `OffensiveContext`; legacy `hydra/skills/`
+> **untouched** (NEW package `hydra/skill_intel/`). Unrelated wiki/PDF/artifact files **excluded**. MCP count
+> **132**; **603 tests pass**, 6 deselected; ruff clean; promotion.py/confidence.py untouched; **NON-executing**.
+> Benchmark O(S+C+D): graph 0.04 ms warm / 0.442 s cold; summary 0.63 ms; marketplace 0.30 ms. Phase Q remains
+> tagged `phase-q-campaign-reasoning` (`45e05d1`, MCP 124).
 
 ---
 
 ## Architecture Lineage
 
-Build order is **locked A → Q**. Every phase is derived/advisory unless noted; none mutate
+Build order is **locked A → R**. Every phase is derived/advisory unless noted; none mutate
 `promotion.py`, `confidence.py`, or the canonical wiki schema behavior.
 
 ### Phase A — Offensive Knowledge OS Foundations
@@ -184,8 +186,18 @@ Build order is **locked A → Q**. Every phase is derived/advisory unless noted;
 - **Tests:** `tests/campaigns/test_campaigns.py` (22) + `tests/mcp/test_campaign_tools.py` (16) = **38**; full suite **569**.
 - **Invariants:** derived/advisory/deterministic/rebuild-identical; store-free; **NON-executing**; no exploitation/validation/confirmation/promotion; no wiki mutation; promotion.py/confidence.py untouched. **Post-exploitation guard:** persistence/privilege_escalation/defense_evasion/lateral_movement/collection/exfiltration are model-only (`hydra_capability_coverage=none`, `advisory_model_only=true`).
 
+### Phase R — Skill Composition & Skill Graph Intelligence
+- **Purpose:** Promote Skills into first-class architecture entities — a skill dependency graph, composition graph, bundles, per-skill effectiveness, coverage, gaps, and an advisory skill marketplace.
+- **Components (`hydra/skill_intel/`, NEW package, store-free — does NOT modify the legacy `hydra/skills/` subsystem):** `util`, `SkillContext` (load-once, reuses the Phase-P OffensiveIntelligence), `SkillGraph` (dependency edges **derived from the capability dependency graph** since `chain_to` is unpopulated; composition edges from shared capabilities), `SkillDependencyAnalyzer`, `SkillComposition`, `SkillBundles`, `SkillEffectivenessAnalyzer`, `SkillCoverageAnalyzer`, `SkillGapAnalyzer`, `SkillMarketplace`, `SkillAdvisor`, `SkillGraphIntelligence`.
+- **Stores:** **none** — store-free (pure function of static catalogs + Phase-P offensive intelligence).
+- **MCP Δ:** +8 (132 total) — `skill_summary`, `skill_graph`, `skill_dependencies`, `skill_bundles`, `skill_effectiveness`, `skill_coverage`, `skill_gaps`, `skill_marketplace`.
+- **Governance:** Phase-J `governance_summary` gains a read-only `skill_intelligence` block (lazy import, no cycle).
+- **Benchmarks:** O(S+C+D); graph 0.04 ms warm / 0.442 s cold; summary 0.63 ms; marketplace 0.30 ms.
+- **Tests:** `tests/skill_intel/test_skill_intel.py` (19) + `tests/mcp/test_skill_tools.py` (15) = **34**; full suite **603**.
+- **Invariants:** derived/advisory/deterministic/rebuild-identical; store-free; **NON-executing**; skills never execute / modify capability-promotion-confidence state / create runtime actions / become a canonical source; legacy `hydra/skills/` untouched; promotion.py/confidence.py untouched.
+
 ### Current Phase
-**Q (implemented & released: tag + branch `phase-q-campaign-reasoning`, cut from `phase-p-offensive-intelligence` `3cf2b0d`).** Next: **Phase R** (see Roadmap).
+**R (implemented & released: tag + branch `phase-r-skill-intelligence`, cut from `phase-q-campaign-reasoning` `45e05d1`).** Next: **Phase S** (see Roadmap).
 
 ---
 
@@ -243,7 +255,7 @@ Build order is **locked A → Q**. Every phase is derived/advisory unless noted;
 | Adapters (effective) | 439 |
 | Agents | 7 (recon, attack_surface, cloud, verification, mobile, correlation, reporting) |
 | Plugins (reference packs) | 6 (cloud, mobile, container, iot, supply_chain, osint) |
-| MCP Tools (live registry) | 124 |
+| MCP Tools (live registry) | 132 |
 
 ### Stores (by layer — v2 taxonomy)
 | Class | Stores |
@@ -433,9 +445,9 @@ base tools (save_finding/get_findings/generate_report/full_recon/check_tools) al
 - Implemented as `hydra/campaigns/` (store-free; +8 MCP tools → 124; governance block). Campaign-level reasoning over the 12 attack-tactic phases; skills first-class (dual capability+skill graphs); post-exploitation model-only; NON-executing. O(C+D). 569 tests. See Architecture Lineage → Phase Q. Next is Phase R.
 - *(The earlier "Federated Trust Graph & Reputation Hardening" concept is deferred to a later federation-track phase.)*
 
-### Phase R — Reporting & Deliverable Synthesis Intelligence
-- **Goal:** Advisory assembly of report drafts from canonical wiki + intel (no new canonical source).
-- **Dependencies:** A/B. **MCP:** +~3. **Perf:** O(pages). **Risks:** hallucinated claims (cite-only). **Invariants:** read-only over wiki.
+### Phase R — Skill Composition & Skill Graph Intelligence ✅ **DELIVERED**
+- Implemented as `hydra/skill_intel/` (store-free; +8 MCP tools → 132; governance block). Skill dependency graph (derived from the capability graph), composition graph, bundles, effectiveness, coverage, gaps, marketplace; NON-executing; legacy `hydra/skills/` untouched. O(S+C+D). 603 tests. See Architecture Lineage → Phase R. Next is Phase S.
+- *(The earlier "Reporting & Deliverable Synthesis Intelligence" concept is deferred to a later reporting-track phase.)*
 
 ### Phase S — Knowledge Compaction & Snapshotting
 - **Goal:** Deterministic event-log compaction/snapshots for all derived stores at scale.

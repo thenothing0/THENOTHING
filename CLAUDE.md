@@ -342,6 +342,26 @@ canonical wiki are untouched.
 - `campaign_gaps` — Weak campaign phases + offensive gaps; model-only phases listed explicitly
 - `campaign_health` — 0-100 campaign-health score (phase + playbook effectiveness + coverage; advisory)
 
+### Skill Composition & Skill Graph Intelligence (Phase R — derived, advisory, NON-executing)
+A store-free, offline-first skill-intelligence layer (`hydra/skill_intel/`) that promotes Skills into
+first-class architecture entities: a **skill dependency graph** (derived from the capability dependency
+graph, since declarative `chain_to` is unpopulated), a **skill composition graph** (shared capabilities),
+**skill bundles**, per-skill effectiveness, skill coverage, skill gaps, and an advisory skill marketplace.
+Built over ONE `SkillContext` that reuses the Phase-P `OffensiveIntelligence` (load-once). This is a NEW
+package — it does **not** modify the legacy `hydra/skills/` operational subsystem; it only reads skills
+(through the Phase-P skill bridge). Deterministic (injected `now`), rebuild-identical, advisory only;
+**NON-executing** — skills never execute, never modify capability/promotion/confidence state, never create
+runtime actions, and never become a canonical source. Phase-J `governance_summary` gains a read-only
+`skill_intelligence` block. promotion.py/confidence.py and the canonical wiki are untouched.
+- `skill_summary` — Overview: skill-health, graph stats, top skills, bundles, coverage, critical skills, gaps, recommendations
+- `skill_graph` — Skill dependency graph (derived from the capability graph) + composition graph + clusters
+- `skill_dependencies` — Dependency edges, critical skills (most depended-upon), isolated skills, cycles
+- `skill_bundles` — Coherent skill bundles (by category) with union capabilities/agents + effectiveness
+- `skill_effectiveness` — Per-skill effectiveness/utility/uniqueness/redundancy; ranked or single skill
+- `skill_coverage` — Per-category skill coverage + overall capability coverage
+- `skill_gaps` — Capabilities with no skill, weak skills, broken chain_to references
+- `skill_marketplace` — Advisory: low-coverage categories + weak skills to strengthen (authors nothing)
+
 ## CLI workflows
 
 ```bash

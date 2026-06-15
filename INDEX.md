@@ -2,21 +2,21 @@
 
 > Navigational catalog for the Hydra Offensive Knowledge OS. Content-light by design: it points to the
 > authoritative documents. If this file and code disagree, **code + wiki + CLAUDE.md** win.
-> Created 2026-06-09 (Harness V4.1) to close the long-standing "no root INDEX.md" gap.
+> Created 2026-06-09 (Harness V4.1); updated 2026-06-10 (Phase R).
 
 ## Current state (verify live before relying on it)
 | Field | Value |
 |-------|-------|
-| Current Phase | **O — Temporal Knowledge Intelligence** (released) |
-| Commit / Tag / Branch | `f8ffdf0` / `phase-o-temporal` / `phase-o-temporal` |
-| Next Phase | **P — Offensive Capability Intelligence** (designed, not implemented) |
-| MCP tools | 108 · Capabilities 153 eff (87 core) · Adapters 439 eff (175 core) · Agents 7 · Plugins 6 |
+| Current Phase | **R — Skill Composition & Skill Graph Intelligence** (released) |
+| Commit / Tag / Branch | `45e05d1`→Phase R commit / `phase-r-skill-intelligence` / `phase-r-skill-intelligence` |
+| Next Phase | **S — Knowledge Compaction & Snapshotting** (roadmap; not started) |
+| MCP tools | 132 · Capabilities 153 eff (87 core) · Adapters 439 eff (175 core) · Skills 31 · Agents 7 · Plugins 6 |
 
 ## Authoritative documents
-- **`CLAUDE.md`** — operating instructions + the canonical MCP tool palette (108 tools, doc-sync enforced in CI).
-- **`docs/HYDRA_SYSTEM_CONTEXT.md`** — permanent architecture memory: phase lineage A→O, invariant registry, inventory, data-flow, performance history, open risks, roadmap O→Z.
-- **`docs/PHASE_O_RELEASE_REPORT.md`** — Phase O release report (commit/tag/branch/counts/invariants).
-- **`docs/PHASE_P_DESIGN.md`** — Phase P architecture design (Offensive Capability Intelligence; design only).
+- **`CLAUDE.md`** — operating instructions + the canonical MCP tool palette (132 tools, doc-sync enforced in CI).
+- **`docs/HYDRA_SYSTEM_CONTEXT.md`** — permanent architecture memory: phase lineage A→R, invariant registry, inventory, data-flow, performance history, open risks, roadmap S→Z.
+- **`docs/PHASE_{O,P,Q,R}_RELEASE_REPORT.md`** — per-phase release reports (commit/tag/branch/counts/invariants).
+- **`docs/PHASE_{P,Q}_DESIGN.md`** — Phase P/Q architecture designs.
 - **`docs/adr/`** — architecture decision records (e.g. wiki-as-canonical-source-of-truth).
 - **`wiki/`** — the single canonical knowledge store; catalog at `wiki/index.md`, schema at `wiki/SCHEMA.md`, timeline at `wiki/log.md`.
 

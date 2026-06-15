@@ -411,6 +411,16 @@ class GovernanceIntelligence(_GovernanceBase):
         except Exception:
             return {"campaign_health_score": None, "status": "unknown", "total_events": 0}
 
+    def skill_intelligence(self) -> Dict:
+        """Phase-R skill-intelligence health (skill_health_score / mean skill effectiveness /
+        capability coverage / graph connectivity). Read-only; lazy import keeps governance robust if
+        the layer is absent. Never alters confidence/promotion or the wiki; NON-executing."""
+        try:
+            from hydra.skill_intel.intelligence import SkillGraphIntelligence
+            return SkillGraphIntelligence().skill_health()
+        except Exception:
+            return {"skill_health_score": None, "status": "unknown", "total_events": 0}
+
     @staticmethod
     def _rank(components: Dict[str, float]):
         return sorted(components.items(), key=lambda kv: (kv[1], kv[0]))
@@ -443,6 +453,7 @@ class GovernanceIntelligence(_GovernanceBase):
             "temporal_intelligence": self.temporal_intelligence(),
             "offensive_intelligence": self.offensive_intelligence(),
             "campaign_intelligence": self.campaign_intelligence(),
+            "skill_intelligence": self.skill_intelligence(),
             "recommendations": LifecycleAdvisor(**self._shared()).recommendations(),
         }
 
