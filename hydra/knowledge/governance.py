@@ -421,6 +421,17 @@ class GovernanceIntelligence(_GovernanceBase):
         except Exception:
             return {"skill_health_score": None, "status": "unknown", "total_events": 0}
 
+    def opportunity_intelligence(self) -> Dict:
+        """Phase-S opportunity-intelligence health (opportunity_health_score / synthesized coverage /
+        surface breadth / coverage realization / blind-spot health). Read-only; lazy import keeps
+        governance robust if the layer is absent. Never alters confidence/promotion or the wiki;
+        NON-executing."""
+        try:
+            from hydra.opportunity_intel.intelligence import OpportunityIntelligence
+            return OpportunityIntelligence().opportunity_health()
+        except Exception:
+            return {"opportunity_health_score": None, "status": "unknown", "total_events": 0}
+
     @staticmethod
     def _rank(components: Dict[str, float]):
         return sorted(components.items(), key=lambda kv: (kv[1], kv[0]))
@@ -454,6 +465,7 @@ class GovernanceIntelligence(_GovernanceBase):
             "offensive_intelligence": self.offensive_intelligence(),
             "campaign_intelligence": self.campaign_intelligence(),
             "skill_intelligence": self.skill_intelligence(),
+            "opportunity_intelligence": self.opportunity_intelligence(),
             "recommendations": LifecycleAdvisor(**self._shared()).recommendations(),
         }
 

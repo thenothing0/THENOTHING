@@ -17,9 +17,11 @@ SKILL_TOOLS = [
 ]
 
 
-def test_mcp_count_is_132():
+def test_mcp_count_at_least_132():
+    # Phase R brought the registry to 132; later phases only add (exact count is pinned by the
+    # contract baseline in test_tool_contract.py). Here we assert the skill tools are present.
     live = {t.name for t in asyncio.run(mcp_server.mcp.list_tools())}
-    assert len(live) == 132
+    assert len(live) >= 132
     for t in SKILL_TOOLS:
         assert t in live
 

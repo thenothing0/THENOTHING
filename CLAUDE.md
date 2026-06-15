@@ -362,6 +362,31 @@ runtime actions, and never become a canonical source. Phase-J `governance_summar
 - `skill_gaps` — Capabilities with no skill, weak skills, broken chain_to references
 - `skill_marketplace` — Advisory: low-coverage categories + weak skills to strengthen (authors nothing)
 
+### Opportunity Intelligence (Phase S — derived, advisory, NON-executing)
+A store-free, offline-first opportunity-intelligence layer (`hydra/opportunity_intel/`) that identifies
+**WHERE** Hydra's highest-value, least-covered, most-leveraged offensive **opportunities** are. Built over
+ONE `OpportunityContext` that reuses the Phase-P `OffensiveIntelligence` (load-once) and threads that SAME
+instance into the Phase-Q `CampaignIntelligence` and Phase-R `SkillGraphIntelligence` (no duplicate scans),
+with bounded cross-store signals from the Phase-O temporal layer (emerging capabilities) and the Phase-N
+federation layer (peer demand). Composes an **attack-surface model** (Hydra's own modelled reach — NOT a
+live target), a **fused coverage synthesizer** (effectiveness/verification/exercise/agent/skill →
+`coverage_index`), a **blind-spot analyzer** (severity-ranked; post-exploitation model-only phases flagged
+INTENTIONAL), an **opportunity graph** (capability↔finding-type + hub/bottleneck leverage), a versioned
+**`OpportunityScore`** ranker (`value + coverage_deficit + chain_potential + uniqueness + novelty` + capped
+temporal/federation bonuses, fully explainable), and a SAFE-verb advisor. Deterministic (injected `now`),
+rebuild-identical, advisory only; **NON-executing** — it SCORES and ADVISES over the capability MODEL and
+never exploits, validates, confirms, promotes, or executes. Distinct from the Phase-D `rank_opportunities`
+(which ranks discovery candidates, not the capability model). Phase-J `governance_summary` gains a read-only
+`opportunity_intelligence` block. promotion.py/confidence.py and the canonical wiki are untouched.
+- `opportunity_summary` — Overview: opportunity-health, surface totals, top opportunities, coverage, blind spots, graph bottlenecks, recommendations
+- `opportunity_surface` — Attack-surface model: Hydra's own modelled reach by category (addressable finding/target types, effectiveness, verification, exercised); NON-executing
+- `opportunity_coverage` — Synthesized per-category `coverage_index` fused over effectiveness/verification/exercise/agent/skill dimensions + overall index
+- `opportunity_blindspots` — Severity-ranked blind spots fused across layers; INTENTIONAL model-only campaign phases flagged (never a defect)
+- `opportunity_graph` — Capability↔finding-type structure + dependency edges; hub capabilities (high leverage) + bottleneck finding-types (single-provider)
+- `opportunity_ranking` — Versioned `OpportunityScore` per capability (explainable components); ranked or single capability
+- `opportunity_advisor` — Bounded SAFE-verb recommendations (prioritize/strengthen/expand/diversify/investigate/improve); authors nothing
+- `opportunity_health` — 0-100 opportunity-health score (synthesized coverage + surface breadth + realization + blind-spot health; advisory)
+
 ## CLI workflows
 
 ```bash

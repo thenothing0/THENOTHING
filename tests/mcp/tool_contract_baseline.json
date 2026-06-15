@@ -555,6 +555,57 @@
     ],
     "required": []
   },
+  "opportunity_advisor": {
+    "params": [
+      "limit",
+      "now"
+    ],
+    "required": []
+  },
+  "opportunity_blindspots": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "opportunity_coverage": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "opportunity_graph": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "opportunity_health": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "opportunity_ranking": {
+    "params": [
+      "capability_id",
+      "limit",
+      "now"
+    ],
+    "required": []
+  },
+  "opportunity_summary": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "opportunity_surface": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
   "ownership_conflicts": {
     "params": [],
     "required": []

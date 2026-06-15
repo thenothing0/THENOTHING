@@ -1085,6 +1085,7 @@ try:
     from hydra.offensive_intel.intelligence import OffensiveIntelligence as _OffensiveIntelligence
     from hydra.campaigns.intelligence import CampaignIntelligence as _CampaignIntelligence
     from hydra.skill_intel.intelligence import SkillGraphIntelligence as _SkillGraphIntelligence
+    from hydra.opportunity_intel.intelligence import OpportunityIntelligence as _OpportunityIntelligence
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -2866,6 +2867,134 @@ def skill_marketplace(now: float = 0.0) -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(_SkillGraphIntelligence().skill_marketplace(_skill_now(now)), indent=2)
+
+
+# ── Phase S — Opportunity Intelligence (derived, advisory, NON-executing) ──
+# All eight tools are read-only/deterministic/advisory. They identify WHERE Hydra's highest-value,
+# least-covered, most-leveraged offensive OPPORTUNITIES are, over a load-once OpportunityContext that
+# reuses the Phase-P OffensiveIntelligence (threaded into Phase-Q + Phase-R) plus bounded Phase-O
+# (emerging) and Phase-N (peer demand) signals. Store-free. The versioned OpportunityScore ranks the
+# capability MODEL; it never exploits, validates, confirms, promotes, or executes, and never touches
+# the canonical wiki / promotion.py / confidence.py. `now` is optional (<=0 = newest event).
+def _opportunity_now(now: float):
+    return None if now is None or now <= 0 else float(now)
+
+
+@mcp.tool()
+def opportunity_summary(now: float = 0.0) -> str:
+    """Opportunity intelligence overview (Phase S, read-only, advisory): opportunity-health, the
+    attack-surface totals, top opportunities, synthesized coverage, blind spots, graph bottlenecks,
+    and bounded recommendations.
+
+    Args:
+        now: optional reference timestamp for determinism (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OpportunityIntelligence().opportunity_summary(_opportunity_now(now)), indent=2)
+
+
+@mcp.tool()
+def opportunity_surface(now: float = 0.0) -> str:
+    """Attack-surface model (Phase S, read-only, advisory): Hydra's OWN modelled offensive reach by
+    category — addressable finding-types/target-types, mean effectiveness, verification capability,
+    and how much has been exercised. NON-executing — it models the capability surface, not a target.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OpportunityIntelligence().opportunity_surface(_opportunity_now(now)), indent=2)
+
+
+@mcp.tool()
+def opportunity_coverage(now: float = 0.0) -> str:
+    """Synthesized coverage (Phase S, read-only, advisory): one fused per-category coverage_index
+    over effectiveness / verification / exercise / agent / skill dimensions, plus an overall index.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OpportunityIntelligence().opportunity_coverage(_opportunity_now(now)), indent=2)
+
+
+@mcp.tool()
+def opportunity_blindspots(now: float = 0.0) -> str:
+    """Blind spots (Phase S, read-only, advisory): severity-ranked gaps fused across layers —
+    verification-blind categories, uncovered finding-types, weak chains, capabilities with no skill /
+    no agent owner, and INTENTIONAL model-only campaign phases (flagged, never a defect).
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OpportunityIntelligence().opportunity_blindspots(_opportunity_now(now)), indent=2)
+
+
+@mcp.tool()
+def opportunity_graph(now: float = 0.0) -> str:
+    """Opportunity graph (Phase S, read-only, advisory): the capability <-> finding-type structure +
+    dependency edges, with hub capabilities (high leverage) and bottleneck finding-types (fragile,
+    single-provider coverage). NON-executing — it scores the MODEL.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OpportunityIntelligence().opportunity_graph(_opportunity_now(now)), indent=2)
+
+
+@mcp.tool()
+def opportunity_ranking(capability_id: str = "", limit: int = 25, now: float = 0.0) -> str:
+    """Ranked opportunities (Phase S, read-only, advisory): the versioned OpportunityScore per
+    capability (value + coverage-deficit + chain-potential + uniqueness + novelty + capped temporal /
+    federation bonuses), fully explained; ranked, or a single capability. Distinct from the Phase-D
+    `rank_opportunities` (which ranks discovery candidates, not the capability model).
+
+    Args:
+        capability_id: optional single capability id; omit for the full ranked list
+        limit: max opportunities to return (default 25)
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OpportunityIntelligence().opportunity_ranking(
+        capability_id, max(1, limit), _opportunity_now(now)), indent=2)
+
+
+@mcp.tool()
+def opportunity_advisor(limit: int = 10, now: float = 0.0) -> str:
+    """Opportunity recommendations (Phase S, read-only, advisory): bounded, SAFE-verb advice —
+    prioritize / strengthen / expand / diversify / investigate / improve. Authors nothing; never
+    executes, exploits, attacks, or deploys.
+
+    Args:
+        limit: max recommendations to return (default 10)
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OpportunityIntelligence().opportunity_advisor(
+        max(1, limit), _opportunity_now(now)), indent=2)
+
+
+@mcp.tool()
+def opportunity_health(now: float = 0.0) -> str:
+    """Opportunity-health (Phase S, read-only, advisory): a 0-100 score blending synthesized
+    coverage, surface breadth, coverage realization, and blind-spot health. Advisory; never alters
+    confidence/promotion.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_OpportunityIntelligence().opportunity_health(_opportunity_now(now)), indent=2)
 
 
 @mcp.tool()
