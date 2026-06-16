@@ -18,9 +18,11 @@ THREAT_TOOLS = [
 ]
 
 
-def test_mcp_count_is_156():
+def test_mcp_count_at_least_156():
+    # Phase U brought the registry to 156; later additions only grow it (exact count is pinned by the
+    # contract baseline in test_tool_contract.py). Here we assert the threat tools are present.
     live = {t.name for t in asyncio.run(mcp_server.mcp.list_tools())}
-    assert len(live) == 156
+    assert len(live) >= 156
     for t in THREAT_TOOLS:
         assert t in live
 

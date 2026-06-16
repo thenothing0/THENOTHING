@@ -1088,6 +1088,20 @@ try:
     from hydra.opportunity_intel.intelligence import OpportunityIntelligence as _OpportunityIntelligence
     from hydra.adversary_intel.intelligence import AdversaryIntelligence as _AdversaryIntelligence
     from hydra.threat_intel.intelligence import ThreatIntelligence as _ThreatIntelligence
+    from hydra.authorization import (
+        AuthorizationError as _AuthorizationError,
+        BugBountyAuthorizationGate as _AuthGate,
+    )
+    from hydra.attack.workflow import AttackWorkflow as _AttackWorkflow
+    from hydra.attack.waf_bypass import Bypass403Generator as _Bypass403
+    from hydra.attack.payloads import (
+        PayloadContext as _PayloadContext,
+        PayloadLibrary as _PayloadLibrary,
+        VulnClass as _VulnClass,
+    )
+    from hydra.attack.oob import ListenerConfig as _ListenerConfig, OOBCorrelator as _OOBCorrelator
+    from hydra.attack.queue import AttackQueue as _AttackQueue
+    from hydra.attack_runtime import HttpExecutor as _HttpExecutor, ScopeLoader as _ScopeLoader
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -3248,6 +3262,202 @@ def threat_health(now: float = 0.0) -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(_ThreatIntelligence().threat_health(_threat_now(now)), indent=2)
+
+
+# ── Bug-Bounty Authorization Gate (DENY-BY-DEFAULT enforcement) ──
+# The safety keystone for moving from advisory modelling toward actual vulnerability validation /
+# exploitation: an active action is permitted ONLY against a target proven in-scope for a registered
+# bug bounty program (published authorization). With no covering program, every active action is
+# DENIED. Absolute prohibitions (DoS / destructive / data-exfil / social-engineering) are never
+# allowed, even in-scope; exploitation is PoC-only. The registry is operator-owned
+# (data/authorized_programs.json; HYDRA_AUTHORIZED_PROGRAMS to override).
+@mcp.tool()
+def register_bounty_program(program: str, platform: str, in_scope: str,
+                            out_of_scope: str = "", url: str = "") -> str:
+    """Register a bug bounty program's published scope = authorization to test its in-scope assets.
+
+    The platform will then permit active/exploitation actions ONLY against these in-scope assets
+    (deny-by-default for everything else). In production, prefer sourcing scope live from the program
+    (HackerOne/Bugcrowd/etc.) rather than hand-entering it.
+
+    Args:
+        program: program handle/name (e.g. "acme")
+        platform: bug bounty platform (hackerone | bugcrowd | intigriti | yeswehack | ... | custom)
+        in_scope: comma-separated in-scope assets (e.g. "*.acme.com, app.acme.io")
+        out_of_scope: comma-separated explicitly out-of-scope assets (optional)
+        url: program URL (optional, for provenance)
+    """
+    ins = [a.strip() for a in in_scope.split(",") if a.strip()]
+    oos = [a.strip() for a in out_of_scope.split(",") if a.strip()]
+    try:
+        bp = _AuthGate().register_program(program, platform, ins, oos, url)
+    except ValueError as e:
+        return json.dumps({"success": False, "error": str(e)})
+    return json.dumps({"success": True, "registered": bp.to_dict()}, indent=2)
+
+
+@mcp.tool()
+def authorize_target(target: str, action: str = "exploitation") -> str:
+    """Deny-by-default authorization check: may the platform take `action` against `target`?
+
+    Returns ALLOW only if the target is in-scope for a registered bug bounty program and the action is
+    not an absolute prohibition (exploitation is authorized PoC-only). Call this immediately before any
+    active action; treat a non-authorized result as a hard stop.
+
+    Args:
+        target: the target url/host (e.g. "https://api.acme.com/v1")
+        action: passive_recon | active_recon | vulnerability_scan | exploitation | data_access
+    """
+    return json.dumps(_AuthGate().authorize(target, action).to_dict(), indent=2)
+
+
+# ── Attack Section (executable, authorization-gated, PoC-only) ──
+# Every tool that names a TARGET is gated by the bug-bounty authorization gate (deny-by-default); the
+# pure payload-library tools do not name a target. All payloads are detection / proof-of-concept grade
+# (no exfiltration / destruction / DoS). `attack_plan` never sends traffic via MCP — it returns a
+# gated, dry-run plan; actual execution requires an explicitly injected executor in code.
+@mcp.tool()
+def attack_plan(target: str, vuln_class: str, context: str = "any") -> str:
+    """Authorization-gated attack PLAN (Phase: attack section): deny-by-default → ATT&CK technique →
+    context-aware PoC payloads → candidate exploit chains. Never sends traffic (dry-run). A
+    non-authorized target returns `authorized: false` and an empty plan.
+
+    Args:
+        target: target url/host (must be in-scope for a registered bug bounty program)
+        vuln_class: xss | sqli | ssti | ssrf | xxe | crlf | path_traversal | cmdi | open_redirect | lfi
+        context: html_body | html_attr | js_string | url | sql | header | path | any
+    """
+    return json.dumps(_AttackWorkflow().plan(target, vuln_class, context), indent=2)
+
+
+@mcp.tool()
+def waf_bypass(url: str, method: str = "GET") -> str:
+    """Automated 403/WAF bypass generator (attack section): the systematic path/method/header/host/
+    encoding permutation set for a URL. Authorization-gated — a non-authorized target is denied
+    (deny-by-default) and no attempts are returned.
+
+    Args:
+        url: the 403/forbidden URL to attempt bypasses for (must be bug-bounty in-scope)
+        method: base HTTP method (default GET)
+    """
+    decision = _AuthGate().authorize(url, "vulnerability_scan")
+    if not decision.authorized:
+        return json.dumps({"authorized": False, "reason": decision.reason, "attempts": []}, indent=2)
+    out = _Bypass403().report(url, method)
+    out["authorized"] = True
+    return json.dumps(out, indent=2)
+
+
+@mcp.tool()
+def generate_payloads(vuln_class: str, context: str = "any") -> str:
+    """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads
+    for a vuln class + injection context. Library lookup (no target named, not gated). Payloads are
+    PoC-only (e.g. XSS pops alert(document.domain); SQLi proves via version()/time) — no exfiltration.
+
+    Args:
+        vuln_class: xss | sqli | ssti | ssrf | xxe | crlf | path_traversal | cmdi | open_redirect | lfi
+        context: html_body | html_attr | js_string | url | sql | header | path | any
+    """
+    if vuln_class.lower() not in _VulnClass._value2member_map_:
+        return json.dumps({"error": f"unknown vuln_class '{vuln_class}'",
+                           "known": [v.value for v in _VulnClass]})
+    try:
+        ctx = _PayloadContext(context)
+    except ValueError:
+        ctx = _PayloadContext.ANY
+    return json.dumps(_PayloadLibrary().report(_VulnClass(vuln_class.lower()), ctx), indent=2)
+
+
+@mcp.tool()
+def oob_payload(vuln_class: str, finding_id: str = "poc", callback_domain: str = "") -> str:
+    """Out-of-band / blind detection payloads (attack section): mints a deterministic correlation
+    token + callback under YOUR configured OOB domain (e.g. your interactsh/Collaborator) and emits
+    blind payloads embedding it (blind SSRF/XXE/XSS/SQLi/cmdi). No live server is created here.
+
+    Args:
+        vuln_class: ssrf | xxe | xss | sqli | cmdi
+        finding_id: stable id to correlate callbacks to (default "poc")
+        callback_domain: your own OOB endpoint domain (e.g. "xxxx.oast.live"); omit for a placeholder
+    """
+    oc = _OOBCorrelator(_ListenerConfig(oob_domain=callback_domain or "oob.invalid"))
+    token = oc.mint(finding_id, vuln_class.lower())
+    return json.dumps({"token": token.to_dict(),
+                       "payloads": oc.payloads(vuln_class.lower(), token.callback_url),
+                       "listener_configured": oc.listener.configured,
+                       "note": "point callback_domain at YOUR authorized OOB server to receive hits",
+                       "advisory": True}, indent=2)
+
+
+@mcp.tool()
+def attack_queue(target: str, findings: str = "") -> str:
+    """Intelligence-driven attack prioritization (attack section): rank candidate attacks for a target
+    by severity + chain potential + capability backing. Authorization-gated (deny-by-default).
+
+    Args:
+        target: target url/host (must be bug-bounty in-scope)
+        findings: JSON array of findings, e.g. '[{"id":"f1","vuln_class":"ssrf","severity":"low"}]'
+    """
+    decision = _AuthGate().authorize(target, "vulnerability_scan")
+    if not decision.authorized:
+        return json.dumps({"authorized": False, "reason": decision.reason, "queue": []}, indent=2)
+    try:
+        rows = json.loads(findings) if findings else []
+        if not isinstance(rows, list):
+            raise ValueError
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "findings must be a JSON array of objects"})
+    out = _AttackQueue().prioritize(target, rows)
+    out["authorized"] = True
+    return json.dumps(out, indent=2)
+
+
+@mcp.tool()
+def load_bounty_scope(url: str = "", platform: str = "", program_id: str = "",
+                      raw_scope: str = "") -> str:
+    """Load a bug bounty program's published scope and register it with the authorization gate —
+    this is what AUTHORIZES its in-scope assets for active testing. Source it live from the program
+    URL (HackerOne/Bugcrowd/...) or pass a raw scope dict.
+
+    Args:
+        url: program URL to fetch live (e.g. "https://hackerone.com/acme")
+        platform: platform when using raw_scope (hackerone|bugcrowd|intigriti|yeswehack|custom)
+        program_id: program handle when using raw_scope
+        raw_scope: JSON object with at least an "in_scope" list (offline alternative to url)
+    """
+    loader = _ScopeLoader()
+    try:
+        if url:
+            out = loader.load_url(url)
+        elif raw_scope:
+            out = loader.load_raw(platform or "custom", program_id or "program",
+                                  json.loads(raw_scope))
+        else:
+            return json.dumps({"success": False, "error": "provide 'url' or 'raw_scope'"})
+    except Exception as e:
+        return json.dumps({"success": False, "error": f"scope load failed: {e}"})
+    return json.dumps({"success": True, **out}, indent=2)
+
+
+@mcp.tool()
+def attack_execute(target: str, vuln_class: str, context: str = "any",
+                   param: str = "q", rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated LIVE PoC execution (attack section): sends ONE PoC payload to an in-scope
+    target via the gated, rate-limited HttpExecutor and returns reproducible evidence
+    (request/response, curl, confirmed/suspected). DENY-BY-DEFAULT — a target not in a registered bug
+    bounty scope returns `authorized: false` and sends NOTHING. PoC-only; never destructive/exfil/DoS.
+
+    Args:
+        target: in-scope target url/host
+        vuln_class: xss | sqli | ssti | ssrf | xxe | crlf | path_traversal | cmdi | open_redirect | lfi
+        context: injection context (html_body|html_attr|js_string|url|sql|header|path|any)
+        param: query parameter to inject the payload into (default "q")
+        rate_per_sec: max requests/sec (clamped to 0.1–5.0)
+    """
+    gate = _AuthGate()
+    executor = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    res = _AttackWorkflow(gate=gate, executor=executor).run(
+        target, vuln_class, context, execute=True, param=param)
+    return json.dumps(res.to_dict(), indent=2)
 
 
 @mcp.tool()

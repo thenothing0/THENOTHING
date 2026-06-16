@@ -94,6 +94,19 @@
     ],
     "required": []
   },
+  "attack_execute": {
+    "params": [
+      "context",
+      "param",
+      "rate_per_sec",
+      "target",
+      "vuln_class"
+    ],
+    "required": [
+      "target",
+      "vuln_class"
+    ]
+  },
   "attack_gaps": {
     "params": [
       "now"
@@ -106,12 +119,32 @@
     ],
     "required": []
   },
+  "attack_plan": {
+    "params": [
+      "context",
+      "target",
+      "vuln_class"
+    ],
+    "required": [
+      "target",
+      "vuln_class"
+    ]
+  },
   "attack_profiles": {
     "params": [
       "now",
       "profile"
     ],
     "required": []
+  },
+  "attack_queue": {
+    "params": [
+      "findings",
+      "target"
+    ],
+    "required": [
+      "target"
+    ]
   },
   "attack_skills": {
     "params": [
@@ -132,6 +165,15 @@
       "technique_id"
     ],
     "required": []
+  },
+  "authorize_target": {
+    "params": [
+      "action",
+      "target"
+    ],
+    "required": [
+      "target"
+    ]
   },
   "campaign_gaps": {
     "params": [
@@ -377,6 +419,15 @@
       "domain"
     ]
   },
+  "generate_payloads": {
+    "params": [
+      "context",
+      "vuln_class"
+    ],
+    "required": [
+      "vuln_class"
+    ]
+  },
   "generate_report": {
     "params": [
       "findings_json",
@@ -521,6 +572,15 @@
     ],
     "required": []
   },
+  "load_bounty_scope": {
+    "params": [
+      "platform",
+      "program_id",
+      "raw_scope",
+      "url"
+    ],
+    "required": []
+  },
   "nmap_scan": {
     "params": [
       "ports",
@@ -606,6 +666,16 @@
       "now"
     ],
     "required": []
+  },
+  "oob_payload": {
+    "params": [
+      "callback_domain",
+      "finding_id",
+      "vuln_class"
+    ],
+    "required": [
+      "vuln_class"
+    ]
   },
   "opportunity_advisor": {
     "params": [
@@ -768,6 +838,20 @@
       "method",
       "outcome",
       "vuln_class"
+    ]
+  },
+  "register_bounty_program": {
+    "params": [
+      "in_scope",
+      "out_of_scope",
+      "platform",
+      "program",
+      "url"
+    ],
+    "required": [
+      "in_scope",
+      "platform",
+      "program"
     ]
   },
   "report_lookup": {
@@ -1029,6 +1113,15 @@
   "verification_trends": {
     "params": [],
     "required": []
+  },
+  "waf_bypass": {
+    "params": [
+      "method",
+      "url"
+    ],
+    "required": [
+      "url"
+    ]
   },
   "wafw00f_detect": {
     "params": [

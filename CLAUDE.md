@@ -71,6 +71,36 @@ For **remote / SSE** transport: `python mcp_server.py --transport sse --port 890
 
 ## MCP tool palette (22 tools)
 
+### Authorization Gate (DENY-BY-DEFAULT — gates all active/exploitation actions)
+The platform performs active testing / vulnerability **exploitation** ONLY against targets covered by a
+registered bug bounty program (a live program's published scope IS written authorization). The gate is
+**deny-by-default**: with no covering program, every active action is denied. Absolute prohibitions
+(DoS / destructive / data-exfil / social-engineering) are never allowed, even in-scope; exploitation is
+**PoC-only** (no exfiltration beyond a minimal proof). Implemented in `hydra/authorization/`
+(`BugBountyAuthorizationGate`), reusing `hydra/scope` (program scopes) + `hydra/guardrails` (hard
+prohibitions). Call `authorize_target` immediately before any active action and treat a non-authorized
+result as a hard stop. Registry is operator-owned (`data/authorized_programs.json`).
+- `register_bounty_program` — Register a bug bounty program's published scope = authorization to test its in-scope assets
+- `load_bounty_scope` — Source a program's scope live (HackerOne/Bugcrowd/… via `ScopePolicyEngine`) or from a raw dict, and register it with the gate
+- `authorize_target` — Deny-by-default check: may the platform take this action against this target? (ALLOW only if in-scope for a registered program; exploitation PoC-only)
+
+### Attack Section (executable, authorization-gated, PoC-only)
+The offensive/attack capability (`hydra/attack/`). Every target-naming tool is gated by the
+authorization gate above (deny-by-default); payloads are detection / proof-of-concept grade only (no
+exfiltration / destruction / DoS). Network sending is confined to an injectable executor (default
+dry-run) that runs only after authorization — so MCP `attack_plan` returns a gated plan and never sends
+traffic. Modules: `AttackWorkflow` (guarded validate-then-exploit keystone), `PayloadLibrary`
+(context-aware + WAF-adaptive), `Bypass403Generator` (automated 403/WAF bypass), `OOBCorrelator`
+(out-of-band/blind detection — pluggable listener, no live server), `ChainTemplateEngine` (high-value
+chain templates + realized-severity elevation + ATT&CK links), `EvidenceCollector` (reproducible PoC
+evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritization).
+- `attack_plan` — Authorization-gated attack PLAN: technique → context-aware PoC payloads → candidate chains; dry-run (never sends traffic)
+- `attack_execute` — Authorization-gated LIVE PoC execution: sends ONE PoC payload via the gated, rate-limited `HttpExecutor` (`hydra/attack_runtime/`) and returns reproducible evidence; deny-by-default, PoC-only
+- `waf_bypass` — Automated 403/WAF bypass permutation set for a URL (path/method/header/host/encoding); gated
+- `generate_payloads` — Context-aware PoC payload library for a vuln class + injection context (no target; not gated)
+- `oob_payload` — Out-of-band/blind payloads + a deterministic correlation token under your own OOB domain
+- `attack_queue` — Intelligence-driven attack prioritization (severity + chain potential + capability backing); gated
+
 ### Recon & Surface Discovery
 - `subfinder_scan` — Fast passive subdomain enumeration
 - `amass_enum` — Deep DNS enumeration and network mapping
