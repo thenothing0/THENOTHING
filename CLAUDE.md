@@ -387,6 +387,33 @@ never exploits, validates, confirms, promotes, or executes. Distinct from the Ph
 - `opportunity_advisor` — Bounded SAFE-verb recommendations (prioritize/strengthen/expand/diversify/investigate/improve); authors nothing
 - `opportunity_health` — 0-100 opportunity-health score (synthesized coverage + surface breadth + realization + blind-spot health; advisory)
 
+### Adversary & ATT&CK Intelligence (Phase T — derived, advisory, NON-executing)
+A store-free, offline-first adversary-intelligence layer (`hydra/adversary_intel/`) that models Hydra's
+offensive tradecraft coverage against **MITRE ATT&CK** and the adversary profiles it supports. Built over
+ONE `AdversaryContext` that reuses the Phase-P `OffensiveIntelligence` (load-once) threaded through the
+Phase-S `OpportunityIntelligence` (which itself reuses Phase-Q `CampaignIntelligence` + Phase-R
+`SkillGraphIntelligence`), plus a bounded Phase-O temporal signal. A static, declarative **`AttackMapping`**
+ties the 14 ATT&CK Enterprise tactics + a curated technique set onto Hydra's real capability categories;
+technique coverage is scored from the Phase-P effectiveness engine (`covered` / `weak` — incl.
+single-provider **fragile** coverage / `uncovered` / `model_only`). **Post-exploitation / out-of-scope
+guard:** Resource Development, Execution, Persistence, Privilege Escalation, Defense Evasion, Lateral
+Movement, Collection, Command and Control, Exfiltration and Impact are **MODEL-ONLY** (zero capabilities,
+zero execution — never a defect). Composes tactic/technique coverage, a skill→technique and
+capability→technique map, declarative adversary-profile support scoring, gap analysis (bridging Phase-Q
+campaign phases + Phase-S opportunities), a SAFE-verb advisor, and a 0-100 health score. Deterministic
+(injected `now`), rebuild-identical, advisory only; **NON-executing** — it SCORES and ADVISES over the
+capability MODEL and never exploits, emulates, validates, confirms, promotes, or executes. Phase-J
+`governance_summary` gains a read-only `adversary_intelligence` block. promotion.py/confidence.py and the
+canonical wiki are untouched.
+- `adversary_summary` — Overview: adversary-health, tactic coverage (covered vs model-only), technique status, best-supported profiles, gaps, top capabilities, recommendations
+- `attack_tactics` — ATT&CK tactic coverage: per-tactic covered/weak/uncovered counts, coverage %, mean effectiveness; model-only tactics flagged
+- `attack_techniques` — ATT&CK technique coverage: per-technique status + supporting capabilities + effectiveness; ranked, one technique, or by tactic
+- `attack_gaps` — Weak/uncovered in-scope techniques, weak tactics, Phase-Q campaign phases lacking coverage, Phase-S opportunities that lift coverage most
+- `attack_profiles` — Adversary-profile support scoring (external recon / web-app / cloud / credential / supply-chain / surface-mapper); ranked or single
+- `attack_skills` — Skill → ATT&CK technique/tactic map (which Phase-R skills contribute to which techniques)
+- `attack_capabilities` — Capability → ATT&CK technique map; strongest technique coverage (effectiveness × breadth), ranked
+- `attack_health` — 0-100 adversary-health score (in-scope technique coverage + per-tactic coverage + covered-technique effectiveness; advisory)
+
 ## CLI workflows
 
 ```bash

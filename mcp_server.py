@@ -1086,6 +1086,7 @@ try:
     from hydra.campaigns.intelligence import CampaignIntelligence as _CampaignIntelligence
     from hydra.skill_intel.intelligence import SkillGraphIntelligence as _SkillGraphIntelligence
     from hydra.opportunity_intel.intelligence import OpportunityIntelligence as _OpportunityIntelligence
+    from hydra.adversary_intel.intelligence import AdversaryIntelligence as _AdversaryIntelligence
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -2995,6 +2996,134 @@ def opportunity_health(now: float = 0.0) -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(_OpportunityIntelligence().opportunity_health(_opportunity_now(now)), indent=2)
+
+
+# ── Phase T — Adversary & ATT&CK Intelligence (derived, advisory, NON-executing) ──
+# All eight tools are read-only/deterministic/advisory. They model Hydra's offensive tradecraft
+# coverage against MITRE ATT&CK over a load-once AdversaryContext that reuses the Phase-P
+# OffensiveIntelligence (threaded through Phase-S → Phase-Q/R) plus a bounded Phase-O signal. A
+# static declarative AttackMapping ties tactics/techniques to Hydra's real capability categories;
+# out-of-scope / post-exploitation tactics are MODEL-ONLY (no capability, no execution). Store-free;
+# it never exploits, emulates, validates, confirms, promotes, or executes, and never touches the
+# canonical wiki / promotion.py / confidence.py. `now` is optional (<=0 = newest event).
+def _adversary_now(now: float):
+    return None if now is None or now <= 0 else float(now)
+
+
+@mcp.tool()
+def adversary_summary(now: float = 0.0) -> str:
+    """Adversary/ATT&CK intelligence overview (Phase T, read-only, advisory): adversary-health,
+    tactic coverage (Hydra-covered vs model-only), technique coverage by status, best-supported
+    adversary profiles, gaps, top capabilities, and bounded recommendations.
+
+    Args:
+        now: optional reference timestamp for determinism (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_AdversaryIntelligence().adversary_summary(_adversary_now(now)), indent=2)
+
+
+@mcp.tool()
+def attack_tactics(now: float = 0.0) -> str:
+    """ATT&CK tactic coverage (Phase T, read-only, advisory): per-tactic covered/weak/uncovered
+    technique counts, coverage %, and mean effectiveness. Out-of-scope / post-exploitation tactics
+    are flagged MODEL-ONLY (intentionally uncovered, never a defect).
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_AdversaryIntelligence().attack_tactics(_adversary_now(now)), indent=2)
+
+
+@mcp.tool()
+def attack_techniques(technique_id: str = "", tactic_id: str = "", now: float = 0.0) -> str:
+    """ATT&CK technique coverage (Phase T, read-only, advisory): per-technique status
+    (covered/weak/uncovered/model_only), supporting capabilities, and effectiveness; ranked, one
+    technique, or filtered by tactic. `weak` includes single-provider (fragile) coverage.
+
+    Args:
+        technique_id: optional single technique id (e.g. "T1190"); omit for the list
+        tactic_id: optional tactic filter (e.g. "TA0043"); ignored when technique_id is set
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_AdversaryIntelligence().attack_techniques(
+        technique_id, tactic_id, _adversary_now(now)), indent=2)
+
+
+@mcp.tool()
+def attack_gaps(now: float = 0.0) -> str:
+    """ATT&CK coverage gaps (Phase T, read-only, advisory): weakly-covered and uncovered in-scope
+    techniques, weak tactics, Phase-Q campaign phases with thin technique coverage, and the Phase-S
+    opportunities whose improvement lifts the most coverage. Model-only techniques are never gaps.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_AdversaryIntelligence().attack_gaps(_adversary_now(now)), indent=2)
+
+
+@mcp.tool()
+def attack_profiles(profile: str = "", now: float = 0.0) -> str:
+    """Adversary profile support (Phase T, read-only, advisory): how well Hydra's coverage supports
+    modelled adversary profiles (external recon / web-app / cloud / credential / supply-chain /
+    surface-mapper); ranked, or a single profile. NON-executing — modelling is not emulation.
+
+    Args:
+        profile: optional single profile id (e.g. "cloud_attacker"); omit for all
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_AdversaryIntelligence().attack_profiles(profile, _adversary_now(now)), indent=2)
+
+
+@mcp.tool()
+def attack_skills(now: float = 0.0) -> str:
+    """Skill → ATT&CK technique map (Phase T, read-only, advisory): which Phase-R skills contribute
+    to which techniques/tactics, ranked by technique breadth.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_AdversaryIntelligence().attack_skills(_adversary_now(now)), indent=2)
+
+
+@mcp.tool()
+def attack_capabilities(limit: int = 25, now: float = 0.0) -> str:
+    """Capability → ATT&CK technique map (Phase T, read-only, advisory): which capabilities provide
+    the strongest technique coverage (effectiveness × technique breadth), ranked.
+
+    Args:
+        limit: max capabilities to return (default 25)
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_AdversaryIntelligence().attack_capabilities(
+        max(1, limit), _adversary_now(now)), indent=2)
+
+
+@mcp.tool()
+def attack_health(now: float = 0.0) -> str:
+    """Adversary-health (Phase T, read-only, advisory): a 0-100 score blending in-scope technique
+    coverage, mean per-tactic coverage, and the effectiveness of covered techniques. Advisory; never
+    alters confidence/promotion.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_AdversaryIntelligence().attack_health(_adversary_now(now)), indent=2)
 
 
 @mcp.tool()

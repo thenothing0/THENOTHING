@@ -29,6 +29,12 @@
     "params": [],
     "required": []
   },
+  "adversary_summary": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
   "agent_catalog": {
     "params": [],
     "required": []
@@ -80,6 +86,52 @@
     "required": [
       "asset"
     ]
+  },
+  "attack_capabilities": {
+    "params": [
+      "limit",
+      "now"
+    ],
+    "required": []
+  },
+  "attack_gaps": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "attack_health": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "attack_profiles": {
+    "params": [
+      "now",
+      "profile"
+    ],
+    "required": []
+  },
+  "attack_skills": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "attack_tactics": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "attack_techniques": {
+    "params": [
+      "now",
+      "tactic_id",
+      "technique_id"
+    ],
+    "required": []
   },
   "campaign_gaps": {
     "params": [

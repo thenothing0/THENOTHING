@@ -18,9 +18,11 @@ OPPORTUNITY_TOOLS = [
 ]
 
 
-def test_mcp_count_is_140():
+def test_mcp_count_at_least_140():
+    # Phase S brought the registry to 140; later phases only add (exact count is pinned by the
+    # contract baseline in test_tool_contract.py). Here we assert the opportunity tools are present.
     live = {t.name for t in asyncio.run(mcp_server.mcp.list_tools())}
-    assert len(live) == 140
+    assert len(live) >= 140
     for t in OPPORTUNITY_TOOLS:
         assert t in live
 

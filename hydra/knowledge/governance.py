@@ -432,6 +432,16 @@ class GovernanceIntelligence(_GovernanceBase):
         except Exception:
             return {"opportunity_health_score": None, "status": "unknown", "total_events": 0}
 
+    def adversary_intelligence(self) -> Dict:
+        """Phase-T adversary/ATT&CK-intelligence health (adversary_health_score / technique coverage /
+        tactic coverage / mean covered effectiveness). Read-only; lazy import keeps governance robust
+        if the layer is absent. Never alters confidence/promotion or the wiki; NON-executing."""
+        try:
+            from hydra.adversary_intel.intelligence import AdversaryIntelligence
+            return AdversaryIntelligence().attack_health()
+        except Exception:
+            return {"adversary_health_score": None, "status": "unknown", "total_events": 0}
+
     @staticmethod
     def _rank(components: Dict[str, float]):
         return sorted(components.items(), key=lambda kv: (kv[1], kv[0]))
@@ -466,6 +476,7 @@ class GovernanceIntelligence(_GovernanceBase):
             "campaign_intelligence": self.campaign_intelligence(),
             "skill_intelligence": self.skill_intelligence(),
             "opportunity_intelligence": self.opportunity_intelligence(),
+            "adversary_intelligence": self.adversary_intelligence(),
             "recommendations": LifecycleAdvisor(**self._shared()).recommendations(),
         }
 

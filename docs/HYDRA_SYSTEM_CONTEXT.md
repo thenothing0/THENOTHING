@@ -197,7 +197,7 @@ Build order is **locked A → R**. Every phase is derived/advisory unless noted;
 - **Invariants:** derived/advisory/deterministic/rebuild-identical; store-free; **NON-executing**; skills never execute / modify capability-promotion-confidence state / create runtime actions / become a canonical source; legacy `hydra/skills/` untouched; promotion.py/confidence.py untouched.
 
 ### Current Phase
-**S (implemented & released: tag + branch `phase-s-opportunity-intelligence`, cut from `phase-r-skill-intelligence` `270141a`).** Next: **Phase T** (see Roadmap).
+**T (implemented & released: tag + branch `phase-t-adversary-intelligence`, cut from `phase-s-opportunity-intelligence` `0407491`).** Next: **Phase U** (see Roadmap).
 
 ---
 
@@ -453,9 +453,9 @@ base tools (save_finding/get_findings/generate_report/full_recon/check_tools) al
 - Implemented as `hydra/opportunity_intel/` (store-free; +8 MCP tools → 140; governance block). Identifies **WHERE** the highest-value, least-covered, most-leveraged offensive opportunities are: an attack-surface model (Hydra's own modelled reach, NON-executing), a fused coverage synthesizer (`coverage_index` over effectiveness/verification/exercise/agent/skill), a severity-ranked blind-spot analyzer (post-exploitation phases flagged INTENTIONAL), an opportunity graph (capability↔finding-type hub/bottleneck leverage), a versioned `OpportunityScore` ranker (value + coverage_deficit + chain_potential + uniqueness + novelty + capped temporal/federation bonuses, fully explainable), and a SAFE-verb advisor. Reuses **P** (shared `OffensiveIntelligence` load) + **Q** + **R** + bounded **O**/**N** signals via one load-once `OpportunityContext`. NON-executing; O(C+D). 634 tests. See Architecture Lineage → Phase S. Next is Phase T. Distinct from the Phase-D `rank_opportunities` (discovery-candidate ranking).
 - *(This supersedes the earlier "Knowledge Compaction & Snapshotting" plan for the S slot, which is deferred to a later infrastructure-track phase.)*
 
-### Phase T — Multi-Tenant Scope & Isolation
-- **Goal:** Per-program/tenant isolation of derived stores + scope-aware federation.
-- **MCP:** +~3. **Perf:** O(E) per tenant. **Risks:** cross-tenant leakage (hard isolation). **Invariants:** scope discipline.
+### Phase T — Adversary & ATT&CK Intelligence ✅ **DELIVERED**
+- Implemented as `hydra/adversary_intel/` (store-free; +8 MCP tools → 148; governance block). Models Hydra's offensive tradecraft coverage against MITRE ATT&CK: a static declarative `AttackMapping` ties the 14 ATT&CK Enterprise tactics + a curated technique set onto Hydra's real capability categories; technique coverage is scored from the Phase-P effectiveness engine (`covered`/`weak`—incl. single-provider *fragile*—/`uncovered`/`model_only`). Tactic & technique coverage, skill→technique + capability→technique maps, declarative adversary-profile support scoring, gap analysis (bridging Phase-Q campaign phases + Phase-S opportunities), SAFE-verb advisor, 0-100 health. Reuses **P** (shared `OffensiveIntelligence` load) + **S** (→ **Q**/**R**) + bounded **O** via one load-once `AdversaryContext`. **Post-exploitation guard:** Resource Development / Execution / Persistence / Privilege Escalation / Defense Evasion / Lateral Movement / Collection / C2 / Exfiltration / Impact are MODEL-ONLY (zero capabilities, zero execution). NON-executing; O(T·C). 669 tests. See Architecture Lineage → Phase T. Next is Phase U.
+- *(This supersedes the earlier "Multi-Tenant Scope & Isolation" plan for the T slot, which is deferred to a later infrastructure-track phase.)*
 
 ### Phase U — Observability & Audit Intelligence
 - **Goal:** Derived audit/replay analytics over the immutable chain-of-thought log.
