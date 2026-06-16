@@ -20,9 +20,13 @@ nothing) that runs only after the bug-bounty gate has authorized the target. Det
 default; promotion.py / confidence.py / the canonical wiki are untouched.
 """
 
+from hydra.attack.chain_exec import ChainExecutor, redact
 from hydra.attack.chain_templates import CHAIN_TEMPLATES, ChainTemplate, ChainTemplateEngine
+from hydra.attack.detection import AccessControlAnalyzer, DifferentialDetector, is_waf_block
 from hydra.attack.evidence import EvidenceBundle, EvidenceCollector, curl_repro
+from hydra.attack.injection_points import InjectionPoint, InjectionPointFinder
 from hydra.attack.oob import ListenerConfig, OOBCorrelator, OOBToken
+from hydra.attack.report_builder import AttackReporter, record_outcome
 from hydra.attack.payloads import (
     Payload,
     PayloadContext,
@@ -55,4 +59,13 @@ __all__ = [
     "EvidenceBundle",
     "curl_repro",
     "AttackQueue",
+    "DifferentialDetector",
+    "AccessControlAnalyzer",
+    "is_waf_block",
+    "InjectionPointFinder",
+    "InjectionPoint",
+    "ChainExecutor",
+    "redact",
+    "AttackReporter",
+    "record_outcome",
 ]

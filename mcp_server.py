@@ -1101,7 +1101,13 @@ try:
     )
     from hydra.attack.oob import ListenerConfig as _ListenerConfig, OOBCorrelator as _OOBCorrelator
     from hydra.attack.queue import AttackQueue as _AttackQueue
-    from hydra.attack_runtime import HttpExecutor as _HttpExecutor, ScopeLoader as _ScopeLoader
+    from hydra.attack_runtime import (
+        HttpExecutor as _HttpExecutor,
+        ScopeLoader as _ScopeLoader,
+        SessionContext as _SessionContext,
+    )
+    from hydra.attack.chain_exec import ChainExecutor as _ChainExecutor
+    from hydra.attack.report_builder import AttackReporter as _AttackReporter
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -3458,6 +3464,93 @@ def attack_execute(target: str, vuln_class: str, context: str = "any",
     res = _AttackWorkflow(gate=gate, executor=executor).run(
         target, vuln_class, context, execute=True, param=param)
     return json.dumps(res.to_dict(), indent=2)
+
+
+@mcp.tool()
+def attack_scan(target: str, vuln_class: str, context: str = "any",
+                max_payloads: int = 6, max_points: int = 8, rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated DIFFERENTIAL scan (attack section): sends a benign baseline then iterates
+    PoC payloads across discovered injection points (query/body/json/header/cookie/path), confirms via
+    differential analysis, adapts to WAF blocks, early-exits a point on first confirmation. Returns
+    confirmed/suspected findings + reproducible evidence. Deny-by-default; PoC-only; rate-limited.
+
+    Args:
+        target: in-scope target url
+        vuln_class: xss | sqli | ssti | ssrf | xxe | crlf | path_traversal | cmdi | open_redirect | lfi
+        context: injection context (html_body|html_attr|js_string|url|sql|header|path|any)
+        max_payloads: payloads per injection point (clamped 1–8)
+        max_points: injection points to test (clamped 1–12)
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    res = _AttackWorkflow(gate=gate, executor=ex).scan(
+        target, vuln_class, context, max_payloads=max(1, min(max_payloads, 8)),
+        max_points=max(1, min(max_points, 12)), record=True)
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def attack_access_control(target: str, session_a: str, session_b: str,
+                          owner_markers: str = "") -> str:
+    """Authorization-gated IDOR / broken-access-control test (attack section): fetches the SAME
+    resource as two identities and diffs the responses. Deny-by-default; PoC-only.
+
+    Args:
+        target: in-scope resource url
+        session_a: JSON identity A, e.g. '{"name":"alice","bearer":"...","cookies":{"sid":"a"}}'
+        session_b: JSON identity B (a different user/role)
+        owner_markers: comma-separated strings unique to A's private data (strongest signal)
+    """
+    gate = _AuthGate()
+    try:
+        a, b = json.loads(session_a), json.loads(session_b)
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "session_a/session_b must be JSON objects"})
+    sa = _SessionContext(name=a.get("name", "A"), bearer=a.get("bearer", ""),
+                         cookies=a.get("cookies", {}) or {}, headers=a.get("headers", {}) or {})
+    sb = _SessionContext(name=b.get("name", "B"), bearer=b.get("bearer", ""),
+                         cookies=b.get("cookies", {}) or {}, headers=b.get("headers", {}) or {})
+    markers = [m.strip() for m in owner_markers.split(",") if m.strip()]
+    ex = _HttpExecutor(gate=gate, rate_per_sec=2.0)
+    res = _AttackWorkflow(gate=gate, executor=ex).access_control_test(target, sa, sb, markers)
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def attack_chain_execute(target: str, chain_id: str, rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated CHAIN execution (attack section): validates a chain template's testable
+    stages in order against the target, recording demonstrable depth + realized severity. Each stage
+    is gated; evidence is REDACTED (credentials/secrets masked); no auto-pivot. PoC-only.
+
+    Args:
+        target: in-scope target url
+        chain_id: a chain template id (e.g. "ssrf_imds_takeover", "idor_ato", "xxe_ssrf_metadata")
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    wf = _AttackWorkflow(gate=gate, executor=ex)
+    return json.dumps(_ChainExecutor(wf).execute(target, chain_id), indent=2)
+
+
+@mcp.tool()
+def attack_report(target: str, findings: str, chains: str = "") -> str:
+    """Build a submission-ready report (attack section) from scan findings: executive summary,
+    confirmed-vs-suspected split, per-finding PoC + remediation, severity calibration (chaining
+    elevates severity). Pure formatting (no target contact).
+
+    Args:
+        target: the assessed target
+        findings: JSON array of findings (from attack_scan's confirmed_findings/suspected)
+        chains: optional JSON array of executed-chain results (for severity elevation)
+    """
+    try:
+        f = json.loads(findings) if findings else []
+        c = json.loads(chains) if chains else []
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "findings/chains must be JSON arrays"})
+    return json.dumps(_AttackReporter().build(target, f, c), indent=2)
 
 
 @mcp.tool()

@@ -87,12 +87,36 @@
       "asset"
     ]
   },
+  "attack_access_control": {
+    "params": [
+      "owner_markers",
+      "session_a",
+      "session_b",
+      "target"
+    ],
+    "required": [
+      "session_a",
+      "session_b",
+      "target"
+    ]
+  },
   "attack_capabilities": {
     "params": [
       "limit",
       "now"
     ],
     "required": []
+  },
+  "attack_chain_execute": {
+    "params": [
+      "chain_id",
+      "rate_per_sec",
+      "target"
+    ],
+    "required": [
+      "chain_id",
+      "target"
+    ]
   },
   "attack_execute": {
     "params": [
@@ -144,6 +168,31 @@
     ],
     "required": [
       "target"
+    ]
+  },
+  "attack_report": {
+    "params": [
+      "chains",
+      "findings",
+      "target"
+    ],
+    "required": [
+      "findings",
+      "target"
+    ]
+  },
+  "attack_scan": {
+    "params": [
+      "context",
+      "max_payloads",
+      "max_points",
+      "rate_per_sec",
+      "target",
+      "vuln_class"
+    ],
+    "required": [
+      "target",
+      "vuln_class"
     ]
   },
   "attack_skills": {

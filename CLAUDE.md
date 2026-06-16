@@ -96,6 +96,10 @@ chain templates + realized-severity elevation + ATT&CK links), `EvidenceCollecto
 evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritization).
 - `attack_plan` — Authorization-gated attack PLAN: technique → context-aware PoC payloads → candidate chains; dry-run (never sends traffic)
 - `attack_execute` — Authorization-gated LIVE PoC execution: sends ONE PoC payload via the gated, rate-limited `HttpExecutor` (`hydra/attack_runtime/`) and returns reproducible evidence; deny-by-default, PoC-only
+- `attack_scan` — Authorization-gated DIFFERENTIAL scan: baseline + multi-payload across discovered injection points (query/body/json/header/cookie/path), WAF-adaptive, confirmed/suspected + evidence; deny-by-default, PoC-only, rate-limited
+- `attack_access_control` — Authorization-gated IDOR / broken-access-control test: fetches a resource as two identities (`SessionContext`) and diffs; deny-by-default
+- `attack_chain_execute` — Authorization-gated chain execution: validates a chain template's testable stages, reports demonstrable depth + realized severity; evidence redacted, no auto-pivot, PoC-only
+- `attack_report` — Build a submission-ready report from scan findings (exec summary, confirmed-vs-suspected, PoC + remediation, chaining severity elevation); pure formatting
 - `waf_bypass` — Automated 403/WAF bypass permutation set for a URL (path/method/header/host/encoding); gated
 - `generate_payloads` — Context-aware PoC payload library for a vuln class + injection context (no target; not gated)
 - `oob_payload` — Out-of-band/blind payloads + a deterministic correlation token under your own OOB domain

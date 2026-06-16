@@ -26,8 +26,16 @@ from typing import Callable, Dict, List, Optional
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from hydra.attack.chain_templates import ChainTemplateEngine
+from hydra.attack.detection import (
+    CONFIRMED,
+    AccessControlAnalyzer,
+    DifferentialDetector,
+    is_waf_block,
+)
 from hydra.attack.evidence import EvidenceCollector
+from hydra.attack.injection_points import InjectionPoint, InjectionPointFinder
 from hydra.attack.payloads import PayloadContext, PayloadLibrary, VulnClass
+from hydra.attack.report_builder import record_outcome
 
 
 def _inject_param(url: str, param: str, value: str) -> str:
@@ -101,7 +109,12 @@ class AttackWorkflow:
     def __init__(self, gate=None, executor: Optional[Callable[[Dict], Dict]] = None,
                  library: Optional[PayloadLibrary] = None,
                  chains: Optional[ChainTemplateEngine] = None,
-                 evidence: Optional[EvidenceCollector] = None):
+                 evidence: Optional[EvidenceCollector] = None,
+                 detector: Optional[DifferentialDetector] = None,
+                 access: Optional[AccessControlAnalyzer] = None,
+                 finder: Optional[InjectionPointFinder] = None,
+                 browser_confirmer: Optional[Callable[[str], Dict]] = None,
+                 oob_confirmer: Optional[Callable[[], Dict]] = None):
         if gate is None:
             from hydra.authorization import BugBountyAuthorizationGate
             gate = BugBountyAuthorizationGate()
@@ -110,6 +123,11 @@ class AttackWorkflow:
         self.library = library or PayloadLibrary()
         self.chains = chains or ChainTemplateEngine()
         self.evidence = evidence or EvidenceCollector()
+        self.detector = detector or DifferentialDetector()
+        self.access = access or AccessControlAnalyzer()
+        self.finder = finder or InjectionPointFinder()
+        self.browser_confirmer = browser_confirmer       # callable(url) -> {confirmed, screenshot}
+        self.oob_confirmer = oob_confirmer                 # callable() -> correlation report
 
     def run(self, target: str, vuln_class: str,
             context: str = "any", findings: Optional[List[Dict]] = None,
@@ -173,3 +191,97 @@ class AttackWorkflow:
              findings: Optional[List[Dict]] = None) -> Dict:
         """Authorization-gated attack PLAN (never executes — `execute=False`)."""
         return self.run(target, vuln_class, context, findings, execute=False).to_dict()
+
+    def _default_point(self, base_req: Dict) -> InjectionPoint:
+        def apply(v: str) -> Dict:
+            r = dict(base_req)
+            r["url"] = _inject_param(base_req["url"], "q", v)
+            return r
+        return InjectionPoint("query", "q", apply)
+
+    def scan(self, target: str, vuln_class: str, context: str = "any", session=None,
+             max_payloads: int = 8, max_points: int = 12, confirm_dom: bool = False,
+             record: bool = False, baseline_marker: str = "hydrabaseline0") -> Dict:
+        """Differential multi-payload scan across injection points (improvements #1/#3/#4/#5/#7).
+
+        Gated (deny-by-default). Sends a benign BASELINE then iterates PoC payloads per injection point,
+        confirms via the differential detector (+ optional DOM confirmation for XSS), adapts to WAF
+        blocks, early-exits a point on first confirmation, and optionally records to attack memory.
+        With the default DryRunExecutor it sends nothing (everything 'suspected')."""
+        decision = self.gate.authorize(target, "exploitation")
+        if not decision.authorized:
+            return {"target": target, "vuln_class": vuln_class, "authorized": False,
+                    "executed": False, "confirmed": False, "evidence": [],
+                    "reason": decision.reason, "advisory": True}
+        vc = vuln_class.lower()
+        if vc not in VulnClass._value2member_map_:
+            return {"target": target, "vuln_class": vuln_class, "authorized": True,
+                    "error": f"unknown vuln_class '{vuln_class}'", "advisory": True}
+        try:
+            ctx = PayloadContext(context)
+        except ValueError:
+            ctx = PayloadContext.ANY
+        payloads = self.library.for_context(VulnClass(vc), ctx)[:max(1, max_payloads)]
+
+        base_req = {"method": "GET", "url": target if "://" in target else f"https://{target}",
+                    "headers": {}, "vuln_class": vc}
+        if session is not None:
+            base_req = session.apply(base_req)
+        points = self.finder.find(base_req)[:max(1, max_points)] or [self._default_point(base_req)]
+
+        confirmed, suspected, evidence = [], [], []
+        executed_any = False
+        for pt in points:
+            base_resp = self.executor(pt.apply(baseline_marker))
+            executed_any = executed_any or bool(base_resp.get("executed"))
+            hit = False
+            for p in payloads:
+                req = {**pt.apply(p.value), "payload": p.value, "vuln_class": vc}
+                resp = self.executor(req)
+                if is_waf_block(resp):                       # #5 adapt: retry once mutated
+                    mutated = self.library.waf_adapted(p.value)[1:2]
+                    if mutated:
+                        req = {**pt.apply(mutated[0]), "payload": mutated[0], "vuln_class": vc}
+                        resp = self.executor(req)
+                verdict, reason, _ = self.detector.decide(vc, base_resp, req["payload"], resp)
+                if verdict == CONFIRMED:
+                    inds = [reason]
+                    if confirm_dom and vc == "xss" and self.browser_confirmer:
+                        bc = self.browser_confirmer(req["url"]) or {}
+                        if bc.get("confirmed"):
+                            inds.append("DOM JS executed (headless browser)")
+                    ev = self.evidence.capture(vc, req, resp, indicators=inds, confirmed=True).to_dict()
+                    ev["injection_point"] = pt.describe()
+                    ev["reason"] = reason
+                    evidence.append(ev)
+                    confirmed.append({"vuln_class": vc, "point": pt.name, "verdict": "confirmed",
+                                      "evidence": ev})
+                    if record:
+                        record_outcome(target, vc, "confirmed", pt.name, ev)
+                    hit = True
+                    break                                    # early-exit this point
+            if not hit:
+                suspected.append({"vuln_class": vc, "point": pt.name, "verdict": "suspected"})
+
+        return {"target": target, "vuln_class": vc, "authorized": True, "poc_only": True,
+                "executed": executed_any, "confirmed": bool(confirmed),
+                "confirmed_findings": confirmed, "suspected": suspected,
+                "points_tested": len(points), "payloads_per_point": len(payloads),
+                "evidence": evidence,
+                "reason": f"AUTHORIZED scan by '{decision.program}' — {len(confirmed)} confirmed",
+                "advisory": True}
+
+    def access_control_test(self, target: str, session_a, session_b,
+                            owner_markers: Optional[List[str]] = None) -> Dict:
+        """IDOR / broken access control (#2): fetch the SAME resource as two identities and diff."""
+        decision = self.gate.authorize(target, "exploitation")
+        if not decision.authorized:
+            return {"target": target, "authorized": False, "reason": decision.reason,
+                    "advisory": True}
+        url = target if "://" in target else f"https://{target}"
+        resp_a = self.executor(session_a.apply({"method": "GET", "url": url, "headers": {}}))
+        resp_b = self.executor(session_b.apply({"method": "GET", "url": url, "headers": {}}))
+        verdict, reason, signals = self.access.decide(resp_a, resp_b, owner_markers)
+        return {"target": target, "authorized": True, "poc_only": True, "verdict": verdict,
+                "reason": reason, "signals": signals, "identity_a": session_a.name,
+                "identity_b": session_b.name, "advisory": True}

@@ -100,6 +100,14 @@ class HttpExecutor:
             self._audit.append({"url": url, "executed": False, "error": str(e), "ts": time.time()})
             return {"status": None, "length": 0, "executed": False, "error": str(e)}
         self._last = time.time()
+        # Responsible WAF/rate back-off (#5): on 429/503 slow down before the next request (bounded),
+        # so authorized testing never turns into rate-abuse; reset on a clean response.
+        if status in (429, 503):
+            self._backoff = min(((getattr(self, "_backoff", 0.0)) or (self.min_interval or 0.5)) * 2,
+                                30.0)
+            time.sleep(min(self._backoff, 5.0))
+        else:
+            self._backoff = 0.0
 
         text = raw[: self.max_body].decode("utf-8", "replace")
         reflected = bool(payload) and payload in text
@@ -151,4 +159,8 @@ def host_of(url: str) -> str:
     return (urlparse(url if "://" in url else f"https://{url}").hostname or "").lower()
 
 
-__all__ = ["HttpExecutor", "ScopeLoader", "host_of"]
+from hydra.attack_runtime.confirm import BrowserConfirmer, OOBConfirmer  # noqa: E402
+from hydra.attack_runtime.session import SessionContext, SessionManager  # noqa: E402
+
+__all__ = ["HttpExecutor", "ScopeLoader", "host_of",
+           "SessionContext", "SessionManager", "BrowserConfirmer", "OOBConfirmer"]
