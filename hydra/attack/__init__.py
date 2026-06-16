@@ -22,6 +22,7 @@ default; promotion.py / confidence.py / the canonical wiki are untouched.
 
 from hydra.attack.chain_exec import ChainExecutor, redact
 from hydra.attack.chain_templates import CHAIN_TEMPLATES, ChainTemplate, ChainTemplateEngine
+from hydra.attack.crawl_seed import CrawlSeeder, param_signature
 from hydra.attack.detection import AccessControlAnalyzer, DifferentialDetector, is_waf_block
 from hydra.attack.evidence import EvidenceBundle, EvidenceCollector, curl_repro
 from hydra.attack.injection_points import InjectionPoint, InjectionPointFinder
@@ -68,4 +69,6 @@ __all__ = [
     "redact",
     "AttackReporter",
     "record_outcome",
+    "CrawlSeeder",
+    "param_signature",
 ]

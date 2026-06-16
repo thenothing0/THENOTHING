@@ -100,6 +100,9 @@ evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritiz
 - `attack_access_control` — Authorization-gated IDOR / broken-access-control test: fetches a resource as two identities (`SessionContext`) and diffs; deny-by-default
 - `attack_chain_execute` — Authorization-gated chain execution: validates a chain template's testable stages, reports demonstrable depth + realized severity; evidence redacted, no auto-pivot, PoC-only
 - `attack_report` — Build a submission-ready report from scan findings (exec summary, confirmed-vs-suspected, PoC + remediation, chaining severity elevation); pure formatting
+- `attack_scan_crawled` — Gated scan over a crawl's URLs (pipe `katana_crawl`/`gau_urls` output): de-dupes to distinct injectable endpoints, differential-scans each; deny-by-default, PoC-only
+- `attack_login` — Gated login automation: POSTs your test credentials to an in-scope login endpoint, returns the captured session (cookies + bearer) for authenticated tests; deny-by-default
+- `oob_confirm` — Confirm a blind/OOB finding: re-mints the deterministic token, polls YOUR collaborator (`OOBPoller`/`InteractshPoller`), correlates interactions → confirmed blind SSRF/XXE/RCE
 - `waf_bypass` — Automated 403/WAF bypass permutation set for a URL (path/method/header/host/encoding); gated
 - `generate_payloads` — Context-aware PoC payload library for a vuln class + injection context (no target; not gated)
 - `oob_payload` — Out-of-band/blind payloads + a deterministic correlation token under your own OOB domain

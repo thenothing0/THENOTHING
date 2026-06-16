@@ -26,6 +26,7 @@ from typing import Callable, Dict, List, Optional
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from hydra.attack.chain_templates import ChainTemplateEngine
+from hydra.attack.crawl_seed import CrawlSeeder
 from hydra.attack.detection import (
     CONFIRMED,
     AccessControlAnalyzer,
@@ -270,6 +271,25 @@ class AttackWorkflow:
                 "evidence": evidence,
                 "reason": f"AUTHORIZED scan by '{decision.program}' — {len(confirmed)} confirmed",
                 "advisory": True}
+
+    def scan_many(self, urls: List[str], vuln_class: str, context: str = "any", session=None,
+                  max_seeds: int = 25, max_payloads: int = 5, max_points: int = 8,
+                  record: bool = False) -> Dict:
+        """Scan a CRAWL's worth of URLs (e.g. from katana/gau): de-dupe to distinct injectable
+        endpoints, then run the gated differential scan on each. Every target is independently
+        authorization-gated (deny-by-default)."""
+        seeds = CrawlSeeder().seeds(urls, max_seeds=max(1, max_seeds))
+        scanned, confirmed = [], []
+        for u in seeds:
+            r = self.scan(u, vuln_class, context, session=session, max_payloads=max_payloads,
+                          max_points=max_points, record=record)
+            scanned.append({"target": u, "authorized": r.get("authorized"),
+                            "confirmed": r.get("confirmed", False),
+                            "confirmed_findings": r.get("confirmed_findings", [])})
+            confirmed.extend(r.get("confirmed_findings", []))
+        return {"input_urls": len(urls), "distinct_seeds": len(seeds), "scanned": scanned,
+                "confirmed": bool(confirmed), "confirmed_findings": confirmed,
+                "vuln_class": vuln_class.lower(), "poc_only": True, "advisory": True}
 
     def access_control_test(self, target: str, session_a, session_b,
                             owner_markers: Optional[List[str]] = None) -> Dict:

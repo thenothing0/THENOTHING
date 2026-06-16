@@ -143,6 +143,18 @@
     ],
     "required": []
   },
+  "attack_login": {
+    "params": [
+      "fields",
+      "json_body",
+      "login_url",
+      "name"
+    ],
+    "required": [
+      "fields",
+      "login_url"
+    ]
+  },
   "attack_plan": {
     "params": [
       "context",
@@ -192,6 +204,19 @@
     ],
     "required": [
       "target",
+      "vuln_class"
+    ]
+  },
+  "attack_scan_crawled": {
+    "params": [
+      "context",
+      "max_seeds",
+      "rate_per_sec",
+      "urls",
+      "vuln_class"
+    ],
+    "required": [
+      "urls",
       "vuln_class"
     ]
   },
@@ -715,6 +740,19 @@
       "now"
     ],
     "required": []
+  },
+  "oob_confirm": {
+    "params": [
+      "finding_id",
+      "oob_domain",
+      "poll_url",
+      "vuln_class"
+    ],
+    "required": [
+      "finding_id",
+      "poll_url",
+      "vuln_class"
+    ]
   },
   "oob_payload": {
     "params": [

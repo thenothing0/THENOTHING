@@ -1103,6 +1103,9 @@ try:
     from hydra.attack.queue import AttackQueue as _AttackQueue
     from hydra.attack_runtime import (
         HttpExecutor as _HttpExecutor,
+        LoginFlow as _LoginFlow,
+        OOBConfirmer as _OOBConfirmer,
+        OOBPoller as _OOBPoller,
         ScopeLoader as _ScopeLoader,
         SessionContext as _SessionContext,
     )
@@ -3551,6 +3554,78 @@ def attack_report(target: str, findings: str, chains: str = "") -> str:
     except (ValueError, json.JSONDecodeError):
         return json.dumps({"error": "findings/chains must be JSON arrays"})
     return json.dumps(_AttackReporter().build(target, f, c), indent=2)
+
+
+@mcp.tool()
+def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
+                        max_seeds: int = 12, rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated scan over a CRAWL's URLs (attack section): de-dupes a list (e.g. from
+    `katana_crawl` / `gau_urls`) to distinct injectable endpoints, then differential-scans each. Every
+    target is independently gated (deny-by-default); PoC-only; rate-limited.
+
+    Args:
+        urls: whitespace/comma-separated URL list (pipe katana/gau output here)
+        vuln_class: xss | sqli | ssti | ssrf | xxe | crlf | path_traversal | cmdi | open_redirect | lfi
+        context: injection context (default any)
+        max_seeds: max distinct endpoints to scan (clamped 1–25)
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    url_list = [u.strip() for u in urls.replace(",", " ").split() if u.strip()]
+    if not url_list:
+        return json.dumps({"error": "provide one or more URLs"})
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    res = _AttackWorkflow(gate=gate, executor=ex).scan_many(
+        url_list, vuln_class, context, max_seeds=max(1, min(max_seeds, 25)), record=True)
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def oob_confirm(finding_id: str, vuln_class: str, poll_url: str, oob_domain: str = "") -> str:
+    """Confirm a blind/OOB finding (attack section): re-mints the deterministic OOB token for this
+    finding, polls YOUR collaborator's poll endpoint, and correlates received interactions back to the
+    token → confirmed blind SSRF/XXE/RCE. Talks only to the OOB endpoint you supply, never the target.
+
+    Args:
+        finding_id: the id used when the OOB payload was issued (see `oob_payload`)
+        vuln_class: ssrf | xxe | xss | sqli | cmdi
+        poll_url: your collaborator's poll endpoint (returns JSON interactions)
+        oob_domain: your OOB domain (for token host reconstruction; optional)
+    """
+    oc = _OOBCorrelator(_ListenerConfig(oob_domain=oob_domain or "oob.invalid"))
+    oc.mint(finding_id, vuln_class.lower())
+    poller = _OOBPoller(poll_url, verify_tls=False).poll if poll_url else None
+    return json.dumps(_OOBConfirmer(oc, poller).confirm(), indent=2)
+
+
+@mcp.tool()
+def attack_login(login_url: str, fields: str, json_body: bool = False, name: str = "auth") -> str:
+    """Authorization-gated login automation (attack section): POSTs YOUR test credentials to an
+    in-scope login endpoint and returns the captured session (cookies + bearer) for use with
+    `attack_access_control` / authenticated scans. Deny-by-default; the operator's own accounts only.
+
+    Args:
+        login_url: in-scope login endpoint
+        fields: JSON object of form/JSON fields (e.g. '{"username":"u","password":"p"}')
+        json_body: send the body as JSON instead of form-encoded
+        name: identity name for the returned session
+    """
+    gate = _AuthGate()
+    try:
+        f = json.loads(fields)
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "fields must be a JSON object"})
+    try:
+        s = _LoginFlow(gate=gate).login(login_url, f, json_body=json_body, name=name)
+    except Exception as e:
+        return json.dumps({"success": False, "error": f"login failed: {e}"})
+    if s is None:
+        return json.dumps({"success": False, "authorized": False,
+                           "error": "login endpoint not in a registered bug bounty scope"})
+    return json.dumps({"success": True, "authorized": True,
+                       "session": {"name": s.name, "bearer": s.bearer, "cookies": s.cookies},
+                       "note": "pass this session JSON to attack_access_control / authenticated scans"},
+                      indent=2)
 
 
 @mcp.tool()
