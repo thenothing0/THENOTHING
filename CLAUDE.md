@@ -414,6 +414,31 @@ canonical wiki are untouched.
 - `attack_capabilities` — Capability → ATT&CK technique map; strongest technique coverage (effectiveness × breadth), ranked
 - `attack_health` — 0-100 adversary-health score (in-scope technique coverage + per-tactic coverage + covered-technique effectiveness; advisory)
 
+### Threat Intelligence & Knowledge Fusion (Phase U — derived, advisory, NON-executing)
+A store-free, offline-first **knowledge-fusion** layer (`hydra/threat_intel/`) that transforms Hydra from
+"knowing capabilities" into "understanding evolving threats, adversaries, campaigns, techniques, skills,
+opportunities and knowledge signals together" — by **reasoning over Hydra's existing knowledge graph**. It
+does NOT execute, attack, or collect live intelligence. A **Threat** is keyed by an ATT&CK tactic and fuses
+all seven reused layers — Federation (N), Temporal (O), Offensive (P), Campaign (Q), Skill (R), Opportunity
+(S), Adversary (T) — over ONE shared `ThreatContext` (a single `OffensiveContext` load threaded through
+Phase-T → S/Q/R, plus bounded guarded O and N signals; no duplicate scans). Builds a fully-explainable
+**Threat→Campaign→Technique→Capability→Skill→Agent** graph (every edge carries a `reason` — no hidden
+inference), deterministic threat clustering, temporal threat evolution (rising/declining/emerging),
+threat↔opportunity / skill / campaign / adversary fusion, per-threat risk, and a versioned 0-100
+`threat_health` (coverage + redundancy/resilience + diversity + opportunity gaps + temporal decay +
+federation consensus). Post-exploitation / out-of-scope tactics are MODEL-ONLY threats (`out_of_scope`,
+never a fixable risk). Deterministic (injected `now`), rebuild-identical, advisory only; **NON-executing**.
+Phase-J `governance_summary` gains a read-only `threat_intelligence` block. promotion.py/confidence.py and
+the canonical wiki are untouched.
+- `threat_summary` — Overview: threat-health, in-scope vs model-only threats, highest-risk threats, fusion-graph size, clusters, evolution, broadest adversary profiles, recommendations
+- `threat_graph` — The unified Threat→Campaign→Technique→Capability→Skill→Agent graph; every edge carries a reason; full graph or one threat's subgraph
+- `threat_clusters` — Related threats grouped by shared backing capabilities (deterministic connected components) with shared capabilities/skills + explainable reason
+- `threat_evolution` — Fuses Phase-O temporal momentum with Phase-T coverage → rising/declining/stable threats + emerging patterns; bounded, no over-prediction
+- `threat_opportunities` — Threat↔opportunity fusion: most-exposed threats + the Phase-S opportunities that would close the most risk
+- `threat_skills` — Threat↔skill fusion: most-critical skills, underrepresented skills, and skill gaps creating the largest threat exposure
+- `threat_campaigns` — Threat↔campaign fusion: best-covered phases, weakest paths, and stages relying on fragile (single-provider) capability coverage
+- `threat_health` — 0-100 threat-health score fusing coverage/resilience/diversity/opportunity-gaps/decay/federation-consensus; fully explainable; advisory
+
 ## CLI workflows
 
 ```bash

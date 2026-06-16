@@ -959,6 +959,55 @@
     ],
     "required": []
   },
+  "threat_campaigns": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "threat_clusters": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "threat_evolution": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "threat_graph": {
+    "params": [
+      "now",
+      "threat_id"
+    ],
+    "required": []
+  },
+  "threat_health": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "threat_opportunities": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "threat_skills": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
+  "threat_summary": {
+    "params": [
+      "now"
+    ],
+    "required": []
+  },
   "tool_capabilities": {
     "params": [
       "category"

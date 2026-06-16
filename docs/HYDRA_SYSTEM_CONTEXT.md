@@ -197,7 +197,7 @@ Build order is **locked A → R**. Every phase is derived/advisory unless noted;
 - **Invariants:** derived/advisory/deterministic/rebuild-identical; store-free; **NON-executing**; skills never execute / modify capability-promotion-confidence state / create runtime actions / become a canonical source; legacy `hydra/skills/` untouched; promotion.py/confidence.py untouched.
 
 ### Current Phase
-**T (implemented & released: tag + branch `phase-t-adversary-intelligence`, cut from `phase-s-opportunity-intelligence` `0407491`).** Next: **Phase U** (see Roadmap).
+**U (implemented & released: tag + branch `phase-u-threat-intelligence`, cut from `phase-t-adversary-intelligence` `d78e5c5`).** Next: **Phase V** (see Roadmap).
 
 ---
 
@@ -457,9 +457,9 @@ base tools (save_finding/get_findings/generate_report/full_recon/check_tools) al
 - Implemented as `hydra/adversary_intel/` (store-free; +8 MCP tools → 148; governance block). Models Hydra's offensive tradecraft coverage against MITRE ATT&CK: a static declarative `AttackMapping` ties the 14 ATT&CK Enterprise tactics + a curated technique set onto Hydra's real capability categories; technique coverage is scored from the Phase-P effectiveness engine (`covered`/`weak`—incl. single-provider *fragile*—/`uncovered`/`model_only`). Tactic & technique coverage, skill→technique + capability→technique maps, declarative adversary-profile support scoring, gap analysis (bridging Phase-Q campaign phases + Phase-S opportunities), SAFE-verb advisor, 0-100 health. Reuses **P** (shared `OffensiveIntelligence` load) + **S** (→ **Q**/**R**) + bounded **O** via one load-once `AdversaryContext`. **Post-exploitation guard:** Resource Development / Execution / Persistence / Privilege Escalation / Defense Evasion / Lateral Movement / Collection / C2 / Exfiltration / Impact are MODEL-ONLY (zero capabilities, zero execution). NON-executing; O(T·C). 669 tests. See Architecture Lineage → Phase T. Next is Phase U.
 - *(This supersedes the earlier "Multi-Tenant Scope & Isolation" plan for the T slot, which is deferred to a later infrastructure-track phase.)*
 
-### Phase U — Observability & Audit Intelligence
-- **Goal:** Derived audit/replay analytics over the immutable chain-of-thought log.
-- **MCP:** +~3. **Perf:** O(events). **Invariants:** read-only.
+### Phase U — Threat Intelligence & Knowledge Fusion ✅ **DELIVERED**
+- Implemented as `hydra/threat_intel/` (store-free; +8 MCP tools → 156; governance block). The FUSION layer: reasons over Hydra's existing knowledge graph (never collects live intel, never executes). A **Threat** is keyed by an ATT&CK tactic and fuses all seven reused layers — **N** (federation consensus, guarded) + **O** (temporal momentum, guarded) + **P** + **Q** + **R** + **S** + **T** — over ONE shared `ThreatContext` (a single `OffensiveContext` load threaded through Phase-T → S/Q/R; no duplicate scans). Fully-explainable **Threat→Campaign→Technique→Capability→Skill→Agent** graph (every edge carries a `reason`), deterministic capability-Jaccard clustering, temporal threat evolution (rising/declining/emerging), threat↔opportunity/skill/campaign/adversary fusion, per-threat risk (coverage deficit + opportunity gap + decay), versioned 0-100 `threat_health` (coverage + resilience + diversity + opportunity gaps + decay + federation consensus). Post-exploitation tactics = MODEL-ONLY threats (`out_of_scope`, never a fixable risk). NON-executing; O(C+D+T). 708 tests. See Architecture Lineage → Phase U. Next is Phase V.
+- *(This supersedes the earlier "Observability & Audit Intelligence" plan for the U slot, which is deferred to a later observability-track phase.)*
 
 ### Phase V — Capability Confidence Calibration (advisory)
 - **Goal:** Calibrate advisory predictions vs. outcomes (Brier/calibration), never altering canonical confidence bands.

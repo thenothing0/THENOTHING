@@ -1087,6 +1087,7 @@ try:
     from hydra.skill_intel.intelligence import SkillGraphIntelligence as _SkillGraphIntelligence
     from hydra.opportunity_intel.intelligence import OpportunityIntelligence as _OpportunityIntelligence
     from hydra.adversary_intel.intelligence import AdversaryIntelligence as _AdversaryIntelligence
+    from hydra.threat_intel.intelligence import ThreatIntelligence as _ThreatIntelligence
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -3124,6 +3125,129 @@ def attack_health(now: float = 0.0) -> str:
     if (g := _kb_guard()):
         return g
     return json.dumps(_AdversaryIntelligence().attack_health(_adversary_now(now)), indent=2)
+
+
+# ── Phase U — Threat Intelligence & Knowledge Fusion (derived, advisory, NON-executing) ──
+# All eight tools are read-only/deterministic/advisory. They FUSE Hydra's existing knowledge layers
+# (Federation N / Temporal O / Offensive P / Campaign Q / Skill R / Opportunity S / Adversary T) over
+# a load-once ThreatContext (one OffensiveContext load threaded through Phase-T → S/Q/R, plus bounded
+# guarded O and N signals). A Threat is keyed by an ATT&CK tactic; the fusion graph
+# Threat→Campaign→Technique→Capability→Skill→Agent explains every edge. Store-free; it reasons over
+# existing knowledge and never collects live intelligence, exploits, attacks, executes, or touches the
+# canonical wiki / promotion.py / confidence.py. `now` is optional (<=0 = newest event).
+def _threat_now(now: float):
+    return None if now is None or now <= 0 else float(now)
+
+
+@mcp.tool()
+def threat_summary(now: float = 0.0) -> str:
+    """Threat intelligence overview (Phase U, read-only, advisory): threat-health, in-scope vs
+    model-only threats, highest-risk threats, fusion-graph size, clusters, evolution, broadest
+    adversary profiles, and bounded recommendations.
+
+    Args:
+        now: optional reference timestamp for determinism (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_ThreatIntelligence().threat_summary(_threat_now(now)), indent=2)
+
+
+@mcp.tool()
+def threat_graph(threat_id: str = "", now: float = 0.0) -> str:
+    """Threat fusion graph (Phase U, read-only, advisory): the unified
+    Threat→Campaign→Technique→Capability→Skill→Agent graph; EVERY edge carries a `reason` (no hidden
+    inference). Full graph, or one threat's subgraph.
+
+    Args:
+        threat_id: optional single threat / ATT&CK tactic id (e.g. "TA0043"); omit for the full graph
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_ThreatIntelligence().threat_graph(threat_id, _threat_now(now)), indent=2)
+
+
+@mcp.tool()
+def threat_clusters(now: float = 0.0) -> str:
+    """Threat clusters (Phase U, read-only, advisory): related threats grouped by shared backing
+    capabilities (deterministic connected components), each with its shared capabilities/skills and an
+    explainable reason.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_ThreatIntelligence().threat_clusters(_threat_now(now)), indent=2)
+
+
+@mcp.tool()
+def threat_evolution(now: float = 0.0) -> str:
+    """Threat evolution (Phase U, read-only, advisory): fuses Phase-O temporal momentum with Phase-T
+    coverage to label threats rising / declining / stable and flag emerging patterns (weak coverage +
+    emerging capabilities). Bounded; no prediction beyond deterministic signals.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_ThreatIntelligence().threat_evolution(_threat_now(now)), indent=2)
+
+
+@mcp.tool()
+def threat_opportunities(now: float = 0.0) -> str:
+    """Threat ↔ opportunity fusion (Phase U, read-only, advisory): which threats are most exposed
+    (weak coverage / capability gaps) and which Phase-S opportunities would close the most risk.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_ThreatIntelligence().threat_opportunities(_threat_now(now)), indent=2)
+
+
+@mcp.tool()
+def threat_skills(now: float = 0.0) -> str:
+    """Threat ↔ skill fusion (Phase U, read-only, advisory): which skills matter most (touch the most
+    threats), which are underrepresented, and which skill gaps create the largest threat exposure.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_ThreatIntelligence().threat_skills(_threat_now(now)), indent=2)
+
+
+@mcp.tool()
+def threat_campaigns(now: float = 0.0) -> str:
+    """Threat ↔ campaign fusion (Phase U, read-only, advisory): which campaign phases are best
+    covered, which paths are weakest, and which stages rely on fragile (single-provider) capability
+    coverage.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_ThreatIntelligence().threat_campaigns(_threat_now(now)), indent=2)
+
+
+@mcp.tool()
+def threat_health(now: float = 0.0) -> str:
+    """Threat-health (Phase U, read-only, advisory): a 0-100 score fusing coverage, redundancy /
+    resilience, diversity, opportunity gaps, temporal decay, and federation consensus. Fully
+    explainable; advisory — never alters confidence/promotion.
+
+    Args:
+        now: optional reference timestamp (<=0 = newest event)
+    """
+    if (g := _kb_guard()):
+        return g
+    return json.dumps(_ThreatIntelligence().threat_health(_threat_now(now)), indent=2)
 
 
 @mcp.tool()

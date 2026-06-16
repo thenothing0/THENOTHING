@@ -18,9 +18,11 @@ ADVERSARY_TOOLS = [
 ]
 
 
-def test_mcp_count_is_148():
+def test_mcp_count_at_least_148():
+    # Phase T brought the registry to 148; later phases only add (exact count is pinned by the
+    # contract baseline in test_tool_contract.py). Here we assert the adversary tools are present.
     live = {t.name for t in asyncio.run(mcp_server.mcp.list_tools())}
-    assert len(live) == 148
+    assert len(live) >= 148
     for t in ADVERSARY_TOOLS:
         assert t in live
 
