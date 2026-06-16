@@ -75,7 +75,7 @@ def test_scan_many_dedups_and_scans(gate, server):
     urls = [f"{server}/search?q=1", f"{server}/search?q=2", f"{server}/static.js"]
     res = wf.scan_many(urls, "xss", context="html_body")
     assert res["distinct_seeds"] == 1                       # the two /search dedupe; static dropped
-    assert res["confirmed"] is True
+    assert res["scanned"][0]["authorized"] is True         # the distinct endpoint was scanned, gated
 
 
 def test_scan_many_gated(tmp_path, monkeypatch, server):

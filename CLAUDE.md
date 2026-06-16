@@ -105,6 +105,14 @@ evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritiz
 - `oob_confirm` — Confirm a blind/OOB finding: re-mints the deterministic token, polls YOUR collaborator (`OOBPoller` or the persisted interactsh session), correlates interactions → confirmed blind SSRF/XXE/RCE
 - `interactsh_register` — Register an interactsh OOB session (RSA keypair + register + persist); returns the OOB domain to embed in payloads; `oob_confirm` then polls + decrypts it (AES-CFB/RSA-OAEP)
 - `attack_recon_scan` — One-step recon→scan: crawls an in-scope target (`katana`, optionally `gau`), de-dupes to distinct endpoints, differential-scans each; deny-by-default, PoC-only
+- `attack_save_findings` — Close the loop: write TWO-SIGNAL-confirmed findings to the knowledge graph (`save_finding`) + attack memory so they feed Phase-D/S/T/U learning (suspected skipped)
+- `attack_graphql` — Gated GraphQL testing (introspection / field-suggestion / GET-introspection / batching); detection-only
+- `attack_jwt` — JWT analysis + test-token forging (weak-secret, alg=none, HS/RS confusion, kid injection); local crypto, replay against an authorized target
+- `attack_web_probe` — Gated web-class probe: `cors` | `cache_poison` | `host_header` (benign markers, detection-only) | `smuggle` (PLAN-ONLY advisory, never auto-sent)
+- `attack_race` — Gated, bounded race-condition test (concurrent requests → limit-overrun/TOCTOU candidate); PoC-only, never amplifies
+- `attack_privesc` — Gated privilege-escalation / RBAC test: low-priv identity against privileged endpoints (optionally diffed vs admin)
+
+Two-signal note: `attack_scan` now confirms a finding only on TWO INDEPENDENT signals (e.g. reflection + DOM execution); a single signal is reported as `suspected` (the platform's validation-first rule).
 - `waf_bypass` — Automated 403/WAF bypass permutation set for a URL (path/method/header/host/encoding); gated
 - `generate_payloads` — Context-aware PoC payload library for a vuln class + injection context (no target; not gated)
 - `oob_payload` — Out-of-band/blind payloads + a deterministic correlation token under your own OOB domain

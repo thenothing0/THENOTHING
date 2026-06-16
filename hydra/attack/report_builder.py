@@ -41,6 +41,25 @@ def record_outcome(target: str, vuln_class: str, verdict: str, point: str = "",
         pass
 
 
+# CVSS 3.1 (base score, vector) + CWE per class — a defensible default the operator can refine.
+_CVSS = {
+    "sqli": (9.8, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "CWE-89"),
+    "cmdi": (9.8, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "CWE-78"),
+    "ssrf": (8.6, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:N", "CWE-918"),
+    "xxe": (8.2, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:L", "CWE-611"),
+    "idor": (8.1, "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N", "CWE-639"),
+    "ssti": (9.0, "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H", "CWE-1336"),
+    "xss": (6.1, "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N", "CWE-79"),
+    "lfi": (7.5, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N", "CWE-98"),
+    "path_traversal": (7.5, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N", "CWE-22"),
+    "open_redirect": (4.3, "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N", "CWE-601"),
+    "crlf": (5.3, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N", "CWE-93"),
+    "jwt": (8.1, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N", "CWE-347"),
+    "cors": (6.5, "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N", "CWE-942"),
+    "graphql": (5.3, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N", "CWE-200"),
+}
+
+
 class AttackReporter:
     def _severity(self, vuln_class: str, chains: Optional[List[Dict]]) -> str:
         base = _CLASS_SEVERITY.get(vuln_class.lower(), "medium")
@@ -51,9 +70,44 @@ class AttackReporter:
                 return {v: k for k, v in _SEV_RANK.items()}[best]      # elevated by chaining
         return base
 
+    @staticmethod
+    def cvss(vuln_class: str) -> Dict:
+        score, vector, cwe = _CVSS.get(vuln_class.lower(), (5.0, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/"
+                                                            "S:U/C:L/I:L/A:N", "CWE-20"))
+        return {"score": score, "vector": vector, "cwe": cwe}
+
+    @staticmethod
+    def dedup(findings: List[Dict]) -> List[Dict]:
+        seen, out = set(), []
+        for f in findings:
+            key = (str(f.get("vuln_class", "")).lower(), f.get("point", ""), f.get("verdict", ""))
+            if key not in seen:
+                seen.add(key)
+                out.append(f)
+        return out
+
+    def to_markdown(self, report: Dict, platform: str = "hackerone") -> str:
+        lines = [f"# {report.get('overall_severity', 'medium').title()} — "
+                 f"{len(report.get('confirmed_findings', []))} confirmed finding(s) on "
+                 f"{report.get('target', '')}", "", "## Summary", report.get("executive_summary", ""),
+                 ""]
+        for s in report.get("confirmed_findings", []):
+            c = s.get("cvss", {})
+            lines += [f"## {s.get('vuln_class', '').upper()} — {s.get('severity', '')} "
+                      f"(CVSS {c.get('score', '')} · {c.get('cwe', '')})",
+                      f"- **Injection point:** {s.get('injection_point', '')}",
+                      f"- **CVSS:** `{c.get('vector', '')}`",
+                      "- **Proof of concept:**", "```bash", s.get("proof_of_concept", ""), "```",
+                      f"- **Evidence:** {', '.join(s.get('evidence_indicators', []))}",
+                      f"- **Remediation:** {s.get('remediation', '')}", ""]
+        lines += ["## Honest assessment", report.get("honest_assessment", "")]
+        if platform == "bugcrowd":
+            lines.insert(1, "_Submitted via Bugcrowd VRT mapping._")
+        return "\n".join(lines)
+
     def build(self, target: str, findings: List[Dict],
               chains: Optional[List[Dict]] = None) -> Dict:
-        confirmed = [f for f in findings if f.get("verdict") == "confirmed"]
+        confirmed = self.dedup([f for f in findings if f.get("verdict") == "confirmed"])
         suspected = [f for f in findings if f.get("verdict") == "suspected"]
         sections = []
         for f in confirmed:
@@ -61,7 +115,7 @@ class AttackReporter:
             ev = f.get("evidence") or {}
             sections.append({
                 "vuln_class": vc, "verdict": "confirmed",
-                "severity": self._severity(vc, chains),
+                "severity": self._severity(vc, chains), "cvss": self.cvss(vc),
                 "injection_point": f.get("point", ""),
                 "proof_of_concept": ev.get("curl", ""),
                 "evidence_indicators": ev.get("indicators", []),

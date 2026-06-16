@@ -137,11 +137,29 @@
     ],
     "required": []
   },
+  "attack_graphql": {
+    "params": [
+      "rate_per_sec",
+      "url"
+    ],
+    "required": [
+      "url"
+    ]
+  },
   "attack_health": {
     "params": [
       "now"
     ],
     "required": []
+  },
+  "attack_jwt": {
+    "params": [
+      "public_key",
+      "token"
+    ],
+    "required": [
+      "token"
+    ]
   },
   "attack_login": {
     "params": [
@@ -168,6 +186,18 @@
       "vuln_class"
     ]
   },
+  "attack_privesc": {
+    "params": [
+      "admin_session",
+      "base_url",
+      "paths",
+      "session"
+    ],
+    "required": [
+      "base_url",
+      "session"
+    ]
+  },
   "attack_profiles": {
     "params": [
       "now",
@@ -182,6 +212,15 @@
     ],
     "required": [
       "target"
+    ]
+  },
+  "attack_race": {
+    "params": [
+      "n",
+      "url"
+    ],
+    "required": [
+      "url"
     ]
   },
   "attack_recon_scan": {
@@ -202,6 +241,17 @@
   "attack_report": {
     "params": [
       "chains",
+      "findings",
+      "target",
+      "template"
+    ],
+    "required": [
+      "findings",
+      "target"
+    ]
+  },
+  "attack_save_findings": {
+    "params": [
       "findings",
       "target"
     ],
@@ -256,6 +306,16 @@
       "technique_id"
     ],
     "required": []
+  },
+  "attack_web_probe": {
+    "params": [
+      "probe",
+      "rate_per_sec",
+      "url"
+    ],
+    "required": [
+      "url"
+    ]
   },
   "authorize_target": {
     "params": [

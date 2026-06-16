@@ -1111,6 +1111,17 @@ try:
     )
     from hydra.attack.chain_exec import ChainExecutor as _ChainExecutor
     from hydra.attack.report_builder import AttackReporter as _AttackReporter
+    from hydra.attack.graphql import GraphQLTester as _GraphQLTester
+    from hydra.attack.jwt_attacks import JWTAnalyzer as _JWTAnalyzer
+    from hydra.attack.web_probes import (
+        CachePoisonProbe as _CachePoison,
+        CORSProbe as _CORSProbe,
+        HostHeaderProbe as _HostHeader,
+        SmugglingPlan as _SmugglingPlan,
+    )
+    from hydra.attack.rbac import PrivilegeEscalationTester as _PrivEsc
+    from hydra.attack.knowledge_loop import FindingPublisher as _FindingPublisher
+    from hydra.attack_runtime.race import RaceTester as _RaceTester
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
     from hydra.capabilities.source_selection import AdaptiveSourceSelector
@@ -3538,22 +3549,28 @@ def attack_chain_execute(target: str, chain_id: str, rate_per_sec: float = 1.0) 
 
 
 @mcp.tool()
-def attack_report(target: str, findings: str, chains: str = "") -> str:
+def attack_report(target: str, findings: str, chains: str = "", template: str = "") -> str:
     """Build a submission-ready report (attack section) from scan findings: executive summary,
-    confirmed-vs-suspected split, per-finding PoC + remediation, severity calibration (chaining
-    elevates severity). Pure formatting (no target contact).
+    confirmed-vs-suspected split (deduped), per-finding PoC + remediation + CVSS 3.1, severity
+    calibration (chaining elevates). Pure formatting (no target contact).
 
     Args:
         target: the assessed target
         findings: JSON array of findings (from attack_scan's confirmed_findings/suspected)
         chains: optional JSON array of executed-chain results (for severity elevation)
+        template: "" for JSON, or "hackerone" / "bugcrowd" for a Markdown submission
     """
     try:
         f = json.loads(findings) if findings else []
         c = json.loads(chains) if chains else []
     except (ValueError, json.JSONDecodeError):
         return json.dumps({"error": "findings/chains must be JSON arrays"})
-    return json.dumps(_AttackReporter().build(target, f, c), indent=2)
+    reporter = _AttackReporter()
+    report = reporter.build(target, f, c)
+    if template in ("hackerone", "bugcrowd"):
+        return json.dumps({"target": target, "template": template,
+                           "markdown": reporter.to_markdown(report, template)}, indent=2)
+    return json.dumps(report, indent=2)
 
 
 @mcp.tool()
@@ -3717,6 +3734,149 @@ def attack_login(login_url: str, fields: str, json_body: bool = False, name: str
                        "session": {"name": s.name, "bearer": s.bearer, "cookies": s.cookies},
                        "note": "pass this session JSON to attack_access_control / authenticated scans"},
                       indent=2)
+
+
+@mcp.tool()
+def attack_save_findings(target: str, findings: str) -> str:
+    """Close the loop (attack section): write TWO-SIGNAL-CONFIRMED findings to the knowledge graph
+    (`save_finding`) + attack memory, so they feed Phase-D/S/T/U learning and re-prioritize future
+    engagements. Only `confirmed` findings are written (suspected/single-signal are skipped).
+
+    Args:
+        target: the assessed target
+        findings: JSON array of findings (from attack_scan's confirmed_findings)
+    """
+    try:
+        f = json.loads(findings) if findings else []
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "findings must be a JSON array"})
+
+    def _save(title, severity, tgt, description, vuln_class):
+        return save_finding(title, severity, tgt, description, finding_type=vuln_class)
+    return json.dumps(_FindingPublisher(save_fn=_save).publish(target, f), indent=2)
+
+
+@mcp.tool()
+def attack_graphql(url: str, rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated GraphQL testing (attack section): introspection, field-suggestion leakage,
+    GET-introspection, batching. Detection/PoC only (reads schema/errors, mutates nothing).
+    Deny-by-default.
+
+    Args:
+        url: in-scope GraphQL endpoint
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    d = gate.authorize(url, "vulnerability_scan")
+    if not d.authorized:
+        return json.dumps({"authorized": False, "reason": d.reason, "checks": []})
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    t = _GraphQLTester()
+    rows = []
+    for chk in t.requests(url):
+        resp = ex(chk["request"])
+        verdict, reason = t.analyze(chk["name"], resp)
+        rows.append({"check": chk["name"], "verdict": verdict, "reason": reason,
+                     "status": resp.get("status")})
+    return json.dumps({"url": url, "authorized": True, "checks": rows,
+                       "confirmed": any(r["verdict"] == "confirmed" for r in rows),
+                       "advisory": True}, indent=2)
+
+
+@mcp.tool()
+def attack_jwt(token: str, public_key: str = "") -> str:
+    """JWT analysis + test-token forging (attack section): decodes claims, recovers a weak HMAC secret
+    (small common list), and forges alg=none / HS-RS-confusion / kid-injection test tokens to REPLAY
+    against an authorized target (PoC). Local crypto only — no target contact, not gated.
+
+    Args:
+        token: the JWT to analyze
+        public_key: server RSA public key PEM (enables HS/RS algorithm-confusion forging)
+    """
+    ja = _JWTAnalyzer()
+    out = ja.analyze(token)
+    if "error" not in out:
+        try:
+            out["forged"] = {"alg_none": ja.forge_none(token),
+                             "kid_injection": ja.inject_kid(token)}
+            if public_key:
+                out["forged"]["alg_confusion_hs256"] = ja.forge_alg_confusion(token, public_key)
+        except Exception:
+            pass
+    return json.dumps(out, indent=2)
+
+
+@mcp.tool()
+def attack_web_probe(url: str, probe: str = "cors", rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated web-class probe (attack section): cors | cache_poison | host_header |
+    smuggle. cache_poison/host use BENIGN markers (detection only — never stores attacker content).
+    `smuggle` is ADVISORY/PLAN ONLY (never auto-sent — desync can affect co-tenants). Deny-by-default.
+
+    Args:
+        url: in-scope target url
+        probe: cors | cache_poison | host_header | smuggle
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    if probe == "smuggle":
+        return json.dumps(_SmugglingPlan().plan(url), indent=2)     # plan only; nothing sent
+    gate = _AuthGate()
+    d = gate.authorize(url, "vulnerability_scan")
+    if not d.authorized:
+        return json.dumps({"authorized": False, "reason": d.reason})
+    probes = {"cors": _CORSProbe(), "cache_poison": _CachePoison(), "host_header": _HostHeader()}
+    p = probes.get(probe)
+    if p is None:
+        return json.dumps({"error": f"unknown probe '{probe}'",
+                           "known": ["cors", "cache_poison", "host_header", "smuggle"]})
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    resp = ex(p.request(url))
+    verdict, reason = p.analyze(resp)
+    return json.dumps({"url": url, "probe": probe, "authorized": True, "verdict": verdict,
+                       "reason": reason, "status": resp.get("status"), "advisory": True}, indent=2)
+
+
+@mcp.tool()
+def attack_race(url: str, n: int = 10) -> str:
+    """Authorization-gated race-condition test (attack section): fires a BOUNDED number of concurrent
+    identical requests and reports the outcome distribution (limit-overrun / TOCTOU candidate).
+    Deny-by-default; bounded (≤30); PoC-only — never amplifies the action.
+
+    Args:
+        url: in-scope target url (a state-changing endpoint is most meaningful)
+        n: concurrent requests (clamped 2–30)
+    """
+    return json.dumps(_RaceTester(gate=_AuthGate()).test({"method": "GET", "url": url}, n=n), indent=2)
+
+
+@mcp.tool()
+def attack_privesc(base_url: str, session: str, paths: str = "", admin_session: str = "") -> str:
+    """Authorization-gated privilege-escalation / RBAC test (attack section): requests privileged
+    endpoints as a LOW-privilege identity (optionally diffed against admin) and flags any reachable as
+    a broken-access candidate. Deny-by-default; PoC-only.
+
+    Args:
+        base_url: in-scope base url
+        session: JSON low-priv identity (e.g. '{"name":"user","cookies":{"sid":"u"}}')
+        paths: comma-separated privileged paths (default: a built-in list)
+        admin_session: optional JSON admin identity (sharpens the diff)
+    """
+    gate = _AuthGate()
+    d = gate.authorize(base_url, "active_recon")
+    if not d.authorized:
+        return json.dumps({"authorized": False, "reason": d.reason})
+    try:
+        low = json.loads(session)
+        adm = json.loads(admin_session) if admin_session else None
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "session/admin_session must be JSON objects"})
+    low_s = _SessionContext(name=low.get("name", "low"), bearer=low.get("bearer", ""),
+                            cookies=low.get("cookies", {}) or {}, headers=low.get("headers", {}) or {})
+    adm_s = (_SessionContext(name="admin", bearer=adm.get("bearer", ""),
+                             cookies=adm.get("cookies", {}) or {}, headers=adm.get("headers", {}) or {})
+             if adm else None)
+    plist = [p.strip() for p in paths.split(",") if p.strip()] or None
+    ex = _HttpExecutor(gate=gate, rate_per_sec=2.0)
+    return json.dumps(_PrivEsc(ex).test(base_url, low_s, plist, adm_s), indent=2)
 
 
 @mcp.tool()

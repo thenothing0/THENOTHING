@@ -28,7 +28,6 @@ from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from hydra.attack.chain_templates import ChainTemplateEngine
 from hydra.attack.crawl_seed import CrawlSeeder
 from hydra.attack.detection import (
-    CONFIRMED,
     AccessControlAnalyzer,
     DifferentialDetector,
     is_waf_block,
@@ -37,6 +36,7 @@ from hydra.attack.evidence import EvidenceCollector
 from hydra.attack.injection_points import InjectionPoint, InjectionPointFinder
 from hydra.attack.payloads import PayloadContext, PayloadLibrary, VulnClass
 from hydra.attack.report_builder import record_outcome
+from hydra.attack.two_signal import TwoSignalConfirmer
 
 
 def _inject_param(url: str, param: str, value: str) -> str:
@@ -115,7 +115,8 @@ class AttackWorkflow:
                  access: Optional[AccessControlAnalyzer] = None,
                  finder: Optional[InjectionPointFinder] = None,
                  browser_confirmer: Optional[Callable[[str], Dict]] = None,
-                 oob_confirmer: Optional[Callable[[], Dict]] = None):
+                 oob_confirmer: Optional[Callable[[], Dict]] = None,
+                 two_signal: Optional[TwoSignalConfirmer] = None):
         if gate is None:
             from hydra.authorization import BugBountyAuthorizationGate
             gate = BugBountyAuthorizationGate()
@@ -129,6 +130,7 @@ class AttackWorkflow:
         self.finder = finder or InjectionPointFinder()
         self.browser_confirmer = browser_confirmer       # callable(url) -> {confirmed, screenshot}
         self.oob_confirmer = oob_confirmer                 # callable() -> correlation report
+        self.two_signal = two_signal or TwoSignalConfirmer()
 
     def run(self, target: str, vuln_class: str,
             context: str = "any", findings: Optional[List[Dict]] = None,
@@ -235,7 +237,7 @@ class AttackWorkflow:
         for pt in points:
             base_resp = self.executor(pt.apply(baseline_marker))
             executed_any = executed_any or bool(base_resp.get("executed"))
-            hit = False
+            hit, best_single = False, None
             for p in payloads:
                 req = {**pt.apply(p.value), "payload": p.value, "vuln_class": vc}
                 resp = self.executor(req)
@@ -244,16 +246,21 @@ class AttackWorkflow:
                     if mutated:
                         req = {**pt.apply(mutated[0]), "payload": mutated[0], "vuln_class": vc}
                         resp = self.executor(req)
-                verdict, reason, _ = self.detector.decide(vc, base_resp, req["payload"], resp)
-                if verdict == CONFIRMED:
-                    inds = [reason]
-                    if confirm_dom and vc == "xss" and self.browser_confirmer:
-                        bc = self.browser_confirmer(req["url"]) or {}
-                        if bc.get("confirmed"):
-                            inds.append("DOM JS executed (headless browser)")
-                    ev = self.evidence.capture(vc, req, resp, indicators=inds, confirmed=True).to_dict()
+                signals = self.detector.signals(vc, base_resp, req["payload"], resp)
+                # #3 second INDEPENDENT signal: confirm reflective XSS by real DOM execution
+                if confirm_dom and vc == "xss" and self.browser_confirmer and \
+                        any(s.kind == "reflection" for s in signals):
+                    bc = self.browser_confirmer(req["url"]) or {}
+                    if bc.get("confirmed"):
+                        resp["dom_executed"] = True
+                        signals = self.detector.signals(vc, base_resp, req["payload"], resp)
+                conf = self.two_signal.assess(signals)
+                if conf.verdict == "confirmed":              # #1 TWO independent signals required
+                    ev = self.evidence.capture(vc, req, resp,
+                                               indicators=[s.detail for s in signals],
+                                               confirmed=True).to_dict()
                     ev["injection_point"] = pt.describe()
-                    ev["reason"] = reason
+                    ev["confirmation"] = conf.to_dict()
                     evidence.append(ev)
                     confirmed.append({"vuln_class": vc, "point": pt.name, "verdict": "confirmed",
                                       "evidence": ev})
@@ -261,8 +268,16 @@ class AttackWorkflow:
                         record_outcome(target, vc, "confirmed", pt.name, ev)
                     hit = True
                     break                                    # early-exit this point
+                if conf.verdict == "single_signal" and best_single is None:
+                    ev = self.evidence.capture(vc, req, resp,
+                                               indicators=[s.detail for s in signals],
+                                               confirmed=False).to_dict()
+                    ev["injection_point"] = pt.describe()
+                    ev["confirmation"] = conf.to_dict()
+                    best_single = ev
             if not hit:
-                suspected.append({"vuln_class": vc, "point": pt.name, "verdict": "suspected"})
+                suspected.append({"vuln_class": vc, "point": pt.name, "verdict": "suspected",
+                                  "evidence": best_single})
 
         return {"target": target, "vuln_class": vc, "authorized": True, "poc_only": True,
                 "executed": executed_any, "confirmed": bool(confirmed),

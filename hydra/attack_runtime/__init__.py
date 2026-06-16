@@ -119,6 +119,10 @@ class HttpExecutor:
             "reflected": reflected, "body_snippet": text[:512], "executed": True,
             "location": resp_headers.get("Location"),
             "content_type": resp_headers.get("Content-Type"),
+            "acao": resp_headers.get("Access-Control-Allow-Origin"),
+            "acac": resp_headers.get("Access-Control-Allow-Credentials"),
+            "x_cache": resp_headers.get("X-Cache") or resp_headers.get("CF-Cache-Status"),
+            "age": resp_headers.get("Age"),
         }
 
     def audit_log(self) -> List[Dict]:
@@ -163,8 +167,10 @@ from hydra.attack_runtime.confirm import BrowserConfirmer, OOBConfirmer  # noqa:
 from hydra.attack_runtime.interactsh import InteractshClient  # noqa: E402
 from hydra.attack_runtime.login import LoginError, LoginFlow  # noqa: E402
 from hydra.attack_runtime.oob_client import InteractshPoller, OOBPoller  # noqa: E402
+from hydra.attack_runtime.race import RaceTester  # noqa: E402
 from hydra.attack_runtime.session import SessionContext, SessionManager  # noqa: E402
 
 __all__ = ["HttpExecutor", "ScopeLoader", "host_of",
            "SessionContext", "SessionManager", "BrowserConfirmer", "OOBConfirmer",
-           "OOBPoller", "InteractshPoller", "InteractshClient", "LoginFlow", "LoginError"]
+           "OOBPoller", "InteractshPoller", "InteractshClient", "LoginFlow", "LoginError",
+           "RaceTester"]

@@ -68,11 +68,22 @@ def wf(tmp_path, monkeypatch):
     return AttackWorkflow(gate=g, executor=HttpExecutor(gate=g, rate_per_sec=0))
 
 
-def test_scan_confirms_reflective_xss(wf, server):
+def test_scan_reflection_alone_is_suspected(wf, server):
+    # Under the two-signal policy, reflection by itself (one signal family) is NOT confirmed.
     res = wf.scan(f"{server}/search?q=hi", "xss", context="html_body")
-    assert res["authorized"] and res["executed"] and res["confirmed"] is True
-    assert res["confirmed_findings"][0]["evidence"]["verdict"] == "confirmed"
+    assert res["authorized"] and res["executed"]
+    assert res["confirmed"] is False and res["suspected"]
     assert res["points_tested"] >= 1
+
+
+def test_scan_two_signal_confirms_with_dom(wf, server):
+    # reflection + a real DOM execution (second independent signal) → confirmed.
+    dom_wf = AttackWorkflow(gate=wf.gate, executor=HttpExecutor(gate=wf.gate, rate_per_sec=0),
+                            browser_confirmer=lambda url: {"confirmed": True})
+    res = dom_wf.scan(f"{server}/search?q=hi", "xss", context="html_body", confirm_dom=True)
+    assert res["confirmed"] is True
+    fams = res["confirmed_findings"][0]["evidence"]["confirmation"]["families"]
+    assert "reflection" in fams and "execution" in fams
 
 
 def test_scan_deny_by_default(tmp_path, monkeypatch, server):
