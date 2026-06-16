@@ -11,11 +11,12 @@ single request is rate-/size-bounded. Network I/O lives here, never in `hydra/at
 from __future__ import annotations
 
 import json
+import re
 import ssl
 import urllib.error
 import urllib.request
 from http.cookies import SimpleCookie
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 from urllib.parse import urlencode
 
 from hydra.attack_runtime.session import SessionContext
@@ -35,13 +36,25 @@ class LoginFlow:
         self._ctx = None if verify_tls else ssl._create_unverified_context()
 
     def login(self, login_url: str, fields: Dict[str, str], json_body: bool = False,
-              name: str = "auth", token_keys=("token", "access_token", "jwt", "id_token")
+              name: str = "auth", token_keys=("token", "access_token", "jwt", "id_token"),
+              csrf_field: str = "", csrf_url: str = "", csrf_regex: str = ""
               ) -> Optional[SessionContext]:
-        """Authenticate and return a SessionContext, or None if the gate denies the login endpoint."""
+        """Authenticate and return a SessionContext, or None if the gate denies the login endpoint.
+
+        Multi-step / CSRF-aware: when `csrf_field` is set, GET `csrf_url` (default the login URL)
+        first, extract the anti-CSRF token (a hidden input / meta tag, or a custom `csrf_regex`),
+        carry the pre-login cookies, and include the token in the POST."""
         decision = self.gate.authorize(login_url, "active_recon")     # login is an active action
         if not decision.authorized:
             return None
+        prefetch_cookies: Dict[str, str] = {}
+        if csrf_field:
+            token, prefetch_cookies = self._csrf(csrf_url or login_url, csrf_field, csrf_regex)
+            if token:
+                fields = {**fields, csrf_field: token}
         headers = {"User-Agent": "hydra-poc/1.0 (authorized bug-bounty testing)"}
+        if prefetch_cookies:
+            headers["Cookie"] = "; ".join(f"{k}={v}" for k, v in prefetch_cookies.items())
         if json_body:
             data = json.dumps(fields).encode()
             headers["Content-Type"] = "application/json"
@@ -63,7 +76,7 @@ class LoginFlow:
         except Exception as e:
             raise LoginError(f"login request failed: {e}") from e
 
-        cookies: Dict[str, str] = {}
+        cookies: Dict[str, str] = dict(prefetch_cookies)        # keep pre-login (CSRF) cookies
         for raw in set_cookies:
             c = SimpleCookie()
             c.load(raw)
@@ -80,3 +93,37 @@ class LoginFlow:
         except ValueError:
             pass
         return SessionContext(name=name, bearer=bearer, cookies=cookies)
+
+    def _get(self, url: str) -> Tuple[Dict[str, str], str]:
+        """GET a page; return (cookies, body). Used for the CSRF pre-fetch."""
+        req = urllib.request.Request(url, headers={"User-Agent": "hydra-poc/1.0"})
+        opener = urllib.request.build_opener(urllib.request.HTTPSHandler(context=self._ctx))
+        try:
+            with opener.open(req, timeout=self.timeout) as r:
+                set_cookies = r.headers.get_all("Set-Cookie") or []
+                body = r.read(1 << 20)
+        except urllib.error.HTTPError as e:
+            set_cookies = (e.headers.get_all("Set-Cookie") or []) if e.headers else []
+            body = b""
+        except Exception:
+            return {}, ""
+        cookies: Dict[str, str] = {}
+        for raw in set_cookies:
+            c = SimpleCookie()
+            c.load(raw)
+            for k, morsel in c.items():
+                cookies[k] = morsel.value
+        return cookies, body.decode("utf-8", "replace")
+
+    def _csrf(self, url: str, field: str, regex: str = "") -> Tuple[str, Dict[str, str]]:
+        cookies, body = self._get(url)
+        patterns = [regex] if regex else [
+            rf'name=["\']{re.escape(field)}["\'][^>]*?value=["\']([^"\']+)["\']',
+            rf'value=["\']([^"\']+)["\'][^>]*?name=["\']{re.escape(field)}["\']',
+            rf'<meta[^>]*?name=["\']{re.escape(field)}["\'][^>]*?content=["\']([^"\']+)["\']',
+        ]
+        for pat in patterns:
+            m = re.search(pat, body, re.IGNORECASE)
+            if m:
+                return m.group(1), cookies
+        return "", cookies

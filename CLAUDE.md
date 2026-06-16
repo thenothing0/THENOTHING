@@ -102,7 +102,9 @@ evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritiz
 - `attack_report` — Build a submission-ready report from scan findings (exec summary, confirmed-vs-suspected, PoC + remediation, chaining severity elevation); pure formatting
 - `attack_scan_crawled` — Gated scan over a crawl's URLs (pipe `katana_crawl`/`gau_urls` output): de-dupes to distinct injectable endpoints, differential-scans each; deny-by-default, PoC-only
 - `attack_login` — Gated login automation: POSTs your test credentials to an in-scope login endpoint, returns the captured session (cookies + bearer) for authenticated tests; deny-by-default
-- `oob_confirm` — Confirm a blind/OOB finding: re-mints the deterministic token, polls YOUR collaborator (`OOBPoller`/`InteractshPoller`), correlates interactions → confirmed blind SSRF/XXE/RCE
+- `oob_confirm` — Confirm a blind/OOB finding: re-mints the deterministic token, polls YOUR collaborator (`OOBPoller` or the persisted interactsh session), correlates interactions → confirmed blind SSRF/XXE/RCE
+- `interactsh_register` — Register an interactsh OOB session (RSA keypair + register + persist); returns the OOB domain to embed in payloads; `oob_confirm` then polls + decrypts it (AES-CFB/RSA-OAEP)
+- `attack_recon_scan` — One-step recon→scan: crawls an in-scope target (`katana`, optionally `gau`), de-dupes to distinct endpoints, differential-scans each; deny-by-default, PoC-only
 - `waf_bypass` — Automated 403/WAF bypass permutation set for a URL (path/method/header/host/encoding); gated
 - `generate_payloads` — Context-aware PoC payload library for a vuln class + injection context (no target; not gated)
 - `oob_payload` — Out-of-band/blind payloads + a deterministic correlation token under your own OOB domain

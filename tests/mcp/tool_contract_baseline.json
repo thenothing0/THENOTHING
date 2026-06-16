@@ -145,6 +145,8 @@
   },
   "attack_login": {
     "params": [
+      "csrf_field",
+      "csrf_url",
       "fields",
       "json_body",
       "login_url",
@@ -180,6 +182,21 @@
     ],
     "required": [
       "target"
+    ]
+  },
+  "attack_recon_scan": {
+    "params": [
+      "context",
+      "depth",
+      "max_seeds",
+      "rate_per_sec",
+      "target",
+      "use_gau",
+      "vuln_class"
+    ],
+    "required": [
+      "target",
+      "vuln_class"
     ]
   },
   "attack_report": {
@@ -594,6 +611,12 @@
     ],
     "required": []
   },
+  "interactsh_register": {
+    "params": [
+      "server"
+    ],
+    "required": []
+  },
   "katana_crawl": {
     "params": [
       "depth",
@@ -750,7 +773,6 @@
     ],
     "required": [
       "finding_id",
-      "poll_url",
       "vuln_class"
     ]
   },

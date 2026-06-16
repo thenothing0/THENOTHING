@@ -1089,7 +1089,6 @@ try:
     from hydra.adversary_intel.intelligence import AdversaryIntelligence as _AdversaryIntelligence
     from hydra.threat_intel.intelligence import ThreatIntelligence as _ThreatIntelligence
     from hydra.authorization import (
-        AuthorizationError as _AuthorizationError,
         BugBountyAuthorizationGate as _AuthGate,
     )
     from hydra.attack.workflow import AttackWorkflow as _AttackWorkflow
@@ -1103,6 +1102,7 @@ try:
     from hydra.attack.queue import AttackQueue as _AttackQueue
     from hydra.attack_runtime import (
         HttpExecutor as _HttpExecutor,
+        InteractshClient as _InteractshClient,
         LoginFlow as _LoginFlow,
         OOBConfirmer as _OOBConfirmer,
         OOBPoller as _OOBPoller,
@@ -3580,35 +3580,125 @@ def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
     return json.dumps(res, indent=2)
 
 
+def _interactsh_session_path():
+    import pathlib
+    return pathlib.Path(os.environ.get("HYDRA_INTERACTSH_SESSION")
+                        or (pathlib.Path(__file__).resolve().parent / "data" / "interactsh_session.json"))
+
+
+def _load_interactsh_client():
+    """Load the persisted interactsh session (keypair etc.), or None."""
+    try:
+        p = _interactsh_session_path()
+        if p.exists():
+            return _InteractshClient.from_dict(json.loads(p.read_text(encoding="utf-8")),
+                                               verify_tls=False)
+    except Exception:
+        pass
+    return None
+
+
 @mcp.tool()
-def oob_confirm(finding_id: str, vuln_class: str, poll_url: str, oob_domain: str = "") -> str:
+def interactsh_register(server: str = "oast.fun") -> str:
+    """Register an interactsh OOB session (attack section): generates a keypair, registers with the
+    interactsh server, persists the session locally, and returns the OOB domain to embed in payloads.
+    `oob_confirm` then polls + decrypts this session automatically. Talks only to the OOB server.
+
+    Args:
+        server: interactsh server host (default oast.fun; use your own self-hosted instance if you have one)
+    """
+    try:
+        client = _InteractshClient(server=server, verify_tls=False)
+        ok = client.register()
+        p = _interactsh_session_path()
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(client.to_dict(), indent=2), encoding="utf-8")
+    except Exception as e:
+        return json.dumps({"success": False, "error": f"interactsh register failed: {e}"})
+    return json.dumps({"success": True, "registered": ok, "oob_domain": client.domain,
+                       "note": "embed <token>.<oob_domain> in OOB payloads; then call oob_confirm"},
+                      indent=2)
+
+
+@mcp.tool()
+def oob_confirm(finding_id: str, vuln_class: str, poll_url: str = "", oob_domain: str = "") -> str:
     """Confirm a blind/OOB finding (attack section): re-mints the deterministic OOB token for this
-    finding, polls YOUR collaborator's poll endpoint, and correlates received interactions back to the
-    token → confirmed blind SSRF/XXE/RCE. Talks only to the OOB endpoint you supply, never the target.
+    finding, polls YOUR collaborator, and correlates received interactions back to the token →
+    confirmed blind SSRF/XXE/RCE. With no `poll_url`, uses the persisted interactsh session
+    (`interactsh_register`). Talks only to the OOB endpoint, never the target.
 
     Args:
         finding_id: the id used when the OOB payload was issued (see `oob_payload`)
         vuln_class: ssrf | xxe | xss | sqli | cmdi
-        poll_url: your collaborator's poll endpoint (returns JSON interactions)
+        poll_url: a generic collaborator poll endpoint (JSON interactions); omit to use interactsh
         oob_domain: your OOB domain (for token host reconstruction; optional)
     """
-    oc = _OOBCorrelator(_ListenerConfig(oob_domain=oob_domain or "oob.invalid"))
+    poller, domain = None, oob_domain
+    if poll_url:
+        poller = _OOBPoller(poll_url, verify_tls=False).poll
+    else:
+        client = _load_interactsh_client()
+        if client is not None:
+            poller = client.poll
+            domain = domain or client.domain
+    oc = _OOBCorrelator(_ListenerConfig(oob_domain=domain or "oob.invalid"))
     oc.mint(finding_id, vuln_class.lower())
-    poller = _OOBPoller(poll_url, verify_tls=False).poll if poll_url else None
     return json.dumps(_OOBConfirmer(oc, poller).confirm(), indent=2)
 
 
 @mcp.tool()
-def attack_login(login_url: str, fields: str, json_body: bool = False, name: str = "auth") -> str:
+def attack_recon_scan(target: str, vuln_class: str, context: str = "any", depth: int = 2,
+                      use_gau: bool = False, max_seeds: int = 12, rate_per_sec: float = 1.0) -> str:
+    """One-step recon→scan (attack section): crawls an in-scope target (katana, optionally gau),
+    de-dupes the discovered URLs to distinct injectable endpoints, and differential-scans each. Every
+    target is independently authorization-gated; PoC-only; rate-limited. Falls back to the target URL
+    if the crawlers find nothing / aren't installed.
+
+    Args:
+        target: in-scope target url
+        vuln_class: xss | sqli | ssti | ssrf | xxe | crlf | path_traversal | cmdi | open_redirect | lfi
+        context: injection context (default any)
+        depth: katana crawl depth (1–5)
+        use_gau: also pull historical URLs via gau
+        max_seeds: max distinct endpoints to scan (clamped 1–25)
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    urls = [target]
+    try:
+        kr = json.loads(katana_crawl(target, depth=max(1, min(depth, 5))))
+        urls += kr.get("endpoints", [])
+    except Exception:
+        pass
+    if use_gau:
+        try:
+            from urllib.parse import urlparse as _up
+            gr = json.loads(gau_urls(_up(target).hostname or target))
+            urls += gr.get("urls", [])
+        except Exception:
+            pass
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    res = _AttackWorkflow(gate=gate, executor=ex).scan_many(
+        urls, vuln_class, context, max_seeds=max(1, min(max_seeds, 25)), record=True)
+    res["crawled_urls"] = len(urls)
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def attack_login(login_url: str, fields: str, json_body: bool = False, name: str = "auth",
+                 csrf_field: str = "", csrf_url: str = "") -> str:
     """Authorization-gated login automation (attack section): POSTs YOUR test credentials to an
     in-scope login endpoint and returns the captured session (cookies + bearer) for use with
-    `attack_access_control` / authenticated scans. Deny-by-default; the operator's own accounts only.
+    `attack_access_control` / authenticated scans. CSRF/multi-step aware. Deny-by-default; the
+    operator's own accounts only.
 
     Args:
         login_url: in-scope login endpoint
         fields: JSON object of form/JSON fields (e.g. '{"username":"u","password":"p"}')
         json_body: send the body as JSON instead of form-encoded
         name: identity name for the returned session
+        csrf_field: anti-CSRF field name to pre-fetch (e.g. "csrf_token"); omit if none
+        csrf_url: page to GET for the CSRF token (default: the login URL)
     """
     gate = _AuthGate()
     try:
@@ -3616,7 +3706,8 @@ def attack_login(login_url: str, fields: str, json_body: bool = False, name: str
     except (ValueError, json.JSONDecodeError):
         return json.dumps({"error": "fields must be a JSON object"})
     try:
-        s = _LoginFlow(gate=gate).login(login_url, f, json_body=json_body, name=name)
+        s = _LoginFlow(gate=gate).login(login_url, f, json_body=json_body, name=name,
+                                        csrf_field=csrf_field, csrf_url=csrf_url)
     except Exception as e:
         return json.dumps({"success": False, "error": f"login failed: {e}"})
     if s is None:
