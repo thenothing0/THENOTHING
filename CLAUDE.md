@@ -105,7 +105,9 @@ evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritiz
 - `oob_confirm` — Confirm a blind/OOB finding: re-mints the deterministic token, polls YOUR collaborator (`OOBPoller` or the persisted interactsh session), correlates interactions → confirmed blind SSRF/XXE/RCE
 - `interactsh_register` — Register an interactsh OOB session (RSA keypair + register + persist); returns the OOB domain to embed in payloads; `oob_confirm` then polls + decrypts it (AES-CFB/RSA-OAEP)
 - `attack_recon_scan` — One-step recon→scan: crawls an in-scope target (`katana`, optionally `gau`), de-dupes to distinct endpoints, differential-scans each; deny-by-default, PoC-only
-- `attack_save_findings` — Close the loop: write TWO-SIGNAL-confirmed findings to the knowledge graph (`save_finding`) + attack memory so they feed Phase-D/S/T/U learning (suspected skipped)
+- `attack_save_findings` — Close the loop: write TWO-SIGNAL-confirmed findings to the findings store + attack memory AND record each as a verification success → actually feeds Phase-F/P → Phase-S/T/U effectiveness (idempotent; suspected skipped)
+- `attack_oob_test` — Active blind-vuln test: injects OOB payloads (SSRF/cmdi into injection points, XXE as XML body) embedding your interactsh callback, polls + correlates → confirmed blind finding; gated, PoC-only
+- `attack_campaign` — End-to-end capstone: seeds → multi-class two-signal scan → confirmed → chain match → loop-back publish → submission report, in one gated PoC-only call
 - `attack_graphql` — Gated GraphQL testing (introspection / field-suggestion / GET-introspection / batching); detection-only
 - `attack_jwt` — JWT analysis + test-token forging (weak-secret, alg=none, HS/RS confusion, kid injection); local crypto, replay against an authorized target
 - `attack_web_probe` — Gated web-class probe: `cors` | `cache_poison` | `host_header` (benign markers, detection-only) | `smuggle` (PLAN-ONLY advisory, never auto-sent)

@@ -22,6 +22,7 @@ default; promotion.py / confidence.py / the canonical wiki are untouched.
 
 from hydra.attack.chain_exec import ChainExecutor, redact
 from hydra.attack.chain_templates import CHAIN_TEMPLATES, ChainTemplate, ChainTemplateEngine
+from hydra.attack.campaign import AttackCampaign
 from hydra.attack.crawl_seed import CrawlSeeder, param_signature
 from hydra.attack.graphql import GraphQLTester
 from hydra.attack.jwt_attacks import JWTAnalyzer
@@ -88,4 +89,5 @@ __all__ = [
     "SmugglingPlan",
     "PrivilegeEscalationTester",
     "FindingPublisher",
+    "AttackCampaign",
 ]

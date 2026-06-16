@@ -1104,6 +1104,7 @@ try:
         HttpExecutor as _HttpExecutor,
         InteractshClient as _InteractshClient,
         LoginFlow as _LoginFlow,
+        OOBAttackTester as _OOBAttackTester,
         OOBConfirmer as _OOBConfirmer,
         OOBPoller as _OOBPoller,
         ScopeLoader as _ScopeLoader,
@@ -1121,6 +1122,7 @@ try:
     )
     from hydra.attack.rbac import PrivilegeEscalationTester as _PrivEsc
     from hydra.attack.knowledge_loop import FindingPublisher as _FindingPublisher
+    from hydra.attack.campaign import AttackCampaign as _AttackCampaign
     from hydra.attack_runtime.race import RaceTester as _RaceTester
     from hydra.capabilities.capability_catalog import CapabilityCatalog
     from hydra.capabilities.source_learning import SourceLearningStore
@@ -3738,9 +3740,10 @@ def attack_login(login_url: str, fields: str, json_body: bool = False, name: str
 
 @mcp.tool()
 def attack_save_findings(target: str, findings: str) -> str:
-    """Close the loop (attack section): write TWO-SIGNAL-CONFIRMED findings to the knowledge graph
-    (`save_finding`) + attack memory, so they feed Phase-D/S/T/U learning and re-prioritize future
-    engagements. Only `confirmed` findings are written (suspected/single-signal are skipped).
+    """Close the loop (attack section): write TWO-SIGNAL-CONFIRMED findings to the findings store
+    (`save_finding`) + attack memory, AND record each as a verification SUCCESS for its vuln-class so
+    it actually feeds Phase-F → Phase-P effectiveness → Phase-S/T/U re-ranking (idempotent per
+    target/class/point). Only `confirmed` findings are recorded (suspected/single-signal skipped).
 
     Args:
         target: the assessed target
@@ -3877,6 +3880,66 @@ def attack_privesc(base_url: str, session: str, paths: str = "", admin_session: 
     plist = [p.strip() for p in paths.split(",") if p.strip()] or None
     ex = _HttpExecutor(gate=gate, rate_per_sec=2.0)
     return json.dumps(_PrivEsc(ex).test(base_url, low_s, plist, adm_s), indent=2)
+
+
+@mcp.tool()
+def attack_oob_test(target: str, vuln_class: str = "ssrf", finding_id: str = "poc",
+                    poll_wait: float = 0.0) -> str:
+    """Authorization-gated ACTIVE blind-vuln test (attack section): injects OOB payloads (SSRF/cmdi
+    into injection points, XXE as an XML body) that embed a per-finding callback under your registered
+    interactsh session, then polls + correlates → confirmed blind SSRF/XXE/cmdi. Requires
+    `interactsh_register` first. Deny-by-default; PoC-only (benign callback, no exfiltration).
+
+    Args:
+        target: in-scope target url
+        vuln_class: ssrf | xxe | cmdi (blind/OOB classes)
+        finding_id: stable id to correlate the callback (default "poc")
+        poll_wait: seconds to wait for async callbacks before polling (bounded ≤30)
+    """
+    client = _load_interactsh_client()
+    if client is None:
+        return json.dumps({"error": "no interactsh session — call interactsh_register first"})
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=1.0)
+    tester = _OOBAttackTester(gate=gate, executor=ex,
+                              correlator=_OOBCorrelator(_ListenerConfig(oob_domain=client.domain)),
+                              poller=client.poll, oob_domain=client.domain)
+    return json.dumps(tester.test(target, vuln_class, finding_id, poll_wait=poll_wait), indent=2)
+
+
+@mcp.tool()
+def attack_campaign(target: str, crawl: bool = False, classes: str = "", max_seeds: int = 8,
+                    publish: bool = True, rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated end-to-end CAMPAIGN (attack section — the capstone): one call runs
+    seeds → differential multi-class scan (two-signal) → confirmed findings → exploit-chain matching →
+    (loop-back) publish confirmed findings to the knowledge graph + verification learning → submission
+    report. Deny-by-default; PoC-only; rate-limited; bounded.
+
+    Args:
+        target: in-scope target url
+        crawl: also crawl the target (katana) to seed distinct endpoints
+        classes: comma-separated vuln classes (default: xss,sqli,open_redirect,lfi,ssti)
+        max_seeds: max distinct endpoints to scan (clamped 1–20)
+        publish: feed confirmed findings back into the intelligence (default True)
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    seeds = [target]
+    if crawl:
+        try:
+            seeds += json.loads(katana_crawl(target, depth=2)).get("endpoints", [])
+        except Exception:
+            pass
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    wf = _AttackWorkflow(gate=gate, executor=ex)
+
+    def _save(title, severity, tgt, description, vuln_class):
+        return save_finding(title, severity, tgt, description, finding_type=vuln_class)
+    publisher = _FindingPublisher(save_fn=_save)
+    cls = [c.strip() for c in classes.split(",") if c.strip()] or None
+    campaign = _AttackCampaign(wf, publisher=publisher, classes=cls)
+    res = campaign.run(target, urls=seeds, max_seeds=max(1, min(max_seeds, 20)), publish=publish)
+    return json.dumps(res, indent=2)
 
 
 @mcp.tool()

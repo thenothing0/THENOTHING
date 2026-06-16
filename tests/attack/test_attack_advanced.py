@@ -105,15 +105,19 @@ def test_privesc_flags_reachable_privileged_path():
 
 
 # ── #2 knowledge-graph loop-back ─────────────────────────────────────────────────
-def test_publisher_writes_only_confirmed():
-    calls = []
-    pub = FindingPublisher(save_fn=lambda *a: calls.append(a))
+def test_publisher_writes_and_learns_only_confirmed():
+    saves, learns = [], []
+    pub = FindingPublisher(save_fn=lambda *a: saves.append(a),
+                           verify_fn=lambda *a: (learns.append(a), True)[1])
     out = pub.publish("acme", [
         {"vuln_class": "xss", "verdict": "confirmed", "point": "q",
-         "evidence": {"curl": "curl x", "reason": "two signals"}},
+         "evidence": {"curl": "curl x", "reason": "two signals",
+                      "confirmation": {"families": ["reflection", "execution"]}}},
         {"vuln_class": "sqli", "verdict": "suspected"}])
-    assert out["saved"] == 1 and out["skipped_unconfirmed"] == 1
-    assert len(calls) == 1 and calls[0][0].startswith("XSS")    # only the confirmed one written
+    assert out["saved"] == 1 and out["skipped_unconfirmed"] == 1 and out["learned_into_intelligence"] == 1
+    assert len(saves) == 1 and saves[0][0].startswith("XSS")        # only the confirmed one saved
+    assert len(learns) == 1 and learns[0][0] == "xss"              # ... and learned as verification
+    assert learns[0][3] == 1.0                                      # two families ⇒ strength 1.0
 
 
 # ── #6 reporting maturity ────────────────────────────────────────────────────────

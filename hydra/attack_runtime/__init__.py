@@ -167,10 +167,11 @@ from hydra.attack_runtime.confirm import BrowserConfirmer, OOBConfirmer  # noqa:
 from hydra.attack_runtime.interactsh import InteractshClient  # noqa: E402
 from hydra.attack_runtime.login import LoginError, LoginFlow  # noqa: E402
 from hydra.attack_runtime.oob_client import InteractshPoller, OOBPoller  # noqa: E402
+from hydra.attack_runtime.oob_tester import OOBAttackTester  # noqa: E402
 from hydra.attack_runtime.race import RaceTester  # noqa: E402
 from hydra.attack_runtime.session import SessionContext, SessionManager  # noqa: E402
 
 __all__ = ["HttpExecutor", "ScopeLoader", "host_of",
            "SessionContext", "SessionManager", "BrowserConfirmer", "OOBConfirmer",
            "OOBPoller", "InteractshPoller", "InteractshClient", "LoginFlow", "LoginError",
-           "RaceTester"]
+           "RaceTester", "OOBAttackTester"]

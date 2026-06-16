@@ -289,7 +289,7 @@ class AttackWorkflow:
 
     def scan_many(self, urls: List[str], vuln_class: str, context: str = "any", session=None,
                   max_seeds: int = 25, max_payloads: int = 5, max_points: int = 8,
-                  record: bool = False) -> Dict:
+                  record: bool = False, confirm_dom: bool = False) -> Dict:
         """Scan a CRAWL's worth of URLs (e.g. from katana/gau): de-dupe to distinct injectable
         endpoints, then run the gated differential scan on each. Every target is independently
         authorization-gated (deny-by-default)."""
@@ -297,7 +297,7 @@ class AttackWorkflow:
         scanned, confirmed = [], []
         for u in seeds:
             r = self.scan(u, vuln_class, context, session=session, max_payloads=max_payloads,
-                          max_points=max_points, record=record)
+                          max_points=max_points, record=record, confirm_dom=confirm_dom)
             scanned.append({"target": u, "authorized": r.get("authorized"),
                             "confirmed": r.get("confirmed", False),
                             "confirmed_findings": r.get("confirmed_findings", [])})
