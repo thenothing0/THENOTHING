@@ -16,7 +16,10 @@ from typing import Dict, List, Optional
 _SEV_RANK = {"info": 0, "low": 1, "medium": 2, "high": 3, "critical": 4}
 _CLASS_SEVERITY = {"sqli": "high", "cmdi": "critical", "xxe": "high", "ssrf": "high",
                    "xss": "medium", "idor": "high", "ssti": "high", "lfi": "high",
-                   "path_traversal": "medium", "open_redirect": "low", "crlf": "low"}
+                   "path_traversal": "medium", "open_redirect": "low", "crlf": "low",
+                   "nosqli": "high", "ldapi": "high", "prototype_pollution": "high",
+                   "bola": "high", "bfla": "high", "mass_assignment": "high",
+                   "excessive_data_exposure": "medium", "oauth": "high", "saml": "high"}
 _REMEDIATION = {
     "xss": "Context-aware output encoding + CSP; never reflect untrusted input unescaped.",
     "sqli": "Parameterized queries / prepared statements; least-privilege DB user.",
@@ -26,6 +29,15 @@ _REMEDIATION = {
     "ssti": "Do not render user input as a template; sandbox the engine.",
     "lfi": "No user-controlled file paths; canonicalize + allowlist.",
     "cmdi": "Avoid shelling out with user input; use safe APIs / strict allowlists.",
+    "nosqli": "Cast/validate input types; reject query operators; use parameterized queries.",
+    "ldapi": "Escape LDAP metacharacters (RFC 4515); bind with least privilege; validate input.",
+    "prototype_pollution": "Reject __proto__/constructor/prototype keys; use Map / null-prototype objects.",
+    "bola": "Enforce per-object authorization server-side on every request; scope references to the caller.",
+    "bfla": "Enforce function/role authorization server-side; default-deny privileged operations.",
+    "mass_assignment": "Allowlist bindable fields; never bind privileged attributes from client input.",
+    "excessive_data_exposure": "Return only client-needed fields; filter sensitive attributes server-side.",
+    "oauth": "Strict redirect_uri allowlist; require state + PKCE; avoid implicit flow.",
+    "saml": "Validate signatures over the whole assertion; reject unsigned/multi-assertion responses.",
 }
 
 
@@ -57,6 +69,15 @@ _CVSS = {
     "jwt": (8.1, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N", "CWE-347"),
     "cors": (6.5, "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N", "CWE-942"),
     "graphql": (5.3, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N", "CWE-200"),
+    "nosqli": (9.8, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "CWE-943"),
+    "ldapi": (8.6, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N", "CWE-90"),
+    "prototype_pollution": (8.1, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:L", "CWE-1321"),
+    "bola": (8.1, "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N", "CWE-639"),
+    "bfla": (8.1, "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N", "CWE-285"),
+    "mass_assignment": (8.1, "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N", "CWE-915"),
+    "excessive_data_exposure": (5.3, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N", "CWE-213"),
+    "oauth": (8.0, "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N", "CWE-601"),
+    "saml": (8.1, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N", "CWE-347"),
 }
 
 

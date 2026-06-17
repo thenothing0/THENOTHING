@@ -1121,6 +1121,8 @@ try:
         SmugglingPlan as _SmugglingPlan,
     )
     from hydra.attack.rbac import PrivilegeEscalationTester as _PrivEsc
+    from hydra.attack.api_top10 import APIAttackTester as _APIAttackTester
+    from hydra.attack.auth_protocol import OAuthTester as _OAuthTester, SAMLAnalyzer as _SAMLAnalyzer
     from hydra.attack.knowledge_loop import FindingPublisher as _FindingPublisher
     from hydra.attack.campaign import AttackCampaign as _AttackCampaign
     from hydra.attack_runtime.race import RaceTester as _RaceTester
@@ -3577,17 +3579,20 @@ def attack_report(target: str, findings: str, chains: str = "", template: str = 
 
 @mcp.tool()
 def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
-                        max_seeds: int = 12, rate_per_sec: float = 1.0) -> str:
+                        max_seeds: int = 12, rate_per_sec: float = 1.0,
+                        concurrency: int = 1, resume: bool = False) -> str:
     """Authorization-gated scan over a CRAWL's URLs (attack section): de-dupes a list (e.g. from
     `katana_crawl` / `gau_urls`) to distinct injectable endpoints, then differential-scans each. Every
     target is independently gated (deny-by-default); PoC-only; rate-limited.
 
     Args:
         urls: whitespace/comma-separated URL list (pipe katana/gau output here)
-        vuln_class: xss | sqli | ssti | ssrf | xxe | crlf | path_traversal | cmdi | open_redirect | lfi
+        vuln_class: xss|sqli|ssti|ssrf|xxe|crlf|path_traversal|cmdi|open_redirect|lfi|nosqli|ldapi|prototype_pollution
         context: injection context (default any)
         max_seeds: max distinct endpoints to scan (clamped 1–25)
         rate_per_sec: max requests/sec (clamped 0.1–5.0)
+        concurrency: parallel endpoints (clamped 1–8; the executor is the rate-limited boundary)
+        resume: skip endpoints already scanned in a prior run (cross-run dedup via ScanState)
     """
     url_list = [u.strip() for u in urls.replace(",", " ").split() if u.strip()]
     if not url_list:
@@ -3595,7 +3600,8 @@ def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
     gate = _AuthGate()
     ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
     res = _AttackWorkflow(gate=gate, executor=ex).scan_many(
-        url_list, vuln_class, context, max_seeds=max(1, min(max_seeds, 25)), record=True)
+        url_list, vuln_class, context, max_seeds=max(1, min(max_seeds, 25)), record=True,
+        concurrency=max(1, min(concurrency, 8)), resume=resume)
     return json.dumps(res, indent=2)
 
 
@@ -3667,7 +3673,8 @@ def oob_confirm(finding_id: str, vuln_class: str, poll_url: str = "", oob_domain
 
 @mcp.tool()
 def attack_recon_scan(target: str, vuln_class: str, context: str = "any", depth: int = 2,
-                      use_gau: bool = False, max_seeds: int = 12, rate_per_sec: float = 1.0) -> str:
+                      use_gau: bool = False, max_seeds: int = 12, rate_per_sec: float = 1.0,
+                      concurrency: int = 1, resume: bool = False) -> str:
     """One-step recon→scan (attack section): crawls an in-scope target (katana, optionally gau),
     de-dupes the discovered URLs to distinct injectable endpoints, and differential-scans each. Every
     target is independently authorization-gated; PoC-only; rate-limited. Falls back to the target URL
@@ -3698,7 +3705,8 @@ def attack_recon_scan(target: str, vuln_class: str, context: str = "any", depth:
     gate = _AuthGate()
     ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
     res = _AttackWorkflow(gate=gate, executor=ex).scan_many(
-        urls, vuln_class, context, max_seeds=max(1, min(max_seeds, 25)), record=True)
+        urls, vuln_class, context, max_seeds=max(1, min(max_seeds, 25)), record=True,
+        concurrency=max(1, min(concurrency, 8)), resume=resume)
     res["crawled_urls"] = len(urls)
     return json.dumps(res, indent=2)
 
@@ -3940,6 +3948,105 @@ def attack_campaign(target: str, crawl: bool = False, classes: str = "", max_see
     campaign = _AttackCampaign(wf, publisher=publisher, classes=cls)
     res = campaign.run(target, urls=seeds, max_seeds=max(1, min(max_seeds, 20)), publish=publish)
     return json.dumps(res, indent=2)
+
+
+def _parse_session(blob: str, default_name: str):
+    """Parse a JSON identity blob into a SessionContext (empty → anonymous)."""
+    if not blob:
+        return _SessionContext(name=default_name)
+    s = json.loads(blob)
+    return _SessionContext(name=s.get("name", default_name), bearer=s.get("bearer", ""),
+                           cookies=s.get("cookies", {}) or {}, headers=s.get("headers", {}) or {})
+
+
+@mcp.tool()
+def attack_api(target: str, check: str, session: str = "", session_b: str = "",
+               owner_markers: str = "", id_param: str = "", ids: str = "",
+               functions: str = "", base_body: str = "", method: str = "PATCH",
+               rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated OWASP API Top 10 test (attack section): bola | bfla | mass_assignment |
+    excessive_data_exposure. Reuses the dual-identity model + gated executor. Deny-by-default; PoC-only
+    (mass-assignment uses benign flag values; data-exposure only LABELS leaked keys, never stores them).
+
+    Args:
+        target: in-scope API resource/base url
+        check: bola | bfla | mass_assignment | excessive_data_exposure
+        session: JSON identity (owner/low-priv/caller) e.g. '{"name":"a","bearer":"...","cookies":{}}'
+        session_b: JSON second identity (BOLA: the other user; BFLA: optional admin)
+        owner_markers: BOLA — comma-separated strings unique to A's private data
+        id_param: BOLA — query param holding the object id (enables foreign-id enumeration)
+        ids: BOLA — comma-separated object ids to enumerate as identity B
+        functions: BFLA — comma-separated "METHOD /path" pairs (default: a built-in list)
+        base_body: mass_assignment — JSON base object to which privileged fields are added
+        method: mass_assignment — write method (PATCH/PUT/POST)
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    try:
+        tester = _APIAttackTester(ex, gate=gate)
+        sess = _parse_session(session, "caller")
+        if check == "bola":
+            sb = _parse_session(session_b, "B")
+            markers = [m.strip() for m in owner_markers.split(",") if m.strip()] or None
+            id_list = [i.strip() for i in ids.replace(",", " ").split() if i.strip()] or None
+            res = tester.bola(target, sess, sb, owner_markers=markers, id_param=id_param,
+                              ids=id_list)
+        elif check == "bfla":
+            adm = _parse_session(session_b, "admin") if session_b else None
+            funcs = None
+            if functions:
+                funcs = []
+                for item in functions.split(","):
+                    parts = item.strip().split(None, 1)
+                    funcs.append((parts[0].upper(), parts[1]) if len(parts) == 2
+                                 else ("GET", parts[0]))
+            res = tester.bfla(target, sess, functions=funcs, admin_session=adm)
+        elif check == "mass_assignment":
+            bb = json.loads(base_body) if base_body else None
+            res = tester.mass_assignment(target, sess, base_body=bb, method=method)
+        elif check == "excessive_data_exposure":
+            res = tester.excessive_data_exposure(target, sess)
+        else:
+            return json.dumps({"error": f"unknown check '{check}'",
+                               "known": ["bola", "bfla", "mass_assignment",
+                                         "excessive_data_exposure"]})
+    except (ValueError, json.JSONDecodeError) as e:
+        return json.dumps({"error": f"invalid JSON argument: {e}"})
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def attack_oauth(authorize_url: str, evil: str = "https://evil.example.com",
+                 rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated OAuth/OIDC test (attack section): statically flags missing state / missing
+    PKCE / implicit-flow token leakage / broad scope, AND actively tests redirect_uri validation by
+    sending tampered variants — confirmed when the server honours an attacker-controlled destination.
+    Deny-by-default; PoC-only (never completes a token exchange).
+
+    Args:
+        authorize_url: in-scope OAuth/OIDC authorize endpoint URL (with its query params)
+        evil: attacker placeholder destination to test redirect_uri against
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    tester = _OAuthTester(executor=ex, gate=gate)
+    out = {"static_analysis": tester.analyze(authorize_url),
+           "redirect_uri_test": tester.test_redirect_uri(authorize_url, evil)}
+    return json.dumps(out, indent=2)
+
+
+@mcp.tool()
+def attack_saml(saml_response: str) -> str:
+    """SAML Response analysis (attack section): decodes a SAML Response and flags unsigned /
+    multi-assertion / comment-injection conditions, and emits XSW (signature-wrapping) test vectors as
+    advisory PoC artifacts. Local crypto only — no target contact, not gated, never replayed.
+
+    Args:
+        saml_response: base64 (or raw XML) SAML Response
+    """
+    return json.dumps(_SAMLAnalyzer().analyze(saml_response), indent=2)
 
 
 @mcp.tool()

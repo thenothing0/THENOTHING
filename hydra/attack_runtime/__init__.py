@@ -21,11 +21,14 @@ published scope (via the existing `hydra.scope.ScopePolicyEngine`) and registers
 from __future__ import annotations
 
 import ssl
+import threading
 import time
 import urllib.error
 import urllib.request
 from typing import Dict, List
 from urllib.parse import urlparse
+
+from hydra.attack.normalize import ResponseNormalizer
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -51,7 +54,26 @@ class HttpExecutor:
         self.user_agent = user_agent
         self._ctx = None if verify_tls else ssl._create_unverified_context()
         self._last = 0.0
+        self._backoff = 0.0
         self._audit: List[Dict] = []
+        self._lock = threading.Lock()                     # thread-safe under bounded concurrency
+        self._normalizer = ResponseNormalizer()
+
+    def _audit_append(self, row: Dict) -> None:
+        with self._lock:
+            self._audit.append(row)
+
+    def _rate_wait(self) -> None:
+        """Claim a global rate-limit slot. Held under the lock (incl. the inter-request sleep) so the
+        TOTAL request rate is bounded even with concurrent callers; the network send happens AFTER the
+        slot is released, so request latencies still overlap."""
+        if not self.min_interval:
+            return
+        with self._lock:
+            dt = time.time() - self._last
+            if dt < self.min_interval:
+                time.sleep(self.min_interval - dt)
+            self._last = time.time()
 
     def __call__(self, request: Dict) -> Dict:
         url = request.get("url", "")
@@ -63,20 +85,18 @@ class HttpExecutor:
         # 1) GATE (defense-in-depth): re-verify the host is bug-bounty-authorized.
         decision = self.gate.authorize(url, "exploitation")
         if not decision.authorized:
-            self._audit.append({"url": url, "executed": False, "blocked": True,
+            self._audit_append({"url": url, "executed": False, "blocked": True,
                                 "reason": decision.reason, "ts": time.time()})
             return {"status": None, "length": 0, "executed": False, "blocked": True,
                     "reason": decision.reason}
 
-        # 2) RATE LIMIT.
-        if self.min_interval:
-            dt = time.time() - self._last
-            if dt < self.min_interval:
-                time.sleep(self.min_interval - dt)
+        # 2) RATE LIMIT (global, thread-safe).
+        self._rate_wait()
 
         # 3) SEND (bounded).
         data = body.encode("utf-8", "replace") if isinstance(body, str) else body
         headers.setdefault("User-Agent", self.user_agent)
+        headers.setdefault("Accept-Encoding", "gzip, deflate")
         req = urllib.request.Request(url, data=data, method=method, headers=headers)
         opener = urllib.request.build_opener(
             *( [] if self.allow_redirects else [_NoRedirect()] ),
@@ -96,27 +116,34 @@ class HttpExecutor:
             except Exception:
                 raw = b""
         except Exception as e:
-            self._last = time.time()
-            self._audit.append({"url": url, "executed": False, "error": str(e), "ts": time.time()})
+            self._audit_append({"url": url, "executed": False, "error": str(e), "ts": time.time()})
             return {"status": None, "length": 0, "executed": False, "error": str(e)}
-        self._last = time.time()
         # Responsible WAF/rate back-off (#5): on 429/503 slow down before the next request (bounded),
         # so authorized testing never turns into rate-abuse; reset on a clean response.
-        if status in (429, 503):
-            self._backoff = min(((getattr(self, "_backoff", 0.0)) or (self.min_interval or 0.5)) * 2,
-                                30.0)
-            time.sleep(min(self._backoff, 5.0))
-        else:
-            self._backoff = 0.0
+        with self._lock:
+            if status in (429, 503):
+                self._backoff = min((self._backoff or (self.min_interval or 0.5)) * 2, 30.0)
+                backoff = min(self._backoff, 5.0)
+            else:
+                self._backoff = 0.0
+                backoff = 0.0
+        if backoff:
+            time.sleep(backoff)
 
-        text = raw[: self.max_body].decode("utf-8", "replace")
+        # #4 NORMALIZE: gzip/deflate-decode + charset-decode + SPA-shell detection, so the differential
+        # detector compares clean, comparable bodies (and doesn't over-trust a client-rendered shell).
+        ct = resp_headers.get("Content-Type") or ""
+        text = self._normalizer.decode(raw[: self.max_body + 1],
+                                       resp_headers.get("Content-Encoding", ""), ct)
         reflected = bool(payload) and payload in text
         elapsed_ms = round((time.time() - t0) * 1000, 1)
-        self._audit.append({"url": url, "method": method, "status": status,
+        self._audit_append({"url": url, "method": method, "status": status,
                             "executed": True, "ts": time.time()})
         return {
             "status": status, "length": len(raw), "elapsed_ms": elapsed_ms,
             "reflected": reflected, "body_snippet": text[:512], "executed": True,
+            "spa_shell": self._normalizer.is_spa_shell(text),
+            "content_encoding": resp_headers.get("Content-Encoding"),
             "location": resp_headers.get("Location"),
             "content_type": resp_headers.get("Content-Type"),
             "acao": resp_headers.get("Access-Control-Allow-Origin"),

@@ -28,6 +28,10 @@ from hydra.attack.graphql import GraphQLTester
 from hydra.attack.jwt_attacks import JWTAnalyzer
 from hydra.attack.knowledge_loop import FindingPublisher
 from hydra.attack.rbac import PrivilegeEscalationTester
+from hydra.attack.api_top10 import APIAttackTester
+from hydra.attack.auth_protocol import OAuthTester, SAMLAnalyzer
+from hydra.attack.normalize import ResponseNormalizer
+from hydra.attack.scan_state import ScanState
 from hydra.attack.two_signal import Confirmation, Signal, TwoSignalConfirmer
 from hydra.attack.web_probes import CachePoisonProbe, CORSProbe, HostHeaderProbe, SmugglingPlan
 from hydra.attack.detection import AccessControlAnalyzer, DifferentialDetector, is_waf_block
@@ -90,4 +94,9 @@ __all__ = [
     "PrivilegeEscalationTester",
     "FindingPublisher",
     "AttackCampaign",
+    "APIAttackTester",
+    "OAuthTester",
+    "SAMLAnalyzer",
+    "ResponseNormalizer",
+    "ScanState",
 ]

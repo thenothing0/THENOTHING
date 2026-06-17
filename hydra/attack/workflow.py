@@ -103,6 +103,7 @@ _VC_TECHNIQUE = {
     "sqli": "T1190", "xss": "T1190", "ssti": "T1190", "ssrf": "T1190", "xxe": "T1190",
     "idor": "T1190", "lfi": "T1190", "path_traversal": "T1083", "cmdi": "T1190",
     "open_redirect": "T1190", "crlf": "T1190",
+    "nosqli": "T1190", "ldapi": "T1190", "prototype_pollution": "T1190",
 }
 
 
@@ -289,22 +290,58 @@ class AttackWorkflow:
 
     def scan_many(self, urls: List[str], vuln_class: str, context: str = "any", session=None,
                   max_seeds: int = 25, max_payloads: int = 5, max_points: int = 8,
-                  record: bool = False, confirm_dom: bool = False) -> Dict:
+                  record: bool = False, confirm_dom: bool = False,
+                  concurrency: int = 1, resume: bool = False, state=None) -> Dict:
         """Scan a CRAWL's worth of URLs (e.g. from katana/gau): de-dupe to distinct injectable
         endpoints, then run the gated differential scan on each. Every target is independently
-        authorization-gated (deny-by-default)."""
+        authorization-gated (deny-by-default).
+
+        Robustness (#4): `concurrency` runs up to N (≤8) endpoints in parallel (the executor is the
+        thread-safe, globally rate-limited boundary, so total traffic stays bounded); `resume` consults
+        a cross-run `ScanState` to SKIP endpoints already scanned in a prior run and records progress.
+        Results are returned in seed order regardless of concurrency (deterministic)."""
         seeds = CrawlSeeder().seeds(urls, max_seeds=max(1, max_seeds))
-        scanned, confirmed = [], []
+        vc = vuln_class.lower()
+        if resume and state is None:
+            from hydra.attack.scan_state import ScanState
+            state = ScanState()
+
+        to_scan, skipped = [], []
         for u in seeds:
+            if state is not None and state.seen(u, vc):
+                skipped.append(u)
+            else:
+                to_scan.append(u)
+
+        def _one(u: str) -> Dict:
             r = self.scan(u, vuln_class, context, session=session, max_payloads=max_payloads,
                           max_points=max_points, record=record, confirm_dom=confirm_dom)
+            if state is not None:
+                state.mark(u, vc, "*", "confirmed" if r.get("confirmed") else "scanned")
+            return r
+
+        results: Dict[str, Dict] = {}
+        workers = max(1, min(int(concurrency), 8))
+        if workers > 1 and len(to_scan) > 1:
+            from concurrent.futures import ThreadPoolExecutor
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                for u, r in zip(to_scan, pool.map(_one, to_scan)):
+                    results[u] = r
+        else:
+            for u in to_scan:
+                results[u] = _one(u)
+
+        scanned, confirmed = [], []
+        for u in to_scan:                                  # deterministic: seed/scan order
+            r = results[u]
             scanned.append({"target": u, "authorized": r.get("authorized"),
                             "confirmed": r.get("confirmed", False),
                             "confirmed_findings": r.get("confirmed_findings", [])})
             confirmed.extend(r.get("confirmed_findings", []))
         return {"input_urls": len(urls), "distinct_seeds": len(seeds), "scanned": scanned,
+                "skipped_already_scanned": skipped, "concurrency": workers,
                 "confirmed": bool(confirmed), "confirmed_findings": confirmed,
-                "vuln_class": vuln_class.lower(), "poc_only": True, "advisory": True}
+                "vuln_class": vc, "poc_only": True, "advisory": True}
 
     def access_control_test(self, target: str, session_a, session_b,
                             owner_markers: Optional[List[str]] = None) -> Dict:

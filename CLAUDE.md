@@ -113,6 +113,11 @@ evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritiz
 - `attack_web_probe` — Gated web-class probe: `cors` | `cache_poison` | `host_header` (benign markers, detection-only) | `smuggle` (PLAN-ONLY advisory, never auto-sent)
 - `attack_race` — Gated, bounded race-condition test (concurrent requests → limit-overrun/TOCTOU candidate); PoC-only, never amplifies
 - `attack_privesc` — Gated privilege-escalation / RBAC test: low-priv identity against privileged endpoints (optionally diffed vs admin)
+- `attack_api` — Gated OWASP API Top 10 test: `bola` (object-level authz) | `bfla` (function-level authz) | `mass_assignment` (privileged-field binding) | `excessive_data_exposure` (sensitive-field leakage); dual-identity, PoC-only (benign values, leaked keys labelled not stored)
+- `attack_oauth` — Gated OAuth/OIDC test: static weaknesses (missing state/PKCE, implicit-flow token leakage, broad scope) + active redirect_uri-validation test (confirmed when an attacker-controlled destination is honoured); never completes a token exchange
+- `attack_saml` — SAML Response analysis (local, not gated): flags unsigned / multi-assertion / comment-injection + emits XSW signature-wrapping test vectors; never replayed against the IdP
+
+Injection coverage: `attack_scan` / `attack_scan_crawled` / `attack_recon_scan` / `attack_campaign` also accept `nosqli` | `ldapi` | `prototype_pollution` (NoSQL-operator / LDAP-filter / prototype-pollution injection). The crawled/recon scanners take `concurrency` (bounded parallel endpoints) and `resume` (cross-run dedup) for robustness at scale; the gated executor transparently gunzip/charset-decodes responses and flags SPA shells.
 
 Two-signal note: `attack_scan` now confirms a finding only on TWO INDEPENDENT signals (e.g. reflection + DOM execution); a single signal is reported as `suspected` (the platform's validation-first rule).
 - `waf_bypass` — Automated 403/WAF bypass permutation set for a URL (path/method/header/host/encoding); gated

@@ -26,6 +26,13 @@ _LFI_MARKERS = ["root:x:0:0", "root:!:0:0", "[boot loader]", "; for 16-bit app s
 _SQL_ERRORS = ["you have an error in your sql syntax", "warning: mysql", "unclosed quotation mark",
                "quoted string not properly terminated", "pg_query", "psql:", "ora-0", "sqlite3.",
                "sqlstate[", "odbc sql server driver", "supplied argument is not a valid mysql"]
+_NOSQL_ERRORS = ["mongoerror", "mongo error", "bson", "$where", "unexpected token",
+                 "syntaxerror: unexpected", "cast to objectid failed", "e11000",
+                 "command failed with error", "couchdberror"]
+_LDAP_ERRORS = ["ldapexception", "javax.naming", "invalid dn syntax", "ldap_search",
+                "ldap: error code", "com.sun.jndi.ldap", "protocol error", "bad search filter"]
+# benign marker embedded in the prototype-pollution PoC payloads.
+_PP_MARKER = "hydrapp"
 _WAF_STATUS = {403, 406, 429, 501, 503}
 _WAF_MARKERS = ["attention required", "cloudflare", "access denied", "request blocked",
                 "this request has been blocked", "incident id", "mod_security", "captcha",
@@ -80,6 +87,15 @@ class DifferentialDetector:
             if loc and (payload.strip("/") in loc or "evil.example.com" in loc):
                 return CONFIRMED, "redirect Location points off-host", signals
 
+        if vc == "nosqli" and any(e in body for e in _NOSQL_ERRORS):
+            return CONFIRMED, "NoSQL error signature in response", signals
+
+        if vc == "ldapi" and any(e in body for e in _LDAP_ERRORS):
+            return CONFIRMED, "LDAP error signature in response", signals
+
+        if vc == "prototype_pollution" and _PP_MARKER in body and _PP_MARKER not in base_body:
+            return CONFIRMED, "polluted prototype property reflected only under injection", signals
+
         # weak differential: status flip or large length delta → worth a manual look
         if resp.get("status") != baseline.get("status"):
             return SUSPECTED, "status differs from baseline", signals
@@ -120,6 +136,12 @@ class DifferentialDetector:
             loc = resp.get("location") or ""
             if loc and (payload.strip("/") in loc or "evil.example.com" in loc):
                 out.append(Signal("redirect_location", "redirect Location points off-host"))
+        if vc == "nosqli" and any(e in body for e in _NOSQL_ERRORS):
+            out.append(Signal("error_signature", "NoSQL error signature"))
+        if vc == "ldapi" and any(e in body for e in _LDAP_ERRORS):
+            out.append(Signal("error_signature", "LDAP error signature"))
+        if vc == "prototype_pollution" and _PP_MARKER in body and _PP_MARKER not in base:
+            out.append(Signal("marker", "polluted prototype property reflected under injection"))
         if resp.get("status") != baseline.get("status"):
             out.append(Signal("differential_status",
                               f"{baseline.get('status')}->{resp.get('status')}"))
