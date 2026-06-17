@@ -75,14 +75,20 @@ def test_registry_schemas_match_baseline():
 
 
 def test_every_tool_is_documented_in_claude_md():
-    """Every registered tool name must appear in CLAUDE.md (docs vs code)."""
+    """Every registered tool name must appear in the documentation set (docs vs code).
+
+    The lean CLAUDE.md keeps the operating spec + a category summary; the full per-tool catalog lives in
+    docs/MCP_TOOLS.md (deferred/search-loaded). Both files together are the documentation contract."""
     doc = CLAUDE_MD.read_text(encoding="utf-8")
-    # Tool names are referenced in CLAUDE.md as `tool_name` in the palette.
+    catalog = ROOT / "docs" / "MCP_TOOLS.md"
+    if catalog.exists():
+        doc += "\n" + catalog.read_text(encoding="utf-8")
+    # Tool names are referenced as `tool_name` in the palette / catalog.
     documented = set(re.findall(r"`([a-z0-9_]+)`", doc))
     live = set(_live_registry())
     undocumented = live - documented
     assert not undocumented, (
-        f"Tools registered but not documented in CLAUDE.md: {sorted(undocumented)}"
+        f"Tools registered but not documented in CLAUDE.md / docs/MCP_TOOLS.md: {sorted(undocumented)}"
     )
 
 
