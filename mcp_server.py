@@ -219,9 +219,20 @@ def _run(cmd: List[str], timeout: int = 120, stdin_data: Optional[str] = None) -
             "elapsed_seconds": elapsed,
             "truncated": truncated,
         }, elapsed)
-    except subprocess.TimeoutExpired:
+    except subprocess.TimeoutExpired as e:
+        # Capture whatever the tool emitted before it was killed — crawlers
+        # (katana/gau/hakrawler) often produce useful partial output before timeout.
+        partial = e.stdout or ""
+        if isinstance(partial, bytes):
+            partial = partial.decode("utf-8", "replace")
+        truncated = False
+        if len(partial) > MAX_OUTPUT_CHARS:
+            partial = partial[:MAX_OUTPUT_CHARS] + f"\n... [TRUNCATED — partial output before {timeout}s timeout]"
+            truncated = True
+        note = f"Timeout after {timeout}s" + (" (partial output returned)" if partial else "")
         return _finalize(binary, cmd,
-                         {"success": False, "error": f"Timeout after {timeout}s", "output": ""},
+                         {"success": bool(partial), "error": note,
+                          "output": partial, "timed_out": True, "truncated": truncated},
                          round(time.time() - start, 2))
     except Exception as e:
         return _finalize(binary, cmd,
@@ -313,7 +324,7 @@ def httpx_probe(targets: str, status_code: bool = True, title: bool = True,
 
 
 @mcp.tool()
-def katana_crawl(target: str, depth: int = 3, js_crawl: bool = False) -> str:
+def katana_crawl(target: str, depth: int = 3, js_crawl: bool = False, timeout: int = 120) -> str:
     """
     Crawl a target website to discover endpoints, URLs, and JS files.
     Uses Katana web crawler.
@@ -322,14 +333,20 @@ def katana_crawl(target: str, depth: int = 3, js_crawl: bool = False) -> str:
         target: Target URL (e.g., "https://example.com")
         depth: Crawl depth (1-5)
         js_crawl: Also crawl JavaScript files for endpoints
+        timeout: Overall subprocess budget in seconds (katana self-terminates ~20s earlier)
     """
     err = _validate_url(target)
     if err:
         return json.dumps(err, indent=2)
-    cmd = ["katana", "-u", target, "-silent", "-d", str(min(depth, 5))]
+    # Bound the crawl so katana exits on its own before the subprocess kill (which would
+    # otherwise discard all output): -ct caps total duration, -timeout per-request,
+    # -rl rate-limit, -c concurrency.
+    crawl_secs = max(10, timeout - 20)
+    cmd = ["katana", "-u", target, "-silent", "-d", str(min(depth, 5)),
+           "-timeout", "10", "-ct", str(crawl_secs), "-rl", "150", "-c", "10"]
     if js_crawl:
         cmd.append("-jc")
-    result = _run(cmd, timeout=180)
+    result = _run(cmd, timeout=timeout)
     if result["success"]:
         urls = [ln.strip() for ln in result["output"].strip().split("\n") if ln.strip()]
         return json.dumps({"endpoints": urls, "count": len(urls)}, indent=2)
@@ -337,19 +354,22 @@ def katana_crawl(target: str, depth: int = 3, js_crawl: bool = False) -> str:
 
 
 @mcp.tool()
-def gau_urls(domain: str) -> str:
+def gau_urls(domain: str, timeout: int = 120) -> str:
     """
     Fetch known URLs for a domain from Wayback Machine, Common Crawl,
     and other sources using gau (Get All URLs).
 
     Args:
         domain: Target domain (e.g., "example.com")
+        timeout: Overall subprocess budget in seconds; partial output is returned on timeout
     """
     err = _validate_host(domain)
     if err:
         return json.dumps(err, indent=2)
-    cmd = ["gau", domain]
-    result = _run(cmd, timeout=120)
+    # Bound per-request time and parallelism; large domains can stream huge corpora, so
+    # _run returns partial output on timeout rather than discarding it.
+    cmd = ["gau", "--threads", "5", "--timeout", "30", domain]
+    result = _run(cmd, timeout=timeout)
     if result["success"]:
         urls = [ln.strip() for ln in result["output"].strip().split("\n") if ln.strip()]
         return json.dumps({"urls": urls, "count": len(urls)}, indent=2)
@@ -1012,11 +1032,16 @@ def hakrawler_crawl(
     err = _validate_url(target)
     if err:
         return json.dumps(err, indent=2)
-    cmd = ["hakrawler", "-url", target, "-depth", str(depth), "-scope", scope]
-    if plain:
-        cmd.append("-plain")
+    # hakrawler reads the seed URL from STDIN; it has no -url/-depth/-scope/-plain flags.
+    # Valid flags: -d depth, -subs (include subdomains), -u unique, -timeout, -json.
+    cmd = ["hakrawler", "-d", str(depth), "-timeout", str(timeout), "-u"]
+    if scope in ("subs", "fuzzy"):
+        cmd.append("-subs")
+    if not plain:
+        cmd.append("-json")
 
-    result = _run(cmd, timeout=timeout)
+    # Headroom beyond hakrawler's own per-URL crawl timeout so it self-terminates.
+    result = _run(cmd, timeout=timeout + 15, stdin_data=target)
     return json.dumps(result, indent=2)
 
 
