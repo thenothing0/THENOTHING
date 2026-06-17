@@ -90,6 +90,9 @@ persistent C2 — none belong in an impact PoC.
 - `hashcat_crack` — Offline hash cracking via hashcat (LOCAL files only; no target, not gated) — crack hashes captured in an authorized engagement
 - `john_crack` — Offline hash cracking via John the Ripper (LOCAL files only; no target, not gated); returns recovered plaintext via `--show`
 
+### General Execution (one shell, runs all of Kali — curl-first)
+- `shell_exec` — Run any shell command (the flexible escape hatch for Kali tools without a dedicated wrapper); curl-first, HITL-approved per call, with a HARD catastrophic-command denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) that fires even in operator/YOLO mode; head/tail truncated. Operator owns scope; the four absolute prohibitions are never permitted.
+
 ### Recon & Surface Discovery
 - `subfinder_scan` — Fast passive subdomain enumeration
 - `amass_enum` — Deep DNS enumeration and network mapping

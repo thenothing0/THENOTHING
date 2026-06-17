@@ -72,8 +72,8 @@ For **remote / SSE** transport: `python mcp_server.py --transport sse --port 890
 ## MCP tool palette
 
 All capability is exposed through the **`hydra-security`** MCP server (stdio; see *MCP server setup*).
-It registers **202 tools** spanning recon → scanning → gated PoC exploitation → gated post-exploitation
-impact → an offline-first Knowledge OS (Phases A–U). They are **deferred / search-loaded** — invoke any tool by name; you do NOT
+It registers **203 tools** spanning a curl-first general shell → recon → scanning → gated PoC exploitation →
+gated post-exploitation impact → an offline-first Knowledge OS (Phases A–U). They are **deferred / search-loaded** — invoke any tool by name; you do NOT
 need every schema in context. **Full catalog (exact names + one-line descriptions):
 [`docs/MCP_TOOLS.md`](docs/MCP_TOOLS.md)** — read it when choosing a tool.
 

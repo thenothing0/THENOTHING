@@ -3777,6 +3777,66 @@ def john_crack(hash_file: str, wordlist: str = "/usr/share/wordlists/rockyou.txt
     return json.dumps(_run(show, timeout=60), indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  GENERAL EXECUTION — one shell, runs all of Kali (curl-first)
+# ══════════════════════════════════════════════════════════════════════════════
+# A single flexible shell tool for the long tail of Kali utilities that don't
+# have a dedicated typed wrapper. Mirrors PentesterFlow's `shell`: the operator's
+# harness still prompts for approval on each call (HITL), and a catastrophic-
+# command denylist is a HARD BLOCK that fires regardless of operator/YOLO mode —
+# defense-in-depth against foot-guns on the operator's OWN box, not a security
+# boundary against a determined model. Output is head/tail truncated by _run.
+# The four absolute prohibitions (DoS / destructive / data-exfil / social-eng)
+# remain platform policy and are enforced at the authorization layer.
+
+# Catastrophic-command denylist (adapted from PentesterFlow DENY_PATTERNS): rm -rf
+# of root/top-level, fork bombs, disk wipes, mass deletes, power state changes.
+_SHELL_DENY_PATTERNS = [
+    _re.compile(r"\brm\b(?=[^|;&\n]*\s-{1,2}[a-z-]*r)(?=[^|;&\n]*\s-{1,2}[a-z-]*f)"
+                r"[^|;&\n]*\s/[^/\s]*/?(?:\s|$)", _re.I),
+    _re.compile(r"\brm\b(?=[^|;&\n]*\s-{1,2}[a-z-]*r)(?=[^|;&\n]*\s-{1,2}[a-z-]*f)"
+                r"[^|;&\n]*\s[\"']/[^/\"'\s]*/?[\"'](?:\s|$)", _re.I),
+    _re.compile(r":\(\)\s*\{\s*:\|:&\s*\}", _re.I),          # fork bomb
+    _re.compile(r"\bmkfs\b", _re.I),
+    _re.compile(r"\bdd\b[^|;&\n]*\bof=/dev/", _re.I),
+    _re.compile(r">\s*/dev/sd[a-z]", _re.I),
+    _re.compile(r"\b(?:shutdown|reboot|halt|poweroff)\b", _re.I),
+    _re.compile(r"\bfind\b[^|;&\n]*\s-delete\b", _re.I),
+    _re.compile(r"\bfind\b[^|;&\n]*\s-exec\s+rm\b", _re.I),
+]
+
+
+@mcp.tool()
+def shell_exec(command: str, timeout: int = 300, shell: str = "bash") -> str:
+    """Run a shell command for HTTP testing / file inspection / one-liners — the
+    flexible escape hatch for any Kali tool without a dedicated wrapper. Default to
+    `curl` for HTTP work; reach for scanners (ffuf/nuclei/sqlmap/…) only when asked.
+
+    HITL: the harness prompts for approval on each call. A catastrophic-command
+    denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) is a
+    HARD BLOCK regardless of operator/YOLO mode. The operator is responsible for
+    keeping commands in declared engagement scope; the four absolute prohibitions
+    (DoS / destructive / data-exfil / social-engineering) are never permitted.
+
+    Args:
+        command: the shell command (pipes, &&, etc. supported)
+        timeout: execution timeout in seconds (max 1800)
+        shell: "bash" (default) or "sh"
+    """
+    cmd_str = (command or "").strip()
+    if not cmd_str:
+        return json.dumps(_err("command is required"), indent=2)
+    for rx in _SHELL_DENY_PATTERNS:
+        if rx.search(cmd_str):
+            return json.dumps(_err(
+                f"command blocked by catastrophic-command denylist (matched /{rx.pattern}/). "
+                "This guard fires even in operator/YOLO mode."), indent=2)
+    interpreter = "/bin/bash" if shell != "sh" else "/bin/sh"
+    timeout = max(1, min(int(timeout) if str(timeout).lstrip("-").isdigit() else 300, 1800))
+    result = _run([interpreter, "-c", cmd_str], timeout=timeout)
+    return json.dumps(result, indent=2)
+
+
 @mcp.tool()
 def generate_payloads(vuln_class: str, context: str = "any") -> str:
     """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads

@@ -1339,6 +1339,16 @@
       "capability"
     ]
   },
+  "shell_exec": {
+    "params": [
+      "command",
+      "shell",
+      "timeout"
+    ],
+    "required": [
+      "command"
+    ]
+  },
   "simulate_strategy": {
     "params": [
       "target_type"
