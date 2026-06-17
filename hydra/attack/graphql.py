@@ -35,6 +35,12 @@ class GraphQLTester:
              "request": {"method": "POST", "url": url,
                          "headers": {"Content-Type": "application/json"},
                          "body": json.dumps([{"query": "{__typename}"} for _ in range(5)])}},
+            # mutations exposed → a server-side WRITE surface (detection only; nothing is mutated)
+            {"name": "mutations_exposed",
+             "request": _post(url, "query{__schema{mutationType{name fields{name}}}}")},
+            # alias overloading: one document, many aliases → brute-force / rate-limit / BOLA bypass
+            {"name": "alias_batching",
+             "request": _post(url, "query{hydra0:__typename hydra1:__typename hydra2:__typename}")},
         ]
 
     def analyze(self, name: str, resp: Dict) -> Tuple[str, str]:
@@ -48,8 +54,14 @@ class GraphQLTester:
             return "confirmed", "field-suggestion leak (schema recoverable despite introspection off)"
         if name == "batching" and body.count("__typename") >= 2:
             return "confirmed", "query batching enabled (brute-force / rate-limit bypass surface)"
+        if name == "mutations_exposed" and '"mutationtype":{' in body and \
+                '"mutationtype":null' not in body:
+            return "confirmed", "mutations exposed — server-side write surface reachable"
+        if name == "alias_batching" and "hydra0" in body and "hydra2" in body:
+            return "confirmed", "alias-based batching (single-request brute-force / rate-limit bypass)"
         return "suspected", "no clear GraphQL signal"
 
     def report(self) -> Dict:
-        return {"checks": ["introspection", "field_suggestion", "get_introspection", "batching"],
+        return {"checks": ["introspection", "field_suggestion", "get_introspection", "batching",
+                           "mutations_exposed", "alias_batching"],
                 "note": "detection/PoC only — schema/errors read, no data mutated", "advisory": True}

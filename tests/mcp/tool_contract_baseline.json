@@ -1,571 +1,79 @@
 {
-  "adapter_catalog": {
-    "params": [
-      "capability",
-      "category"
-    ],
-    "required": []
-  },
-  "adapter_coverage": {
-    "params": [],
-    "required": []
-  },
-  "adapter_health": {
-    "params": [
-      "adapter_id"
-    ],
-    "required": []
-  },
-  "adapter_select": {
-    "params": [
-      "capability",
-      "limit"
-    ],
+  "subfinder_scan": {
     "required": [
-      "capability"
-    ]
-  },
-  "adapter_summary": {
-    "params": [],
-    "required": []
-  },
-  "adversary_summary": {
-    "params": [
-      "now"
+      "domain"
     ],
-    "required": []
-  },
-  "agent_catalog": {
-    "params": [],
-    "required": []
-  },
-  "agent_coverage": {
-    "params": [],
-    "required": []
-  },
-  "agent_effectiveness": {
-    "params": [],
-    "required": []
-  },
-  "agent_ownership": {
-    "params": [],
-    "required": []
-  },
-  "agent_plan": {
     "params": [
-      "prior_findings",
-      "target",
-      "target_type"
-    ],
-    "required": [
-      "target"
-    ]
-  },
-  "agent_route": {
-    "params": [
-      "target",
-      "target_type"
-    ],
-    "required": [
-      "target"
+      "domain",
+      "silent"
     ]
   },
   "amass_enum": {
+    "required": [
+      "domain"
+    ],
     "params": [
       "domain",
       "passive"
-    ],
+    ]
+  },
+  "httpx_probe": {
     "required": [
+      "targets"
+    ],
+    "params": [
+      "follow_redirects",
+      "status_code",
+      "targets",
+      "tech_detect",
+      "title"
+    ]
+  },
+  "katana_crawl": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "depth",
+      "js_crawl",
+      "target"
+    ]
+  },
+  "gau_urls": {
+    "required": [
+      "domain"
+    ],
+    "params": [
       "domain"
     ]
   },
-  "asset_lookup": {
-    "params": [
-      "asset"
-    ],
-    "required": [
-      "asset"
-    ]
-  },
-  "attack_access_control": {
-    "params": [
-      "owner_markers",
-      "session_a",
-      "session_b",
-      "target"
-    ],
-    "required": [
-      "session_a",
-      "session_b",
-      "target"
-    ]
-  },
-  "attack_campaign": {
-    "params": [
-      "classes",
-      "crawl",
-      "max_seeds",
-      "publish",
-      "rate_per_sec",
-      "target"
-    ],
+  "nuclei_scan": {
     "required": [
       "target"
-    ]
-  },
-  "attack_capabilities": {
-    "params": [
-      "limit",
-      "now"
     ],
-    "required": []
-  },
-  "attack_chain_execute": {
     "params": [
-      "chain_id",
-      "rate_per_sec",
-      "target"
-    ],
-    "required": [
-      "chain_id",
-      "target"
-    ]
-  },
-  "attack_execute": {
-    "params": [
-      "context",
-      "param",
-      "rate_per_sec",
+      "rate_limit",
+      "severity",
+      "tags",
       "target",
-      "vuln_class"
-    ],
-    "required": [
-      "target",
-      "vuln_class"
+      "templates"
     ]
   },
-  "attack_gaps": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "attack_graphql": {
-    "params": [
-      "rate_per_sec",
-      "url"
-    ],
+  "nuclei_scan_list": {
     "required": [
-      "url"
+      "targets"
+    ],
+    "params": [
+      "rate_limit",
+      "severity",
+      "tags",
+      "targets"
     ]
-  },
-  "attack_health": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "attack_jwt": {
-    "params": [
-      "public_key",
-      "token"
-    ],
-    "required": [
-      "token"
-    ]
-  },
-  "attack_login": {
-    "params": [
-      "csrf_field",
-      "csrf_url",
-      "fields",
-      "json_body",
-      "login_url",
-      "name"
-    ],
-    "required": [
-      "fields",
-      "login_url"
-    ]
-  },
-  "attack_oob_test": {
-    "params": [
-      "finding_id",
-      "poll_wait",
-      "target",
-      "vuln_class"
-    ],
-    "required": [
-      "target"
-    ]
-  },
-  "attack_plan": {
-    "params": [
-      "context",
-      "target",
-      "vuln_class"
-    ],
-    "required": [
-      "target",
-      "vuln_class"
-    ]
-  },
-  "attack_privesc": {
-    "params": [
-      "admin_session",
-      "base_url",
-      "paths",
-      "session"
-    ],
-    "required": [
-      "base_url",
-      "session"
-    ]
-  },
-  "attack_profiles": {
-    "params": [
-      "now",
-      "profile"
-    ],
-    "required": []
-  },
-  "attack_queue": {
-    "params": [
-      "findings",
-      "target"
-    ],
-    "required": [
-      "target"
-    ]
-  },
-  "attack_race": {
-    "params": [
-      "n",
-      "url"
-    ],
-    "required": [
-      "url"
-    ]
-  },
-  "attack_recon_scan": {
-    "params": [
-      "context",
-      "depth",
-      "max_seeds",
-      "rate_per_sec",
-      "target",
-      "use_gau",
-      "vuln_class"
-    ],
-    "required": [
-      "target",
-      "vuln_class"
-    ]
-  },
-  "attack_report": {
-    "params": [
-      "chains",
-      "findings",
-      "target",
-      "template"
-    ],
-    "required": [
-      "findings",
-      "target"
-    ]
-  },
-  "attack_save_findings": {
-    "params": [
-      "findings",
-      "target"
-    ],
-    "required": [
-      "findings",
-      "target"
-    ]
-  },
-  "attack_scan": {
-    "params": [
-      "context",
-      "max_payloads",
-      "max_points",
-      "rate_per_sec",
-      "target",
-      "vuln_class"
-    ],
-    "required": [
-      "target",
-      "vuln_class"
-    ]
-  },
-  "attack_scan_crawled": {
-    "params": [
-      "context",
-      "max_seeds",
-      "rate_per_sec",
-      "urls",
-      "vuln_class"
-    ],
-    "required": [
-      "urls",
-      "vuln_class"
-    ]
-  },
-  "attack_skills": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "attack_tactics": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "attack_techniques": {
-    "params": [
-      "now",
-      "tactic_id",
-      "technique_id"
-    ],
-    "required": []
-  },
-  "attack_web_probe": {
-    "params": [
-      "probe",
-      "rate_per_sec",
-      "url"
-    ],
-    "required": [
-      "url"
-    ]
-  },
-  "authorize_target": {
-    "params": [
-      "action",
-      "target"
-    ],
-    "required": [
-      "target"
-    ]
-  },
-  "campaign_gaps": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "campaign_health": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "campaign_objectives": {
-    "params": [
-      "now",
-      "objective"
-    ],
-    "required": []
-  },
-  "campaign_paths": {
-    "params": [
-      "limit",
-      "now",
-      "playbook",
-      "target_type"
-    ],
-    "required": []
-  },
-  "campaign_playbooks": {
-    "params": [
-      "now",
-      "playbook"
-    ],
-    "required": []
-  },
-  "campaign_simulation": {
-    "params": [
-      "now",
-      "scenario",
-      "subject"
-    ],
-    "required": []
-  },
-  "campaign_strategies": {
-    "params": [
-      "now",
-      "strategy_a",
-      "strategy_b"
-    ],
-    "required": []
-  },
-  "campaign_summary": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "capability_catalog": {
-    "params": [
-      "category"
-    ],
-    "required": []
-  },
-  "capability_coverage": {
-    "params": [],
-    "required": []
-  },
-  "capability_graph": {
-    "params": [],
-    "required": []
-  },
-  "capability_impact": {
-    "params": [
-      "capability"
-    ],
-    "required": []
-  },
-  "capability_list": {
-    "params": [],
-    "required": []
-  },
-  "capability_sources": {
-    "params": [
-      "capability",
-      "online"
-    ],
-    "required": [
-      "capability"
-    ]
-  },
-  "capability_trends": {
-    "params": [],
-    "required": []
-  },
-  "check_tools": {
-    "params": [],
-    "required": []
-  },
-  "confirm_candidate": {
-    "params": [
-      "candidate_id",
-      "candidate_type"
-    ],
-    "required": [
-      "candidate_id",
-      "candidate_type"
-    ]
-  },
-  "contradiction_report": {
-    "params": [],
-    "required": []
-  },
-  "critical_capabilities": {
-    "params": [],
-    "required": []
-  },
-  "dalfox_scan": {
-    "params": [
-      "blind",
-      "pipe_mode",
-      "target",
-      "timeout"
-    ],
-    "required": [
-      "target"
-    ]
-  },
-  "decision_health": {
-    "params": [],
-    "required": []
-  },
-  "dependency_paths": {
-    "params": [
-      "source",
-      "target"
-    ],
-    "required": [
-      "source",
-      "target"
-    ]
-  },
-  "dirsearch_scan": {
-    "params": [
-      "extensions",
-      "threads",
-      "url"
-    ],
-    "required": [
-      "url"
-    ]
-  },
-  "discover_chains": {
-    "params": [
-      "min_support"
-    ],
-    "required": []
-  },
-  "discover_patterns": {
-    "params": [
-      "min_support"
-    ],
-    "required": []
-  },
-  "dnsx_resolve": {
-    "params": [
-      "record_type",
-      "target",
-      "timeout",
-      "wordlist"
-    ],
-    "required": [
-      "target"
-    ]
-  },
-  "drift_report": {
-    "params": [],
-    "required": []
-  },
-  "duplicate_patterns": {
-    "params": [],
-    "required": []
-  },
-  "ecosystem_opportunities": {
-    "params": [],
-    "required": []
-  },
-  "ecosystem_summary": {
-    "params": [],
-    "required": []
-  },
-  "export_digest": {
-    "params": [
-      "node_name",
-      "record"
-    ],
-    "required": []
-  },
-  "federation_consensus": {
-    "params": [
-      "capability_id"
-    ],
-    "required": []
-  },
-  "federation_health": {
-    "params": [],
-    "required": []
-  },
-  "federation_peers": {
-    "params": [],
-    "required": []
-  },
-  "federation_summary": {
-    "params": [],
-    "required": []
   },
   "ffuf_fuzz": {
+    "required": [
+      "url"
+    ],
     "params": [
       "fuzz_mode",
       "headers",
@@ -573,497 +81,65 @@
       "method",
       "url",
       "wordlist"
-    ],
+    ]
+  },
+  "dirsearch_scan": {
     "required": [
+      "url"
+    ],
+    "params": [
+      "extensions",
+      "threads",
       "url"
     ]
   },
-  "full_recon": {
-    "params": [
-      "domain"
-    ],
+  "whatweb_detect": {
     "required": [
-      "domain"
-    ]
-  },
-  "gau_urls": {
-    "params": [
-      "domain"
-    ],
-    "required": [
-      "domain"
-    ]
-  },
-  "generate_payloads": {
-    "params": [
-      "context",
-      "vuln_class"
-    ],
-    "required": [
-      "vuln_class"
-    ]
-  },
-  "generate_report": {
-    "params": [
-      "findings_json",
-      "report_format",
       "target"
     ],
-    "required": [
-      "findings_json",
+    "params": [
+      "aggression",
       "target"
     ]
   },
-  "get_findings": {
-    "params": [
-      "limit",
-      "severity"
-    ],
-    "required": []
-  },
-  "governance_summary": {
-    "params": [],
-    "required": []
-  },
-  "graph_neighbors": {
-    "params": [
-      "page"
-    ],
-    "required": [
-      "page"
-    ]
-  },
-  "graph_path": {
-    "params": [
-      "source_page",
-      "target_page"
-    ],
-    "required": [
-      "source_page",
-      "target_page"
-    ]
-  },
-  "gxss_check": {
-    "params": [
-      "timeout",
-      "urls"
-    ],
-    "required": [
-      "urls"
-    ]
-  },
-  "hakrawler_crawl": {
-    "params": [
-      "depth",
-      "plain",
-      "scope",
-      "target",
-      "timeout"
-    ],
+  "wafw00f_detect": {
     "required": [
       "target"
-    ]
-  },
-  "httpx_probe": {
-    "params": [
-      "follow_redirects",
-      "status_code",
-      "targets",
-      "tech_detect",
-      "title"
     ],
-    "required": [
-      "targets"
-    ]
-  },
-  "import_digest": {
     "params": [
-      "digest_json",
-      "peer_id"
-    ],
-    "required": [
-      "digest_json"
-    ]
-  },
-  "ingest_report": {
-    "params": [
-      "path",
-      "source_url",
-      "target",
-      "text",
-      "title"
-    ],
-    "required": []
-  },
-  "interactsh_register": {
-    "params": [
-      "server"
-    ],
-    "required": []
-  },
-  "katana_crawl": {
-    "params": [
-      "depth",
-      "js_crawl",
-      "target"
-    ],
-    "required": [
       "target"
     ]
-  },
-  "kb_lint": {
-    "params": [],
-    "required": []
-  },
-  "kb_promote": {
-    "params": [
-      "evidence_count",
-      "page",
-      "scope_ok",
-      "sources",
-      "to_stage"
-    ],
-    "required": [
-      "page",
-      "to_stage"
-    ]
-  },
-  "kb_rebuild_index": {
-    "params": [],
-    "required": []
-  },
-  "kb_recall": {
-    "params": [
-      "limit",
-      "query",
-      "target",
-      "types"
-    ],
-    "required": [
-      "query"
-    ]
-  },
-  "knowledge_health": {
-    "params": [],
-    "required": []
-  },
-  "list_reports": {
-    "params": [
-      "min_learning_score"
-    ],
-    "required": []
-  },
-  "load_bounty_scope": {
-    "params": [
-      "platform",
-      "program_id",
-      "raw_scope",
-      "url"
-    ],
-    "required": []
   },
   "nmap_scan": {
+    "required": [
+      "target"
+    ],
     "params": [
       "ports",
       "scan_type",
       "scripts",
       "target"
-    ],
-    "required": [
-      "target"
     ]
   },
-  "nuclei_scan": {
-    "params": [
-      "rate_limit",
-      "severity",
-      "tags",
-      "target",
-      "templates"
-    ],
+  "full_recon": {
     "required": [
-      "target"
-    ]
-  },
-  "nuclei_scan_list": {
-    "params": [
-      "rate_limit",
-      "severity",
-      "tags",
-      "targets"
+      "domain"
     ],
-    "required": [
-      "targets"
-    ]
-  },
-  "offensive_chains": {
     "params": [
-      "limit",
-      "now",
-      "target_type"
-    ],
-    "required": []
-  },
-  "offensive_coverage": {
-    "params": [
-      "category",
-      "now"
-    ],
-    "required": []
-  },
-  "offensive_effectiveness": {
-    "params": [
-      "capability_id",
-      "now"
-    ],
-    "required": []
-  },
-  "offensive_gaps": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "offensive_health": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "offensive_overlap": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "offensive_skills": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "offensive_summary": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "oob_confirm": {
-    "params": [
-      "finding_id",
-      "oob_domain",
-      "poll_url",
-      "vuln_class"
-    ],
-    "required": [
-      "finding_id",
-      "vuln_class"
-    ]
-  },
-  "oob_payload": {
-    "params": [
-      "callback_domain",
-      "finding_id",
-      "vuln_class"
-    ],
-    "required": [
-      "vuln_class"
-    ]
-  },
-  "opportunity_advisor": {
-    "params": [
-      "limit",
-      "now"
-    ],
-    "required": []
-  },
-  "opportunity_blindspots": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "opportunity_coverage": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "opportunity_graph": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "opportunity_health": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "opportunity_ranking": {
-    "params": [
-      "capability_id",
-      "limit",
-      "now"
-    ],
-    "required": []
-  },
-  "opportunity_summary": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "opportunity_surface": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "ownership_conflicts": {
-    "params": [],
-    "required": []
-  },
-  "plugin_capabilities": {
-    "params": [
-      "plugin_id"
-    ],
-    "required": []
-  },
-  "plugin_catalog": {
-    "params": [],
-    "required": []
-  },
-  "plugin_coverage": {
-    "params": [],
-    "required": []
-  },
-  "plugin_dependencies": {
-    "params": [
-      "plugin_id"
-    ],
-    "required": []
-  },
-  "plugin_health": {
-    "params": [],
-    "required": []
-  },
-  "plugin_summary": {
-    "params": [],
-    "required": []
-  },
-  "predict_outcome": {
-    "params": [
-      "target",
-      "target_type",
-      "workflow_id"
-    ],
-    "required": []
-  },
-  "prediction_accuracy": {
-    "params": [],
-    "required": []
-  },
-  "prioritization_report": {
-    "params": [],
-    "required": []
-  },
-  "rank_opportunities": {
-    "params": [
-      "limit"
-    ],
-    "required": []
-  },
-  "rank_tools": {
-    "params": [
-      "capability",
-      "limit"
-    ],
-    "required": [
-      "capability"
-    ]
-  },
-  "recon_fuse": {
-    "params": [
-      "capability",
-      "domain",
-      "online"
-    ],
-    "required": [
       "domain"
     ]
   },
-  "recon_plan": {
-    "params": [
-      "online",
-      "prior_findings",
-      "target",
-      "target_type"
-    ],
-    "required": [
-      "target"
-    ]
-  },
-  "record_outcome": {
-    "params": [
-      "candidate_id",
-      "candidate_type",
-      "outcome"
-    ],
-    "required": [
-      "candidate_id",
-      "candidate_type",
-      "outcome"
-    ]
-  },
-  "record_verification": {
-    "params": [
-      "dedup_key",
-      "evidence_strength",
-      "evidence_type",
-      "method",
-      "outcome",
-      "source_ids",
-      "vuln_class"
-    ],
-    "required": [
-      "method",
-      "outcome",
-      "vuln_class"
-    ]
-  },
-  "register_bounty_program": {
-    "params": [
-      "in_scope",
-      "out_of_scope",
-      "platform",
-      "program",
-      "url"
-    ],
-    "required": [
-      "in_scope",
-      "platform",
-      "program"
-    ]
-  },
-  "report_lookup": {
-    "params": [
-      "slug"
-    ],
-    "required": [
-      "slug"
-    ]
-  },
-  "runtime_analytics": {
-    "params": [],
-    "required": []
-  },
-  "runtime_summary": {
-    "params": [],
-    "required": []
+  "check_tools": {
+    "required": [],
+    "params": []
   },
   "save_finding": {
+    "required": [
+      "description",
+      "severity",
+      "target",
+      "title"
+    ],
     "params": [
       "description",
       "evidence",
@@ -1071,106 +147,30 @@
       "severity",
       "target",
       "title"
-    ],
-    "required": [
-      "description",
-      "severity",
-      "target",
-      "title"
     ]
   },
-  "select_sources": {
+  "get_findings": {
+    "required": [],
     "params": [
-      "capability",
       "limit",
-      "online"
-    ],
-    "required": [
-      "capability"
+      "severity"
     ]
   },
-  "select_tool": {
-    "params": [
-      "capability"
-    ],
+  "generate_report": {
     "required": [
-      "capability"
+      "findings_json",
+      "target"
+    ],
+    "params": [
+      "findings_json",
+      "report_format",
+      "target"
     ]
-  },
-  "simulate_strategy": {
-    "params": [
-      "target_type"
-    ],
-    "required": []
-  },
-  "simulate_workflow": {
-    "params": [
-      "target",
-      "target_type",
-      "workflow_id"
-    ],
-    "required": []
-  },
-  "skill_bundles": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "skill_coverage": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "skill_dependencies": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "skill_effectiveness": {
-    "params": [
-      "now",
-      "skill_id"
-    ],
-    "required": []
-  },
-  "skill_gaps": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "skill_graph": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "skill_marketplace": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "skill_summary": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "source_scores": {
-    "params": [
-      "source_id"
-    ],
-    "required": []
-  },
-  "source_trends": {
-    "params": [],
-    "required": []
   },
   "sqlmap_scan": {
+    "required": [
+      "target"
+    ],
     "params": [
       "batch",
       "level",
@@ -1179,190 +179,1276 @@
       "target",
       "technique",
       "timeout"
-    ],
+    ]
+  },
+  "dalfox_scan": {
     "required": [
       "target"
+    ],
+    "params": [
+      "blind",
+      "pipe_mode",
+      "target",
+      "timeout"
     ]
   },
-  "stale_entities": {
-    "params": [],
-    "required": []
-  },
-  "subfinder_scan": {
-    "params": [
-      "domain",
-      "silent"
+  "gxss_check": {
+    "required": [
+      "urls"
     ],
+    "params": [
+      "timeout",
+      "urls"
+    ]
+  },
+  "dnsx_resolve": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "record_type",
+      "target",
+      "timeout",
+      "wordlist"
+    ]
+  },
+  "hakrawler_crawl": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "depth",
+      "plain",
+      "scope",
+      "target",
+      "timeout"
+    ]
+  },
+  "capability_list": {
+    "required": [],
+    "params": []
+  },
+  "capability_sources": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability",
+      "online"
+    ]
+  },
+  "recon_fuse": {
     "required": [
       "domain"
+    ],
+    "params": [
+      "capability",
+      "domain",
+      "online"
     ]
   },
-  "temporal_anomalies": {
-    "params": [
-      "now"
+  "kb_recall": {
+    "required": [
+      "query"
     ],
-    "required": []
-  },
-  "temporal_decay": {
     "params": [
-      "now"
+      "limit",
+      "query",
+      "target",
+      "types"
+    ]
+  },
+  "kb_lint": {
+    "required": [],
+    "params": []
+  },
+  "kb_promote": {
+    "required": [
+      "page",
+      "to_stage"
     ],
-    "required": []
-  },
-  "temporal_forecast": {
     "params": [
-      "domain",
-      "horizon",
-      "now"
+      "evidence_count",
+      "page",
+      "scope_ok",
+      "sources",
+      "to_stage"
+    ]
+  },
+  "kb_rebuild_index": {
+    "required": [],
+    "params": []
+  },
+  "asset_lookup": {
+    "required": [
+      "asset"
     ],
-    "required": []
-  },
-  "temporal_health": {
     "params": [
-      "now"
+      "asset"
+    ]
+  },
+  "graph_neighbors": {
+    "required": [
+      "page"
     ],
-    "required": []
-  },
-  "temporal_summary": {
     "params": [
-      "now"
+      "page"
+    ]
+  },
+  "graph_path": {
+    "required": [
+      "source_page",
+      "target_page"
     ],
-    "required": []
-  },
-  "temporal_trends": {
     "params": [
-      "domain",
-      "now"
+      "source_page",
+      "target_page"
+    ]
+  },
+  "discover_patterns": {
+    "required": [],
+    "params": [
+      "min_support"
+    ]
+  },
+  "discover_chains": {
+    "required": [],
+    "params": [
+      "min_support"
+    ]
+  },
+  "confirm_candidate": {
+    "required": [
+      "candidate_id",
+      "candidate_type"
     ],
-    "required": []
-  },
-  "threat_campaigns": {
     "params": [
-      "now"
+      "candidate_id",
+      "candidate_type"
+    ]
+  },
+  "record_outcome": {
+    "required": [
+      "candidate_id",
+      "candidate_type",
+      "outcome"
     ],
-    "required": []
-  },
-  "threat_clusters": {
     "params": [
-      "now"
+      "candidate_id",
+      "candidate_type",
+      "outcome"
+    ]
+  },
+  "source_scores": {
+    "required": [],
+    "params": [
+      "source_id"
+    ]
+  },
+  "rank_opportunities": {
+    "required": [],
+    "params": [
+      "limit"
+    ]
+  },
+  "prioritization_report": {
+    "required": [],
+    "params": []
+  },
+  "select_sources": {
+    "required": [
+      "capability"
     ],
-    "required": []
-  },
-  "threat_evolution": {
     "params": [
-      "now"
+      "capability",
+      "limit",
+      "online"
+    ]
+  },
+  "recon_plan": {
+    "required": [
+      "target"
     ],
-    "required": []
-  },
-  "threat_graph": {
     "params": [
-      "now",
-      "threat_id"
-    ],
-    "required": []
+      "online",
+      "prior_findings",
+      "target",
+      "target_type"
+    ]
   },
-  "threat_health": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "threat_opportunities": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "threat_skills": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "threat_summary": {
-    "params": [
-      "now"
-    ],
-    "required": []
-  },
-  "tool_capabilities": {
-    "params": [
-      "category"
-    ],
-    "required": []
-  },
-  "verification_playbook": {
-    "params": [
+  "record_verification": {
+    "required": [
+      "method",
+      "outcome",
       "vuln_class"
     ],
-    "required": [
+    "params": [
+      "dedup_key",
+      "evidence_strength",
+      "evidence_type",
+      "method",
+      "outcome",
+      "source_ids",
       "vuln_class"
     ]
   },
   "verification_stats": {
-    "params": [],
-    "required": []
+    "required": [],
+    "params": []
   },
-  "verification_trends": {
-    "params": [],
-    "required": []
-  },
-  "waf_bypass": {
-    "params": [
-      "method",
-      "url"
-    ],
+  "verification_playbook": {
     "required": [
-      "url"
+      "vuln_class"
+    ],
+    "params": [
+      "vuln_class"
     ]
   },
-  "wafw00f_detect": {
+  "tool_capabilities": {
+    "required": [],
     "params": [
-      "target"
-    ],
-    "required": [
-      "target"
+      "category"
     ]
   },
-  "whatweb_detect": {
+  "capability_catalog": {
+    "required": [],
     "params": [
-      "aggression",
-      "target"
-    ],
-    "required": [
-      "target"
+      "category"
     ]
   },
-  "workflow_create": {
+  "capability_coverage": {
+    "required": [],
+    "params": []
+  },
+  "rank_tools": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability",
+      "limit"
+    ]
+  },
+  "select_tool": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability"
+    ]
+  },
+  "agent_catalog": {
+    "required": [],
+    "params": []
+  },
+  "agent_plan": {
+    "required": [
+      "target"
+    ],
     "params": [
       "prior_findings",
       "target",
       "target_type"
-    ],
+    ]
+  },
+  "agent_route": {
     "required": [
       "target"
+    ],
+    "params": [
+      "target",
+      "target_type"
+    ]
+  },
+  "agent_coverage": {
+    "required": [],
+    "params": []
+  },
+  "workflow_create": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "prior_findings",
+      "target",
+      "target_type"
+    ]
+  },
+  "workflow_status": {
+    "required": [
+      "workflow_id"
+    ],
+    "params": [
+      "workflow_id"
     ]
   },
   "workflow_history": {
+    "required": [],
     "params": [
       "workflow_id"
-    ],
-    "required": []
+    ]
   },
-  "workflow_optimization": {
+  "runtime_summary": {
+    "required": [],
+    "params": []
+  },
+  "governance_summary": {
+    "required": [],
+    "params": []
+  },
+  "drift_report": {
+    "required": [],
+    "params": []
+  },
+  "knowledge_health": {
+    "required": [],
+    "params": []
+  },
+  "stale_entities": {
+    "required": [],
+    "params": []
+  },
+  "duplicate_patterns": {
+    "required": [],
+    "params": []
+  },
+  "contradiction_report": {
+    "required": [],
+    "params": []
+  },
+  "adapter_catalog": {
+    "required": [],
+    "params": [
+      "capability",
+      "category"
+    ]
+  },
+  "adapter_coverage": {
+    "required": [],
+    "params": []
+  },
+  "adapter_health": {
+    "required": [],
+    "params": [
+      "adapter_id"
+    ]
+  },
+  "adapter_summary": {
+    "required": [],
+    "params": []
+  },
+  "adapter_select": {
+    "required": [
+      "capability"
+    ],
+    "params": [
+      "capability",
+      "limit"
+    ]
+  },
+  "runtime_analytics": {
+    "required": [],
+    "params": []
+  },
+  "simulate_workflow": {
+    "required": [],
     "params": [
       "target",
       "target_type",
       "workflow_id"
-    ],
-    "required": []
+    ]
   },
-  "workflow_status": {
+  "simulate_strategy": {
+    "required": [],
     "params": [
+      "target_type"
+    ]
+  },
+  "predict_outcome": {
+    "required": [],
+    "params": [
+      "target",
+      "target_type",
       "workflow_id"
-    ],
+    ]
+  },
+  "capability_impact": {
+    "required": [],
+    "params": [
+      "capability"
+    ]
+  },
+  "prediction_accuracy": {
+    "required": [],
+    "params": []
+  },
+  "agent_effectiveness": {
+    "required": [],
+    "params": []
+  },
+  "workflow_optimization": {
+    "required": [],
+    "params": [
+      "target",
+      "target_type",
+      "workflow_id"
+    ]
+  },
+  "decision_health": {
+    "required": [],
+    "params": []
+  },
+  "plugin_catalog": {
+    "required": [],
+    "params": []
+  },
+  "plugin_summary": {
+    "required": [],
+    "params": []
+  },
+  "plugin_health": {
+    "required": [],
+    "params": []
+  },
+  "plugin_dependencies": {
+    "required": [],
+    "params": [
+      "plugin_id"
+    ]
+  },
+  "plugin_capabilities": {
+    "required": [],
+    "params": [
+      "plugin_id"
+    ]
+  },
+  "plugin_coverage": {
+    "required": [],
+    "params": []
+  },
+  "capability_graph": {
+    "required": [],
+    "params": []
+  },
+  "dependency_paths": {
     "required": [
-      "workflow_id"
+      "source",
+      "target"
+    ],
+    "params": [
+      "source",
+      "target"
+    ]
+  },
+  "critical_capabilities": {
+    "required": [],
+    "params": []
+  },
+  "agent_ownership": {
+    "required": [],
+    "params": []
+  },
+  "ownership_conflicts": {
+    "required": [],
+    "params": []
+  },
+  "ecosystem_summary": {
+    "required": [],
+    "params": []
+  },
+  "federation_peers": {
+    "required": [],
+    "params": []
+  },
+  "federation_summary": {
+    "required": [],
+    "params": []
+  },
+  "export_digest": {
+    "required": [],
+    "params": [
+      "node_name",
+      "record"
+    ]
+  },
+  "import_digest": {
+    "required": [
+      "digest_json"
+    ],
+    "params": [
+      "digest_json",
+      "peer_id"
+    ]
+  },
+  "capability_trends": {
+    "required": [],
+    "params": []
+  },
+  "verification_trends": {
+    "required": [],
+    "params": []
+  },
+  "source_trends": {
+    "required": [],
+    "params": []
+  },
+  "federation_consensus": {
+    "required": [],
+    "params": [
+      "capability_id"
+    ]
+  },
+  "ecosystem_opportunities": {
+    "required": [],
+    "params": []
+  },
+  "federation_health": {
+    "required": [],
+    "params": []
+  },
+  "temporal_summary": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "temporal_trends": {
+    "required": [],
+    "params": [
+      "domain",
+      "now"
+    ]
+  },
+  "temporal_forecast": {
+    "required": [],
+    "params": [
+      "domain",
+      "horizon",
+      "now"
+    ]
+  },
+  "temporal_decay": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "temporal_anomalies": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "temporal_health": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "offensive_summary": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "offensive_effectiveness": {
+    "required": [],
+    "params": [
+      "capability_id",
+      "now"
+    ]
+  },
+  "offensive_coverage": {
+    "required": [],
+    "params": [
+      "category",
+      "now"
+    ]
+  },
+  "offensive_chains": {
+    "required": [],
+    "params": [
+      "limit",
+      "now",
+      "target_type"
+    ]
+  },
+  "offensive_overlap": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "offensive_gaps": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "offensive_skills": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "offensive_health": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "campaign_summary": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "campaign_objectives": {
+    "required": [],
+    "params": [
+      "now",
+      "objective"
+    ]
+  },
+  "campaign_playbooks": {
+    "required": [],
+    "params": [
+      "now",
+      "playbook"
+    ]
+  },
+  "campaign_paths": {
+    "required": [],
+    "params": [
+      "limit",
+      "now",
+      "playbook",
+      "target_type"
+    ]
+  },
+  "campaign_strategies": {
+    "required": [],
+    "params": [
+      "now",
+      "strategy_a",
+      "strategy_b"
+    ]
+  },
+  "campaign_simulation": {
+    "required": [],
+    "params": [
+      "now",
+      "scenario",
+      "subject"
+    ]
+  },
+  "campaign_gaps": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "campaign_health": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "skill_summary": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "skill_graph": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "skill_dependencies": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "skill_bundles": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "skill_effectiveness": {
+    "required": [],
+    "params": [
+      "now",
+      "skill_id"
+    ]
+  },
+  "skill_coverage": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "skill_gaps": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "skill_marketplace": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "opportunity_summary": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "opportunity_surface": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "opportunity_coverage": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "opportunity_blindspots": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "opportunity_graph": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "opportunity_ranking": {
+    "required": [],
+    "params": [
+      "capability_id",
+      "limit",
+      "now"
+    ]
+  },
+  "opportunity_advisor": {
+    "required": [],
+    "params": [
+      "limit",
+      "now"
+    ]
+  },
+  "opportunity_health": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "adversary_summary": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "attack_tactics": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "attack_techniques": {
+    "required": [],
+    "params": [
+      "now",
+      "tactic_id",
+      "technique_id"
+    ]
+  },
+  "attack_gaps": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "attack_profiles": {
+    "required": [],
+    "params": [
+      "now",
+      "profile"
+    ]
+  },
+  "attack_skills": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "attack_capabilities": {
+    "required": [],
+    "params": [
+      "limit",
+      "now"
+    ]
+  },
+  "attack_health": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "threat_summary": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "threat_graph": {
+    "required": [],
+    "params": [
+      "now",
+      "threat_id"
+    ]
+  },
+  "threat_clusters": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "threat_evolution": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "threat_opportunities": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "threat_skills": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "threat_campaigns": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "threat_health": {
+    "required": [],
+    "params": [
+      "now"
+    ]
+  },
+  "register_bounty_program": {
+    "required": [
+      "in_scope",
+      "platform",
+      "program"
+    ],
+    "params": [
+      "in_scope",
+      "out_of_scope",
+      "platform",
+      "program",
+      "url"
+    ]
+  },
+  "authorize_target": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "action",
+      "target"
+    ]
+  },
+  "attack_plan": {
+    "required": [
+      "target",
+      "vuln_class"
+    ],
+    "params": [
+      "context",
+      "target",
+      "vuln_class"
+    ]
+  },
+  "waf_bypass": {
+    "required": [
+      "url"
+    ],
+    "params": [
+      "method",
+      "url"
+    ]
+  },
+  "generate_payloads": {
+    "required": [
+      "vuln_class"
+    ],
+    "params": [
+      "context",
+      "vuln_class"
+    ]
+  },
+  "oob_payload": {
+    "required": [
+      "vuln_class"
+    ],
+    "params": [
+      "callback_domain",
+      "finding_id",
+      "vuln_class"
+    ]
+  },
+  "attack_queue": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "findings",
+      "target"
+    ]
+  },
+  "load_bounty_scope": {
+    "required": [],
+    "params": [
+      "platform",
+      "program_id",
+      "raw_scope",
+      "url"
+    ]
+  },
+  "attack_execute": {
+    "required": [
+      "target",
+      "vuln_class"
+    ],
+    "params": [
+      "context",
+      "param",
+      "rate_per_sec",
+      "target",
+      "vuln_class"
+    ]
+  },
+  "attack_scan": {
+    "required": [
+      "target",
+      "vuln_class"
+    ],
+    "params": [
+      "baseline_samples",
+      "confirm_dom",
+      "context",
+      "headless",
+      "max_payloads",
+      "max_points",
+      "rate_per_sec",
+      "target",
+      "vuln_class"
+    ]
+  },
+  "attack_access_control": {
+    "required": [
+      "session_a",
+      "session_b",
+      "target"
+    ],
+    "params": [
+      "owner_markers",
+      "session_a",
+      "session_b",
+      "target"
+    ]
+  },
+  "attack_chain_execute": {
+    "required": [
+      "chain_id",
+      "target"
+    ],
+    "params": [
+      "chain_id",
+      "rate_per_sec",
+      "target"
+    ]
+  },
+  "attack_report": {
+    "required": [
+      "findings",
+      "target"
+    ],
+    "params": [
+      "chains",
+      "findings",
+      "target",
+      "template"
+    ]
+  },
+  "attack_scan_crawled": {
+    "required": [
+      "urls",
+      "vuln_class"
+    ],
+    "params": [
+      "concurrency",
+      "confirm_dom",
+      "context",
+      "headless",
+      "max_seeds",
+      "rate_per_sec",
+      "resume",
+      "urls",
+      "vuln_class"
+    ]
+  },
+  "interactsh_register": {
+    "required": [],
+    "params": [
+      "server"
+    ]
+  },
+  "oob_confirm": {
+    "required": [
+      "finding_id",
+      "vuln_class"
+    ],
+    "params": [
+      "finding_id",
+      "oob_domain",
+      "poll_url",
+      "vuln_class"
+    ]
+  },
+  "attack_recon_scan": {
+    "required": [
+      "target",
+      "vuln_class"
+    ],
+    "params": [
+      "concurrency",
+      "context",
+      "depth",
+      "max_seeds",
+      "rate_per_sec",
+      "resume",
+      "target",
+      "use_gau",
+      "vuln_class"
+    ]
+  },
+  "attack_login": {
+    "required": [
+      "fields",
+      "login_url"
+    ],
+    "params": [
+      "csrf_field",
+      "csrf_url",
+      "fields",
+      "json_body",
+      "login_url",
+      "name"
+    ]
+  },
+  "attack_save_findings": {
+    "required": [
+      "findings",
+      "target"
+    ],
+    "params": [
+      "findings",
+      "target"
+    ]
+  },
+  "attack_graphql": {
+    "required": [
+      "url"
+    ],
+    "params": [
+      "rate_per_sec",
+      "url"
+    ]
+  },
+  "attack_jwt": {
+    "required": [
+      "token"
+    ],
+    "params": [
+      "public_key",
+      "token"
+    ]
+  },
+  "attack_web_probe": {
+    "required": [
+      "url"
+    ],
+    "params": [
+      "probe",
+      "rate_per_sec",
+      "url"
+    ]
+  },
+  "attack_race": {
+    "required": [
+      "url"
+    ],
+    "params": [
+      "n",
+      "url"
+    ]
+  },
+  "attack_privesc": {
+    "required": [
+      "base_url",
+      "session"
+    ],
+    "params": [
+      "admin_session",
+      "base_url",
+      "paths",
+      "session"
+    ]
+  },
+  "attack_oob_test": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "finding_id",
+      "poll_wait",
+      "target",
+      "vuln_class"
+    ]
+  },
+  "attack_campaign": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "classes",
+      "crawl",
+      "max_seeds",
+      "publish",
+      "rate_per_sec",
+      "target"
+    ]
+  },
+  "attack_api": {
+    "required": [
+      "check",
+      "target"
+    ],
+    "params": [
+      "base_body",
+      "check",
+      "functions",
+      "id_param",
+      "ids",
+      "method",
+      "owner_markers",
+      "rate_per_sec",
+      "session",
+      "session_b",
+      "target"
+    ]
+  },
+  "attack_oauth": {
+    "required": [
+      "authorize_url"
+    ],
+    "params": [
+      "authorize_url",
+      "evil",
+      "rate_per_sec"
+    ]
+  },
+  "attack_saml": {
+    "required": [
+      "saml_response"
+    ],
+    "params": [
+      "saml_response"
+    ]
+  },
+  "attack_stored": {
+    "required": [
+      "observe_urls",
+      "submit_url"
+    ],
+    "params": [
+      "body",
+      "field",
+      "finding_id",
+      "json_body",
+      "method",
+      "observe_urls",
+      "oob",
+      "poll_wait",
+      "rate_per_sec",
+      "session",
+      "submit_url",
+      "vuln_class"
+    ]
+  },
+  "attack_param_mine": {
+    "required": [
+      "url"
+    ],
+    "params": [
+      "batch",
+      "max_requests",
+      "rate_per_sec",
+      "session",
+      "url",
+      "wordlist"
+    ]
+  },
+  "attack_js_extract": {
+    "required": [],
+    "params": [
+      "js",
+      "url"
+    ]
+  },
+  "ingest_report": {
+    "required": [],
+    "params": [
+      "path",
+      "source_url",
+      "target",
+      "text",
+      "title"
+    ]
+  },
+  "report_lookup": {
+    "required": [
+      "slug"
+    ],
+    "params": [
+      "slug"
+    ]
+  },
+  "list_reports": {
+    "required": [],
+    "params": [
+      "min_learning_score"
     ]
   }
 }

@@ -57,7 +57,8 @@ def test_boolean_blind_sqli():
 # ── #3 GraphQL / JWT / web probes ────────────────────────────────────────────────
 def test_graphql_requests_and_analyze():
     g = GraphQLTester()
-    assert len(g.requests("https://x/graphql")) == 4
+    # introspection, field_suggestion, get_introspection, batching, mutations_exposed, alias_batching
+    assert len(g.requests("https://x/graphql")) == 6
     assert g.analyze("introspection", {"executed": True,
                      "body_snippet": '{"data":{"__schema":{"types":[]}}}'})[0] == "confirmed"
     assert g.analyze("field_suggestion", {"executed": True,

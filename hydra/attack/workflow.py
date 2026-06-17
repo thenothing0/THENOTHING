@@ -33,10 +33,11 @@ from hydra.attack.detection import (
     is_waf_block,
 )
 from hydra.attack.evidence import EvidenceCollector
+from hydra.attack.honeypot import HoneypotGuard
 from hydra.attack.injection_points import InjectionPoint, InjectionPointFinder
 from hydra.attack.payloads import PayloadContext, PayloadLibrary, VulnClass
 from hydra.attack.report_builder import record_outcome
-from hydra.attack.two_signal import TwoSignalConfirmer
+from hydra.attack.two_signal import Signal, TwoSignalConfirmer
 
 
 def _inject_param(url: str, param: str, value: str) -> str:
@@ -203,15 +204,40 @@ class AttackWorkflow:
             return r
         return InjectionPoint("query", "q", apply)
 
+    def _baseline(self, pt: InjectionPoint, marker: str, samples: int) -> Dict:
+        """Send the benign baseline `samples` times → annotate length jitter + status stability (#3),
+        so the detector's length/status differentials don't fire on a noisy/dynamic page."""
+        samples = max(1, samples)
+        resps = [self.executor(pt.apply(marker)) for _ in range(samples)]
+        base = dict(resps[-1])
+        if samples > 1:
+            lengths = [r.get("length") or 0 for r in resps]
+            base["length_jitter"] = max(lengths) - min(lengths)
+            base["status_unstable"] = len({r.get("status") for r in resps}) > 1
+        return base
+
+    def _boolean_signal(self, pt: InjectionPoint, vc: str):
+        """Boolean-based blind SQLi (#3): a TRUE-condition vs FALSE-condition pair that diverges is a
+        strong INDEPENDENT signal (behavioural family) — wires the detector's `boolean_blind` into the
+        active loop so it can corroborate an error/timing hit into a confirmation."""
+        tr = self.executor({**pt.apply("' AND '1'='1"), "payload": "' AND '1'='1", "vuln_class": vc})
+        fr = self.executor({**pt.apply("' AND '1'='2"), "payload": "' AND '1'='2", "vuln_class": vc})
+        differs, why = self.detector.boolean_blind(tr, fr)
+        return Signal("boolean_pair", f"boolean-based blind ({why})") if differs else None
+
     def scan(self, target: str, vuln_class: str, context: str = "any", session=None,
              max_payloads: int = 8, max_points: int = 12, confirm_dom: bool = False,
-             record: bool = False, baseline_marker: str = "hydrabaseline0") -> Dict:
+             record: bool = False, baseline_marker: str = "hydrabaseline0",
+             baseline_samples: int = 1, detect_traps: bool = True,
+             boolean_blind: bool = True) -> Dict:
         """Differential multi-payload scan across injection points (improvements #1/#3/#4/#5/#7).
 
-        Gated (deny-by-default). Sends a benign BASELINE then iterates PoC payloads per injection point,
-        confirms via the differential detector (+ optional DOM confirmation for XSS), adapts to WAF
-        blocks, early-exits a point on first confirmation, and optionally records to attack memory.
-        With the default DryRunExecutor it sends nothing (everything 'suspected')."""
+        Gated (deny-by-default). Samples a benign BASELINE (optionally several times for stability),
+        guards against trap/honeypot endpoints, then iterates PoC payloads per injection point: confirms
+        via the differential detector (two-signal), adds boolean-blind corroboration for SQLi and DOM
+        execution for XSS, adapts to WAF blocks, early-exits a point on first confirmation. A trap
+        endpoint downgrades confirmations to suspected. With the default DryRunExecutor it sends nothing
+        (everything 'suspected')."""
         decision = self.gate.authorize(target, "exploitation")
         if not decision.authorized:
             return {"target": target, "vuln_class": vuln_class, "authorized": False,
@@ -233,11 +259,19 @@ class AttackWorkflow:
             base_req = session.apply(base_req)
         points = self.finder.find(base_req)[:max(1, max_points)] or [self._default_point(base_req)]
 
+        guard = HoneypotGuard() if detect_traps else None
         confirmed, suspected, evidence = [], [], []
         executed_any = False
+        traps = 0
         for pt in points:
-            base_resp = self.executor(pt.apply(baseline_marker))
+            base_resp = self._baseline(pt, baseline_marker, baseline_samples)
             executed_any = executed_any or bool(base_resp.get("executed"))
+            is_trap, trap_reason = (guard.probe(self.detector, vc, base_resp, pt.apply, self.executor)
+                                    if guard else (False, ""))
+            if is_trap:
+                traps += 1
+            bool_sig = (self._boolean_signal(pt, vc)
+                        if (boolean_blind and vc == "sqli") else None)
             hit, best_single = False, None
             for p in payloads:
                 req = {**pt.apply(p.value), "payload": p.value, "vuln_class": vc}
@@ -248,6 +282,8 @@ class AttackWorkflow:
                         req = {**pt.apply(mutated[0]), "payload": mutated[0], "vuln_class": vc}
                         resp = self.executor(req)
                 signals = self.detector.signals(vc, base_resp, req["payload"], resp)
+                if bool_sig is not None:                     # #3 boolean-blind corroboration (sqli)
+                    signals = signals + [bool_sig]
                 # #3 second INDEPENDENT signal: confirm reflective XSS by real DOM execution
                 if confirm_dom and vc == "xss" and self.browser_confirmer and \
                         any(s.kind == "reflection" for s in signals):
@@ -255,8 +291,13 @@ class AttackWorkflow:
                     if bc.get("confirmed"):
                         resp["dom_executed"] = True
                         signals = self.detector.signals(vc, base_resp, req["payload"], resp)
+                        if bool_sig is not None:
+                            signals = signals + [bool_sig]
                 conf = self.two_signal.assess(signals)
-                if conf.verdict == "confirmed":              # #1 TWO independent signals required
+                verdict = conf.verdict
+                if verdict == "confirmed" and is_trap:       # #3 trap returns canned signals → demote
+                    verdict = "single_signal"
+                if verdict == "confirmed":                   # #1 TWO independent signals required
                     ev = self.evidence.capture(vc, req, resp,
                                                indicators=[s.detail for s in signals],
                                                confirmed=True).to_dict()
@@ -269,23 +310,31 @@ class AttackWorkflow:
                         record_outcome(target, vc, "confirmed", pt.name, ev)
                     hit = True
                     break                                    # early-exit this point
-                if conf.verdict == "single_signal" and best_single is None:
+                if verdict == "single_signal" and best_single is None:
                     ev = self.evidence.capture(vc, req, resp,
                                                indicators=[s.detail for s in signals],
                                                confirmed=False).to_dict()
                     ev["injection_point"] = pt.describe()
                     ev["confirmation"] = conf.to_dict()
+                    if is_trap:
+                        ev["honeypot"] = True
+                        ev["honeypot_reason"] = trap_reason
                     best_single = ev
             if not hit:
-                suspected.append({"vuln_class": vc, "point": pt.name, "verdict": "suspected",
-                                  "evidence": best_single})
+                row = {"vuln_class": vc, "point": pt.name, "verdict": "suspected",
+                       "evidence": best_single}
+                if is_trap:
+                    row["honeypot"] = True
+                    row["honeypot_reason"] = trap_reason
+                suspected.append(row)
 
         return {"target": target, "vuln_class": vc, "authorized": True, "poc_only": True,
                 "executed": executed_any, "confirmed": bool(confirmed),
                 "confirmed_findings": confirmed, "suspected": suspected,
                 "points_tested": len(points), "payloads_per_point": len(payloads),
-                "evidence": evidence,
-                "reason": f"AUTHORIZED scan by '{decision.program}' — {len(confirmed)} confirmed",
+                "honeypot_points": traps, "evidence": evidence,
+                "reason": f"AUTHORIZED scan by '{decision.program}' — {len(confirmed)} confirmed"
+                          + (f", {traps} trap point(s) demoted" if traps else ""),
                 "advisory": True}
 
     def scan_many(self, urls: List[str], vuln_class: str, context: str = "any", session=None,

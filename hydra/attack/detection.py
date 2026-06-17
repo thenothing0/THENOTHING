@@ -142,11 +142,15 @@ class DifferentialDetector:
             out.append(Signal("error_signature", "LDAP error signature"))
         if vc == "prototype_pollution" and _PP_MARKER in body and _PP_MARKER not in base:
             out.append(Signal("marker", "polluted prototype property reflected under injection"))
-        if resp.get("status") != baseline.get("status"):
+        # baseline-stability aware (#3): a status flip only counts if the baseline status was STABLE
+        # across samples, and a length delta must exceed the observed baseline jitter — kills the
+        # dynamic-page false positives that plagued naive length/status differentials.
+        if resp.get("status") != baseline.get("status") and not baseline.get("status_unstable"):
             out.append(Signal("differential_status",
                               f"{baseline.get('status')}->{resp.get('status')}"))
         bl = baseline.get("length") or 0
-        if bl and abs((resp.get("length") or 0) - bl) > max(40, 0.25 * bl):
+        jitter = baseline.get("length_jitter") or 0
+        if bl and abs((resp.get("length") or 0) - bl) > max(40, 0.25 * bl, jitter * 1.5):
             out.append(Signal("differential_length", "response length delta vs baseline"))
         if resp.get("dom_executed"):                       # attached by BrowserConfirmer
             out.append(Signal("dom_execution", "headless-browser JS execution"))

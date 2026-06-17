@@ -1101,6 +1101,7 @@ try:
     from hydra.attack.oob import ListenerConfig as _ListenerConfig, OOBCorrelator as _OOBCorrelator
     from hydra.attack.queue import AttackQueue as _AttackQueue
     from hydra.attack_runtime import (
+        BrowserConfirmer as _BrowserConfirmer,
         HttpExecutor as _HttpExecutor,
         InteractshClient as _InteractshClient,
         LoginFlow as _LoginFlow,
@@ -1109,6 +1110,11 @@ try:
         OOBPoller as _OOBPoller,
         ScopeLoader as _ScopeLoader,
         SessionContext as _SessionContext,
+    )
+    from hydra.attack.stored import StoredVulnTester as _StoredVulnTester
+    from hydra.attack.param_mining import (
+        JSEndpointExtractor as _JSEndpointExtractor,
+        ParameterMiner as _ParameterMiner,
     )
     from hydra.attack.chain_exec import ChainExecutor as _ChainExecutor
     from hydra.attack.report_builder import AttackReporter as _AttackReporter
@@ -3486,25 +3492,37 @@ def attack_execute(target: str, vuln_class: str, context: str = "any",
 
 @mcp.tool()
 def attack_scan(target: str, vuln_class: str, context: str = "any",
-                max_payloads: int = 6, max_points: int = 8, rate_per_sec: float = 1.0) -> str:
+                max_payloads: int = 6, max_points: int = 8, rate_per_sec: float = 1.0,
+                confirm_dom: bool = False, headless: bool = True,
+                baseline_samples: int = 1) -> str:
     """Authorization-gated DIFFERENTIAL scan (attack section): sends a benign baseline then iterates
     PoC payloads across discovered injection points (query/body/json/header/cookie/path), confirms via
-    differential analysis, adapts to WAF blocks, early-exits a point on first confirmation. Returns
+    differential analysis (two-signal — incl. boolean-blind for SQLi), guards against trap/honeypot
+    endpoints, adapts to WAF blocks, early-exits a point on first confirmation. Returns
     confirmed/suspected findings + reproducible evidence. Deny-by-default; PoC-only; rate-limited.
 
     Args:
         target: in-scope target url
-        vuln_class: xss | sqli | ssti | ssrf | xxe | crlf | path_traversal | cmdi | open_redirect | lfi
+        vuln_class: xss|sqli|ssti|ssrf|xxe|crlf|path_traversal|cmdi|open_redirect|lfi|nosqli|ldapi|prototype_pollution
         context: injection context (html_body|html_attr|js_string|url|sql|header|path|any)
         max_payloads: payloads per injection point (clamped 1–8)
         max_points: injection points to test (clamped 1–12)
         rate_per_sec: max requests/sec (clamped 0.1–5.0)
+        confirm_dom: confirm reflective XSS via a REAL headless browser (needs Playwright; the strong
+                     second signal). Falls back to the differential verdict if unavailable.
+        headless: run the confirmation browser headless (default True)
+        baseline_samples: sample the baseline N times for stability (clamped 1–3; cuts dynamic-page FPs)
     """
     gate = _AuthGate()
     ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
-    res = _AttackWorkflow(gate=gate, executor=ex).scan(
+    bc = None
+    if confirm_dom:
+        _browser = _BrowserConfirmer(headless=headless)
+        bc = lambda url: _browser.confirm_xss(url)            # noqa: E731 (adapt to (url)->{confirmed})
+    res = _AttackWorkflow(gate=gate, executor=ex, browser_confirmer=bc).scan(
         target, vuln_class, context, max_payloads=max(1, min(max_payloads, 8)),
-        max_points=max(1, min(max_points, 12)), record=True)
+        max_points=max(1, min(max_points, 12)), record=True, confirm_dom=confirm_dom,
+        baseline_samples=max(1, min(baseline_samples, 3)))
     return json.dumps(res, indent=2)
 
 
@@ -3580,7 +3598,8 @@ def attack_report(target: str, findings: str, chains: str = "", template: str = 
 @mcp.tool()
 def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
                         max_seeds: int = 12, rate_per_sec: float = 1.0,
-                        concurrency: int = 1, resume: bool = False) -> str:
+                        concurrency: int = 1, resume: bool = False,
+                        confirm_dom: bool = False, headless: bool = True) -> str:
     """Authorization-gated scan over a CRAWL's URLs (attack section): de-dupes a list (e.g. from
     `katana_crawl` / `gau_urls`) to distinct injectable endpoints, then differential-scans each. Every
     target is independently gated (deny-by-default); PoC-only; rate-limited.
@@ -3593,15 +3612,21 @@ def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
         rate_per_sec: max requests/sec (clamped 0.1–5.0)
         concurrency: parallel endpoints (clamped 1–8; the executor is the rate-limited boundary)
         resume: skip endpoints already scanned in a prior run (cross-run dedup via ScanState)
+        confirm_dom: confirm reflective XSS via a REAL headless browser (needs Playwright)
+        headless: run the confirmation browser headless (default True)
     """
     url_list = [u.strip() for u in urls.replace(",", " ").split() if u.strip()]
     if not url_list:
         return json.dumps({"error": "provide one or more URLs"})
     gate = _AuthGate()
     ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
-    res = _AttackWorkflow(gate=gate, executor=ex).scan_many(
+    bc = None
+    if confirm_dom:
+        _browser = _BrowserConfirmer(headless=headless)
+        bc = lambda url: _browser.confirm_xss(url)            # noqa: E731
+    res = _AttackWorkflow(gate=gate, executor=ex, browser_confirmer=bc).scan_many(
         url_list, vuln_class, context, max_seeds=max(1, min(max_seeds, 25)), record=True,
-        concurrency=max(1, min(concurrency, 8)), resume=resume)
+        concurrency=max(1, min(concurrency, 8)), resume=resume, confirm_dom=confirm_dom)
     return json.dumps(res, indent=2)
 
 
@@ -4047,6 +4072,109 @@ def attack_saml(saml_response: str) -> str:
         saml_response: base64 (or raw XML) SAML Response
     """
     return json.dumps(_SAMLAnalyzer().analyze(saml_response), indent=2)
+
+
+@mcp.tool()
+def attack_stored(submit_url: str, observe_urls: str, vuln_class: str = "xss",
+                  field: str = "", method: str = "POST", body: str = "", json_body: bool = False,
+                  session: str = "", oob: bool = False, finding_id: str = "stored-poc",
+                  poll_wait: float = 0.0, rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated STORED / second-order test (attack section): submits a uniquely-tagged
+    payload at one endpoint, then OBSERVES other endpoints for the tag — catching stored XSS / stored
+    SSRF / second-order injection that single-request scans miss. In-band canary correlation (+ real
+    DOM execution for stored XSS = two-signal) or OOB mode for blind/second-order. Every URL is
+    independently gated (deny-by-default); PoC-only.
+
+    Args:
+        submit_url: in-scope endpoint that PERSISTS input (e.g. a profile/comment write)
+        observe_urls: whitespace/comma-separated endpoints where the stored value may surface
+        vuln_class: xss | ssti | html_injection | ssrf | xxe | cmdi (last three imply oob=True)
+        field: the field to inject (default: first injectable point of the submit request)
+        method: submit HTTP method (default POST)
+        body: submit body to seed (form or JSON object); the field is injected into it
+        json_body: treat `body` as JSON
+        session: JSON identity to authenticate both submit and observe
+        oob: blind/second-order via your interactsh callback (requires interactsh_register)
+        finding_id: stable id for OOB correlation
+        poll_wait: seconds to wait for a (possibly delayed) OOB callback (bounded ≤30)
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    observe = [u.strip() for u in observe_urls.replace(",", " ").split() if u.strip()]
+    submit_req = {"method": method.upper(), "url": submit_url, "headers": {}}
+    if body:
+        submit_req["body"] = body
+        if json_body:
+            submit_req["headers"]["Content-Type"] = "application/json"
+    try:
+        sess = _parse_session(session, "auth") if session else None
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "session must be a JSON object"})
+    correlator = None
+    poller = None
+    if oob:
+        client = _load_interactsh_client()
+        if client is None:
+            return json.dumps({"error": "OOB mode needs an interactsh session — call interactsh_register first"})
+        correlator = _OOBCorrelator(_ListenerConfig(oob_domain=client.domain))
+        poller = client.poll
+    tester = _StoredVulnTester(gate=gate, executor=ex, correlator=correlator)
+    res = tester.test(submit_req, observe, vuln_class=vuln_class, field=field, session=sess,
+                      oob=oob, finding_id=finding_id, poll_wait=poll_wait, poller=poller)
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def attack_param_mine(url: str, session: str = "", wordlist: str = "", batch: int = 20,
+                      max_requests: int = 80, rate_per_sec: float = 2.0) -> str:
+    """Authorization-gated PARAMETER mining (attack section): Arjun-style reflection-based discovery of
+    hidden/undocumented query parameters — sends batched candidate names with a canary, then isolates
+    the responsible parameter. Returns injectable endpoints to feed `attack_scan_crawled`. Deny-by-
+    default; PoC-only; bounded request budget.
+
+    Args:
+        url: in-scope endpoint to mine
+        session: optional JSON identity to authenticate
+        wordlist: optional comma/space-separated parameter names (default: a built-in high-signal list)
+        batch: parameters per batched probe (clamped 5–50)
+        max_requests: hard request budget (clamped 5–300)
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    try:
+        sess = _parse_session(session, "auth") if session else None
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "session must be a JSON object"})
+    words = [w.strip() for w in wordlist.replace(",", " ").split() if w.strip()] or None
+    res = _ParameterMiner(gate=gate, executor=ex).mine(
+        url, session=sess, wordlist=words, batch=max(5, min(batch, 50)),
+        max_requests=max(5, min(max_requests, 300)))
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def attack_js_extract(js: str = "", url: str = "") -> str:
+    """Extract endpoints / parameter names / high-signal secrets from JavaScript (attack section).
+    Pure analysis — provide JS text directly, or a URL to fetch (gated). Secrets are previews only
+    (values redacted). Not a scanner; feed discovered endpoints/params to the injection scanners.
+
+    Args:
+        js: raw JavaScript source to analyze
+        url: alternatively, an in-scope .js URL to fetch and analyze (gated)
+    """
+    text = js
+    if not text and url:
+        gate = _AuthGate()
+        d = gate.authorize(url, "active_recon")
+        if not d.authorized:
+            return json.dumps({"authorized": False, "reason": d.reason})
+        resp = _HttpExecutor(gate=gate, rate_per_sec=2.0)({"method": "GET", "url": url, "headers": {}})
+        text = resp.get("body_snippet") or ""
+    if not text:
+        return json.dumps({"error": "provide js text or an in-scope url"})
+    return json.dumps(_JSEndpointExtractor().extract(text), indent=2)
 
 
 @mcp.tool()

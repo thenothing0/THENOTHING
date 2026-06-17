@@ -60,6 +60,20 @@ CHAIN_TEMPLATES: List[ChainTemplate] = [
     ChainTemplate("cors_credential_leak", "Permissive CORS → credentialed data leak",
                   ["cors", "info_disclosure"], "medium", ["T1190"],
                   "reflective CORS with credentials exposes authenticated responses cross-origin"),
+    # auth-protocol / API-authz chains (improvement #5) — confirmed auth findings elevate to ATO.
+    ChainTemplate("oauth_redirect_ato", "OAuth redirect_uri abuse → code/token theft → ATO",
+                  ["oauth", "open_redirect"], "critical", ["T1190", "T1539", "T1550.001"],
+                  "a honoured attacker redirect_uri leaks the OAuth code/token → full account takeover"),
+    ChainTemplate("bola_ato", "BOLA → cross-account object access → account takeover",
+                  ["bola", "auth_bypass"], "high", ["T1190", "T1087"],
+                  "object-level authz gap exposes another user's data/session → ATO"),
+    ChainTemplate("bfla_mass_assignment_privesc",
+                  "BFLA → privileged function → mass assignment → privilege escalation",
+                  ["bfla", "mass_assignment"], "critical", ["T1190", "T1068"],
+                  "function-level authz gap plus privileged-field binding escalates a low-priv user"),
+    ChainTemplate("saml_forgery_ato", "Unsigned/wrappable SAML → assertion forgery → ATO",
+                  ["saml", "auth_bypass"], "critical", ["T1190", "T1606.002"],
+                  "missing/wrappable SAML signature lets an attacker forge an assertion → ATO"),
 ]
 
 

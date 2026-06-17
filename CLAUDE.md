@@ -116,6 +116,11 @@ evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritiz
 - `attack_api` — Gated OWASP API Top 10 test: `bola` (object-level authz) | `bfla` (function-level authz) | `mass_assignment` (privileged-field binding) | `excessive_data_exposure` (sensitive-field leakage); dual-identity, PoC-only (benign values, leaked keys labelled not stored)
 - `attack_oauth` — Gated OAuth/OIDC test: static weaknesses (missing state/PKCE, implicit-flow token leakage, broad scope) + active redirect_uri-validation test (confirmed when an attacker-controlled destination is honoured); never completes a token exchange
 - `attack_saml` — SAML Response analysis (local, not gated): flags unsigned / multi-assertion / comment-injection + emits XSW signature-wrapping test vectors; never replayed against the IdP
+- `attack_stored` — Gated STORED / second-order test: submits a uniquely-tagged payload at one endpoint then OBSERVES others for the tag (stored XSS / stored SSRF / second-order injection); in-band canary (+ real DOM execution = two-signal) or OOB blind mode; PoC-only
+- `attack_param_mine` — Gated parameter mining: Arjun-style reflection-based discovery of hidden query parameters, isolates the responsible param, returns injectable endpoints to feed `attack_scan_crawled`; bounded request budget
+- `attack_js_extract` — Extract endpoints / parameter names / high-signal secrets from JavaScript (text or a gated `.js` URL fetch); secret values redacted to previews; feeds the scanners
+
+Detection fidelity: `attack_scan` accepts `confirm_dom` (real headless-browser XSS confirmation via Playwright — the strong second signal) and `baseline_samples` (baseline stability sampling); the scan also runs a honeypot/trap guard (demotes confirmations on endpoints that return canned "vulnerable" content for benign input) and wires boolean-blind SQLi as an independent corroborating signal.
 
 Injection coverage: `attack_scan` / `attack_scan_crawled` / `attack_recon_scan` / `attack_campaign` also accept `nosqli` | `ldapi` | `prototype_pollution` (NoSQL-operator / LDAP-filter / prototype-pollution injection). The crawled/recon scanners take `concurrency` (bounded parallel endpoints) and `resume` (cross-run dedup) for robustness at scale; the gated executor transparently gunzip/charset-decodes responses and flags SPA shells.
 
