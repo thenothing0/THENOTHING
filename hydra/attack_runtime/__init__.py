@@ -102,15 +102,18 @@ class HttpExecutor:
             *( [] if self.allow_redirects else [_NoRedirect()] ),
             urllib.request.HTTPSHandler(context=self._ctx))
         t0 = time.time()
-        status, resp_headers, raw = None, {}, b""
+        status, resp_headers, raw, set_cookies = None, {}, b"", []
         try:
             with opener.open(req, timeout=self.timeout) as r:
                 status = getattr(r, "status", r.getcode())
+                set_cookies = r.headers.get_all("Set-Cookie") or [] if r.headers else []
                 resp_headers = dict(r.headers or {})
                 raw = r.read(self.max_body + 1)
         except urllib.error.HTTPError as e:                # 3xx (no-redirect) / 4xx / 5xx
             status = e.code
-            resp_headers = dict(getattr(e, "headers", {}) or {})
+            _h = getattr(e, "headers", None)
+            set_cookies = (_h.get_all("Set-Cookie") or []) if _h else []
+            resp_headers = dict(_h or {})
             try:
                 raw = e.read(self.max_body + 1)
             except Exception:
@@ -144,6 +147,7 @@ class HttpExecutor:
             "reflected": reflected, "body_snippet": text[:512], "executed": True,
             "spa_shell": self._normalizer.is_spa_shell(text),
             "content_encoding": resp_headers.get("Content-Encoding"),
+            "set_cookie": set_cookies,
             "location": resp_headers.get("Location"),
             "content_type": resp_headers.get("Content-Type"),
             "acao": resp_headers.get("Access-Control-Allow-Origin"),

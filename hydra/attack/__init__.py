@@ -30,11 +30,16 @@ from hydra.attack.knowledge_loop import FindingPublisher
 from hydra.attack.rbac import PrivilegeEscalationTester
 from hydra.attack.api_top10 import APIAttackTester
 from hydra.attack.auth_protocol import OAuthTester, SAMLAnalyzer
+from hydra.attack.auth_session import CookieAuditor, CSRFTester, PasswordResetPoisoning
+from hydra.attack.correlate import FindingCorrelator
+from hydra.attack.fingerprint_select import FingerprintPayloadSelector
 from hydra.attack.honeypot import HoneypotGuard
 from hydra.attack.normalize import ResponseNormalizer
 from hydra.attack.param_mining import JSEndpointExtractor, ParameterMiner
+from hydra.attack.poc_bundle import FindingReverifier, build_bundle, write_bundle
 from hydra.attack.scan_state import ScanState
 from hydra.attack.stored import StoredVulnTester
+from hydra.attack.triage import SubmissionReadiness, program_severity, triage_finding
 from hydra.attack.two_signal import Confirmation, Signal, TwoSignalConfirmer
 from hydra.attack.web_probes import CachePoisonProbe, CORSProbe, HostHeaderProbe, SmugglingPlan
 from hydra.attack.detection import AccessControlAnalyzer, DifferentialDetector, is_waf_block
@@ -106,4 +111,15 @@ __all__ = [
     "ParameterMiner",
     "JSEndpointExtractor",
     "HoneypotGuard",
+    "build_bundle",
+    "write_bundle",
+    "FindingReverifier",
+    "program_severity",
+    "SubmissionReadiness",
+    "triage_finding",
+    "FindingCorrelator",
+    "CSRFTester",
+    "CookieAuditor",
+    "PasswordResetPoisoning",
+    "FingerprintPayloadSelector",
 ]

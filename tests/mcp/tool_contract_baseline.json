@@ -1157,6 +1157,7 @@
       "baseline_samples",
       "confirm_dom",
       "context",
+      "fingerprint",
       "headless",
       "max_payloads",
       "max_points",
@@ -1425,6 +1426,63 @@
     "params": [
       "js",
       "url"
+    ]
+  },
+  "attack_reverify": {
+    "required": [
+      "finding"
+    ],
+    "params": [
+      "bundle",
+      "finding",
+      "rate_per_sec"
+    ]
+  },
+  "attack_triage": {
+    "required": [
+      "findings"
+    ],
+    "params": [
+      "findings",
+      "known_signatures",
+      "platform",
+      "target"
+    ]
+  },
+  "attack_correlate": {
+    "required": [
+      "findings"
+    ],
+    "params": [
+      "findings"
+    ]
+  },
+  "attack_auth_session": {
+    "required": [
+      "target"
+    ],
+    "params": [
+      "body",
+      "check",
+      "csrf_field",
+      "csrf_header",
+      "email",
+      "email_field",
+      "evil_host",
+      "json_body",
+      "method",
+      "rate_per_sec",
+      "session",
+      "target"
+    ]
+  },
+  "attack_tech_plan": {
+    "required": [
+      "fingerprint"
+    ],
+    "params": [
+      "fingerprint",
+      "platform"
     ]
   },
   "ingest_report": {

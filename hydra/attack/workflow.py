@@ -229,7 +229,7 @@ class AttackWorkflow:
              max_payloads: int = 8, max_points: int = 12, confirm_dom: bool = False,
              record: bool = False, baseline_marker: str = "hydrabaseline0",
              baseline_samples: int = 1, detect_traps: bool = True,
-             boolean_blind: bool = True) -> Dict:
+             boolean_blind: bool = True, fingerprint: str = "") -> Dict:
         """Differential multi-payload scan across injection points (improvements #1/#3/#4/#5/#7).
 
         Gated (deny-by-default). Samples a benign BASELINE (optionally several times for stability),
@@ -251,7 +251,14 @@ class AttackWorkflow:
             ctx = PayloadContext(context)
         except ValueError:
             ctx = PayloadContext.ANY
-        payloads = self.library.for_context(VulnClass(vc), ctx)[:max(1, max_payloads)]
+        payloads = self.library.for_context(VulnClass(vc), ctx)
+        if fingerprint:                                  # #5 float stack-relevant payloads to the front
+            from hydra.attack.fingerprint_select import FingerprintPayloadSelector
+            order = FingerprintPayloadSelector().prioritize_payloads(
+                vc, fingerprint, [p.value for p in payloads])
+            rank = {v: i for i, v in enumerate(order)}
+            payloads = sorted(payloads, key=lambda p: rank.get(p.value, 999))
+        payloads = payloads[:max(1, max_payloads)]
 
         base_req = {"method": "GET", "url": target if "://" in target else f"https://{target}",
                     "headers": {}, "vuln_class": vc}

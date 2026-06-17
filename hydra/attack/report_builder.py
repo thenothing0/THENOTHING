@@ -19,7 +19,8 @@ _CLASS_SEVERITY = {"sqli": "high", "cmdi": "critical", "xxe": "high", "ssrf": "h
                    "path_traversal": "medium", "open_redirect": "low", "crlf": "low",
                    "nosqli": "high", "ldapi": "high", "prototype_pollution": "high",
                    "bola": "high", "bfla": "high", "mass_assignment": "high",
-                   "excessive_data_exposure": "medium", "oauth": "high", "saml": "high"}
+                   "excessive_data_exposure": "medium", "oauth": "high", "saml": "high",
+                   "csrf": "medium", "password_reset_poisoning": "high", "insecure_cookie": "low"}
 _REMEDIATION = {
     "xss": "Context-aware output encoding + CSP; never reflect untrusted input unescaped.",
     "sqli": "Parameterized queries / prepared statements; least-privilege DB user.",
@@ -38,6 +39,9 @@ _REMEDIATION = {
     "excessive_data_exposure": "Return only client-needed fields; filter sensitive attributes server-side.",
     "oauth": "Strict redirect_uri allowlist; require state + PKCE; avoid implicit flow.",
     "saml": "Validate signatures over the whole assertion; reject unsigned/multi-assertion responses.",
+    "csrf": "Require an unpredictable anti-CSRF token on state-changing requests; verify Origin/Referer.",
+    "password_reset_poisoning": "Build reset links from a server-side allowlisted host; ignore Host/X-Forwarded-Host.",
+    "insecure_cookie": "Set Secure + HttpOnly + SameSite on session cookies; scope Domain/Path tightly.",
 }
 
 
@@ -78,6 +82,9 @@ _CVSS = {
     "excessive_data_exposure": (5.3, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N", "CWE-213"),
     "oauth": (8.0, "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N", "CWE-601"),
     "saml": (8.1, "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N", "CWE-347"),
+    "csrf": (6.5, "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:H/A:N", "CWE-352"),
+    "password_reset_poisoning": (8.1, "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N", "CWE-640"),
+    "insecure_cookie": (4.3, "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:N", "CWE-614"),
 }
 
 
@@ -128,7 +135,10 @@ class AttackReporter:
 
     def build(self, target: str, findings: List[Dict],
               chains: Optional[List[Dict]] = None) -> Dict:
-        confirmed = self.dedup([f for f in findings if f.get("verdict") == "confirmed"])
+        # #3 correlate confirmed findings by root cause (one bug → one section, with every instance).
+        from hydra.attack.correlate import FindingCorrelator
+        corr = FindingCorrelator().merge([f for f in findings if f.get("verdict") == "confirmed"])
+        confirmed = corr["merged_findings"]
         suspected = [f for f in findings if f.get("verdict") == "suspected"]
         sections = []
         for f in confirmed:
@@ -138,6 +148,7 @@ class AttackReporter:
                 "vuln_class": vc, "verdict": "confirmed",
                 "severity": self._severity(vc, chains), "cvss": self.cvss(vc),
                 "injection_point": f.get("point", ""),
+                "instances": f.get("instances", []), "instance_count": f.get("instance_count", 1),
                 "proof_of_concept": ev.get("curl", ""),
                 "evidence_indicators": ev.get("indicators", []),
                 "remediation": _REMEDIATION.get(vc, "Validate and constrain untrusted input."),
@@ -149,6 +160,7 @@ class AttackReporter:
                 f"{len(confirmed)} confirmed and {len(suspected)} suspected finding(s) on {target}; "
                 f"highest confirmed severity: {[k for k, v in _SEV_RANK.items() if v == top_sev][0]}."),
             "confirmed_findings": sections,
+            "duplicates_collapsed": corr["duplicates_collapsed"],
             "suspected_findings": [{"vuln_class": f.get("vuln_class"), "point": f.get("point", ""),
                                     "reason": (f.get("evidence") or {}).get("reason", "needs review")}
                                    for f in suspected],

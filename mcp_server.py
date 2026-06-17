@@ -1116,6 +1116,21 @@ try:
         JSEndpointExtractor as _JSEndpointExtractor,
         ParameterMiner as _ParameterMiner,
     )
+    from hydra.attack.poc_bundle import (
+        FindingReverifier as _FindingReverifier,
+        build_bundle as _build_bundle,
+    )
+    from hydra.attack.triage import (
+        SubmissionReadiness as _SubmissionReadiness,
+        program_severity as _program_severity,
+    )
+    from hydra.attack.correlate import FindingCorrelator as _FindingCorrelator
+    from hydra.attack.auth_session import (
+        CookieAuditor as _CookieAuditor,
+        CSRFTester as _CSRFTester,
+        PasswordResetPoisoning as _PasswordResetPoisoning,
+    )
+    from hydra.attack.fingerprint_select import FingerprintPayloadSelector as _FingerprintSelector
     from hydra.attack.chain_exec import ChainExecutor as _ChainExecutor
     from hydra.attack.report_builder import AttackReporter as _AttackReporter
     from hydra.attack.graphql import GraphQLTester as _GraphQLTester
@@ -3494,7 +3509,7 @@ def attack_execute(target: str, vuln_class: str, context: str = "any",
 def attack_scan(target: str, vuln_class: str, context: str = "any",
                 max_payloads: int = 6, max_points: int = 8, rate_per_sec: float = 1.0,
                 confirm_dom: bool = False, headless: bool = True,
-                baseline_samples: int = 1) -> str:
+                baseline_samples: int = 1, fingerprint: str = "") -> str:
     """Authorization-gated DIFFERENTIAL scan (attack section): sends a benign baseline then iterates
     PoC payloads across discovered injection points (query/body/json/header/cookie/path), confirms via
     differential analysis (two-signal — incl. boolean-blind for SQLi), guards against trap/honeypot
@@ -3512,6 +3527,7 @@ def attack_scan(target: str, vuln_class: str, context: str = "any",
                      second signal). Falls back to the differential verdict if unavailable.
         headless: run the confirmation browser headless (default True)
         baseline_samples: sample the baseline N times for stability (clamped 1–3; cuts dynamic-page FPs)
+        fingerprint: stack techs (e.g. "wordpress php mysql") → float stack-relevant payloads first
     """
     gate = _AuthGate()
     ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
@@ -3522,7 +3538,7 @@ def attack_scan(target: str, vuln_class: str, context: str = "any",
     res = _AttackWorkflow(gate=gate, executor=ex, browser_confirmer=bc).scan(
         target, vuln_class, context, max_payloads=max(1, min(max_payloads, 8)),
         max_points=max(1, min(max_points, 12)), record=True, confirm_dom=confirm_dom,
-        baseline_samples=max(1, min(baseline_samples, 3)))
+        baseline_samples=max(1, min(baseline_samples, 3)), fingerprint=fingerprint)
     return json.dumps(res, indent=2)
 
 
@@ -4175,6 +4191,139 @@ def attack_js_extract(js: str = "", url: str = "") -> str:
     if not text:
         return json.dumps({"error": "provide js text or an in-scope url"})
     return json.dumps(_JSEndpointExtractor().extract(text), indent=2)
+
+
+@mcp.tool()
+def attack_reverify(finding: str, bundle: bool = True, rate_per_sec: float = 1.0) -> str:
+    """Re-verify a stored finding (attack section): replays the finding's saved request against a fresh
+    baseline and re-runs the differential + two-signal logic → reproduces true/false with fresh
+    evidence; optionally emits a self-contained, replayable PoC bundle. Deny-by-default; PoC-only.
+
+    Args:
+        finding: a confirmed finding JSON (with its `evidence.request`), e.g. an item from
+                 attack_scan's confirmed_findings
+        bundle: also build a replayable PoC bundle (curl + request/response + indicators)
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    try:
+        f = json.loads(finding)
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "finding must be a JSON object"})
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    out = _FindingReverifier(gate=gate, executor=ex).reverify(f)
+    if bundle:
+        out["poc_bundle"] = _build_bundle(f)
+    return json.dumps(out, indent=2)
+
+
+@mcp.tool()
+def attack_triage(findings: str, target: str = "", platform: str = "hackerone",
+                  known_signatures: str = "") -> str:
+    """Program-aware triage + submission-readiness (attack section): maps each finding's CVSS to the
+    platform severity (HackerOne/Bugcrowd P-scale) + advisory bounty band, and runs the
+    submission-readiness gate (confirmed? two signals? proof attached? in-scope? not duplicate?).
+    Pure/advisory (the in-scope check uses the gate; sends nothing).
+
+    Args:
+        findings: JSON array of findings (from attack_scan / attack_report)
+        target: the assessed target (enables the in-scope readiness check)
+        platform: hackerone | bugcrowd
+        known_signatures: comma-separated `vuln_class|point` signatures already submitted (dup check)
+    """
+    try:
+        items = json.loads(findings) if findings else []
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "findings must be a JSON array"})
+    gate = _AuthGate()
+    known = [s.strip() for s in known_signatures.split(",") if s.strip()]
+    from hydra.attack.triage import triage_finding as _triage
+    rows = [_triage(f, target=target, platform=platform, gate=gate, known_signatures=known)
+            for f in items]
+    ready = [r for r in rows if r["readiness"]["ready"]]
+    return json.dumps({"target": target, "platform": platform, "triaged": len(rows),
+                       "ready_to_submit": len(ready), "results": rows, "advisory": True}, indent=2)
+
+
+@mcp.tool()
+def attack_correlate(findings: str) -> str:
+    """Correlate & dedup findings (attack section): merges findings sharing a root cause
+    `(vuln_class, normalized endpoint)` — so the same bug seen via multiple params/endpoints becomes one
+    finding carrying every instance. Pure/advisory.
+
+    Args:
+        findings: JSON array of findings
+    """
+    try:
+        items = json.loads(findings) if findings else []
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "findings must be a JSON array"})
+    return json.dumps(_FindingCorrelator().merge(items), indent=2)
+
+
+@mcp.tool()
+def attack_auth_session(target: str, check: str = "csrf", session: str = "",
+                        csrf_field: str = "", csrf_header: str = "", method: str = "POST",
+                        body: str = "", email_field: str = "email", email: str = "victim@example.com",
+                        evil_host: str = "evil.example.com", json_body: bool = False,
+                        rate_per_sec: float = 1.0) -> str:
+    """Authorization-gated auth/session test (attack section): csrf | cookies | reset_poison.
+    CSRF replays a state-changing request without/with-bad token and cross-origin; cookies audits
+    Set-Cookie security attributes; reset_poison tampers Host/X-Forwarded-Host on the reset flow.
+    Deny-by-default; PoC-only.
+
+    Args:
+        target: in-scope url (the state-changing endpoint / reset endpoint / any page that sets cookies)
+        check: csrf | cookies | reset_poison
+        session: JSON identity (CSRF needs an authenticated session)
+        csrf_field: anti-CSRF body field name (CSRF)
+        csrf_header: anti-CSRF header name (CSRF)
+        method: state-changing method for CSRF (default POST)
+        body: request body for CSRF
+        email_field/email: reset-flow field + the address to request (reset_poison)
+        evil_host: attacker host to inject into Host headers (reset_poison)
+        json_body: send reset body as JSON
+        rate_per_sec: max requests/sec (clamped 0.1–5.0)
+    """
+    gate = _AuthGate()
+    ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
+    try:
+        sess = _parse_session(session, "auth") if session else None
+    except (ValueError, json.JSONDecodeError):
+        return json.dumps({"error": "session must be a JSON object"})
+    if check == "csrf":
+        req = {"method": method, "url": target, "headers": {}, "body": body}
+        if json_body:
+            req["headers"]["Content-Type"] = "application/json"
+        res = _CSRFTester(gate=gate, executor=ex).test(req, csrf_field=csrf_field,
+                                                       csrf_header=csrf_header, session=sess)
+    elif check == "cookies":
+        d = gate.authorize(target, "active_recon")
+        if not d.authorized:
+            return json.dumps({"authorized": False, "reason": d.reason})
+        resp = ex({"method": "GET", "url": target, "headers": {}})
+        res = _CookieAuditor().audit(resp.get("set_cookie", []))
+        res["target"] = target
+    elif check == "reset_poison":
+        res = _PasswordResetPoisoning(gate=gate, executor=ex).test(
+            target, email_field=email_field, email=email, evil_host=evil_host, json_body=json_body)
+    else:
+        return json.dumps({"error": f"unknown check '{check}'",
+                           "known": ["csrf", "cookies", "reset_poison"]})
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def attack_tech_plan(fingerprint: str, platform: str = "hackerone") -> str:
+    """Technology-fingerprint attack planner (attack section): given a stack fingerprint (techs from
+    `whatweb_detect` / headers), recommends WHICH vuln classes are worth testing (and why). Pass the
+    same fingerprint to `attack_scan` to float stack-relevant payloads to the front. Pure/advisory.
+
+    Args:
+        fingerprint: comma/space-separated techs (e.g. "wordpress php mysql nginx")
+        platform: hackerone | bugcrowd (reserved for severity context)
+    """
+    return json.dumps(_FingerprintSelector().plan(fingerprint), indent=2)
 
 
 @mcp.tool()

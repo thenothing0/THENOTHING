@@ -119,6 +119,11 @@ evidence + curl + screenshot hook), `AttackQueue` (intelligence-driven prioritiz
 - `attack_stored` — Gated STORED / second-order test: submits a uniquely-tagged payload at one endpoint then OBSERVES others for the tag (stored XSS / stored SSRF / second-order injection); in-band canary (+ real DOM execution = two-signal) or OOB blind mode; PoC-only
 - `attack_param_mine` — Gated parameter mining: Arjun-style reflection-based discovery of hidden query parameters, isolates the responsible param, returns injectable endpoints to feed `attack_scan_crawled`; bounded request budget
 - `attack_js_extract` — Extract endpoints / parameter names / high-signal secrets from JavaScript (text or a gated `.js` URL fetch); secret values redacted to previews; feeds the scanners
+- `attack_reverify` — Re-verify a stored finding: replays its saved request against a fresh baseline + re-runs two-signal logic → reproduces true/false, and emits a self-contained replayable PoC bundle (curl + request/response + indicators)
+- `attack_triage` — Program-aware triage + submission-readiness: maps each finding's CVSS to platform severity (HackerOne/Bugcrowd P-scale) + bounty band, and gates on confirmed / two-signal / proof-attached / in-scope / not-duplicate
+- `attack_correlate` — Merge & dedup findings by root cause `(vuln_class, normalized endpoint)` so the same bug via multiple params/endpoints becomes one finding with all instances
+- `attack_auth_session` — Gated auth/session test: `csrf` (state-change accepted without/with-bad token + cross-origin) | `cookies` (Set-Cookie security audit) | `reset_poison` (Host/X-Forwarded-Host password-reset poisoning)
+- `attack_tech_plan` — Technology-fingerprint attack planner: recommends which vuln classes to test for a detected stack (`whatweb`/headers); pass the same fingerprint to `attack_scan` to float stack-relevant payloads first
 
 Detection fidelity: `attack_scan` accepts `confirm_dom` (real headless-browser XSS confirmation via Playwright — the strong second signal) and `baseline_samples` (baseline stability sampling); the scan also runs a honeypot/trap guard (demotes confirmations on endpoints that return canned "vulnerable" content for benign input) and wires boolean-blind SQLi as an independent corroborating signal.
 
