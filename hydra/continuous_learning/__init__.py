@@ -29,6 +29,11 @@ class LearningRecord:
     confidence_after: float = 0.0
     context: Dict[str, Any] = field(default_factory=dict)
     timestamp: float = field(default_factory=time.time)
+    # TN-1: set when scan_injection flags target-derived steering in the lesson;
+    # quarantined records are stored for audit but NEVER fold into methodology/
+    # payload intelligence (so a poisoned "lesson" can't influence future runs).
+    quarantined: bool = False
+    inject_hits: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -90,14 +95,44 @@ class ContinuousLearningEngine:
     # ── Learning Interface ────────────────────
 
     async def record(self, learning: Dict[str, Any]):
-        """Record a learning event from the cognitive loop."""
+        """Record a learning event from the cognitive loop.
+
+        TN-1 poison gate: target-derived lessons are scanned for agent-steering /
+        exfil / fake-role payloads BEFORE they can influence intelligence. A
+        flagged lesson is stored quarantined (for audit) but never folded into
+        methodology/payload intelligence, so it cannot steer future runs. Secrets
+        in the free-text context are redacted before storage.
+        """
+        try:
+            from hydra.safety import redact, scan_injection
+        except Exception:  # safety layer always present, but never break learning
+            redact, scan_injection = (lambda s: s), (lambda s: [])
+
+        # Concatenate the free-text fields a poisoned target could influence.
+        blob = " ".join(str(learning.get(k, "")) for k in
+                        ("attack_vector", "payload", "outcome", "lesson", "details", "note"))
+        for v in learning.values():
+            if isinstance(v, str):
+                blob += " " + v
+        hits = scan_injection(blob)
+
+        # Redact operator secrets from stored context (cross-boundary persistence).
+        safe_ctx = {k: (redact(v) if isinstance(v, str) else v) for k, v in learning.items()}
+
         record = LearningRecord(
             id=f"lr_{int(time.time())}_{len(self._records)}",
             event_type=learning.get("outcome", "unknown"),
             attack_vector=learning.get("attack_vector", ""),
-            context=learning,
+            context=safe_ctx,
+            quarantined=bool(hits),
+            inject_hits=[h.pattern for h in hits],
         )
         self._records.append(record)
+
+        if record.quarantined:
+            logger.warning("TN-1: quarantined a learning record — injection patterns %s",
+                           record.inject_hits)
+            return  # never let a flagged lesson influence methodology/payload intel
 
         # Update methodology intelligence
         if record.attack_vector:
