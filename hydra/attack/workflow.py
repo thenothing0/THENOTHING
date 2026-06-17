@@ -297,6 +297,8 @@ class AttackWorkflow:
                     bc = self.browser_confirmer(req["url"]) or {}
                     if bc.get("confirmed"):
                         resp["dom_executed"] = True
+                        if bc.get("screenshot"):          # carry the headless-browser PoC screenshot
+                            resp["dom_screenshot"] = bc["screenshot"]
                         signals = self.detector.signals(vc, base_resp, req["payload"], resp)
                         if bool_sig is not None:
                             signals = signals + [bool_sig]
@@ -310,6 +312,8 @@ class AttackWorkflow:
                                                confirmed=True).to_dict()
                     ev["injection_point"] = pt.describe()
                     ev["confirmation"] = conf.to_dict()
+                    if resp.get("dom_screenshot") and not ev.get("screenshot_path"):
+                        ev["screenshot_path"] = resp["dom_screenshot"]   # attach real DOM PoC proof
                     evidence.append(ev)
                     confirmed.append({"vuln_class": vc, "point": pt.name, "verdict": "confirmed",
                                       "evidence": ev})
