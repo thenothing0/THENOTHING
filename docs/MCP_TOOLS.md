@@ -93,6 +93,17 @@ persistent C2 — none belong in an impact PoC.
 ### General Execution (one shell, runs all of Kali — curl-first)
 - `shell_exec` — Run any shell command (the flexible escape hatch for Kali tools without a dedicated wrapper); curl-first, HITL-approved per call, with a HARD catastrophic-command denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) that fires even in operator/YOLO mode; head/tail truncated. Operator owns scope; the four absolute prohibitions are never permitted.
 
+### Findings Lifecycle & Coverage (spec Parts 4 & 5)
+Production findings state machine (draft→validated→confirmed→reported→remediated) with **evidence-gated confirm** (no confirm without request+response evidence), CVSS→severity, CWE/OWASP, sha256 evidence, root-cause dedup; plus a coverage matrix + scores + the `/next` engine. SQLite under `./findings/`.
+- `finding_create` — Create a DRAFT finding (idempotent by vuln_class + normalized endpoint)
+- `finding_add_evidence` — Attach redacted, sha256'd evidence (request|response|screenshot|tool_output|curl)
+- `finding_transition` — Move through the lifecycle; confirm is evidence-gated; reject from any pre-report state
+- `finding_score` — Set CVSS vector + base score → derived severity band
+- `finding_list` — List findings (+ summary + dedup clusters) for an engagement
+- `coverage_record` — Record/update a coverage tuple (endpoint×method×param×vuln_class) status
+- `coverage_summary` — Coverage / attack-surface / risk scores (risk folds in open-finding severities)
+- `coverage_next` — The `/next` engine: highest-value untested tuples (auth-area × high-impact class first)
+
 ### Browser & Burp Capture
 Capture bridge (the bounded, control-byte-scrubbed in-process store the optional `hydra.burp.start_bridge` localhost listener also writes to) + a Playwright JS-rendering crawler. Capture store is LRU-bounded (requests/endpoints/params) and scrubs terminal escapes on insert (hardened per PentesterFlow's M9/M11).
 - `burp_status` — Capture-store status: buffered request/endpoint counts + bounds

@@ -3953,6 +3953,155 @@ def browser_crawl(url: str, depth: int = 2, headless: bool = True, max_pages: in
     return json.dumps(out, indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  FINDINGS LIFECYCLE & COVERAGE  (architecture spec Parts 4 & 5)
+# ══════════════════════════════════════════════════════════════════════════════
+# Production findings state machine (draft→validated→confirmed→reported→remediated)
+# with evidence-gated confirm (no confirm without request+response evidence), CVSS
+# scoring, and a coverage matrix with the /next engine. SQLite under ./findings/.
+
+_FINDINGS_STORE = None
+_COVERAGE_STORE = None
+
+
+def _findings():
+    global _FINDINGS_STORE
+    if _FINDINGS_STORE is None:
+        from hydra.findings import FindingsStore
+        _FINDINGS_STORE = FindingsStore()
+    return _FINDINGS_STORE
+
+
+def _coverage():
+    global _COVERAGE_STORE
+    if _COVERAGE_STORE is None:
+        from hydra.coverage import CoverageStore
+        _COVERAGE_STORE = CoverageStore()
+    return _COVERAGE_STORE
+
+
+@mcp.tool()
+def finding_create(engagement_id: str, title: str, vuln_class: str = "", severity: str = "info",
+                   asset: str = "", endpoint: str = "", method: str = "GET", parameter: str = "",
+                   payload: str = "", impact: str = "", remediation: str = "", cwe: str = "",
+                   owasp: str = "") -> str:
+    """Create a DRAFT finding (idempotent by root cause: same vuln_class + normalized
+    endpoint returns the existing id). Promote it later via finding_transition.
+
+    Args:
+        engagement_id: engagement/workspace id
+        title: short finding title
+        vuln_class: idor|sqli|xss|ssrf|... (used for dedup + coverage)
+        severity: info|low|medium|high|critical (or set via finding_score CVSS)
+        asset/endpoint/method/parameter/payload: location + trigger
+        impact/remediation: narrative
+        cwe: e.g. CWE-89   owasp: e.g. A01:2021
+    """
+    fid = _findings().create(engagement_id, title, vuln_class=vuln_class, severity=severity,
+                             asset=asset, endpoint=endpoint, method=method, parameter=parameter,
+                             payload=payload, impact=impact, remediation=remediation, cwe=cwe,
+                             owasp=owasp)
+    return json.dumps({"id": fid, "state": "draft"}, indent=2)
+
+
+@mcp.tool()
+def finding_add_evidence(finding_id: str, kind: str, content: str) -> str:
+    """Attach evidence to a finding (content is secret-redacted + sha256'd on store).
+    Confirm requires BOTH a 'request' and a 'response' evidence row.
+
+    Args:
+        finding_id: target finding
+        kind: request | response | screenshot | tool_output | curl
+        content: the evidence text
+    """
+    try:
+        return json.dumps(_findings().add_evidence(finding_id, kind, content), indent=2)
+    except KeyError as e:
+        return json.dumps(_err(str(e)), indent=2)
+
+
+@mcp.tool()
+def finding_transition(finding_id: str, to_state: str) -> str:
+    """Move a finding through its lifecycle: draft→validated→confirmed→reported→
+    remediated (reject from any pre-report state). Confirm is EVIDENCE-GATED.
+
+    Args:
+        finding_id: target finding
+        to_state: validated | confirmed | rejected | reported | remediated
+    """
+    from hydra.findings import EvidenceGateError, TransitionError
+    try:
+        return json.dumps(_findings().transition(finding_id, to_state), indent=2)
+    except (TransitionError, EvidenceGateError, KeyError) as e:
+        return json.dumps(_err(str(e)), indent=2)
+
+
+@mcp.tool()
+def finding_score(finding_id: str, cvss_vector: str = "", cvss_score: float = 0.0) -> str:
+    """Set a finding's CVSS vector + base score; severity is derived from the band.
+
+    Args:
+        finding_id: target finding
+        cvss_vector: e.g. CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N
+        cvss_score: base score 0.0-10.0
+    """
+    return json.dumps(_findings().score(finding_id, cvss_vector, cvss_score), indent=2)
+
+
+@mcp.tool()
+def finding_list(engagement_id: str, state: str = "") -> str:
+    """List findings for an engagement (optionally filtered by state) + summary + dedup clusters.
+
+    Args:
+        engagement_id: engagement/workspace id
+        state: optional state filter
+    """
+    fs = _findings()
+    return json.dumps({"findings": fs.list(engagement_id, state),
+                       "summary": fs.summary(engagement_id),
+                       "correlation": fs.correlate(engagement_id)}, indent=2)
+
+
+@mcp.tool()
+def coverage_record(engagement_id: str, endpoint: str, vuln_class: str, method: str = "GET",
+                    parameter: str = "", asset: str = "", auth_area: str = "",
+                    status: str = "untested", evidence_finding_id: str = "") -> str:
+    """Record/update a coverage tuple (asset×endpoint×method×param×vuln_class).
+
+    Args:
+        engagement_id: engagement id
+        endpoint/method/parameter/asset/auth_area: the tested surface
+        vuln_class: vuln class tested
+        status: untested|passed|failed|skipped|waf-blocked
+        evidence_finding_id: link to a finding if one resulted
+    """
+    return json.dumps(_coverage().record(engagement_id, endpoint, vuln_class, method=method,
+                      parameter=parameter, asset=asset, auth_area=auth_area, status=status,
+                      evidence_finding_id=evidence_finding_id), indent=2)
+
+
+@mcp.tool()
+def coverage_summary(engagement_id: str) -> str:
+    """Coverage / attack-surface / risk scores for an engagement (risk folds in open
+    confirmed-finding severities)."""
+    fs = _findings()
+    open_states = ("confirmed", "validated", "reported")
+    sevs = [f["severity"] for st in open_states for f in fs.list(engagement_id, st)]
+    return json.dumps(_coverage().summary(engagement_id, open_finding_severities=sevs), indent=2)
+
+
+@mcp.tool()
+def coverage_next(engagement_id: str, limit: int = 10) -> str:
+    """The /next engine: highest-value UNTESTED tuples (auth-area × high-impact class first).
+
+    Args:
+        engagement_id: engagement id
+        limit: max suggestions
+    """
+    lim = max(1, min(int(limit) if str(limit).lstrip("-").isdigit() else 10, 100))
+    return json.dumps({"next": _coverage().next(engagement_id, limit=lim)}, indent=2)
+
+
 @mcp.tool()
 def generate_payloads(vuln_class: str, context: str = "any") -> str:
     """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads

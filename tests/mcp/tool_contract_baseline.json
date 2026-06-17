@@ -665,6 +665,41 @@
     "params": [],
     "required": []
   },
+  "coverage_next": {
+    "params": [
+      "engagement_id",
+      "limit"
+    ],
+    "required": [
+      "engagement_id"
+    ]
+  },
+  "coverage_record": {
+    "params": [
+      "asset",
+      "auth_area",
+      "endpoint",
+      "engagement_id",
+      "evidence_finding_id",
+      "method",
+      "parameter",
+      "status",
+      "vuln_class"
+    ],
+    "required": [
+      "endpoint",
+      "engagement_id",
+      "vuln_class"
+    ]
+  },
+  "coverage_summary": {
+    "params": [
+      "engagement_id"
+    ],
+    "required": [
+      "engagement_id"
+    ]
+  },
   "critical_capabilities": {
     "params": [],
     "required": []
@@ -788,6 +823,68 @@
     ],
     "required": [
       "url"
+    ]
+  },
+  "finding_add_evidence": {
+    "params": [
+      "content",
+      "finding_id",
+      "kind"
+    ],
+    "required": [
+      "content",
+      "finding_id",
+      "kind"
+    ]
+  },
+  "finding_create": {
+    "params": [
+      "asset",
+      "cwe",
+      "endpoint",
+      "engagement_id",
+      "impact",
+      "method",
+      "owasp",
+      "parameter",
+      "payload",
+      "remediation",
+      "severity",
+      "title",
+      "vuln_class"
+    ],
+    "required": [
+      "engagement_id",
+      "title"
+    ]
+  },
+  "finding_list": {
+    "params": [
+      "engagement_id",
+      "state"
+    ],
+    "required": [
+      "engagement_id"
+    ]
+  },
+  "finding_score": {
+    "params": [
+      "cvss_score",
+      "cvss_vector",
+      "finding_id"
+    ],
+    "required": [
+      "finding_id"
+    ]
+  },
+  "finding_transition": {
+    "params": [
+      "finding_id",
+      "to_state"
+    ],
+    "required": [
+      "finding_id",
+      "to_state"
     ]
   },
   "full_recon": {
