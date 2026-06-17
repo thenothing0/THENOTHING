@@ -16,6 +16,27 @@ Severity legend: **HIGH** = authorization/trust-boundary bypass, cross-engagemen
 
 ---
 
+## Remediation status (updated)
+
+The trust-boundary layer (`hydra/safety/`) now provides the three primitives these findings need, with
+tests (`tests/safety/`):
+
+- **TN-7 — FIXED.** `hydra/llm/client.py` applies `redact()` to outbound prompts for every **hosted**
+  backend (Groq/OpenAI/DeepSeek/Kimi/OpenRouter); local models (Ollama/LM Studio) stay verbatim as the
+  sensitive-data-safe path. Redaction covers the gaps PentesterFlow's audit called out (URL userinfo H9,
+  2-segment JWT H10) plus AWS/provider keys and PEM blocks.
+- **TN-2 — MECHANISM BUILT.** `fence_untrusted()` wraps target-derived data in "data, not instructions"
+  delimiters (forged close-markers neutralized). Wiring it at *every* tool-output boundary in the
+  `hydra.main` LLM loop is the remaining step (the MCP path returns raw JSON to the harness, which already
+  treats it as data).
+- **TN-1 — MECHANISM BUILT.** `scan_injection()` flags agent-steering / exfil / fake-role payloads. Wiring
+  it as a quarantine gate in the knowledge-fusion / learning ingestion path is the remaining step.
+
+TN-3 (denylist = soft DiD), TN-4 (localhost bridge), TN-5 (browser rebinding) remain accepted/known and are
+documented so they are not mistaken for boundaries.
+
+---
+
 ## Capability-impact triage — "fix without limiting the operator"
 
 THENOTHING's mission is authorized offensive research **with impact**. Like PentesterFlow, every fix is
