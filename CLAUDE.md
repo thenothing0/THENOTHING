@@ -72,8 +72,8 @@ For **remote / SSE** transport: `python mcp_server.py --transport sse --port 890
 ## MCP tool palette
 
 All capability is exposed through the **`hydra-security`** MCP server (stdio; see *MCP server setup*).
-It registers **156 tools** spanning recon → scanning → gated PoC exploitation → an offline-first
-Knowledge OS (Phases A–U). They are **deferred / search-loaded** — invoke any tool by name; you do NOT
+It registers **202 tools** spanning recon → scanning → gated PoC exploitation → gated post-exploitation
+impact → an offline-first Knowledge OS (Phases A–U). They are **deferred / search-loaded** — invoke any tool by name; you do NOT
 need every schema in context. **Full catalog (exact names + one-line descriptions):
 [`docs/MCP_TOOLS.md`](docs/MCP_TOOLS.md)** — read it when choosing a tool.
 
@@ -90,7 +90,12 @@ never allowed even in-scope; exploitation is PoC-only. Gate tools: `register_bou
   (OAuth/OIDC, SAML), CSRF/cookie/reset-poisoning, stored/second-order, OOB (interactsh), GraphQL, JWT,
   WAF/403 bypass, chains, end-to-end campaign, PoC bundles + **reverify**, **triage** (program severity +
   readiness), **correlate** (dedup), fingerprint planning, knowledge loop-back.
-- **Recon & surface**: subfinder, amass, httpx, katana, gau, hakrawler, dnsx, full_recon.
+- **Recon & surface**: subfinder, amass, httpx, katana, gau, hakrawler, dnsx, subzy (subdomain takeover), full_recon.
+- **Post-exploitation & impact** (gated, authorized-engagement, PoC-only — for DEMONSTRATING impact after
+  an authorized foothold): enum4linux/smbmap/ldapsearch (AD/SMB enum), netexec (lateral movement + benign
+  PoC code-exec), secretsdump (credential-store access), bloodhound (attack-path collection), hashcat/john
+  (offline cracking). EXCLUDED by non-negotiables: DoS, destructive/ransomware, data-exfil, social-eng/
+  phishing, detection-evasion/AV-EDR-bypass, persistent C2.
 - **Vuln scanning**: nuclei (+ list), sqlmap, dalfox, gxss.
 - **Fuzzing**: ffuf, dirsearch.   **Fingerprinting & defense**: whatweb, wafw00f, nmap.
 - **Knowledge & reporting**: save/get findings, generate_report, check_tools.

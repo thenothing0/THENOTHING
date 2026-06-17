@@ -32,6 +32,7 @@ import shutil
 import subprocess
 import sys
 import sqlite3
+import tempfile
 import time
 from pathlib import Path
 from typing import List, Optional
@@ -689,6 +690,7 @@ def check_tools() -> str:
         "gau": "URL gathering",
         "hakrawler": "Web crawling",
         "dnsx": "DNS resolution & enumeration",
+        "subzy": "Subdomain takeover detection",
         "whatweb": "Tech fingerprinting",
         "wafw00f": "WAF detection",
         "nmap": "Network scanning",
@@ -696,6 +698,15 @@ def check_tools() -> str:
         "sqlmap": "SQL injection",
         "dalfox": "XSS scanning",
         "gxss": "XSS parameter reflection grep",
+        # Post-exploitation & impact (gated, authorized-engagement, PoC-only)
+        "nxc": "netexec — lateral movement / AD assessment",
+        "impacket-secretsdump": "Credential-store dump (SAM/LSA/NTDS)",
+        "enum4linux-ng": "SMB/AD enumeration",
+        "smbmap": "SMB share enumeration + permissions",
+        "ldapsearch": "LDAP/AD directory query",
+        "bloodhound-python": "AD attack-path collection",
+        "hashcat": "Offline hash cracking (GPU)",
+        "john": "Offline hash cracking (John the Ripper)",
     }
 
     # Some binaries ship under alternate casing/names; check known aliases too.
@@ -1042,6 +1053,74 @@ def hakrawler_crawl(
 
     # Headroom beyond hakrawler's own per-URL crawl timeout so it self-terminates.
     result = _run(cmd, timeout=timeout + 15, stdin_data=target)
+    return json.dumps(result, indent=2)
+
+
+# ══════════════════════════════════════════════
+#  TOOL 23 — subzy (Subdomain Takeover Detection)
+# ══════════════════════════════════════════════
+
+@mcp.tool()
+def subzy_takeover(
+    targets: str,
+    https: bool = True,
+    concurrency: int = 10,
+    req_timeout: int = 10,
+    timeout: int = 180,
+) -> str:
+    """
+    Check subdomains for takeover vulnerabilities using subzy. Feed the output of
+    subfinder_scan/amass_enum (newline-delimited subdomains, ideally the live ones
+    from httpx_probe) and surface any that point at an unclaimed third-party service
+    (GitHub Pages, S3, Heroku, Azure, etc.) — a classic high-value bug-bounty finding.
+
+    Passive fingerprinting against a known service-signature set: it identifies
+    dangling CNAMEs, it does NOT claim or modify any resource. Confirm a positive
+    by replaying the fingerprint before reporting (single-signal until verified).
+
+    Args:
+        targets: One or more subdomains, one per line
+        https: Force https for targets with no scheme
+        concurrency: Number of concurrent checks (default 10)
+        req_timeout: Per-request timeout in seconds (default 10)
+        timeout: Overall execution timeout in seconds
+    """
+    err = _validate_block(targets, kind="host")
+    if err:
+        return json.dumps(err, indent=2)
+    hosts = [ln.strip() for ln in targets.splitlines() if ln.strip()]
+
+    # subzy reads a file via --targets; write the validated hosts to a temp file
+    # rather than risk an over-long --target argv on large enumeration lists.
+    tmp = tempfile.NamedTemporaryFile(
+        mode="w", suffix=".txt", prefix="subzy_", delete=False)
+    try:
+        tmp.write("\n".join(hosts))
+        tmp.close()
+        cmd = ["subzy", "run", "--targets", tmp.name, "--hide_fails",
+               "--concurrency", str(concurrency), "--timeout", str(req_timeout)]
+        if https:
+            cmd.append("--https")
+        result = _run(cmd, timeout=timeout)
+    finally:
+        try:
+            os.unlink(tmp.name)
+        except OSError:  # pragma: no cover
+            pass
+
+    if result["success"]:
+        # subzy marks a live takeover candidate with the bracketed token
+        # "[ VULNERABLE ]" (vs "[ NOT VULNERABLE ]" and the "--hide_fails" banner).
+        # Match that exact token so the banner/negatives don't slip through.
+        lines = [ln.strip() for ln in result["output"].splitlines() if ln.strip()]
+        vulnerable = [ln for ln in lines if "[ VULNERABLE ]" in ln.upper()]
+        return json.dumps({
+            "checked": len(hosts),
+            "vulnerable": vulnerable,
+            "vulnerable_count": len(vulnerable),
+            "note": "Single-signal fingerprint — replay/verify before reporting.",
+            "raw": result["output"],
+        }, indent=2)
     return json.dumps(result, indent=2)
 
 
@@ -3416,6 +3495,286 @@ def waf_bypass(url: str, method: str = "GET") -> str:
     out = _Bypass403().report(url, method)
     out["authorized"] = True
     return json.dumps(out, indent=2)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  POST-EXPLOITATION & IMPACT  (gated, authorized-engagement, PoC-only)
+# ══════════════════════════════════════════════════════════════════════════════
+# Active internal / Active-Directory tradecraft for DEMONSTRATING IMPACT once an
+# authorized foothold exists (privilege escalation, lateral movement, AD enumeration,
+# credential-store access). Every target-naming tool is gated by the SAME deny-by-default
+# authorization gate as the attack section — an out-of-scope target is a HARD STOP.
+# PoC-only: enumerate and PROVE access; never exfiltrate bulk data, never destroy, never
+# persist. Excluded by policy (CLAUDE.md non-negotiables): DoS, ransomware/destructive,
+# data-exfiltration, social-engineering/phishing, detection-evasion / AV-EDR-bypass, and
+# persistent C2 — none of which belong in an impact PoC.
+
+def _reject_flaglike(*vals) -> Optional[dict]:
+    """Reject any argument that looks like a CLI flag (leading '-'). Args go to argv
+    (shell=False) so there is no shell injection, but a '-'-prefixed value could be
+    mis-parsed by the tool as an option — block that."""
+    for v in vals:
+        s = str(v or "")
+        if s.startswith("-"):
+            return _err(f"Rejected argument '{v}': leading '-' looks like a flag, not a value")
+    return None
+
+
+def _gate_or_reject(target: str, action: str = "exploitation"):
+    """Validate `target` then run the deny-by-default authorization gate.
+    Returns (decision, None) when ALLOWED, or (None, error_json_str) when rejected."""
+    err = _validate_host(target, allow_cidr=True)
+    if err:
+        return None, json.dumps(err, indent=2)
+    decision = _AuthGate().authorize(target, action)
+    if not decision.authorized:
+        return None, json.dumps({
+            "authorized": False,
+            "reason": decision.reason,
+            "note": ("Out-of-scope for any registered bug-bounty program — hard stop. "
+                     "Register the engagement scope (load_bounty_scope) before active testing."),
+        }, indent=2)
+    return decision, None
+
+
+def _localfile_or_reject(path: str) -> Optional[dict]:
+    """Reject flag-like or non-existent local file paths (for offline tools)."""
+    e = _reject_flaglike(path)
+    if e:
+        return e
+    if not path or not os.path.isfile(path):
+        return _err(f"File not found: '{path}'")
+    return None
+
+
+@mcp.tool()
+def enum4linux_scan(target: str, timeout: int = 300) -> str:
+    """Gated SMB / Active-Directory enumeration via enum4linux-ng (shares, users, groups,
+    password policy, OS, RID cycling). Authorized-engagement IMPACT tool — read-only
+    enumeration; deny-by-default (out-of-scope target = hard stop).
+
+    Args:
+        target: in-scope host/IP of an SMB/AD server
+        timeout: execution timeout in seconds
+    """
+    _decision, rej = _gate_or_reject(target, "vulnerability_scan")
+    if rej:
+        return rej
+    return json.dumps(_run(["enum4linux-ng", "-A", target], timeout=timeout), indent=2)
+
+
+@mcp.tool()
+def smbmap_scan(target: str, username: str = "", password: str = "", domain: str = "",
+                timeout: int = 180) -> str:
+    """Gated SMB share enumeration + per-share read/write permissions via smbmap (anonymous
+    or authenticated). IMPACT tool: shows which shares an identity can reach. Deny-by-default.
+
+    Args:
+        target: in-scope host/IP
+        username/password/domain: optional credentials (blank = anonymous/guest)
+        timeout: execution timeout in seconds
+    """
+    _decision, rej = _gate_or_reject(target, "vulnerability_scan")
+    if rej:
+        return rej
+    fl = _reject_flaglike(username, password, domain)
+    if fl:
+        return json.dumps(fl, indent=2)
+    cmd = ["smbmap", "-H", target]
+    if username:
+        cmd += ["-u", username, "-p", password]
+    else:
+        cmd += ["-u", "guest", "-p", ""]
+    if domain:
+        cmd += ["-d", domain]
+    return json.dumps(_run(cmd, timeout=timeout), indent=2)
+
+
+@mcp.tool()
+def ldapsearch_query(target: str, base_dn: str, ldap_filter: str = "(objectClass=*)",
+                     username: str = "", password: str = "", attributes: str = "",
+                     timeout: int = 120) -> str:
+    """Gated LDAP / AD directory query via ldapsearch (anonymous or simple-bind). IMPACT tool
+    for enumerating AD objects (users, groups, SPNs, GPOs). Deny-by-default.
+
+    Args:
+        target: in-scope LDAP/AD host/IP
+        base_dn: search base, e.g. "DC=corp,DC=local"
+        ldap_filter: LDAP filter (default all objects)
+        username/password: optional bind DN + password
+        attributes: optional space-separated attribute list to return
+        timeout: execution timeout in seconds
+    """
+    _decision, rej = _gate_or_reject(target, "vulnerability_scan")
+    if rej:
+        return rej
+    fl = _reject_flaglike(base_dn, ldap_filter, username, attributes)
+    if fl:
+        return json.dumps(fl, indent=2)
+    cmd = ["ldapsearch", "-x", "-H", f"ldap://{target}", "-b", base_dn]
+    if username:
+        cmd += ["-D", username, "-w", password]
+    cmd.append(ldap_filter)
+    if attributes:
+        cmd += [a for a in attributes.split() if not a.startswith("-")]
+    return json.dumps(_run(cmd, timeout=timeout), indent=2)
+
+
+@mcp.tool()
+def netexec_scan(target: str, protocol: str = "smb", username: str = "", password: str = "",
+                 domain: str = "", nt_hash: str = "", shares: bool = False,
+                 command: str = "", timeout: int = 240) -> str:
+    """Gated lateral-movement / AD assessment via netexec (nxc). Authenticates across a
+    protocol, optionally enumerates shares or runs a single PoC command for impact proof.
+    Deny-by-default; PoC-only — use BENIGN proof commands (whoami / id / hostname), never
+    destructive or data-harvesting commands.
+
+    Args:
+        target: in-scope host/IP or CIDR
+        protocol: smb | ldap | winrm | mssql | ssh | rdp | wmi | ftp | nfs | vnc
+        username/password/domain: credentials
+        nt_hash: NT hash for pass-the-hash (instead of password)
+        shares: enumerate accessible shares (smb)
+        command: a single benign PoC command to prove code-exec (winrm/mssql/ssh/wmi)
+        timeout: execution timeout in seconds
+    """
+    _decision, rej = _gate_or_reject(target, "exploitation")
+    if rej:
+        return rej
+    proto = protocol.lower()
+    if proto not in {"smb", "ldap", "winrm", "mssql", "ssh", "rdp", "wmi", "ftp", "nfs", "vnc"}:
+        return json.dumps(_err(f"Unknown protocol '{protocol}'"), indent=2)
+    fl = _reject_flaglike(username, password, domain, nt_hash, command)
+    if fl:
+        return json.dumps(fl, indent=2)
+    cmd = ["nxc", proto, target]
+    if username:
+        cmd += ["-u", username]
+    if nt_hash:
+        cmd += ["-H", nt_hash]
+    elif password:
+        cmd += ["-p", password]
+    if domain:
+        cmd += ["-d", domain]
+    if shares:
+        cmd.append("--shares")
+    if command:
+        cmd += ["-x", command]
+    return json.dumps(_run(cmd, timeout=timeout), indent=2)
+
+
+@mcp.tool()
+def secretsdump_run(target: str, username: str, password: str = "", domain: str = "",
+                    nt_hashes: str = "", just_dc_user: str = "", timeout: int = 300) -> str:
+    """Gated credential-store access via impacket-secretsdump (SAM/LSA/cached creds, or NTDS
+    via DRSUAPI). IMPACT proof that an identity can reach credential material. Deny-by-default,
+    PoC-only — prove the access; do NOT bulk-harvest/exfiltrate beyond the minimal proof
+    (use `just_dc_user` to dump a single account rather than the whole directory).
+
+    Args:
+        target: in-scope host/IP (DC for NTDS, or a member for SAM/LSA)
+        username: account name
+        password: account password (or use nt_hashes)
+        domain: AD domain (optional)
+        nt_hashes: "LM:NT" for pass-the-hash auth instead of password
+        just_dc_user: limit a DCSync to a single account (PoC scoping) e.g. "krbtgt"
+        timeout: execution timeout in seconds
+    """
+    _decision, rej = _gate_or_reject(target, "exploitation")
+    if rej:
+        return rej
+    fl = _reject_flaglike(username, password, domain, nt_hashes, just_dc_user)
+    if fl:
+        return json.dumps(fl, indent=2)
+    auth = f"{domain}/{username}" if domain else username
+    if password:
+        auth = f"{auth}:{password}"
+    cmd = ["impacket-secretsdump", f"{auth}@{target}"]
+    if nt_hashes:
+        cmd += ["-hashes", nt_hashes]
+    if just_dc_user:
+        cmd += ["-just-dc-user", just_dc_user]
+    return json.dumps(_run(cmd, timeout=timeout), indent=2)
+
+
+@mcp.tool()
+def bloodhound_collect(domain: str, username: str, password: str, dc_ip: str,
+                       collection: str = "Default", timeout: int = 600) -> str:
+    """Gated AD attack-path collection via bloodhound-python (SharpHound for Python). Produces
+    a graph dataset (zipped JSON) for offline attack-path analysis to demonstrate escalation
+    paths. Deny-by-default (gated on the DC IP); read-only LDAP/SMB collection.
+
+    Args:
+        domain: AD domain (e.g. "corp.local")
+        username/password: domain credentials
+        dc_ip: in-scope domain-controller IP (gated)
+        collection: Default | All | DCOnly | Group | LocalAdmin | Session | ACL | Trusts | Container
+        timeout: execution timeout in seconds
+    """
+    _decision, rej = _gate_or_reject(dc_ip, "vulnerability_scan")
+    if rej:
+        return rej
+    if collection not in {"Default", "All", "DCOnly", "Group", "LocalAdmin", "Session",
+                          "LoggedOn", "ACL", "Trusts", "Container", "RDP", "DCOM", "PSRemote"}:
+        return json.dumps(_err(f"Unknown collection method '{collection}'"), indent=2)
+    fl = _reject_flaglike(domain, username, password)
+    if fl:
+        return json.dumps(fl, indent=2)
+    cmd = ["bloodhound-python", "-d", domain, "-u", username, "-p", password,
+           "-ns", dc_ip, "-c", collection, "--zip"]
+    return json.dumps(_run(cmd, timeout=timeout), indent=2)
+
+
+@mcp.tool()
+def hashcat_crack(hash_file: str, hash_mode: int,
+                  wordlist: str = "/usr/share/wordlists/rockyou.txt",
+                  timeout: int = 600) -> str:
+    """Offline hash cracking via hashcat (LOCAL files only; names no target, NOT gated). For
+    cracking credential hashes captured during an authorized engagement to demonstrate impact.
+
+    Args:
+        hash_file: path to a file of hashes (must exist locally)
+        hash_mode: hashcat -m mode (e.g. 1000=NTLM, 5600=NetNTLMv2, 1800=sha512crypt, 22000=WPA)
+        wordlist: wordlist path
+        timeout: execution timeout in seconds
+    """
+    e = _localfile_or_reject(hash_file) or _localfile_or_reject(wordlist)
+    if e:
+        return json.dumps(e, indent=2)
+    try:
+        mode = str(int(hash_mode))
+    except (TypeError, ValueError):
+        return json.dumps(_err(f"hash_mode must be an integer, got '{hash_mode}'"), indent=2)
+    cmd = ["hashcat", "-m", mode, "-a", "0", hash_file, wordlist,
+           "--quiet", "--potfile-disable", "--force"]
+    return json.dumps(_run(cmd, timeout=timeout), indent=2)
+
+
+@mcp.tool()
+def john_crack(hash_file: str, wordlist: str = "/usr/share/wordlists/rockyou.txt",
+               fmt: str = "", timeout: int = 600) -> str:
+    """Offline hash cracking via John the Ripper (LOCAL files only; names no target, NOT gated).
+    Cracks then returns the recovered plaintext (john --show) for authorized impact proof.
+
+    Args:
+        hash_file: path to a file of hashes (must exist locally)
+        wordlist: wordlist path
+        fmt: optional john --format (e.g. "nt", "sha512crypt", "netntlmv2")
+        timeout: execution timeout in seconds
+    """
+    e = _localfile_or_reject(hash_file) or _localfile_or_reject(wordlist)
+    if e:
+        return json.dumps(e, indent=2)
+    fl = _reject_flaglike(fmt)
+    if fl:
+        return json.dumps(fl, indent=2)
+    crack = ["john", f"--wordlist={wordlist}", hash_file]
+    show = ["john", "--show", hash_file]
+    if fmt:
+        crack.append(f"--format={fmt}")
+        show.append(f"--format={fmt}")
+    _run(crack, timeout=timeout)
+    return json.dumps(_run(show, timeout=60), indent=2)
 
 
 @mcp.tool()

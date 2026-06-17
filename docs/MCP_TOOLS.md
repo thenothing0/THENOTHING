@@ -73,6 +73,23 @@ Two-signal note: `attack_scan` now confirms a finding only on TWO INDEPENDENT si
 - `oob_payload` — Out-of-band/blind payloads + a deterministic correlation token under your own OOB domain
 - `attack_queue` — Intelligence-driven attack prioritization (severity + chain potential + capability backing); gated
 
+### Post-Exploitation & Impact (gated, authorized-engagement, PoC-only)
+Active internal / Active-Directory tradecraft for **demonstrating impact** once an authorized foothold
+exists (privilege escalation, lateral movement, AD enumeration, credential-store access). Every
+target-naming tool is gated by the SAME deny-by-default authorization gate as the attack section — an
+out-of-scope target is a HARD STOP. PoC-only: enumerate and PROVE access; never exfiltrate bulk data,
+never destroy, never persist. **Excluded by policy** (CLAUDE.md non-negotiables): DoS, ransomware /
+destructive, data-exfiltration, social-engineering / phishing, detection-evasion / AV-EDR-bypass, and
+persistent C2 — none belong in an impact PoC.
+- `enum4linux_scan` — Gated SMB/AD enumeration (shares, users, groups, policy, OS, RID cycling) via enum4linux-ng
+- `smbmap_scan` — Gated SMB share enumeration + per-share read/write permissions (anonymous or authenticated)
+- `ldapsearch_query` — Gated LDAP/AD directory query (users/groups/SPNs/GPOs); anonymous or simple-bind
+- `netexec_scan` — Gated lateral-movement / AD assessment via netexec (nxc): authenticate across smb/ldap/winrm/mssql/ssh/…, enumerate shares, or run a single BENIGN PoC command for code-exec proof
+- `secretsdump_run` — Gated credential-store access (SAM/LSA/cached or NTDS via DRSUAPI); PoC-only, prefer `just_dc_user` to scope a DCSync to one account
+- `bloodhound_collect` — Gated AD attack-path collection (bloodhound-python → zipped graph dataset) for offline escalation-path analysis
+- `hashcat_crack` — Offline hash cracking via hashcat (LOCAL files only; no target, not gated) — crack hashes captured in an authorized engagement
+- `john_crack` — Offline hash cracking via John the Ripper (LOCAL files only; no target, not gated); returns recovered plaintext via `--show`
+
 ### Recon & Surface Discovery
 - `subfinder_scan` — Fast passive subdomain enumeration
 - `amass_enum` — Deep DNS enumeration and network mapping
@@ -81,6 +98,7 @@ Two-signal note: `attack_scan` now confirms a finding only on TWO INDEPENDENT si
 - `gau_urls` — Get historical URLs from Wayback Machine & archives
 - `hakrawler_crawl` — Fast web crawler for endpoint discovery
 - `dnsx_resolve` — Fast DNS resolution and enumeration
+- `subzy_takeover` — Subdomain takeover detection: fingerprints dangling CNAMEs against unclaimed third-party services (GitHub Pages/S3/Heroku/Azure/…); feed subfinder/amass output, single-signal (verify before reporting)
 
 ### Vulnerability Scanning
 - `nuclei_scan` — Template-based scanner (CVEs, misconfigs, default creds)
