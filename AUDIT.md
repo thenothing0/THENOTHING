@@ -25,12 +25,13 @@ tests (`tests/safety/`):
   backend (Groq/OpenAI/DeepSeek/Kimi/OpenRouter); local models (Ollama/LM Studio) stay verbatim as the
   sensitive-data-safe path. Redaction covers the gaps PentesterFlow's audit called out (URL userinfo H9,
   2-segment JWT H10) plus AWS/provider keys and PEM blocks.
-- **TN-2 — MECHANISM BUILT.** `fence_untrusted()` wraps target-derived data in "data, not instructions"
-  delimiters (forged close-markers neutralized). Wiring it at *every* tool-output boundary in the
-  `hydra.main` LLM loop is the remaining step (the MCP path returns raw JSON to the harness, which already
-  treats it as data).
-- **TN-1 — MECHANISM BUILT.** `scan_injection()` flags agent-steering / exfil / fake-role payloads. Wiring
-  it as a quarantine gate in the knowledge-fusion / learning ingestion path is the remaining step.
+- **TN-2 — WIRED.** `fence_untrusted()` wraps target-derived data in "data, not instructions" delimiters
+  (forged close-markers neutralized) and is applied at the tool-output→LLM boundary via
+  `HydraEngine.reason_over_tool_output()` (`hydra/main.py`). The MCP path returns raw JSON to the harness,
+  which already treats it as data.
+- **TN-1 — WIRED.** `scan_injection()` is now a quarantine gate in `ContinuousLearningEngine.record()`
+  (`hydra/continuous_learning`): a flagged lesson is stored for audit but NEVER folded into methodology/
+  payload intelligence, so target-derived steering can't influence future runs. Stored context is redacted.
 
 TN-3 (denylist = soft DiD), TN-4 (localhost bridge), TN-5 (browser rebinding) remain accepted/known and are
 documented so they are not mistaken for boundaries.
