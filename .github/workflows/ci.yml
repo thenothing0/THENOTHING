@@ -84,3 +84,16 @@ jobs:
       - run: ruff check mcp_server.py tests hydra/knowledge hydra/capabilities hydra/recon_fusion
       # Legacy package debt: reported, not gated (pre-existing; ratchet later).
       - run: ruff check hydra || true
+
+  security:
+    # Dependency vulnerability audit — closes the PF-4 gap (CI had no SAST/dep-audit).
+    # Reported, not gated yet (ratchet to fail-on-vuln once the tree is clean).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pip-audit
+      - name: Audit runtime dependencies
+        run: pip-audit -r requirements.txt || true

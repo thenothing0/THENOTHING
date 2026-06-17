@@ -72,8 +72,8 @@ For **remote / SSE** transport: `python mcp_server.py --transport sse --port 890
 ## MCP tool palette
 
 All capability is exposed through the **`hydra-security`** MCP server (stdio; see *MCP server setup*).
-It registers **203 tools** spanning a curl-first general shell → recon → scanning → gated PoC exploitation →
-gated post-exploitation impact → an offline-first Knowledge OS (Phases A–U). They are **deferred / search-loaded** — invoke any tool by name; you do NOT
+It registers **208 tools** spanning a curl-first general shell → recon → scanning → gated PoC exploitation →
+gated post-exploitation impact → browser/Burp capture → an offline-first Knowledge OS (Phases A–U). They are **deferred / search-loaded** — invoke any tool by name; you do NOT
 need every schema in context. **Full catalog (exact names + one-line descriptions):
 [`docs/MCP_TOOLS.md`](docs/MCP_TOOLS.md)** — read it when choosing a tool.
 
@@ -83,6 +83,18 @@ authorization). Call `authorize_target` immediately before any active action and
 result as a HARD STOP. Absolute prohibitions (DoS / destructive / data-exfil / social-engineering) are
 never allowed even in-scope; exploitation is PoC-only. Gate tools: `register_bounty_program`,
 `load_bounty_scope`, `authorize_target`.
+
+**Operator / YOLO mode (PentesterFlow-parity, frictionless — TWO things stay hard).** To run with
+PentesterFlow-style low friction: (1) declare your authorized engagement ONCE — a bug-bounty program
+*or* a signed-SoW pentest via `register_bounty_program(platform="custom"|"self_hosted", in_scope=[…])`
+(this is your operator attestation = authorization; it's logged in `data/authorized_programs.json` + the
+gate audit log); (2) run the Claude Code **harness** in skip-permissions mode (`--dangerously-skip-permissions`
+/ a permission allowlist) to auto-approve the per-tool friction — the approval modal is the harness's, not
+THENOTHING's. After that, the full arsenal runs frictionlessly **within your declared scope**. Even in this
+mode, two controls never relax: the **deny-by-default scope gate still requires a declared scope** (no silent
+all-targets bypass), and the **four absolute prohibitions** (DoS / destructive / data-exfil / social-eng) and
+`shell_exec`'s catastrophic-command denylist remain HARD BLOCKS. This mirrors how PentesterFlow keeps its own
+denylist hard under YOLO — power without friction, never a bypass of authorization.
 
 **Categories** (search `docs/MCP_TOOLS.md` for exact tool names + contracts):
 - **Attack section** (gated, PoC-only): plan/execute, injection-aware **two-signal** differential
@@ -96,6 +108,8 @@ never allowed even in-scope; exploitation is PoC-only. Gate tools: `register_bou
   PoC code-exec), secretsdump (credential-store access), bloodhound (attack-path collection), hashcat/john
   (offline cracking). EXCLUDED by non-negotiables: DoS, destructive/ransomware, data-exfil, social-eng/
   phishing, detection-evasion/AV-EDR-bypass, persistent C2.
+- **General execution**: `shell_exec` (curl-first, runs any Kali tool; HITL + hard catastrophic denylist).
+- **Browser & Burp capture**: `browser_crawl` (gated Playwright JS crawler), `burp_status`/`burp_requests`/`burp_endpoints`/`burp_ingest` (bounded, scrubbed capture store; optional `hydra.burp.start_bridge` localhost listener).
 - **Vuln scanning**: nuclei (+ list), sqlmap, dalfox, gxss.
 - **Fuzzing**: ffuf, dirsearch.   **Fingerprinting & defense**: whatweb, wafw00f, nmap.
 - **Knowledge & reporting**: save/get findings, generate_report, check_tools.

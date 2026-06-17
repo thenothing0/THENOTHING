@@ -512,6 +512,47 @@
       "username"
     ]
   },
+  "browser_crawl": {
+    "params": [
+      "depth",
+      "headless",
+      "max_pages",
+      "url"
+    ],
+    "required": [
+      "url"
+    ]
+  },
+  "burp_endpoints": {
+    "params": [
+      "limit"
+    ],
+    "required": []
+  },
+  "burp_ingest": {
+    "params": [
+      "method",
+      "note",
+      "params",
+      "raw",
+      "status",
+      "url"
+    ],
+    "required": [
+      "method",
+      "url"
+    ]
+  },
+  "burp_requests": {
+    "params": [
+      "limit"
+    ],
+    "required": []
+  },
+  "burp_status": {
+    "params": [],
+    "required": []
+  },
   "campaign_gaps": {
     "params": [
       "now"

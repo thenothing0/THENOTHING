@@ -93,6 +93,14 @@ persistent C2 — none belong in an impact PoC.
 ### General Execution (one shell, runs all of Kali — curl-first)
 - `shell_exec` — Run any shell command (the flexible escape hatch for Kali tools without a dedicated wrapper); curl-first, HITL-approved per call, with a HARD catastrophic-command denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) that fires even in operator/YOLO mode; head/tail truncated. Operator owns scope; the four absolute prohibitions are never permitted.
 
+### Browser & Burp Capture
+Capture bridge (the bounded, control-byte-scrubbed in-process store the optional `hydra.burp.start_bridge` localhost listener also writes to) + a Playwright JS-rendering crawler. Capture store is LRU-bounded (requests/endpoints/params) and scrubs terminal escapes on insert (hardened per PentesterFlow's M9/M11).
+- `burp_status` — Capture-store status: buffered request/endpoint counts + bounds
+- `burp_requests` — List recently-captured requests (newest first)
+- `burp_endpoints` — Distinct captured endpoints + accumulated parameter names
+- `burp_ingest` — Push a captured request (e.g. pasted from Burp) into the store (scrubbed + bounded)
+- `browser_crawl` — Gated (deny-by-default) headless-browser crawl: renders JS to surface SPA endpoints, forms, tokens/JWTs, cookies, storage secrets, WebSocket URLs; needs Playwright, degrades gracefully
+
 ### Recon & Surface Discovery
 - `subfinder_scan` — Fast passive subdomain enumeration
 - `amass_enum` — Deep DNS enumeration and network mapping

@@ -3837,6 +3837,122 @@ def shell_exec(command: str, timeout: int = 300, shell: str = "bash") -> str:
     return json.dumps(result, indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  BROWSER & BURP CAPTURE
+# ══════════════════════════════════════════════════════════════════════════════
+# Burp-bridge capture query/ingest (the in-process CaptureStore the optional
+# `start_bridge` localhost server also writes to) + a Playwright browser crawler.
+# The capture store is bounded + control-byte-scrubbed (see hydra/burp). The
+# browser crawler renders JS to surface SPA endpoints/tokens/cookies — active
+# recon, so it is authorization-gated (deny-by-default).
+
+
+@mcp.tool()
+def burp_status() -> str:
+    """Capture-store status: how many requests/endpoints are buffered + the bounds.
+    Feed traffic in via the Burp companion (start_bridge) or `burp_ingest`."""
+    from hydra.burp import STORE
+    return json.dumps(STORE.stats(), indent=2)
+
+
+@mcp.tool()
+def burp_requests(limit: int = 50) -> str:
+    """List recently-captured requests (newest first) from the capture store.
+
+    Args:
+        limit: max requests to return
+    """
+    from hydra.burp import STORE
+    lim = max(1, min(int(limit) if str(limit).lstrip("-").isdigit() else 50, 500))
+    return json.dumps({"requests": STORE.requests(limit=lim)}, indent=2)
+
+
+@mcp.tool()
+def burp_endpoints(limit: int = 100) -> str:
+    """List distinct captured endpoints with their accumulated parameter names.
+
+    Args:
+        limit: max endpoints to return
+    """
+    from hydra.burp import STORE
+    lim = max(1, min(int(limit) if str(limit).lstrip("-").isdigit() else 100, 1000))
+    return json.dumps({"endpoints": STORE.endpoints(limit=lim)}, indent=2)
+
+
+@mcp.tool()
+def burp_ingest(method: str, url: str, status: int = 0, raw: str = "",
+                note: str = "", params: str = "") -> str:
+    """Push a captured request (e.g. pasted from Burp) into the capture store for
+    later querying/replay. Text is control-byte scrubbed and bounded on insert.
+
+    Args:
+        method: HTTP method
+        url: full request URL
+        status: response status code (optional)
+        raw: full raw request material for evidence/replay (optional)
+        note: free-text note (optional)
+        params: comma-separated parameter names (optional)
+    """
+    from hydra.burp import STORE
+    plist = [p.strip() for p in params.split(",") if p.strip()] if params else []
+    cr = STORE.add(method=method, url=url, status=status, raw=raw, note=note, params=plist)
+    return json.dumps({"stored": cr.to_dict()}, indent=2)
+
+
+@mcp.tool()
+def browser_crawl(url: str, depth: int = 2, headless: bool = True, max_pages: int = 25) -> str:
+    """Gated headless-browser crawl (Playwright): renders JS to surface SPA
+    endpoints, forms, tokens/JWTs, cookies, storage secrets, and WebSocket URLs.
+    Active recon — authorization-gated (deny-by-default). Requires Playwright
+    (`pip install playwright && playwright install chromium`); degrades to a clear
+    message if unavailable.
+
+    Args:
+        url: in-scope target URL to crawl
+        depth: crawl depth (1-5)
+        headless: run the browser headless
+        max_pages: max pages to visit (bounded)
+    """
+    import asyncio as _asyncio
+    err = _validate_url(url)
+    if err:
+        return json.dumps(err, indent=2)
+    decision = _AuthGate().authorize(url, "active_recon")
+    if not decision.authorized:
+        return json.dumps({"authorized": False, "reason": decision.reason,
+                           "note": "Out-of-scope — register the engagement scope first."}, indent=2)
+    depth = max(1, min(int(depth) if str(depth).lstrip("-").isdigit() else 2, 5))
+    max_pages = max(1, min(int(max_pages) if str(max_pages).lstrip("-").isdigit() else 25, 200))
+
+    async def _go():
+        from hydra.browser import BrowserIntelligenceEngine
+        eng = BrowserIntelligenceEngine(headless=headless, max_pages=max_pages)
+        await eng.initialize()
+        try:
+            return await eng.crawl(url, depth=depth)
+        finally:
+            await eng.close()
+
+    try:
+        session = _asyncio.run(_go())
+    except Exception as e:  # Playwright missing / launch failure → clear, non-fatal
+        return json.dumps(_err(f"browser crawl unavailable: {e}. "
+                               "Install: pip install playwright && playwright install chromium"),
+                          indent=2)
+    out = {
+        "authorized": True,
+        "target": session.target,
+        "pages_visited": session.pages_visited,
+        "endpoints": sorted(session.endpoints),
+        "tokens_found": session.tokens_found,
+        "cookies": session.cookies_collected,
+        "screenshots": session.screenshots,
+        "findings": [vars(f) for f in session.findings],
+        "duration_seconds": round(session.duration, 2),
+    }
+    return json.dumps(out, indent=2)
+
+
 @mcp.tool()
 def generate_payloads(vuln_class: str, context: str = "any") -> str:
     """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads
