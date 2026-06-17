@@ -49,10 +49,10 @@ def record_outcome(target: str, vuln_class: str, verdict: str, point: str = "",
                    evidence: Optional[Dict] = None) -> None:
     """Append an attack outcome to the existing attack-memory journal (best-effort, never raises)."""
     try:
-        from hydra.skills.attack_memory import record_event
-        record_event({"kind": "attack_outcome", "target": target, "vuln_class": vuln_class,
-                      "verdict": verdict, "point": point,
-                      "status": (evidence or {}).get("response", {}).get("status")})
+        from hydra.skills.attack_memory import append_event
+        append_event("attack_outcome", {"target": target, "vuln_class": vuln_class,
+                                         "verdict": verdict, "point": point,
+                                         "status": (evidence or {}).get("response", {}).get("status")})
     except Exception:
         pass
 
