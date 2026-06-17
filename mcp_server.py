@@ -3509,7 +3509,7 @@ def attack_execute(target: str, vuln_class: str, context: str = "any",
 def attack_scan(target: str, vuln_class: str, context: str = "any",
                 max_payloads: int = 6, max_points: int = 8, rate_per_sec: float = 1.0,
                 confirm_dom: bool = False, headless: bool = True,
-                baseline_samples: int = 1, fingerprint: str = "") -> str:
+                baseline_samples: int = 1, fingerprint: str = "", extra_headers: str = "") -> str:
     """Authorization-gated DIFFERENTIAL scan (attack section): sends a benign baseline then iterates
     PoC payloads across discovered injection points (query/body/json/header/cookie/path), confirms via
     differential analysis (two-signal — incl. boolean-blind for SQLi), guards against trap/honeypot
@@ -3528,6 +3528,8 @@ def attack_scan(target: str, vuln_class: str, context: str = "any",
         headless: run the confirmation browser headless (default True)
         baseline_samples: sample the baseline N times for stability (clamped 1–3; cuts dynamic-page FPs)
         fingerprint: stack techs (e.g. "wordpress php mysql") → float stack-relevant payloads first
+        extra_headers: JSON object of headers added to EVERY request (e.g. program attribution
+                       '{"X_Bug_Bounty":"your_username"}'); applied via a header-only session
     """
     gate = _AuthGate()
     ex = _HttpExecutor(gate=gate, rate_per_sec=max(0.1, min(rate_per_sec, 5.0)))
@@ -3535,8 +3537,14 @@ def attack_scan(target: str, vuln_class: str, context: str = "any",
     if confirm_dom:
         _browser = _BrowserConfirmer(headless=headless)
         bc = lambda url: _browser.confirm_xss(url)            # noqa: E731 (adapt to (url)->{confirmed})
+    sess = None
+    if extra_headers:
+        try:
+            sess = _SessionContext(name="hdr", headers=json.loads(extra_headers))
+        except (ValueError, json.JSONDecodeError):
+            return json.dumps({"error": "extra_headers must be a JSON object"})
     res = _AttackWorkflow(gate=gate, executor=ex, browser_confirmer=bc).scan(
-        target, vuln_class, context, max_payloads=max(1, min(max_payloads, 8)),
+        target, vuln_class, context, session=sess, max_payloads=max(1, min(max_payloads, 8)),
         max_points=max(1, min(max_points, 12)), record=True, confirm_dom=confirm_dom,
         baseline_samples=max(1, min(baseline_samples, 3)), fingerprint=fingerprint)
     return json.dumps(res, indent=2)
@@ -3615,7 +3623,8 @@ def attack_report(target: str, findings: str, chains: str = "", template: str = 
 def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
                         max_seeds: int = 12, rate_per_sec: float = 1.0,
                         concurrency: int = 1, resume: bool = False,
-                        confirm_dom: bool = False, headless: bool = True) -> str:
+                        confirm_dom: bool = False, headless: bool = True,
+                        extra_headers: str = "") -> str:
     """Authorization-gated scan over a CRAWL's URLs (attack section): de-dupes a list (e.g. from
     `katana_crawl` / `gau_urls`) to distinct injectable endpoints, then differential-scans each. Every
     target is independently gated (deny-by-default); PoC-only; rate-limited.
@@ -3630,6 +3639,7 @@ def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
         resume: skip endpoints already scanned in a prior run (cross-run dedup via ScanState)
         confirm_dom: confirm reflective XSS via a REAL headless browser (needs Playwright)
         headless: run the confirmation browser headless (default True)
+        extra_headers: JSON object of headers added to EVERY request (e.g. '{"X_Bug_Bounty":"user"}')
     """
     url_list = [u.strip() for u in urls.replace(",", " ").split() if u.strip()]
     if not url_list:
@@ -3640,9 +3650,15 @@ def attack_scan_crawled(urls: str, vuln_class: str, context: str = "any",
     if confirm_dom:
         _browser = _BrowserConfirmer(headless=headless)
         bc = lambda url: _browser.confirm_xss(url)            # noqa: E731
+    sess = None
+    if extra_headers:
+        try:
+            sess = _SessionContext(name="hdr", headers=json.loads(extra_headers))
+        except (ValueError, json.JSONDecodeError):
+            return json.dumps({"error": "extra_headers must be a JSON object"})
     res = _AttackWorkflow(gate=gate, executor=ex, browser_confirmer=bc).scan_many(
-        url_list, vuln_class, context, max_seeds=max(1, min(max_seeds, 25)), record=True,
-        concurrency=max(1, min(concurrency, 8)), resume=resume, confirm_dom=confirm_dom)
+        url_list, vuln_class, context, session=sess, max_seeds=max(1, min(max_seeds, 25)),
+        record=True, concurrency=max(1, min(concurrency, 8)), resume=resume, confirm_dom=confirm_dom)
     return json.dumps(res, indent=2)
 
 
