@@ -4102,6 +4102,110 @@ def coverage_next(engagement_id: str, limit: int = 10) -> str:
     return json.dumps({"next": _coverage().next(engagement_id, limit=lim)}, indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  4-TIER CONTINUOUS LEARNING  (architecture spec Part 2)
+# ══════════════════════════════════════════════════════════════════════════════
+# project → personal → cross → org lessons. WRITE is a poison gate (TN-1: steering/
+# exfil text quarantined, never retrieved); RETRIEVAL fences results as untrusted
+# data (TN-2); promotion is approval-gated (org needs >=2 confirmations). SQLite
+# under ./.thenothing/learning/.
+
+_LEARN_STORE = None
+
+
+def _learn():
+    global _LEARN_STORE
+    if _LEARN_STORE is None:
+        from hydra.learning_tiers import LearningTiersStore
+        _LEARN_STORE = LearningTiersStore()
+    return _LEARN_STORE
+
+
+@mcp.tool()
+def learn_record(tier: str, title: str, category: str, lesson: str, triggers: str = "",
+                 technologies: str = "", source_class: str = "manual", host: str = "",
+                 engagement_id: str = "") -> str:
+    """Record a cross-session lesson into a learning tier. The write path is a
+    poison gate: target-derived steering/exfil text is QUARANTINED (stored for
+    audit, never retrieved). Secrets are redacted; the host is stored hashed.
+
+    Args:
+        tier: project | personal | cross | org
+        title: short lesson title
+        category: e.g. recon-gap | auth-bypass | waf
+        lesson: the reusable lesson text
+        triggers/technologies: comma-separated match hints
+        source_class: confirmed_finding|verification|manual|recon|tool_output (sets trust prior)
+        host: target host (stored only as a hash — provenance without leakage)
+        engagement_id: originating engagement
+    """
+    trg = [t.strip() for t in triggers.split(",") if t.strip()]
+    tec = [t.strip() for t in technologies.split(",") if t.strip()]
+    try:
+        return json.dumps(_learn().record(tier, title, category, lesson, triggers=trg,
+                          technologies=tec, source_class=source_class, host=host,
+                          engagement_id=engagement_id), indent=2)
+    except ValueError as e:
+        return json.dumps(_err(str(e)), indent=2)
+
+
+@mcp.tool()
+def learn_search(query: str, tier: str = "all", k: int = 5) -> str:
+    """Recall lessons (fenced as untrusted data) by token-overlap × recency × trust.
+    Only ACTIVE (non-quarantined) lessons are returned.
+
+    Args:
+        query: free-text query
+        tier: project|personal|cross|org|all
+        k: max results
+    """
+    lim = max(1, min(int(k) if str(k).lstrip("-").isdigit() else 5, 25))
+    return json.dumps({"results": _learn().search(query, tier=tier, k=lim)}, indent=2)
+
+
+@mcp.tool()
+def learn_quarantined() -> str:
+    """List quarantined lessons (flagged by the TN-1 poison gate) for human review."""
+    return json.dumps({"quarantined": _learn().quarantined()}, indent=2)
+
+
+@mcp.tool()
+def learn_review(lesson_id: str, action: str) -> str:
+    """Govern a lesson: approve (release a quarantined lesson), reject (drop it),
+    or confirm (raise trust; 2 confirmations enable org-tier promotion).
+
+    Args:
+        lesson_id: the lesson id
+        action: approve | reject | confirm
+    """
+    st = _learn()
+    fn = {"approve": st.approve, "reject": st.reject, "confirm": st.confirm}.get(action)
+    if not fn:
+        return json.dumps(_err(f"unknown action '{action}' (approve|reject|confirm)"), indent=2)
+    return json.dumps(fn(lesson_id), indent=2)
+
+
+@mcp.tool()
+def learn_promote(lesson_id: str, to_tier: str) -> str:
+    """Promote a lesson toward a broader tier (project→personal→cross→org). Must
+    broaden; can't promote a quarantined lesson; org requires >=2 confirmations.
+
+    Args:
+        lesson_id: the lesson id
+        to_tier: personal | cross | org
+    """
+    try:
+        return json.dumps(_learn().promote(lesson_id, to_tier), indent=2)
+    except (ValueError, KeyError) as e:
+        return json.dumps(_err(str(e)), indent=2)
+
+
+@mcp.tool()
+def learn_stats() -> str:
+    """Learning-store stats: active lessons per tier + quarantined count."""
+    return json.dumps(_learn().stats(), indent=2)
+
+
 @mcp.tool()
 def generate_payloads(vuln_class: str, context: str = "any") -> str:
     """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads

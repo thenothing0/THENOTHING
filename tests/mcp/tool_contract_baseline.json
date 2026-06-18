@@ -1081,6 +1081,63 @@
     "params": [],
     "required": []
   },
+  "learn_promote": {
+    "params": [
+      "lesson_id",
+      "to_tier"
+    ],
+    "required": [
+      "lesson_id",
+      "to_tier"
+    ]
+  },
+  "learn_quarantined": {
+    "params": [],
+    "required": []
+  },
+  "learn_record": {
+    "params": [
+      "category",
+      "engagement_id",
+      "host",
+      "lesson",
+      "source_class",
+      "technologies",
+      "tier",
+      "title",
+      "triggers"
+    ],
+    "required": [
+      "category",
+      "lesson",
+      "tier",
+      "title"
+    ]
+  },
+  "learn_review": {
+    "params": [
+      "action",
+      "lesson_id"
+    ],
+    "required": [
+      "action",
+      "lesson_id"
+    ]
+  },
+  "learn_search": {
+    "params": [
+      "k",
+      "query",
+      "tier"
+    ],
+    "required": [
+      "query"
+    ]
+  },
+  "learn_stats": {
+    "params": [],
+    "required": []
+  },
   "ldapsearch_query": {
     "params": [
       "attributes",

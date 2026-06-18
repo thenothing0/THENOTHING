@@ -153,6 +153,8 @@ def build_parser():
                         "openrouter|deepseek|kimi (default: none — coded workflows)")
     p.add_argument("--llm-model", default="", help="LLM model id for --llm-backend")
     p.add_argument("--llm-base-url", default="", help="Override LLM base URL (openai-compat)")
+    p.add_argument("--resume", default="", metavar="SESSION_ID",
+                   help="Resume a saved session and print a recap")
     return p
 
 
@@ -195,6 +197,9 @@ class HydraEngine:
         # None ⇒ the legacy coded workflows run unchanged.
         self._llm = None
         self._llm_cfg = {"backend": llm_backend, "model": llm_model, "base_url": llm_base_url}
+        # Durable session persistence (resume/compaction/snapshots). Lazy.
+        self._session_store = None
+        self._session_memory = None
         self.findings: List[Dict[str, Any]] = []
         self.recon_data: Dict[str, Any] = {}
         self._start_time = 0.0
@@ -245,6 +250,33 @@ class HydraEngine:
                 self._llm_cfg["backend"], self._llm_cfg.get("model") or "default",
                 base_url=self._llm_cfg.get("base_url", ""))
         return self._llm
+
+    def session(self, session_id: str = ""):
+        """Lazily get/create the durable session store for this engagement."""
+        if self._session_store is None and session_id:
+            from hydra.session import SessionStore
+            self._session_store = SessionStore(session_id)
+        return self._session_store
+
+    def resume(self, session_id: str) -> str:
+        """Load a saved session's persistent memory and return a recap string.
+        Empty string if there is nothing to resume."""
+        from hydra.session import format_recap
+        store = self.session(session_id)
+        if not store or not store.exists():
+            return ""
+        loaded = store.load()
+        self._session_memory = loaded.get("memory")
+        if loaded.get("target"):
+            self.target = loaded["target"]
+        return format_recap(self._session_memory)
+
+    def compact_session(self, summary: str) -> int:
+        """Fold a compaction `summary` into persistent memory (deduped, capped,
+        redacted) and return the resulting item count. Drives auto-compaction."""
+        from hydra.session import merge_memory
+        self._session_memory = merge_memory(self._session_memory, summary)
+        return self._session_memory.item_count()
 
     def reason_over_tool_output(self, instruction: str, tool_output: str,
                                 source: str = "tool-output") -> str:
@@ -1536,6 +1568,13 @@ async def async_main():
         llm_base_url=getattr(args, "llm_base_url", "") or "",
     )
     await engine.init()
+    # Resume a prior session: load persistent memory + show a recap before running.
+    if getattr(args, "resume", ""):
+        recap = engine.resume(args.resume)
+        if recap:
+            rprint(f"[bold cyan]Resuming session {args.resume}[/bold cyan]\n{recap}")
+        else:
+            rprint(f"[yellow]No saved session '{args.resume}' to resume.[/yellow]")
     summary = await engine.run()
     print_summary(summary)
 

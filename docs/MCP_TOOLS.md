@@ -93,6 +93,15 @@ persistent C2 — none belong in an impact PoC.
 ### General Execution (one shell, runs all of Kali — curl-first)
 - `shell_exec` — Run any shell command (the flexible escape hatch for Kali tools without a dedicated wrapper); curl-first, HITL-approved per call, with a HARD catastrophic-command denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) that fires even in operator/YOLO mode; head/tail truncated. Operator owns scope; the four absolute prohibitions are never permitted.
 
+### 4-Tier Continuous Learning (spec Part 2)
+Cross-session lessons across project → personal → cross → org tiers. WRITE is a poison gate (TN-1: steering/exfil text quarantined, never retrieved); RETRIEVAL fences results as untrusted data (TN-2); promotion is approval-gated (org needs ≥2 confirmations); host stored hashed (provenance without leakage). SQLite under `./.thenothing/learning/`.
+- `learn_record` — Record a lesson into a tier (poison-gated, secret-redacted, host hashed)
+- `learn_search` — Recall lessons (fenced as untrusted data) by token-overlap × recency × trust
+- `learn_quarantined` — List poison-gate-flagged lessons for human review
+- `learn_review` — Govern a lesson: approve | reject | confirm (confirm raises trust)
+- `learn_promote` — Promote a lesson to a broader tier (must broaden; org needs ≥2 confirmations)
+- `learn_stats` — Active lessons per tier + quarantined count
+
 ### Findings Lifecycle & Coverage (spec Parts 4 & 5)
 Production findings state machine (draft→validated→confirmed→reported→remediated) with **evidence-gated confirm** (no confirm without request+response evidence), CVSS→severity, CWE/OWASP, sha256 evidence, root-cause dedup; plus a coverage matrix + scores + the `/next` engine. SQLite under `./findings/`.
 - `finding_create` — Create a DRAFT finding (idempotent by vuln_class + normalized endpoint)
