@@ -198,8 +198,16 @@ class HydraEngine:
         self._llm = None
         self._llm_cfg = {"backend": llm_backend, "model": llm_model, "base_url": llm_base_url}
         # Durable session persistence (resume/compaction/snapshots). Lazy.
+        self.session_id = ""
         self._session_store = None
         self._session_memory = None
+        # Integration layer (built in init()): enforcement gateway + orchestrator
+        # + skill registry + external-MCP registry. None until init().
+        self._orchestrator = None
+        self._runtime_ctx = None
+        self._engagement_id = ""
+        self._skill_registry = None
+        self._mcp_registry = None
         self.findings: List[Dict[str, Any]] = []
         self.recon_data: Dict[str, Any] = {}
         self._start_time = 0.0
@@ -320,6 +328,10 @@ class HydraEngine:
         if self._artifact_store:
             self.tool_server.set_artifact_store(self._artifact_store)
         self.mcp = MCPClient(tool_server=self.tool_server)
+
+        # Integration layer: build the enforcement gateway + orchestrator, load
+        # skills into the registry, and discover external MCP servers at startup.
+        self._build_integration()
 
         # Scope enforcement
         if self.scope_url:
@@ -1388,13 +1400,132 @@ class HydraEngine:
     #  Tool execution helpers
     # ═══════════════════════════════════════════
 
+    # ── Integration layer (enforcement + automation) ───────────────────────────
+
+    def _build_integration(self) -> None:
+        """Construct the enforcement gateway + orchestrator, auto-create an
+        engagement for this target, load skills into the registry, and discover
+        external MCP servers. Best-effort: a failure here must not break a run."""
+        try:
+            from hydra.engagement import EngagementStore
+            from hydra.findings import FindingsStore
+            from hydra.coverage import CoverageStore
+            from hydra.learning_tiers import LearningTiersStore
+            from hydra.hitl import ApprovalPolicy
+            from hydra.workflow import PentestWorkflow
+            from hydra.orchestration import RuntimeContext, RuntimeOrchestrator, ToolGateway
+
+            est = EngagementStore()
+            self._engagement_id = est.create("self", f"auto:{self.target}",
+                                             scope=[self.target], owner="operator")
+            gateway = ToolGateway(engagement_store=est,
+                                  approval_policy=ApprovalPolicy(operator_mode=True),
+                                  enforce_rbac=True, enforce_scope=False)
+            session = self.session(self.session_id or f"auto-{self._safe_dir(self.target)}")
+            self._orchestrator = RuntimeOrchestrator(
+                gateway=gateway, findings=FindingsStore(), coverage=CoverageStore(),
+                learning=LearningTiersStore(), session=session,
+                workflow=PentestWorkflow(), engagement_id=self._engagement_id,
+                target=self.target)
+            self._runtime_ctx = RuntimeContext(
+                engagement_id=self._engagement_id, target=self.target,
+                username="operator", role="lead",
+                session_id=self.session_id, operator_mode=True)
+            self._load_skills_into_registry()
+            self._discover_mcp_servers()
+        except Exception as e:           # never let integration wiring break a run
+            logger.debug(f"integration layer unavailable: {e}")
+            self._orchestrator = None
+            self._runtime_ctx = None
+
+    def _load_skills_into_registry(self) -> None:
+        """Phase 7: load the real skills/<cat>/SKILL.yaml manifests into the signed
+        registry at startup so skills influence planning instead of sitting idle."""
+        try:
+            from hydra.skill_registry import SignedSkillRegistry, load_manifest
+            reg = SignedSkillRegistry()
+            loaded = 0
+            for path in Path("skills").glob("*/SKILL.yaml"):
+                try:
+                    reg.add(load_manifest(str(path), source="builtin"))
+                    loaded += 1
+                except Exception:
+                    continue
+            self._skill_registry = reg
+            logger.info(f"  Loaded {loaded} skills into the signed registry")
+        except Exception as e:
+            logger.debug(f"skill registry load failed: {e}")
+            self._skill_registry = None
+
+    def _discover_mcp_servers(self) -> None:
+        """Phase 8: at startup, discover + validate + trust-score + load the tools
+        of every declared external MCP server, namespaced + isolated. Uses the live
+        MCP client as the tool lister; core tool names are passed so externals can't
+        shadow them."""
+        try:
+            from hydra.mcp_registry import MCPServerRegistry
+            self._mcp_registry = MCPServerRegistry()
+            servers = self._mcp_registry.servers()
+            if not servers:
+                return
+            core = set(getattr(self.tool_server, "tool_names", lambda: [])() or [])
+
+            def lister(server_name: str):
+                # Best-effort: ask the live client for the server's advertised tools.
+                fn = getattr(self.mcp, "list_server_tools", None)
+                return fn(server_name) if callable(fn) else []
+
+            total = 0
+            for s in servers:
+                try:
+                    res = self._mcp_registry.discover(s["name"], lister, core_names=core)
+                    total += len(res.get("registered", []))
+                except Exception:
+                    continue
+            logger.info(f"  Discovered {total} external MCP tool(s) from {len(servers)} server(s)")
+        except Exception as e:
+            logger.debug(f"mcp discovery failed: {e}")
+            self._mcp_registry = None
+
+    def recommend_skill(self, objective: str) -> Optional[str]:
+        """Phase 7: skills influence planning — pick the best-matching loaded skill
+        for an objective by trigger/id token overlap. Returns a skill id or None."""
+        import re
+        reg = getattr(self, "_skill_registry", None)
+        if not reg:
+            return None
+        toks = set(re.findall(r"[a-z0-9]{3,}", objective.lower()))
+        best, best_score = None, 0
+        for sid in reg.names():
+            m = reg.get(sid)
+            hay = set(re.findall(r"[a-z0-9]{3,}",
+                                 f"{sid} {m.category} {' '.join(m.triggers)}".lower()))
+            score = len(toks & hay)
+            if score > best_score:
+                best, best_score = sid, score
+        return best
+
     async def _run_tool(self, tool_name: str, params: Dict[str, Any],
                         stdin: Optional[str] = None) -> Dict[str, Any]:
-        """Execute a tool via the MCP client, log result, save artifact."""
+        """Execute a tool via the MCP client, THROUGH the integration layer:
+        gateway enforcement → execute → coverage/findings/learning/session."""
         assert self.mcp is not None
         if stdin:
             params["_stdin"] = stdin
-        result = await self.mcp.execute_tool(tool_name, params, timeout=self.timeout)
+
+        async def _exec() -> Dict[str, Any]:
+            return await self.mcp.execute_tool(tool_name, params, timeout=self.timeout)
+
+        orch = getattr(self, "_orchestrator", None)
+        if orch is not None and self._runtime_ctx is not None:
+            self._runtime_ctx.target = self.target
+            result = await orch.execute(tool_name, params, self._runtime_ctx, _exec)
+        else:
+            result = await _exec()
+
+        if result.get("blocked"):
+            logger.warning(f"  ⛔ {tool_name} BLOCKED by gateway: {result.get('reason')}")
+            return result
         success = result.get("success", False)
         tool_used = result.get("tool_used", tool_name)
         elapsed = result.get("elapsed", 0)
@@ -1403,7 +1534,6 @@ class HydraEngine:
         else:
             err = result.get("error", "unknown")
             logger.warning(f"  ⚠️  {tool_used} failed: {err}")
-        # Save raw output
         self._save_text(f"logs/{tool_name}_raw.txt", result.get("output", ""))
         return result
 
@@ -1567,6 +1697,10 @@ async def async_main():
         llm_model=getattr(args, "llm_model", "") or "",
         llm_base_url=getattr(args, "llm_base_url", "") or "",
     )
+    # Bind the session id BEFORE init() so the orchestrator persists to the same
+    # session that --resume restores.
+    if getattr(args, "resume", ""):
+        engine.session_id = args.resume
     await engine.init()
     # Resume a prior session: load persistent memory + show a recap before running.
     if getattr(args, "resume", ""):
