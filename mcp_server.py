@@ -3900,6 +3900,97 @@ def burp_ingest(method: str, url: str, status: int = 0, raw: str = "",
 
 
 @mcp.tool()
+def burp_ingest_sitemap(items_json: str) -> str:
+    """Site-map import: bulk-ingest a JSON array of request records
+    [{method,url,host,status,raw,note,params[]}] (scrubbed + bounded per item).
+
+    Args:
+        items_json: JSON array of request records
+    """
+    from hydra.burp import STORE
+    try:
+        items = json.loads(items_json)
+        if not isinstance(items, list):
+            raise ValueError("expected a JSON array")
+    except (json.JSONDecodeError, ValueError) as e:
+        return json.dumps(_err(f"invalid items_json: {e}"), indent=2)
+    return json.dumps(STORE.add_bulk(items), indent=2)
+
+
+@mcp.tool()
+def burp_issue(action: str = "add", name: str = "", url: str = "", severity: str = "info",
+               detail: str = "", request: str = "", response: str = "", confidence: str = "",
+               issue_id: str = "", engagement_id: str = "", limit: int = 50) -> str:
+    """Burp Scanner issue integration. `add` records a scrubbed issue; `list` lists
+    issue metadata; `to_finding` promotes an issue into a DRAFT finding (round-trip)
+    carrying its request/response as evidence.
+
+    Args:
+        action: add | list | to_finding
+        name/url/severity/detail/request/response/confidence: issue fields (for add)
+        issue_id: target issue (for to_finding)
+        engagement_id: engagement for the created draft finding (for to_finding)
+        limit: max issues (for list)
+    """
+    from hydra.burp import STORE
+    if action == "add":
+        if not name or not url:
+            return json.dumps(_err("add requires name and url"), indent=2)
+        return json.dumps({"issue": {k: v for k, v in
+                          STORE.add_issue(name, url, severity, detail=detail, request=request,
+                                          response=response, confidence=confidence).items()
+                          if k not in ("request", "response")}}, indent=2)
+    if action == "list":
+        lim = max(1, min(int(limit) if str(limit).lstrip("-").isdigit() else 50, 500))
+        return json.dumps({"issues": STORE.issues(limit=lim)}, indent=2)
+    if action == "to_finding":
+        issue = STORE.get_issue(issue_id)
+        if not issue:
+            return json.dumps(_err(f"unknown issue '{issue_id}'"), indent=2)
+        if not engagement_id:
+            return json.dumps(_err("to_finding requires engagement_id"), indent=2)
+        fs = _findings()
+        fid = fs.create(engagement_id, issue["name"], vuln_class=issue["name"].lower().split()[0],
+                        severity=issue["severity"], endpoint=issue["url"], impact=issue["detail"])
+        if issue.get("request"):
+            fs.add_evidence(fid, "request", issue["request"])
+        if issue.get("response"):
+            fs.add_evidence(fid, "response", issue["response"])
+        return json.dumps({"finding_id": fid, "state": "draft",
+                           "evidence": ["request", "response"]}, indent=2)
+    return json.dumps(_err(f"unknown action '{action}' (add|list|to_finding)"), indent=2)
+
+
+@mcp.tool()
+def burp_repeater(method: str, url: str) -> str:
+    """Repeater: fetch the stored RAW request material for a captured (method, url)
+    so it can be replayed/edited. Returns the raw text or an error if not captured.
+
+    Args:
+        method: HTTP method
+        url: full request URL
+    """
+    from hydra.burp import STORE
+    raw = STORE.get_raw(method, url)
+    if raw is None:
+        return json.dumps(_err(f"no captured raw request for {method} {url}"), indent=2)
+    return json.dumps({"method": method.upper(), "url": url, "raw": raw}, indent=2)
+
+
+@mcp.tool()
+def burp_timeline(limit: int = 100) -> str:
+    """Session recording: the ordered timeline of captured requests + scanner issues
+    (a replayable record of the engagement's traffic).
+
+    Args:
+        limit: max timeline entries (most recent)
+    """
+    from hydra.burp import STORE
+    lim = max(1, min(int(limit) if str(limit).lstrip("-").isdigit() else 100, 1000))
+    return json.dumps({"timeline": STORE.timeline(limit=lim)}, indent=2)
+
+
+@mcp.tool()
 def browser_crawl(url: str, depth: int = 2, headless: bool = True, max_pages: int = 25) -> str:
     """Gated headless-browser crawl (Playwright): renders JS to surface SPA
     endpoints, forms, tokens/JWTs, cookies, storage secrets, and WebSocket URLs.

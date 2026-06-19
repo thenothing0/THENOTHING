@@ -127,6 +127,10 @@ Capture bridge (the bounded, control-byte-scrubbed in-process store the optional
 - `burp_requests` — List recently-captured requests (newest first)
 - `burp_endpoints` — Distinct captured endpoints + accumulated parameter names
 - `burp_ingest` — Push a captured request (e.g. pasted from Burp) into the store (scrubbed + bounded)
+- `burp_ingest_sitemap` — Site-map import: bulk-ingest a JSON array of request records (scrubbed + bounded)
+- `burp_issue` — Burp Scanner integration: `add` an issue, `list` issues, or `to_finding` (promote an issue into a DRAFT finding carrying its request/response as evidence — the findings round-trip)
+- `burp_repeater` — Fetch a captured request's RAW material for replay/editing
+- `burp_timeline` — Session recording: ordered timeline of captured requests + scanner issues
 - `browser_crawl` — Gated (deny-by-default) headless-browser crawl: renders JS to surface SPA endpoints, forms, tokens/JWTs, cookies, storage secrets, WebSocket URLs; needs Playwright, degrades gracefully
 
 ### Recon & Surface Discovery

@@ -543,6 +543,40 @@
       "url"
     ]
   },
+  "burp_ingest_sitemap": {
+    "params": [
+      "items_json"
+    ],
+    "required": [
+      "items_json"
+    ]
+  },
+  "burp_issue": {
+    "params": [
+      "action",
+      "confidence",
+      "detail",
+      "engagement_id",
+      "issue_id",
+      "limit",
+      "name",
+      "request",
+      "response",
+      "severity",
+      "url"
+    ],
+    "required": []
+  },
+  "burp_repeater": {
+    "params": [
+      "method",
+      "url"
+    ],
+    "required": [
+      "method",
+      "url"
+    ]
+  },
   "burp_requests": {
     "params": [
       "limit"
@@ -551,6 +585,12 @@
   },
   "burp_status": {
     "params": [],
+    "required": []
+  },
+  "burp_timeline": {
+    "params": [
+      "limit"
+    ],
     "required": []
   },
   "campaign_gaps": {
@@ -1081,6 +1121,21 @@
     "params": [],
     "required": []
   },
+  "ldapsearch_query": {
+    "params": [
+      "attributes",
+      "base_dn",
+      "ldap_filter",
+      "password",
+      "target",
+      "timeout",
+      "username"
+    ],
+    "required": [
+      "base_dn",
+      "target"
+    ]
+  },
   "learn_promote": {
     "params": [
       "lesson_id",
@@ -1137,21 +1192,6 @@
   "learn_stats": {
     "params": [],
     "required": []
-  },
-  "ldapsearch_query": {
-    "params": [
-      "attributes",
-      "base_dn",
-      "ldap_filter",
-      "password",
-      "target",
-      "timeout",
-      "username"
-    ],
-    "required": [
-      "base_dn",
-      "target"
-    ]
   },
   "list_reports": {
     "params": [

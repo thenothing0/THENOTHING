@@ -66,6 +66,8 @@ class CaptureStore:
                  max_params: int = DEFAULT_MAX_PARAMS_PER_ENDPOINT):
         self._requests: "OrderedDict[str, CapturedRequest]" = OrderedDict()
         self._endpoints: "OrderedDict[str, set]" = OrderedDict()
+        self._issues: "OrderedDict[str, Dict]" = OrderedDict()   # scanner issues
+        self._timeline: List[Dict] = []                          # session recording
         self._max_requests = max_requests
         self._max_endpoints = max_endpoints
         self._max_params = max_params
@@ -92,7 +94,61 @@ class CaptureStore:
                 pset.add(p)
         while len(self._endpoints) > self._max_endpoints:
             self._endpoints.popitem(last=False)
+        # Append to the bounded session-recording timeline.
+        self._record("request", f"{cr.method} {cr.url}")
         return cr
+
+    def add_bulk(self, items: List[Dict]) -> Dict:
+        """Site-map import: ingest many request records at once (bounded per-item)."""
+        n = 0
+        for it in items[:self._max_requests]:
+            if not isinstance(it, dict) or not it.get("url"):
+                continue
+            self.add(it.get("method", "GET"), it["url"], host=it.get("host", ""),
+                     status=it.get("status", 0), raw=it.get("raw", ""),
+                     note=it.get("note", ""), params=it.get("params") or [])
+            n += 1
+        return {"imported": n, "stats": self.stats()}
+
+    def add_issue(self, name: str, url: str, severity: str = "info", *, detail: str = "",
+                  request: str = "", response: str = "", confidence: str = "") -> Dict:
+        """Record a scanner issue (Burp Scanner). Bounded + scrubbed. Becomes a
+        DRAFT finding via the burp_issue MCP tool's findings round-trip."""
+        iid = f"I-{secrets.token_hex(6)}"
+        issue = {"id": iid, "name": scrub(name)[:200], "url": scrub(url),
+                 "severity": (severity or "info").lower(), "confidence": scrub(confidence)[:40],
+                 "detail": scrub(detail)[:8000],
+                 "request": scrub(request[:MAX_BODY_BYTES]),
+                 "response": scrub(response[:MAX_BODY_BYTES]), "ts": time.time()}
+        self._issues[iid] = issue
+        self._issues.move_to_end(iid)
+        while len(self._issues) > self._max_requests:
+            self._issues.popitem(last=False)
+        self._record("issue", f"{issue['severity']}: {issue['name']}")
+        return issue
+
+    def issues(self, limit: int = 50) -> List[Dict]:
+        items = list(self._issues.values())[-limit:]
+        # Return metadata (omit big request/response blobs; fetch raw via get_issue).
+        return [{k: v for k, v in i.items() if k not in ("request", "response")}
+                for i in reversed(items)]
+
+    def get_issue(self, issue_id: str) -> Optional[Dict]:
+        return self._issues.get(issue_id)
+
+    def get_raw(self, method: str, url: str) -> Optional[str]:
+        """Repeater: the stored raw request material for replay/evidence."""
+        cr = self._requests.get(f"{scrub(method).upper()} {scrub(url)}")
+        return cr.raw if cr else None
+
+    def _record(self, kind: str, summary: str) -> None:
+        self._timeline.append({"kind": kind, "summary": summary[:200], "ts": time.time()})
+        # Bound the recording so a long capture can't grow without limit.
+        if len(self._timeline) > self._max_requests:
+            self._timeline = self._timeline[-self._max_requests:]
+
+    def timeline(self, limit: int = 100) -> List[Dict]:
+        return self._timeline[-limit:]
 
     def requests(self, limit: int = 50) -> List[Dict]:
         items = list(self._requests.values())[-limit:]
@@ -106,6 +162,7 @@ class CaptureStore:
 
     def stats(self) -> Dict:
         return {"requests": len(self._requests), "endpoints": len(self._endpoints),
+                "issues": len(self._issues), "timeline": len(self._timeline),
                 "caps": {"max_requests": self._max_requests,
                          "max_endpoints": self._max_endpoints,
                          "max_params_per_endpoint": self._max_params}}
@@ -113,6 +170,8 @@ class CaptureStore:
     def clear(self) -> None:
         self._requests.clear()
         self._endpoints.clear()
+        self._issues.clear()
+        self._timeline.clear()
 
 
 # A process-wide store the MCP tools read and the bridge writes.
