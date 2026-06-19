@@ -1595,17 +1595,57 @@
     ],
     "required": []
   },
+  "skill_list": {
+    "params": [],
+    "required": []
+  },
   "skill_marketplace": {
     "params": [
       "now"
     ],
     "required": []
   },
+  "skill_parse": {
+    "params": [
+      "fmt",
+      "source",
+      "text"
+    ],
+    "required": [
+      "text"
+    ]
+  },
+  "skill_register": {
+    "params": [
+      "fmt",
+      "source",
+      "text"
+    ],
+    "required": [
+      "text"
+    ]
+  },
+  "skill_resolve": {
+    "params": [
+      "skill_id"
+    ],
+    "required": [
+      "skill_id"
+    ]
+  },
   "skill_summary": {
     "params": [
       "now"
     ],
     "required": []
+  },
+  "skill_verify": {
+    "params": [
+      "skill_id"
+    ],
+    "required": [
+      "skill_id"
+    ]
   },
   "smbmap_scan": {
     "params": [

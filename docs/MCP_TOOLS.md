@@ -93,6 +93,14 @@ persistent C2 — none belong in an impact PoC.
 ### General Execution (one shell, runs all of Kali — curl-first)
 - `shell_exec` — Run any shell command (the flexible escape hatch for Kali tools without a dedicated wrapper); curl-first, HITL-approved per call, with a HARD catastrophic-command denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) that fires even in operator/YOLO mode; head/tail truncated. Operator owns scope; the four absolute prohibitions are never permitted.
 
+### Signed Skills 2.0 (spec Part 3)
+Multi-format skill manifests (Markdown frontmatter / YAML / JSON) normalized to one canonical form, with SemVer dependencies + acyclic resolution, discovery-order overrides (shadow WARNING when a local skill shadows a SIGNED builtin — PF-3 mitigation), detached HMAC signatures, and trust-gated install (signed-trusted > signed-unknown > unsigned-builtin > unsigned-local > invalid). Keyring via env `HYDRA_SKILL_KEYS`. Skills are DATA — never executed.
+- `skill_parse` — Parse a manifest (md|yaml|json) into canonical form (no registration)
+- `skill_register` — Parse + register with override precedence + shadow warning
+- `skill_verify` — Report a skill's trust level (verifies the detached signature)
+- `skill_resolve` — SemVer dependency closure (deps first); errors on missing/mismatch/cycle
+- `skill_list` — List registered skills with source + trust level
+
 ### 4-Tier Continuous Learning (spec Part 2)
 Cross-session lessons across project → personal → cross → org tiers. WRITE is a poison gate (TN-1: steering/exfil text quarantined, never retrieved); RETRIEVAL fences results as untrusted data (TN-2); promotion is approval-gated (org needs ≥2 confirmations); host stored hashed (provenance without leakage). SQLite under `./.thenothing/learning/`.
 - `learn_record` — Record a lesson into a tier (poison-gated, secret-redacted, host hashed)

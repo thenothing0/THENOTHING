@@ -4206,6 +4206,103 @@ def learn_stats() -> str:
     return json.dumps(_learn().stats(), indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  SIGNED SKILLS 2.0  (architecture spec Part 3)
+# ══════════════════════════════════════════════════════════════════════════════
+# Multi-format (MD/YAML/JSON) skill manifests with SemVer dependencies, discovery-
+# order overrides (+ shadow warning when a local skill shadows a SIGNED builtin),
+# detached HMAC signatures, and trust-gated install. Skills are DATA — never
+# executed here. A process-wide registry the tools share.
+
+_SKILL_REGISTRY = None
+
+
+def _skillreg():
+    global _SKILL_REGISTRY
+    if _SKILL_REGISTRY is None:
+        from hydra.skill_registry import SignedSkillRegistry
+        _SKILL_REGISTRY = SignedSkillRegistry()
+    return _SKILL_REGISTRY
+
+
+@mcp.tool()
+def skill_parse(text: str, fmt: str = "md", source: str = "inline") -> str:
+    """Parse a skill manifest (Markdown frontmatter / YAML / JSON) into the canonical
+    form (id, name, version, allowed_tools, requires, triggers) without registering it.
+
+    Args:
+        text: the skill source
+        fmt: md | yaml | json
+        source: builtin | marketplace | personal | project | extra | inline
+    """
+    from hydra.skill_registry import parse_manifest
+    try:
+        m = parse_manifest(text, fmt, source=source)
+    except Exception as e:
+        return json.dumps(_err(f"parse failed: {e}"), indent=2)
+    return json.dumps(m.to_dict(), indent=2)
+
+
+@mcp.tool()
+def skill_register(text: str, fmt: str = "md", source: str = "inline") -> str:
+    """Parse + register a skill manifest in the signed registry. Higher-precedence
+    sources override lower ones on id collision; a local skill shadowing a SIGNED
+    builtin emits a warning. Returns the action + any warnings.
+
+    Args:
+        text: the skill source
+        fmt: md | yaml | json
+        source: builtin | marketplace | personal | project | extra | inline
+    """
+    from hydra.skill_registry import parse_manifest
+    reg = _skillreg()
+    try:
+        m = parse_manifest(text, fmt, source=source)
+    except Exception as e:
+        return json.dumps(_err(f"parse failed: {e}"), indent=2)
+    res = reg.add(m)
+    res["warnings"] = list(reg.warnings)
+    return json.dumps(res, indent=2)
+
+
+@mcp.tool()
+def skill_verify(skill_id: str) -> str:
+    """Report a registered skill's trust level: signed-trusted | signed-unknown |
+    unsigned-builtin | unsigned-local | invalid. Keyring from env HYDRA_SKILL_KEYS.
+
+    Args:
+        skill_id: a registered skill id
+    """
+    reg = _skillreg()
+    if not reg.get(skill_id):
+        return json.dumps(_err(f"unknown skill '{skill_id}'"), indent=2)
+    return json.dumps({"id": skill_id, "trust": reg.trust_of(skill_id)}, indent=2)
+
+
+@mcp.tool()
+def skill_resolve(skill_id: str) -> str:
+    """Resolve a skill's SemVer dependency closure (deps first). Errors on a missing
+    dependency, version mismatch, or a dependency cycle.
+
+    Args:
+        skill_id: a registered skill id
+    """
+    from hydra.skill_registry import DependencyError
+    try:
+        return json.dumps({"order": _skillreg().resolve(skill_id)}, indent=2)
+    except DependencyError as e:
+        return json.dumps(_err(str(e)), indent=2)
+
+
+@mcp.tool()
+def skill_list() -> str:
+    """List registered skills with their source + trust level."""
+    reg = _skillreg()
+    out = [{"id": sid, "source": reg.get(sid).source, "trust": reg.trust_of(sid)}
+           for sid in reg.names()]
+    return json.dumps({"skills": out, "warnings": list(reg.warnings)}, indent=2)
+
+
 @mcp.tool()
 def generate_payloads(vuln_class: str, context: str = "any") -> str:
     """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads
