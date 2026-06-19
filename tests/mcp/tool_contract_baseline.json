@@ -1026,6 +1026,16 @@
       "hash_mode"
     ]
   },
+  "hitl_classify": {
+    "params": [
+      "command",
+      "operator_mode",
+      "tool"
+    ],
+    "required": [
+      "tool"
+    ]
+  },
   "httpx_probe": {
     "params": [
       "follow_redirects",
@@ -1907,6 +1917,21 @@
       "workflow_id"
     ],
     "required": []
+  },
+  "workflow_pentest": {
+    "params": [
+      "action",
+      "approve",
+      "checkpoint_json",
+      "engagement_id",
+      "note",
+      "run_id",
+      "target",
+      "to_state"
+    ],
+    "required": [
+      "action"
+    ]
   },
   "workflow_status": {
     "params": [

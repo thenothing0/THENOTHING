@@ -4394,6 +4394,84 @@ def skill_list() -> str:
     return json.dumps({"skills": out, "warnings": list(reg.warnings)}, indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  HITL RISK TIERS & PENTEST WORKFLOW ENGINE  (architecture spec Parts 8 & 9)
+# ══════════════════════════════════════════════════════════════════════════════
+# Risk classification + tiered approval policy (advisory; the real modal is the
+# harness's), and the pentest lifecycle state machine (scope→…→reporting) with
+# approval-gated transitions, checkpoints, and halt/resume recovery.
+
+_WORKFLOW = None
+
+
+def _workflow():
+    global _WORKFLOW
+    if _WORKFLOW is None:
+        from hydra.workflow import PentestWorkflow
+        _WORKFLOW = PentestWorkflow()
+    return _WORKFLOW
+
+
+@mcp.tool()
+def hitl_classify(tool: str, command: str = "", operator_mode: bool = False) -> str:
+    """Classify a tool call's HITL risk tier and the approval policy that applies:
+    low (auto) | medium (allow-once/session/deny) | high (once/workflow/deny) |
+    critical (once/deny/emergency-stop) | prohibited (HARD DENY). Operator mode
+    auto-approves friction up to critical; prohibitions + scope gate stay hard.
+
+    Args:
+        tool: the tool name to classify
+        command: the shell command (for shell_exec risk heuristics)
+        operator_mode: simulate operator/YOLO friction-skip
+    """
+    from hydra.hitl import ApprovalPolicy
+    args = {"command": command} if command else {}
+    return json.dumps(ApprovalPolicy(operator_mode=operator_mode).evaluate(tool, args), indent=2)
+
+
+@mcp.tool()
+def workflow_pentest(action: str, run_id: str = "", engagement_id: str = "", target: str = "",
+                     to_state: str = "", approve: bool = True, note: str = "",
+                     checkpoint_json: str = "") -> str:
+    """Drive the pentest lifecycle state machine (scope→recon→enumeration→validation
+    →exploitation→evidence→coverage_review→reporting→done). Transitions into
+    exploitation/evidence require approval; halt/resume recover from a checkpoint.
+
+    Args:
+        action: create | status | advance | checkpoint | halt | resume | list
+        run_id: workflow run id (for all but create/list)
+        engagement_id, target: for create
+        to_state: target state (for advance)
+        approve: approval decision for high-consequence transitions (advance)
+        note: free-text note
+        checkpoint_json: JSON snapshot (for checkpoint)
+    """
+    from hydra.workflow import WorkflowError
+    w = _workflow()
+    try:
+        if action == "create":
+            if not engagement_id or not target:
+                return json.dumps(_err("create requires engagement_id and target"), indent=2)
+            return json.dumps({"run_id": w.create(engagement_id, target), "state": "scope"}, indent=2)
+        if action == "status":
+            return json.dumps(w.get(run_id) or _err(f"unknown run {run_id}"), indent=2)
+        if action == "list":
+            return json.dumps({"runs": w.list_runs()}, indent=2)
+        if action == "advance":
+            return json.dumps(w.advance(run_id, to_state, approver=lambda _s: bool(approve),
+                                        note=note), indent=2)
+        if action == "checkpoint":
+            data = json.loads(checkpoint_json) if checkpoint_json else {}
+            return json.dumps(w.checkpoint(run_id, data), indent=2)
+        if action == "halt":
+            return json.dumps(w.halt(run_id, reason=note or "emergency-stop"), indent=2)
+        if action == "resume":
+            return json.dumps(w.resume(run_id), indent=2)
+        return json.dumps(_err(f"unknown action '{action}'"), indent=2)
+    except (WorkflowError, json.JSONDecodeError) as e:
+        return json.dumps(_err(str(e)), indent=2)
+
+
 @mcp.tool()
 def generate_payloads(vuln_class: str, context: str = "any") -> str:
     """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads

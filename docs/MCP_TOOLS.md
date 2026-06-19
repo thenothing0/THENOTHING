@@ -93,6 +93,11 @@ persistent C2 — none belong in an impact PoC.
 ### General Execution (one shell, runs all of Kali — curl-first)
 - `shell_exec` — Run any shell command (the flexible escape hatch for Kali tools without a dedicated wrapper); curl-first, HITL-approved per call, with a HARD catastrophic-command denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) that fires even in operator/YOLO mode; head/tail truncated. Operator owns scope; the four absolute prohibitions are never permitted.
 
+### HITL Risk Tiers & Pentest Workflow Engine (spec Parts 8 & 9)
+Risk-tiered approval policy (advisory; the real modal is the harness's) + the pentest lifecycle state machine. Risk tiers: low (auto) / medium (allow-once|session|deny) / high (once|workflow|deny) / critical (once|deny|emergency-stop) / prohibited (HARD DENY). Operator mode auto-approves friction up to critical; prohibitions + scope gate stay hard. Workflow: scope→recon→enumeration→validation→exploitation→evidence→coverage_review→reporting→done, with approval-gated high-consequence transitions, durable checkpoints, and halt/resume recovery.
+- `hitl_classify` — Classify a tool call's risk tier + the approval policy that applies
+- `workflow_pentest` — Drive the lifecycle state machine: create|status|advance|checkpoint|halt|resume|list
+
 ### Signed Skills 2.0 (spec Part 3)
 Multi-format skill manifests (Markdown frontmatter / YAML / JSON) normalized to one canonical form, with SemVer dependencies + acyclic resolution, discovery-order overrides (shadow WARNING when a local skill shadows a SIGNED builtin — PF-3 mitigation), detached HMAC signatures, and trust-gated install (signed-trusted > signed-unknown > unsigned-builtin > unsigned-local > invalid). Keyring via env `HYDRA_SKILL_KEYS`. Skills are DATA — never executed.
 - `skill_parse` — Parse a manifest (md|yaml|json) into canonical form (no registration)
