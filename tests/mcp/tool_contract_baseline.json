@@ -818,6 +818,23 @@
     "params": [],
     "required": []
   },
+  "engagement": {
+    "params": [
+      "action",
+      "client",
+      "engagement_id",
+      "name",
+      "owner",
+      "role",
+      "scope",
+      "sow_end",
+      "sow_start",
+      "username"
+    ],
+    "required": [
+      "action"
+    ]
+  },
   "enum4linux_scan": {
     "params": [
       "target",
@@ -1477,6 +1494,18 @@
       "capability"
     ]
   },
+  "rbac_check": {
+    "params": [
+      "engagement_id",
+      "rbac_action",
+      "username"
+    ],
+    "required": [
+      "engagement_id",
+      "rbac_action",
+      "username"
+    ]
+  },
   "recon_fuse": {
     "params": [
       "capability",
@@ -1538,6 +1567,15 @@
       "in_scope",
       "platform",
       "program"
+    ]
+  },
+  "report_export": {
+    "params": [
+      "engagement_id",
+      "fmt"
+    ],
+    "required": [
+      "engagement_id"
     ]
   },
   "report_lookup": {

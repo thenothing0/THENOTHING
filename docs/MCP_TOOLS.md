@@ -93,6 +93,12 @@ persistent C2 — none belong in an impact PoC.
 ### General Execution (one shell, runs all of Kali — curl-first)
 - `shell_exec` — Run any shell command (the flexible escape hatch for Kali tools without a dedicated wrapper); curl-first, HITL-approved per call, with a HARD catastrophic-command denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) that fires even in operator/YOLO mode; head/tail truncated. Operator owns scope; the four absolute prohibitions are never permitted.
 
+### Enterprise: Engagements, RBAC & Report Export
+Multi-client engagement objects (client / SoW window / team / authorized scope) with role-based access control (admin > lead > operator > viewer), and findings export to SARIF 2.1.0 / Markdown / JSON for client deliverables + CI security ingestion.
+- `engagement` — Manage engagements + team: create | get | list | add_member
+- `rbac_check` — RBAC authorization: may a user perform an action on an engagement?
+- `report_export` — Export an engagement's findings (sarif | markdown | json)
+
 ### Dynamic MCP Discovery (spec Part 10)
 Operator-declared external MCP servers → discover/validate/namespace their tools with trust scoring + isolation. Unknown-server tools are gated (requires-permission + HIGH risk) and namespaced `mcp:<server>:<tool>` so they can't shadow a core tool; results are byte-capped before materialization (fixes the M10 hostile-server OOM).
 - `mcp_declare` — Declare an external MCP server with a trust class (trusted|local|unknown)

@@ -4525,6 +4525,90 @@ def mcp_discovered_tools() -> str:
     return json.dumps({"tools": _mcpreg().tools()}, indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  ENTERPRISE: ENGAGEMENTS + RBAC + REPORT EXPORT  (architecture spec — enterprise)
+# ══════════════════════════════════════════════════════════════════════════════
+# Multi-client engagement objects (client/SoW/team/scope) with role-based access
+# control (admin > lead > operator > viewer), and findings export to SARIF / Markdown
+# / JSON for client deliverables + CI security ingestion.
+
+_ENGAGEMENT_STORE = None
+
+
+def _engagements():
+    global _ENGAGEMENT_STORE
+    if _ENGAGEMENT_STORE is None:
+        from hydra.engagement import EngagementStore
+        _ENGAGEMENT_STORE = EngagementStore()
+    return _ENGAGEMENT_STORE
+
+
+@mcp.tool()
+def engagement(action: str, engagement_id: str = "", client: str = "", name: str = "",
+               scope: str = "", sow_start: str = "", sow_end: str = "", owner: str = "",
+               username: str = "", role: str = "") -> str:
+    """Manage multi-client engagements + team membership.
+
+    Args:
+        action: create | get | list | add_member
+        engagement_id: target engagement (get / add_member)
+        client/name/scope/sow_start/sow_end/owner: for create (scope = comma-separated)
+        username/role: for add_member (role: admin|lead|operator|viewer)
+    """
+    es = _engagements()
+    try:
+        if action == "create":
+            if not client or not name:
+                return json.dumps(_err("create requires client and name"), indent=2)
+            scopes = [s.strip() for s in scope.split(",") if s.strip()]
+            eid = es.create(client, name, scope=scopes, sow_start=sow_start,
+                            sow_end=sow_end, owner=owner)
+            return json.dumps({"engagement_id": eid}, indent=2)
+        if action == "get":
+            return json.dumps(es.get(engagement_id) or _err(f"unknown {engagement_id}"), indent=2)
+        if action == "list":
+            return json.dumps({"engagements": es.list()}, indent=2)
+        if action == "add_member":
+            return json.dumps(es.add_member(engagement_id, username, role), indent=2)
+        return json.dumps(_err(f"unknown action '{action}'"), indent=2)
+    except (ValueError, KeyError) as e:
+        return json.dumps(_err(str(e)), indent=2)
+
+
+@mcp.tool()
+def rbac_check(engagement_id: str, username: str, rbac_action: str) -> str:
+    """RBAC check: may `username` perform `rbac_action` on this engagement? Actions:
+    read, run_recon/scan, create/validate/confirm/report_finding, run_exploit,
+    record_coverage, export_report, manage_team/engagement/scope.
+
+    Args:
+        engagement_id: target engagement
+        username: the user
+        rbac_action: the action to authorize
+    """
+    return json.dumps(_engagements().authorize(engagement_id, username, rbac_action), indent=2)
+
+
+@mcp.tool()
+def report_export(engagement_id: str, fmt: str = "markdown") -> str:
+    """Export an engagement's findings to a client/CI deliverable.
+
+    Args:
+        engagement_id: the engagement whose findings to export
+        fmt: sarif | markdown | json
+    """
+    from hydra.reporting.export import to_json, to_markdown, to_sarif
+    findings = _findings().list(engagement_id)
+    eng = _engagements().get(engagement_id) or {"id": engagement_id}
+    if fmt == "sarif":
+        return to_sarif(findings)
+    if fmt == "json":
+        return to_json(findings, engagement=eng)
+    if fmt in ("markdown", "md"):
+        return to_markdown(findings, engagement=eng)
+    return json.dumps(_err(f"unknown format '{fmt}' (sarif|markdown|json)"), indent=2)
+
+
 @mcp.tool()
 def generate_payloads(vuln_class: str, context: str = "any") -> str:
     """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads
