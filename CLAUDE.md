@@ -75,7 +75,7 @@ All capability is exposed through the **`hydra-security`** MCP server (stdio; se
 It registers **233 tools** spanning a curl-first general shell → recon → scanning → gated PoC exploitation →
 gated post-exploitation impact → browser/Burp capture (site-map/scanner/repeater/timeline) → findings-lifecycle
 + coverage → 4-tier continuous learning → signed-skill management → risk-tiered HITL + a pentest workflow
-state machine → an offline-first Knowledge OS (Phases A–U). They are **deferred / search-loaded** — invoke any tool by name; you do NOT
+state machine → dynamic external-MCP discovery → an offline-first Knowledge OS (Phases A–U). They are **deferred / search-loaded** — invoke any tool by name; you do NOT
 need every schema in context. **Full catalog (exact names + one-line descriptions):
 [`docs/MCP_TOOLS.md`](docs/MCP_TOOLS.md)** — read it when choosing a tool.
 

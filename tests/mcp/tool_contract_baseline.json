@@ -1218,6 +1218,27 @@
     ],
     "required": []
   },
+  "mcp_declare": {
+    "params": [
+      "args",
+      "command",
+      "name",
+      "persist",
+      "trust_class"
+    ],
+    "required": [
+      "command",
+      "name"
+    ]
+  },
+  "mcp_discovered_tools": {
+    "params": [],
+    "required": []
+  },
+  "mcp_servers": {
+    "params": [],
+    "required": []
+  },
   "netexec_scan": {
     "params": [
       "command",

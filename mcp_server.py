@@ -4472,6 +4472,59 @@ def workflow_pentest(action: str, run_id: str = "", engagement_id: str = "", tar
         return json.dumps(_err(str(e)), indent=2)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  DYNAMIC MCP DISCOVERY  (architecture spec Part 10)
+# ══════════════════════════════════════════════════════════════════════════════
+# Operator-declared external MCP servers → discover/validate/namespace their tools
+# with trust scoring + isolation. Unknown-server tools are gated (requires-permission
+# + HIGH risk) and namespaced mcp:<server>:<tool> so they cannot shadow a core tool.
+
+_MCP_REGISTRY = None
+
+
+def _mcpreg():
+    global _MCP_REGISTRY
+    if _MCP_REGISTRY is None:
+        from hydra.mcp_registry import MCPServerRegistry
+        _MCP_REGISTRY = MCPServerRegistry()
+    return _MCP_REGISTRY
+
+
+@mcp.tool()
+def mcp_declare(name: str, command: str, args: str = "", trust_class: str = "unknown",
+                persist: bool = False) -> str:
+    """Declare an external MCP server in the registry. trust_class drives how its
+    tools are gated: trusted (not gated) | local (gated) | unknown (gated, HIGH risk).
+
+    Args:
+        name: server name
+        command: launch command
+        args: comma-separated args
+        trust_class: trusted | local | unknown
+        persist: write to data/mcp_servers.json
+    """
+    from hydra.mcp_registry import DiscoveryError
+    arglist = [a.strip() for a in args.split(",") if a.strip()]
+    try:
+        return json.dumps(_mcpreg().declare(name, command, args=arglist,
+                          trust_class=trust_class, persist=persist), indent=2)
+    except DiscoveryError as e:
+        return json.dumps(_err(str(e)), indent=2)
+
+
+@mcp.tool()
+def mcp_servers() -> str:
+    """List declared external MCP servers + their trust classes."""
+    return json.dumps({"servers": _mcpreg().servers()}, indent=2)
+
+
+@mcp.tool()
+def mcp_discovered_tools() -> str:
+    """List tools discovered from external MCP servers (namespaced) with trust +
+    risk + whether they require permission."""
+    return json.dumps({"tools": _mcpreg().tools()}, indent=2)
+
+
 @mcp.tool()
 def generate_payloads(vuln_class: str, context: str = "any") -> str:
     """Context-aware PoC payload library (attack section): detection / proof-of-concept-grade payloads

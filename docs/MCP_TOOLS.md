@@ -93,6 +93,12 @@ persistent C2 — none belong in an impact PoC.
 ### General Execution (one shell, runs all of Kali — curl-first)
 - `shell_exec` — Run any shell command (the flexible escape hatch for Kali tools without a dedicated wrapper); curl-first, HITL-approved per call, with a HARD catastrophic-command denylist (rm -rf /, fork bomb, mkfs, dd of=/dev/*, shutdown, find -delete) that fires even in operator/YOLO mode; head/tail truncated. Operator owns scope; the four absolute prohibitions are never permitted.
 
+### Dynamic MCP Discovery (spec Part 10)
+Operator-declared external MCP servers → discover/validate/namespace their tools with trust scoring + isolation. Unknown-server tools are gated (requires-permission + HIGH risk) and namespaced `mcp:<server>:<tool>` so they can't shadow a core tool; results are byte-capped before materialization (fixes the M10 hostile-server OOM).
+- `mcp_declare` — Declare an external MCP server with a trust class (trusted|local|unknown)
+- `mcp_servers` — List declared external MCP servers + trust classes
+- `mcp_discovered_tools` — List discovered external tools (namespaced) with trust/risk/gating
+
 ### HITL Risk Tiers & Pentest Workflow Engine (spec Parts 8 & 9)
 Risk-tiered approval policy (advisory; the real modal is the harness's) + the pentest lifecycle state machine. Risk tiers: low (auto) / medium (allow-once|session|deny) / high (once|workflow|deny) / critical (once|deny|emergency-stop) / prohibited (HARD DENY). Operator mode auto-approves friction up to critical; prohibitions + scope gate stay hard. Workflow: scope→recon→enumeration→validation→exploitation→evidence→coverage_review→reporting→done, with approval-gated high-consequence transitions, durable checkpoints, and halt/resume recovery.
 - `hitl_classify` — Classify a tool call's risk tier + the approval policy that applies
