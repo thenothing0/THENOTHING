@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import pytest
+
+textual = pytest.importorskip("textual")
+
 from unittest.mock import MagicMock
 
 from control_center.tui.event_bridge import (
