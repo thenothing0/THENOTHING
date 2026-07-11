@@ -21,7 +21,6 @@ from hydra.attack import (
     StoredVulnTester,
 )
 from hydra.attack.chain_templates import ChainTemplateEngine
-from hydra.attack_runtime.session import SessionContext
 from hydra.authorization import BugBountyAuthorizationGate
 
 
@@ -37,9 +36,10 @@ def gate(tmp_path, monkeypatch):
 def test_honeypot_guard_flags_canned_sql_error():
     det = DifferentialDetector()
     base = {"executed": True, "status": 200, "length": 50, "body_snippet": "ok"}
-    # endpoint returns a SQL error for ANY input → trap
-    ex = lambda req: {"executed": True, "status": 200, "length": 80,
-                      "body_snippet": "you have an error in your sql syntax near"}
+    def ex(req):
+        return {"executed": True, "status": 200, "length": 80,
+                "body_snippet": "you have an error in your sql syntax near"}
+
     is_trap, reason = HoneypotGuard().probe(det, "sqli", base, lambda v: {"url": "x", "headers": {}}, ex)
     assert is_trap is True and "error_signature" in reason
 
@@ -47,9 +47,10 @@ def test_honeypot_guard_flags_canned_sql_error():
 def test_honeypot_guard_ignores_plain_reflection():
     det = DifferentialDetector()
     base = {"executed": True, "status": 200, "length": 50, "body_snippet": "ok"}
-    # reflects input but no class-confirming signal → NOT a trap (normal reflective sink)
-    ex = lambda req: {"executed": True, "status": 200, "length": 60,
-                      "body_snippet": f"you said {req.get('payload','')}", "content_type": "text/html"}
+    def ex(req):
+        return {"executed": True, "status": 200, "length": 60,
+                "body_snippet": f"you said {req.get('payload','')}", "content_type": "text/html"}
+
     is_trap, _ = HoneypotGuard().probe(det, "xss", base, lambda v: {"url": "x", "headers": {},
                                                                     "payload": v}, ex)
     assert is_trap is False
