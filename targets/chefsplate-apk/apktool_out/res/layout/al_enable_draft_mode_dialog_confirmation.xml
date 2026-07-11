@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:theme="@style/Theme.MaterialComponents" android:orientation="vertical" android:background="#ffffffff" android:padding="24.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layoutDirection="ltr"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="#ff333333" android:id="@id/enable_draft_mode_confirmation_close_application_question" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="24.0dip" android:text="@string/ID_APPLANGA_ENABLE_DRAFT_MODE_DIALOG_CONFIRMATION_CLOSE_APPLICATION_QUESTION" android:layout_centerHorizontal="true" android:fontFamily="sans-serif" />
+    <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="24.0dip">
+        <TextView android:textColor="#99000000" android:gravity="left" android:id="@id/enableDraftModeDialogConfirmationWillCloseInXSeconds" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ID_APPLANGA_ENABLE_DRAFT_MODE_DIALOG_CONFIRMATION_WILL_CLOSE_IN_X_SECONDS" android:fontFamily="sans-serif" />
+        <TextView android:textColor="#99000000" android:gravity="top" android:id="@id/enable_draft_mode_dialog_confirmation_reopen_application" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ID_APPLANGA_ENABLE_DRAFT_MODE_DIALOG_CONFIRMATION_REOPEN_APPLICATION" android:fontFamily="sans-serif" />
+    </LinearLayout>
+    <LinearLayout android:layout_gravity="end" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAligned="false">
+        <androidx.appcompat.widget.AppCompatButton android:textColor="#ff3099d5" android:id="@id/applanga_button_abort" android:background="#ffffffff" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ID_APPLANGA_ENABLE_DRAFT_MODE_DIALOG_ACTION_ABORT" android:fontFamily="sans-serif" />
+        <androidx.appcompat.widget.AppCompatButton android:textColor="#ffffffff" android:id="@id/applanga_button_close" android:background="#ff3099d5" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="8.0dip" android:text="@string/ID_APPLANGA_ENABLE_DRAFT_MODE_DIALOG_CONFIRMATION_CLOSE_APPLICATION_TITLE" android:fontFamily="sans-serif" android:layout_marginStart="8.0dip" android:paddingHorizontal="8.0dip" />
+    </LinearLayout>
+</LinearLayout>

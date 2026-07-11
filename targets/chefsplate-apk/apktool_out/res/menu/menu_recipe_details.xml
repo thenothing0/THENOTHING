@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@id/actionTimers" android:title="" app:actionLayout="@layout/m_timers" app:showAsAction="always" />
+    <item android:id="@id/actionVoiceControl" android:title="" app:actionLayout="@layout/m_voice_control" app:showAsAction="always" />
+</menu>

@@ -259,7 +259,7 @@ class HuntEngine:
 
             # Adaptive: if high-severity found, escalate
             if any(f.get("severity", "").lower() in ("critical", "high") for f in cycle.findings):
-                logger.info(f"🔥 High-severity finding! Escalating hunt...")
+                logger.info("🔥 High-severity finding! Escalating hunt...")
                 if self.planner:
                     await self.planner.replan(
                         plan_id=session.session_id,

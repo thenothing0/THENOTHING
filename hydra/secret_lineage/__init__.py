@@ -238,13 +238,13 @@ class SecretLineageTracker:
                 elif node.system == "config_file":
                     steps.append(f"2. Remove from config file: {node.name}")
             elif node.stage == PropagationStage.PIPELINE:
-                steps.append(f"4. Update CI/CD pipeline to use secret manager instead of env vars")
+                steps.append("4. Update CI/CD pipeline to use secret manager instead of env vars")
             elif node.stage == PropagationStage.DEPLOYMENT:
-                steps.append(f"5. Redeploy affected services with rotated credentials")
+                steps.append("5. Redeploy affected services with rotated credentials")
             elif node.stage == PropagationStage.RUNTIME:
-                steps.append(f"6. Clear runtime caches and invalidate sessions")
+                steps.append("6. Clear runtime caches and invalidate sessions")
             elif node.stage == PropagationStage.EXFILTRATION:
-                steps.append(f"7. URGENT: Assume compromise — audit access logs for the secret")
+                steps.append("7. URGENT: Assume compromise — audit access logs for the secret")
 
         steps.append(f"8. Monitor for unauthorized usage of the {chain.secret_type.value}")
         chain.remediation = steps

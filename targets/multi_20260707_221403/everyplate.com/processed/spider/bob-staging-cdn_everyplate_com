@@ -1,0 +1,8 @@
+[url] - [code-403] - http://bob-staging-cdn.everyplate.com
+[url] - [code-403] - http://bob-staging-cdn.everyplate.com:2082
+[url] - [code-400] - http://bob-staging-cdn.everyplate.com:2083
+[url] - [code-403] - http://bob-staging-cdn.everyplate.com:2086
+[url] - [code-403] - http://bob-staging-cdn.everyplate.com:2095
+[url] - [code-400] - http://bob-staging-cdn.everyplate.com:2096
+[url] - [code-403] - http://bob-staging-cdn.everyplate.com:8080
+[url] - [code-400] - http://bob-staging-cdn.everyplate.com:8443

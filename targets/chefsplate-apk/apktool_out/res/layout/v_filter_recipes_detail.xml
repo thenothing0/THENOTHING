@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.hellofresh.cookbookrecipes.filter.ui.view.SingleSelectionFilterView android:id="@id/singleSelectionFilterView" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <com.hellofresh.cookbookrecipes.filter.ui.view.MultiSelectionFilterView android:id="@id/multiSelectionFilterView" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="1.0" />
+    <View android:id="@id/selectedFiltersDivider" android:background="@color/neutral_400" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerViewSelectedFilters" android:layout_width="fill_parent" android:layout_height="48.0dip" />
+    <View android:background="@color/neutral_400" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="48.0dip">
+        <TextView android:id="@id/textViewSelectedFilters" style="@style/SelectedFiltersText" />
+        <Button android:enabled="false" android:id="@id/buttonClear" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginStart="@dimen/spacing_sm_1" android:layout_marginEnd="@dimen/spacing_sm_1" style="@style/buttonNoBackground.Green" />
+        <Button android:enabled="false" android:id="@id/buttonApply" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginEnd="@dimen/spacing_sm_1" style="@style/buttonNoBackground.Green" />
+    </LinearLayout>
+</merge>

@@ -4,13 +4,19 @@ Accepts HackerOne/Bugcrowd/Intigriti URLs. Parses all scope data.
 No task may execute without scope validation.
 """
 
-import json, logging, time, re
+import json
+import logging
+import time
+import re
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
 from urllib.parse import urlparse
 
 logger = logging.getLogger("hydra.scope")
+
+_DOMAIN_RE = re.compile(r'[\w][\w.-]+\.[\w]{2,}')
+_WILDCARD_RE = re.compile(r'\*\.[\w.-]+\.[\w]{2,}')
 
 
 @dataclass
@@ -68,10 +74,10 @@ class ProgramAdapter(ABC):
     async def parse_scope(self, raw_data: Dict) -> ProgramScope: ...
 
     def _extract_domains(self, text: str) -> List[str]:
-        return list(set(re.findall(r'[\w][\w.-]+\.[\w]{2,}', text)))
+        return list(set(_DOMAIN_RE.findall(text)))
 
     def _extract_wildcards(self, text: str) -> List[str]:
-        return list(set(re.findall(r'\*\.[\w.-]+\.[\w]{2,}', text)))
+        return list(set(_WILDCARD_RE.findall(text)))
 
     async def _http_get(self, url: str) -> Optional[str]:
         try:
@@ -312,7 +318,7 @@ class ScopePolicyEngine:
                 violations.append(f"Forbidden: {label}")
         if violations:
             return ScopeValidationResult(allowed=False, target=workflow_type,
-                reason=f"Workflow violates policy", policy_violations=violations)
+                reason="Workflow violates policy", policy_violations=violations)
         return ScopeValidationResult(allowed=True, target=workflow_type)
 
     def validate_tool_execution(self, tool_name: str, target: str) -> ScopeValidationResult:

@@ -1,0 +1,65 @@
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:2083 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:8443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:80 status-code=403 title="Access denied | bob-staging-cdn.everyplate.com used Cloudflare to restrict access | bob-staging-cdn.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:2095 status-code=403 title="Access denied | bob-staging-cdn.everyplate.com used Cloudflare to restrict access | bob-staging-cdn.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://cdn.everyplate.com:80 status-code=403 title="" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:2082 status-code=403 title="Access denied | bob-staging-cdn.everyplate.com used Cloudflare to restrict access | bob-staging-cdn.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:8080 status-code=403 title="Access denied | bob-staging-cdn.everyplate.com used Cloudflare to restrict access | bob-staging-cdn.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:28:58 INFO result 🤖 target=http://bob-staging-cdn.everyplate.com:2086 status-code=403 title="Access denied | bob-staging-cdn.everyplate.com used Cloudflare to restrict access | bob-staging-cdn.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:29:01 INFO result 🤖 target=http://email.updates.everyplate.com:80 status-code=404 title="" have-screenshot=true
+2026/07/08 02:29:01 INFO result 🤖 target=http://email.updates.everyplate.com:443 status-code=404 title="" have-screenshot=true
+2026/07/08 02:29:01 INFO result 🤖 target=http://everyplate.com:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:01 INFO result 🤖 target=http://get-preprod.everyplate.com:2086 status-code=403 title="Access denied | get-preprod.everyplate.com used Cloudflare to restrict access | get-preprod.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:29:03 INFO result 🤖 target=http://join.everyplate.com:80 status-code=200 title=Everyplate have-screenshot=true
+2026/07/08 02:29:04 ERRO failed to witness target target=http://join.everyplate.com:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/08 02:29:05 INFO result 🤖 target=http://lp-preprod.everyplate.com:8443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:06 ERRO failed to witness target target=http://cdn.everyplate.com:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/08 02:29:07 INFO result 🤖 target=http://lp.everyplate.com:8443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:08 INFO result 🤖 target=http://media.everyplate.com:80 status-code=400 title="" have-screenshot=true
+2026/07/08 02:29:08 INFO result 🤖 target=http://links.everyplate.com:443 status-code=200 title="EveryPlate Meal Kits: Easy & Affordable Meal Delivery Service" have-screenshot=true
+2026/07/08 02:29:09 INFO result 🤖 target=http://media.everyplate.com:443 status-code=400 title="" have-screenshot=true
+2026/07/08 02:29:10 INFO result 🤖 target=http://links.everyplate.com:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:10 INFO result 🤖 target=http://mobile.everyplate.com:2087 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:12 INFO result 🤖 target=http://mobile.everyplate.com:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:12 INFO result 🤖 target=http://get.everyplate.com:2086 status-code=200 title="EveryPlate Meal Kits: Easy & Affordable Meal Delivery Service" have-screenshot=true
+2026/07/08 02:29:12 INFO result 🤖 target=http://everyplate.com:80 status-code=200 title="EveryPlate Meal Kits: Easy & Affordable Meal Delivery Service" have-screenshot=true
+2026/07/08 02:29:12 INFO result 🤖 target=http://mobile.everyplate.com:8080 status-code=403 title="Attention Required! | Cloudflare" have-screenshot=true
+2026/07/08 02:29:13 INFO result 🤖 target=http://links.everyplate.com:2095 status-code=200 title="EveryPlate Meal Kits: Easy & Affordable Meal Delivery Service" have-screenshot=true
+2026/07/08 02:29:13 INFO result 🤖 target=http://stage.mobile.everyplate.com:80 status-code=403 title="Access denied | stage.mobile.everyplate.com used Cloudflare to restrict access | stage.mobile.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:29:14 ERRO failed to witness target target=http://staging-vercel.everyplate.com:8880 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:15 INFO result 🤖 target=http://nutritional-cards.everyplate.com:2086 status-code=403 title="" have-screenshot=true
+2026/07/08 02:29:15 INFO result 🤖 target=http://stage.mobile.everyplate.com:443 status-code=403 title="Access denied | stage.mobile.everyplate.com used Cloudflare to restrict access | stage.mobile.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:29:15 ERRO failed to witness target target=https://cdn-live.everyplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:16 INFO result 🤖 target=http://static-staging-cdn.everyplate.com:2087 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:17 ERRO failed to witness target target=https://cdn.everyplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:17 INFO result 🤖 target=http://staging-vercel.everyplate.com:80 status-code=429 title="" have-screenshot=true
+2026/07/08 02:29:17 INFO result 🤖 target=http://mobile.everyplate.com:8880 status-code=403 title="Attention Required! | Cloudflare" have-screenshot=true
+2026/07/08 02:29:18 ERRO failed to witness target target=https://cloud.link.everyplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:18 INFO result 🤖 target=http://static-staging-cdn.everyplate.com:8880 status-code=403 title="Access denied | static-staging-cdn.everyplate.com used Cloudflare to restrict access | static-staging-cdn.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:29:18 INFO result 🤖 target=http://static-staging-cdn.everyplate.com:8443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:19 INFO result 🤖 target=https://cdn-live.everyplate.com:443 status-code=502 title="ERROR: The request could not be satisfied" have-screenshot=true
+2026/07/08 02:29:20 ERRO failed to witness target target=https://get-preprod.everyplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:20 INFO result 🤖 target=https://cdn.everyplate.com:443 status-code=403 title="" have-screenshot=true
+2026/07/08 02:29:21 ERRO failed to witness target target=https://image.link.everyplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:21 INFO result 🤖 target=https://cloud.link.everyplate.com:443 status-code=404 title="" have-screenshot=true
+2026/07/08 02:29:22 INFO result 🤖 target=https://email.g.everyplate.com:80 status-code=404 title="" have-screenshot=true
+2026/07/08 02:29:22 INFO result 🤖 target=https://email.g.everyplate.com:443 status-code=404 title="" have-screenshot=true
+2026/07/08 02:29:22 ERRO failed to witness target target=https://images.everyplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:22 INFO result 🤖 target=https://get-preprod.everyplate.com:443 status-code=403 title="Access denied | get-preprod.everyplate.com used Cloudflare to restrict access | get-preprod.everyplate.com | Cloudflare" have-screenshot=true
+2026/07/08 02:29:23 ERRO failed to witness target target=https://live-vercel.everyplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:23 INFO result 🤖 target=http://staging-vercel.everyplate.com:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 02:29:24 INFO result 🤖 target=https://get-preprod.everyplate.com:2087 status-code=403 title="CNAME Cross-User Banned | Cloudflare" have-screenshot=true
+2026/07/08 02:29:24 ERRO failed to witness target target=https://nutritional-cards.everyplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 02:29:25 ERRO failed to witness target target=https://mail05.recalls.everyplate.com:8888 err="page load error net::ERR_INVALID_AUTH_CREDENTIALS"
+2026/07/08 02:29:25 INFO result 🤖 target=https://images.everyplate.com:443 status-code=400 title="" have-screenshot=true
+2026/07/08 02:29:27 INFO result 🤖 target=https://nutritional-cards.everyplate.com:443 status-code=403 title="" have-screenshot=true
+2026/07/08 02:29:27 INFO result 🤖 target=https://live-vercel.everyplate.com:443 status-code=429 title="" have-screenshot=true
+2026/07/08 02:29:29 INFO result 🤖 target=https://lp.everyplate.com:2083 status-code=200 title="EveryPlate Meal Kits: Easy & Affordable Meal Delivery Service" have-screenshot=true
+2026/07/08 02:29:29 INFO result 🤖 target=https://image.link.everyplate.com:443 status-code=403 title="Access Denied" have-screenshot=true
+2026/07/08 02:29:55 INFO result 🤖 target=http://staging-vercel.everyplate.com:2083 status-code=522 title="everyplate.com | 522: Connection timed out" have-screenshot=true
+2026/07/08 02:30:00 ERRO could not grab screenshot target=http://links.everyplate.com:80 err="context deadline exceeded"
+2026/07/08 02:30:00 INFO result 🤖 target=http://links.everyplate.com:80 status-code=200 title="EveryPlate Meal Kits: Easy & Affordable Meal Delivery Service" have-screenshot=false
+2026/07/08 02:30:04 ERRO could not grab screenshot target=http://lp.everyplate.com:2082 err="context deadline exceeded"
+2026/07/08 02:30:04 INFO result 🤖 target=http://lp.everyplate.com:2082 status-code=200 title="EveryPlate Meal Kits: Easy & Affordable Meal Delivery Service" have-screenshot=false

@@ -1,0 +1,10 @@
+alt1.aspmx.l.google.com
+alt2.aspmx.l.google.com
+aspmx.l.google.com
+aspmx2.googlemail.com
+aspmx3.googlemail.com
+aspmx4.googlemail.com
+aspmx5.googlemail.com
+dmarc.everest.email
+rua.dmarc.emailanalyst.com
+ruf.dmarc.emailanalyst.com

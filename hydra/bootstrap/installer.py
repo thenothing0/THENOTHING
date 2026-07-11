@@ -61,9 +61,9 @@ def install_tool(name: str, dry_run: bool = False) -> bool:
     if not tool_def:
         logger.error(f"Unknown tool: {name}")
         return False
-    
+
     install_methods = tool_def.get("install", {})
-    
+
     # Try Go install first
     if "go" in install_methods and detect_go():
         cmd = install_methods["go"]
@@ -81,7 +81,7 @@ def install_tool(name: str, dry_run: bool = False) -> bool:
             logger.warning(f"  Go install failed: {result.stderr[:200]}")
         except Exception as e:
             logger.warning(f"  Go install error: {e}")
-    
+
     # Try pip install
     if "pip" in install_methods and detect_pip():
         cmd = install_methods["pip"]
@@ -98,7 +98,7 @@ def install_tool(name: str, dry_run: bool = False) -> bool:
             logger.warning(f"  pip install failed: {result.stderr[:200]}")
         except Exception as e:
             logger.warning(f"  pip install error: {e}")
-    
+
     # Try system package manager
     pkg_mgr = detect_package_manager()
     if pkg_mgr and pkg_mgr in install_methods:
@@ -116,7 +116,7 @@ def install_tool(name: str, dry_run: bool = False) -> bool:
             logger.warning(f"  {pkg_mgr} install failed: {result.stderr[:200]}")
         except Exception as e:
             logger.warning(f"  {pkg_mgr} install error: {e}")
-    
+
     logger.error(f"  ❌ Could not install {name} — install manually")
     return False
 
@@ -124,25 +124,25 @@ def install_tool(name: str, dry_run: bool = False) -> bool:
 def auto_install_all(dry_run: bool = False) -> Dict[str, bool]:
     """Detect and install all missing tools."""
     missing = get_missing_tools()
-    
+
     if not missing:
         logger.info("✅ All security tools are already installed")
         return {}
-    
+
     logger.info(f"🔧 {len(missing)} tools missing: {', '.join(missing)}")
     logger.info(f"  System: {platform.system()} {platform.machine()}")
     logger.info(f"  Package manager: {detect_package_manager() or 'none detected'}")
     logger.info(f"  Go: {'yes' if detect_go() else 'no'}")
     logger.info(f"  pip: {'yes' if detect_pip() else 'no'}")
-    
+
     results = {}
     for tool_name in missing:
         results[tool_name] = install_tool(tool_name, dry_run=dry_run)
-    
+
     installed = sum(1 for v in results.values() if v)
     failed = sum(1 for v in results.values() if not v)
     logger.info(f"📊 Install results: {installed} installed, {failed} failed")
-    
+
     return results
 
 

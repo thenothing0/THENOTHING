@@ -1,0 +1,101 @@
+/* HYDRA TUI — Dark theme (default) */
+
+Screen {
+    background: #0d1117;
+    color: #c9d1d9;
+}
+
+#workspace {
+    layout: horizontal;
+    height: 1fr;
+}
+
+#main-area {
+    width: 1fr;
+    layout: vertical;
+}
+
+ConversationLog {
+    height: 1fr;
+    background: #0d1117;
+    scrollbar-background: #161b22;
+    scrollbar-color: #30363d;
+    scrollbar-size: 1 1;
+}
+
+CommandInput {
+    background: #161b22;
+    color: #c9d1d9;
+    height: 1;
+}
+
+CommandInput:focus {
+    background: #1c2128;
+}
+
+StatusBar {
+    dock: bottom;
+    background: #161b22;
+    color: #8b949e;
+    height: 1;
+}
+
+Sidebar {
+    background: #0d1117;
+    border-right: solid #30363d;
+    width: 28;
+    padding: 1;
+}
+
+WorkflowBar {
+    height: 1;
+    background: #161b22;
+    padding: 0 1;
+}
+
+BottomPanel {
+    height: 12;
+    background: #0d1117;
+    border-top: solid #30363d;
+    display: none;
+    scrollbar-size: 1 1;
+}
+
+BottomPanel.open {
+    display: block;
+}
+
+ContextDrawer {
+    width: 45;
+    background: #161b22;
+    border-left: solid #30363d;
+    padding: 1 2;
+    display: none;
+}
+
+ContextDrawer.open {
+    display: block;
+}
+
+Inspector {
+    background: #0d1117;
+    border: solid #30363d;
+    padding: 1 2;
+    display: none;
+    layer: overlay;
+    width: 100%;
+    height: 100%;
+}
+
+Inspector.open {
+    display: block;
+}
+
+ToolOutput {
+    height: 1fr;
+    background: #0d1117;
+}
+
+.hidden {
+    display: none;
+}

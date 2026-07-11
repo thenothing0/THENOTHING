@@ -1,0 +1,10 @@
+161.71.57.133	cloud.link.everyplate.com
+18.66.122.116	server-18-66-122-116.fra60.r.cloudfront.net
+3.167.2.59	server-3-167-2-59.osl50.r.cloudfront.net
+34.111.99.212	212.99.111.34.bc.googleusercontent.com
+52.209.242.51	ec2-52-209-242-51.eu-west-1.compute.amazonaws.com
+54.240.174.54	server-54-240-174-54.osl50.r.cloudfront.net
+65.9.46.60	server-65-9-46-60.arn52.r.cloudfront.net
+65.9.62.71	server-65-9-62-71.arn56.r.cloudfront.net
+66.18.4.228	ns01.belltowertech.com
+99.84.152.100	server-99-84-152-100.fra56.r.cloudfront.net

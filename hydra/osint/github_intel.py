@@ -10,14 +10,12 @@ Correlation chain:
 """
 
 import asyncio
-import json
 import logging
 import re
-import time
-from typing import Any, Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set
 from dataclasses import dataclass, field
 
-from hydra.osint import HTTPMixin, OSINTFinding, InfrastructureAsset
+from hydra.osint import HTTPMixin, OSINTFinding
 
 logger = logging.getLogger("hydra.osint.github")
 

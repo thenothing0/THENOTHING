@@ -1,0 +1,3 @@
+join.everyplate.com -> d3c17743tgwo8l.cloudfront.net.
+live-vercel.everyplate.com -> live-vercel.everyplate.com.cdn.cloudflare.net.
+staging-vercel.everyplate.com -> staging-vercel.everyplate.com.cdn.cloudflare.net.

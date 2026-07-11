@@ -1,0 +1,848 @@
+{
+  "availableCountries": [
+    "YE"
+  ],
+  "availableLocales": {
+    "YE": [
+      "en-AU"
+    ]
+  },
+  "country": "ye",
+  "features": {
+    "accountDeletionV2": {
+      "enabled": true,
+      "minVersion": "26.6"
+    },
+    "addOnsInEos": {
+      "addonsCarouselCount": 5,
+      "addonsListCount": 3,
+      "category": "dessert",
+      "enabled": true
+    },
+    "addOnsSections": {
+      "enabled": true
+    },
+    "addOnsSubscription": {
+      "enabled": true,
+      "minVersion": "23.38"
+    },
+    "additionalNutritionalInfo": {
+      "enabled": true
+    },
+    "adjustPurchaseEvent": {
+      "enabled": true
+    },
+    "analytics": {
+      "salesForce": {
+        "enabled": true
+      },
+      "swrve": {
+        "enabled": true
+      }
+    },
+    "appForceUpdate": {
+      "android_min_version_code": 2951,
+      "enabled": true,
+      "minSupportedVersion": "25.20"
+    },
+    "appReview": {
+      "enabled": true
+    },
+    "autoSave": {
+      "enabled": false,
+      "minVersion": "24.16",
+      "showOnboarding": false
+    },
+    "balancePriceIntegration": {
+      "enabled": true
+    },
+    "bffMenusHome": {
+      "enabled": false
+    },
+    "billingTransparency": {
+      "enabled": false
+    },
+    "billingTransparencyOnCart": {
+      "enabled": false
+    },
+    "braintreeNativePaymentMethod": {
+      "enabled": true
+    },
+    "chargeAtMealSelection": {
+      "enabled": false
+    },
+    "collectionsAndFiltering": {
+      "collectionsHandles": [
+        "nonnas-faves",
+        "spooky-season",
+        "street-food",
+        "aussie-summer",
+        "christmas-hits",
+        "cheesy-faves",
+        "comfort-food",
+        "dads-day",
+        "asian-bites",
+        "burger-bar",
+        "xmas",
+        "premium",
+        "kids-fave",
+        "most-loved",
+        "veggie",
+        "speedy",
+        "climate-hero"
+      ],
+      "enabled": true
+    },
+    "conceptOfChoice": {
+      "contactPhoneNumber": "(07) 3633 0708",
+      "enabled": true
+    },
+    "contactCustomerCare": {
+      "enabled": true,
+      "url": "https://www.youfoodz.com/contact"
+    },
+    "crmDiscountCommunication": {
+      "enabled": false
+    },
+    "customerWalletAddons": {
+      "enabled": true
+    },
+    "customerWalletFreeAddons": {
+      "enabled": true
+    },
+    "customerWalletFreeXForLife": {
+      "enabled": true
+    },
+    "customerWalletHome": {
+      "enabled": true
+    },
+    "customerWalletMultipleSurcharges": {
+      "enabled": true,
+      "minVersion": "24.16"
+    },
+    "customerWalletMyMenu": {
+      "enabled": true
+    },
+    "deliveryCheckIn": {
+      "contactPageUrl": "https://www.youfoodz.com/contact",
+      "enabled": true
+    },
+    "deliveryCheckInChatOnly": {
+      "chatWebPageUrl": "",
+      "enabled": true
+    },
+    "deliveryCheckInFinal": {
+      "certWebPageURL": "https://www.youfoodz.com/contact",
+      "chatWebPageUrl": "https://www.youfoodz.com/contact",
+      "contactPageUrl": "https://www.youfoodz.com/contact",
+      "enabled": true
+    },
+    "deliveryCheckInHomeScreen": {
+      "enabled": true
+    },
+    "deliveryCheckInPastDeliveries": {
+      "enabled": true
+    },
+    "deliveryTracking": {
+      "enabled": true
+    },
+    "discountCommunicationManageWeek": {
+      "enabled": false,
+      "rollout": false
+    },
+    "discountCommunicationTooltip": {
+      "enabled": false,
+      "rollout": false
+    },
+    "donation": {
+      "enabled": false
+    },
+    "earlyAndDeliveryCheckIn": {
+      "enabled": true
+    },
+    "editableOrderSummaryFutureWeeksShowPriceDetails": {
+      "enabled": true,
+      "minVersion": "23.30"
+    },
+    "editableOrderSummaryV2": {
+      "enabled": true,
+      "minVersion": "22.50"
+    },
+    "enhancedVouchers": {
+      "enabled": true
+    },
+    "expiredTokenVisibility": {
+      "enabled": false
+    },
+    "extraMealsPromoCard": {
+      "basePriceIncludesShipping": true,
+      "enabled": true,
+      "minimumDiscountPercentage": 10
+    },
+    "facebookLogin": {
+      "enabled": true
+    },
+    "giftCards": {
+      "enabled": false
+    },
+    "googleLogin": {
+      "enabled": true
+    },
+    "guestHomeRevamp": {
+      "enabled": true
+    },
+    "helloFriendsReplaceCreditAchievementPanelToggle": {
+      "enabled": true
+    },
+    "hideNonActionablePausedWeek": {
+      "enabled": true
+    },
+    "hideVoucherCode": {
+      "enabled": true
+    },
+    "holidayBanner": {
+      "enabled": true
+    },
+    "home": {
+      "enabled": true
+    },
+    "homeReactivationBanners": {
+      "enabled": true
+    },
+    "homeTopBannerCarousel": {
+      "enabled": true
+    },
+    "inboxNotificationForTokenExpiry": {
+      "enabled": false
+    },
+    "languageSelector": {
+      "availableLanguages": null,
+      "enabled": false
+    },
+    "launchNativeTopUpInSettings": {
+      "enabled": true
+    },
+    "manageWeek": {
+      "donate": false,
+      "enabled": true,
+      "reschedule": true,
+      "resize": true
+    },
+    "manageWeekReorder": {
+      "enabled": true,
+      "rollout": true
+    },
+    "megaAddons": {
+      "enabled": true
+    },
+    "menuViewInterface": {
+      "enabled": true
+    },
+    "missingTranslationsLogging": {
+      "enabled": false
+    },
+    "multiweekDiscountMyDeliveries": {
+      "enabled": true
+    },
+    "nativeChangePaymentMethod": {
+      "enabled": false
+    },
+    "newWeeklyNav": {
+      "enabled": false,
+      "minVersion": "24.16"
+    },
+    "newsletterOptIn": {
+      "enabled": false
+    },
+    "notificationChannels": {
+      "channels": [
+        {
+          "channel": "notification_channel_productAnnouncements",
+          "importance": 3,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_hellofreshGifts",
+          "importance": 3,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_specialOffers",
+          "importance": 3,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_kitchenTips",
+          "importance": 3,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_weeklyMenuReminders",
+          "importance": 4,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_transactional",
+          "importance": 3,
+          "visible": false
+        }
+      ],
+      "enabled": true
+    },
+    "onboardingPromo": {
+      "enabled": true
+    },
+    "oneOffsAndCreditsCommunication": {
+      "enabled": true,
+      "rollout": false
+    },
+    "passwordless_login": {
+      "enabled": false,
+      "minVersion": "23.26"
+    },
+    "pastDeliveries": {
+      "enabled": true,
+      "minVersion": "23.34"
+    },
+    "pauseSurvey2Relaunch": {
+      "enabled": true,
+      "tags": [
+        "is_fruitbox",
+        "is_mealbox",
+        "is_winebox"
+      ]
+    },
+    "pauseSurveyOptionsLevel2": {
+      "enabled": true
+    },
+    "pauseSurveyOptionsLevel3": {
+      "enabled": true
+    },
+    "payNowBannerFeatureToggle": {
+      "enabled": true
+    },
+    "paymentVerificationOnMealSelection": {
+      "enabled": false
+    },
+    "physicalDeliveryCheckIn": {
+      "enabled": true
+    },
+    "planMenuSeparation": {
+      "enabled": true
+    },
+    "purecloudSupport": {
+      "enabled": false,
+      "schedule": [
+
+      ],
+      "url": "https://www.youfoodz.com/contact"
+    },
+    "reactivationBannerRevamp": {
+      "enabled": true
+    },
+    "reactivationCTACopy": {
+      "enabled": true
+    },
+    "reactivationDiscountBreakdown": {
+      "enabled": true
+    },
+    "reactivationDiscountPriceCalculation": {
+      "enabled": true
+    },
+    "reactivationDisplayDeliveryDate": {
+      "enabled": true
+    },
+    "reactivationDynamicBannerMessage": {
+      "enabled": true
+    },
+    "reactivationGlobalButton": {
+      "enabled": false
+    },
+    "reactivationGlobalPinnedButton": {
+      "enabled": false
+    },
+    "reactivationHome": {
+      "configuration": {
+        "reactivationBanners": [
+          {
+            "backgroundColor": "#B2F1FF",
+            "campaignCategory": "reactivation",
+            "campaignID": "081c9231-7105-4d45-ac34-877a75e0c522",
+            "campaignName": "App_CRM_CRM-App_AU_EC-C_MB_2___30_sk___AppBannertest__",
+            "fontColor": "#242424",
+            "headline": "home.reactivation.promotionalbanners.marketbanner.headline",
+            "imageURL": "https://cdn.hellofresh.com/cg/cms/banners/reactivations/reactivation-banner.png",
+            "linkURL": "youfoodz://account/subscription/reactivation/[SUBSCRIPTION_ID]",
+            "message": "home.reactivation.promotionalbanners.marketbanner.body",
+            "type": "topBanner"
+          }
+        ]
+      },
+      "enabled": true
+    },
+    "reactivationMyMenuUrgencyBanner": {
+      "enabled": true
+    },
+    "reactivationNativePaymentMethod": {
+      "enabled": true
+    },
+    "reactivationNativeVoucher": {
+      "enabled": true
+    },
+    "reactivationOneCta": {
+      "enabled": true
+    },
+    "reactivationOrderedTipList": {
+      "enabled": true
+    },
+    "reactivationPersonalisedOnSiteOffer": {
+      "enabled": false
+    },
+    "reactivationPriceInGlobalButton": {
+      "enabled": false
+    },
+    "reactivationPromoBannerRedesign": {
+      "enabled": true
+    },
+    "reactivationPromoRelocation": {
+      "enabled": true
+    },
+    "reactivationPromoSegmentationToggle": {
+      "enabled": true
+    },
+    "reactivationPromoUrgencyBanner": {
+      "enabled": true
+    },
+    "reactivationPromoUrgencyBannerCopyToggle": {
+      "enabled": true
+    },
+    "reactivationPromoUrgencyBannerToggle": {
+      "enabled": true
+    },
+    "reactivationRedesign": {
+      "enabled": true
+    },
+    "reactivationSeamlessNativeJourneyToggle": {
+      "enabled": true
+    },
+    "reactivationTipListFollowUpToggle": {
+      "enabled": true
+    },
+    "reactivationTipListRelocation": {
+      "enabled": true
+    },
+    "reactivationTotalPriceInGlobalButton": {
+      "enabled": false
+    },
+    "reactivationUpcomingMenu": {
+      "enabled": true
+    },
+    "reactivationVoucherDiscoverability": {
+      "enabled": true
+    },
+    "reactivationVoucherProvider": {
+      "enabled": true
+    },
+    "reactivationWebViewOnStartup": {
+      "enabled": false
+    },
+    "reactivationYellowPromoBannerCopy": {
+      "enabled": true
+    },
+    "reactivation_price_in_cta": {
+      "enabled": true
+    },
+    "recipeArchiveBlocked": {
+      "enabled": true
+    },
+    "recipeSignaletic": {
+      "calorieSmartTags": {
+        "under-650-calories": true
+      },
+      "enabled": false,
+      "quickRecipeTags": {
+        "quick": true
+      },
+      "signaleticColorCombinations": {
+        "calorieSmart": [
+          "Calorie Smart",
+          "#09766A",
+          "#E3F9FF"
+        ],
+        "familyFeast": [
+          "Family feast",
+          "#7C0000",
+          "#FFCCCA"
+        ],
+        "familyFriendly": [
+          "Family friendly",
+          "#A43700",
+          "#FFF3E3"
+        ],
+        "glutenFree": [
+          "Gluten free",
+          "#75451A",
+          "#F7EDCD"
+        ],
+        "quickPrep": [
+          "Quick prep",
+          "#001DB2",
+          "#DEEAFF"
+        ],
+        "regular": [
+          "Regular",
+          "#B26030",
+          "#E8E8E8"
+        ],
+        "spicy": [
+          "Spicy",
+          "#B30000",
+          "#FFEAF9"
+        ],
+        "text": [
+          "Text",
+          "#B26030",
+          "transparent"
+        ],
+        "vegan": [
+          "Vegan",
+          "#09766A",
+          "#DFF9EF"
+        ],
+        "veggie": [
+          "Veggie",
+          "#067A46",
+          "#E4FABF"
+        ]
+      },
+      "tagStyles": {
+        "mild- spice": {
+          "backgroundColor": "#FFEAF9",
+          "color": "#B30000"
+        },
+        "plant-based": {
+          "backgroundColor": "#DFF9EF",
+          "color": "#09766A"
+        },
+        "quick": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "spicy": {
+          "backgroundColor": "#FFEAF9",
+          "color": "#B30000"
+        },
+        "veggie": {
+          "backgroundColor": "#E4FABF",
+          "color": "#067A46"
+        }
+      },
+      "tagsToIconsMap": {
+        "gluten-free": "gluten-free",
+        "plant-based": "plant-based",
+        "quick": "quick",
+        "spicy": "spicy",
+        "under-650-calories": "caloriesmart",
+        "vegan": "vegan",
+        "vegetarian": "veggie",
+        "veggie": "veggie"
+      }
+    },
+    "rollingCutoff": {
+      "enabled": false
+    },
+    "scaledCustomization": {
+      "enabled": false,
+      "minVersion": "23.36"
+    },
+    "seamlessRescheduling": {
+      "disabledWeeks": [
+
+      ],
+      "enabled": false,
+      "isPermanentSwitchEnabled": false
+    },
+    "seamlessSelfReporting": {
+      "chatURL": "https://www.youfoodz.com/contact",
+      "enabled": false,
+      "entireMealReportingDisabled": false,
+      "minVersion": "23.20"
+    },
+    "seasonalBox": {
+      "active": [
+
+      ],
+      "enabled": false,
+      "productFamilies": [
+
+      ]
+    },
+    "sfNotificationScreen": {
+      "enabled": true
+    },
+    "shopPurchaseCookies": {
+      "enabled": true,
+      "minVersion": "23.22"
+    },
+    "showBlockedMessage": {
+      "enabled": true,
+      "url": "https://www.youfoodz.com/faq"
+    },
+    "standaloneWallet": {
+      "contactURL": "https://www.youfoodz.com/contact",
+      "enabled": true,
+      "faq": [
+        {
+          "answer": "wallet.faq.promo-code-not-working.answer",
+          "key": "promo-code-not-working",
+          "question": "wallet.faq.promo-code-not-working.question"
+        },
+        {
+          "answer": "wallet.faq.where-is-my-signup-discount.int.answer",
+          "key": "where-is-my-signup-discount.int",
+          "question": "wallet.faq.where-is-my-signup-discount.int.question"
+        },
+        {
+          "answer": "wallet.faq.add.more.discounts.answer",
+          "key": "add.more.discounts",
+          "question": "wallet.faq.add.more.discounts.question"
+        },
+        {
+          "answer": "wallet.faq.more-codes.applied.answer",
+          "key": "more-codes.applied",
+          "question": "wallet.faq.more-codes.applied.question"
+        },
+        {
+          "answer": "wallet.faq.skip-a-week.answer",
+          "key": "skip-a-week",
+          "question": "wallet.faq.skip-a-week.question"
+        },
+        {
+          "answer": "wallet.faq.where-are-my-credits.answer",
+          "key": "where-are-my-credits",
+          "question": "wallet.faq.where-are-my-credits.question"
+        }
+      ]
+    },
+    "topUpOrderSummary": {
+      "enabled": true
+    },
+    "topUpWallet": {
+      "enabled": false
+    },
+    "ultimateUnpauseBanner": {
+      "enabled": true
+    },
+    "understandingMultiWeekDiscount": {
+      "enabled": true,
+      "rollout": true
+    },
+    "updateSubscriberPreferences": {
+      "enabled": true
+    },
+    "usabillaIntegration": {
+      "enabled": false,
+      "usabillaFormId": "6939498acd7cb66b82092de4"
+    },
+    "useComboVoucherValidation": {
+      "enabled": false
+    },
+    "useWalletVoucherLegacyExperience": {
+      "enabled": true,
+      "maxVersion": "23.32"
+    },
+    "voiceControl": {
+      "enabled": true,
+      "instructions": {
+        "next": [
+          "next",
+          "forward"
+        ],
+        "previous": [
+          "previous",
+          "back"
+        ],
+        "read": [
+          "read"
+        ],
+        "startTimer": [
+          "start timer"
+        ],
+        "stopTimer": [
+          "stop timer"
+        ]
+      },
+      "search": true
+    },
+    "weeklyDiscountBadges": {
+      "enabled": true,
+      "minVersion": "23.38"
+    },
+    "whatsappIntegration": {
+      "enabled": false,
+      "phoneNumber": ""
+    }
+  },
+  "home": {
+    "order": [
+      "greeting",
+      "reactivation",
+      "topBanner",
+      "deliveries",
+      "promotionalBanners"
+    ],
+    "segments": [
+      {
+        "headline": "home.greeting.headline",
+        "id": "greeting",
+        "message": "home.greeting.message",
+        "type": "greetingType"
+      },
+      {
+        "id": "reactivation",
+        "tips": true,
+        "type": "reactivationType"
+      },
+      {
+        "header": {
+          "linkTitleKey": "home.nextDeliveries.linkTitle",
+          "linkURL": "youfoodz://subscriptions/editableWeek",
+          "titleKey": "home.nextDeliveries.headline"
+        },
+        "id": "deliveries",
+        "type": "deliveriesType",
+        "weeks": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "topBanner",
+        "priorities": [
+          {
+            "backgroundColor": "#B2F1FF",
+            "backgroundImageURL": null,
+            "campaignCategory": "RAF-TopBanner",
+            "campaignID": "5525",
+            "campaignName": "learnAboutHelloShare",
+            "fontColor": "242424",
+            "headline": "home.topBanner.raf.header",
+            "imageURL": "https://img.hellofresh.com/q_auto/mobile/home/RAF_LearnAboutHelloShare_DiscountBox.png",
+            "isDismissable": true,
+            "linkURL": "youfoodz://helloshare?origin=home-screen-panel",
+            "message": "home.topBanner.raf.body"
+          }
+        ],
+        "type": "topBannerType"
+      },
+      {
+        "banners": [
+          {
+            "backgroundColor": "#007885",
+            "campaignCategory": "RAF",
+            "campaignID": "5",
+            "campaignName": "helloShare",
+            "fontColor": "#ffffff",
+            "headline": "home.promotionalBanners.giveoff.headline",
+            "imageURL": "https://cdn.hellofresh.com/er/cms/banners/raf/raf-banner.png",
+            "linkURL": "youfoodz://helloshare?origin=home-screen-panel&type=credit&openIntent=creditModal",
+            "message": "home.promotionalBanners.giveoff.message",
+            "subHeadline": "home.promotionalBanners.giveoff.subHeadline",
+            "type": "bigBanner"
+          },
+          {
+            "backgroundColor": "#343434",
+            "campaignCategory": "premium",
+            "campaignID": "2",
+            "campaignName": "gourmet",
+            "fontColor": "#ffffff",
+            "headline": "home.promotionalBanners.gourmet.headline",
+            "imageURL": "https://img.hellofresh.com/q_auto,f_webp/android/home/Banner_AU_Gourmet.webp",
+            "linkURL": "youfoodz://recipe/label/gourmet",
+            "message": "home.promotionalBanners.gourmet.message",
+            "type": "smallBanner"
+          },
+          {
+            "backgroundColor": "#ffffff",
+            "campaignCategory": "openArchive",
+            "campaignID": "3",
+            "campaignName": "homeMenu",
+            "headline": "home.promotionalBanners.cookbook.headline",
+            "imageURL": "https://img.hellofresh.com/q_auto/android/cookbook2.png",
+            "linkURL": "youfoodz://recipes",
+            "message": "home.promotionalBanners.cookbook.message",
+            "type": "disclosureBanner"
+          }
+        ],
+        "header": {
+          "linkTitleKey": "home.nextDeliveries.linkTitle",
+          "linkURL": "youfoodz://inbox",
+          "titleKey": "home.promotionalBanners.headline"
+        },
+        "id": "promotionalBanners",
+        "reactivationBanners": [
+          {
+            "backgroundColor": "#B2F1FF",
+            "campaignCategory": "reactivation",
+            "campaignID": "081c9231-7105-4d45-ac34-877a75e0c522",
+            "campaignName": "App_CRM_CRM-App_AU_EC-C_MB_2___30_sk___AppBannertest__",
+            "fontColor": "#242424",
+            "headline": "home.reactivation.promotionalbanners.marketbanner.headline",
+            "imageURL": "https://cdn.hellofresh.com/cg/cms/banners/reactivations/reactivation-banner.png",
+            "linkURL": "youfoodz://account/subscription/reactivation/[SUBSCRIPTION_ID]",
+            "message": "home.reactivation.promotionalbanners.marketbanner.body",
+            "type": "topBanner"
+          },
+          {
+            "campaignCategory": "openArchive",
+            "campaignID": "3",
+            "campaignName": "homeMenu",
+            "headline": "home.promotionalBanners.cookbook.headline",
+            "imageURL": "https://img.hellofresh.com/q_auto/android/cookbook2.png",
+            "linkURL": "youfoodz://recipes",
+            "message": "home.promotionalBanners.cookbook.message",
+            "type": "disclosureBanner"
+          }
+        ],
+        "type": "promotionalBannersType"
+      }
+    ]
+  },
+  "id": "81eee293-e41c-4593-a2db-828f35fbfdd8",
+  "locale": {
+    "country": "ye",
+    "currency": {
+      "code": "AUD",
+      "name": "Australian Dollar",
+      "symbol": "$"
+    },
+    "key": "en-AU",
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "timezone": "Australia/Sydney",
+    "timezone_offset": "+1000"
+  },
+  "website": {
+    "links": {
+      "addToCart": "/checkout-form/address?sku=[PRODUCT_HANDLE]",
+      "app_privacy": "/privacy-policy",
+      "checkout_form": "/checkout-form/address",
+      "checkout_success": "/checkout-success",
+      "email_preferences": "/settings/notifications?token=[TOKEN]",
+      "faq": "/faq",
+      "gift_cards": "/gift",
+      "order_history": "/settings/orders",
+      "payment_change": "/settings/account/payment-method",
+      "payment_cipr": "/settings/orders?popCIPR=true&workflow=[WORKFLOW]&locale=en-AU&hfweek=[HFWEEK]",
+      "payment_wallet": "/settings/payments",
+      "plan_settings": "/settings/plan",
+      "product_selection": "/plans",
+      "subscription_cancellation": "/cancellation",
+      "terms": "/terms",
+      "webview_reactivation": "/settings/plan/reactivate"
+    },
+    "url": "https://www.youfoodz.com"
+  }
+}

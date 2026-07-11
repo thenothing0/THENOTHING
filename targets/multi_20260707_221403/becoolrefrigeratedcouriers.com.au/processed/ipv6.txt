@@ -1,0 +1,13 @@
+becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+cpanel.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+cpcalendars.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+cpcontacts.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+ftp.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+new.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+test.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+webdisk.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+webmail.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+www.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+www.new.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+www.staging.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c
+www.test.becoolrefrigeratedcouriers.com.au	2400:b800:3:1::3c

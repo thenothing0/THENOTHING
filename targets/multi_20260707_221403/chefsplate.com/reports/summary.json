@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "tool": "TheN0thing",
+    "version": "11.0",
+    "timestamp": "2026-07-08T02:11:48+00:00",
+    "duration": 14265,
+    "target": "chefsplate.com",
+    "type": "domain"
+  },
+  "summary": {
+    "subdomains": 244,
+    "ips": 21,
+    "asns": 0,
+    "cidrs": 0,
+    "urls": 46,
+    "ports": 86,
+    "vulns": 0,
+    "cloud": 0,
+    "waf": 8,
+    "tech": 0
+  },
+  "securitytrails": {
+    "subdomains": 0,
+    "historical_ips": 0,
+    "associated_domains": 0
+  },
+  "advanced": {
+    "wayback": 0,
+    "otx": 0,
+    "virustotal": 40,
+    "axfr_records": 0,
+    "zonewalk": 0,
+    "permutations": 96,
+    "recursive": 59,
+    "ai_predicted": 0,
+    "buckets": 103,
+    "buckets_open": 10,
+    "vhosts": 211,
+    "cname_chains": 18,
+    "cname_thirdparty": 3,
+    "wildcard_dns": "false",
+    "dnssec": "not enabled on chefsplate.com"
+  },
+  "health": {
+    "errors": 0,
+    "warnings": 10,
+    "log": "/sec/root/.config/then0thing/logs/TheN0thing.sh_20260707_221403.log"
+  }
+}

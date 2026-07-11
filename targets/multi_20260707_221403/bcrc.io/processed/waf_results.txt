@@ -1,0 +1,7 @@
+[*] Checking http://bcrc.io
+[*] Checking http://dev-lnk.bcrc.io
+[*] Checking http://lnk.bcrc.io
+[*] Checking http://trk.bcrc.io
+[*] Checking https://lnk.bcrc.io
+[*] Checking https://trk.bcrc.io
+[~] Number of requests: 2

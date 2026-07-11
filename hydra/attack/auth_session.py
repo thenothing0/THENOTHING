@@ -20,7 +20,7 @@ stolen). Network only via the injected executor. Deterministic.
 from __future__ import annotations
 
 import re
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 _AUTH_REJECT = {401, 403}                                  # an auth/permission rejection
 _SAMESITE_RE = re.compile(r"samesite=(\w+)", re.I)

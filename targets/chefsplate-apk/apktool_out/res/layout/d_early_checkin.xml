@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/layoutContainer" android:paddingTop="@dimen/spacing_xs" android:paddingBottom="@dimen/spacing_md_1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_md_1" android:paddingEnd="@dimen/spacing_md_1" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent">
+        <ImageView android:layout_width="100.0dip" android:layout_height="100.0dip" android:src="@drawable/bg_early_check_in" android:importantForAccessibility="no" />
+        <LinearLayout android:orientation="vertical" android:focusable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:importantForAccessibility="yes">
+            <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_800" android:gravity="center_horizontal" android:id="@id/textViewTitle" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+            <TextView android:textAppearance="@style/HFText.BodyMediumRegular" android:textColor="@color/neutral_800" android:gravity="center_horizontal" android:id="@id/textViewMessage" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" />
+        </LinearLayout>
+        <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonCta" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" />
+    </LinearLayout>
+    <ImageView android:id="@id/imageViewArrowDown" android:background="?selectableItemBackgroundBorderless" android:padding="@dimen/spacing_xs" android:focusable="true" android:clickable="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="@dimen/spacing_xxs" android:src="@drawable/ic_arrow_down_new" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -261,7 +261,6 @@ class DeceptionDetectionEngine:
     def _check_behavioral_anomalies(self,
                                      response_data: Dict[str, Any]) -> List[str]:
         anomalies = []
-        status = response_data.get("status_code", 200)
         response_time = response_data.get("response_time_ms", 0)
         body_length = response_data.get("content_length", 0)
 

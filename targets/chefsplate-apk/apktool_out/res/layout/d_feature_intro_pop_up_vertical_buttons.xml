@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView android:id="@id/imageView" android:layout_width="fill_parent" android:layout_height="@dimen/base_level8" android:scaleType="centerCrop" />
+    <TextView android:id="@id/textViewTitle" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/MenuAddOnsFeatureIntroPopUpTitle" />
+    <TextView android:id="@id/textViewMessage" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" style="@style/MenuAddOnsFeatureIntroPopUpMessage" />
+    <TextView android:id="@id/textViewSubMessage" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" style="@style/MenuAddOnsFeatureIntroPopUpSubMessage" />
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/spacing_sm_2">
+        <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonPositive" android:layout_width="fill_parent" android:layout_height="wrap_content" app:zestBtnType="filled" app:zestText="See our desserts" />
+        <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:layout_gravity="center" android:id="@id/buttonNegative" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_1" app:zestBtnType="outlined" app:zestText="Maybe later" />
+    </LinearLayout>
+</LinearLayout>

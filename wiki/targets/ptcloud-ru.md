@@ -1,0 +1,75 @@
+---
+type: target
+tags:
+- target
+- auto
+created: '2026-06-05'
+updated: '2026-06-05'
+---
+
+# ptcloud-ru
+
+> _Target page (auto-created as an asset parent)._
+
+## Discovered assets (auto)
+- [[vpn-proxy-ptcloud-ru]]
+- [[test-ui-megahiddensuffix-ptcloud-ru]]
+- [[temporal-npe-ptcloud-ru]]
+- [[teleport-test-ptcloud-ru]]
+- [[telemetry-management-internal-ptcloud-ru]]
+- [[telemetry-agent-ptcloud-ru]]
+- [[status-ptcloud-ru]]
+- [[stage-ptcloud-ru]]
+- [[stage-af-ptcloud-ru]]
+- [[roadmap-ptcloud-ru]]
+- [[ptaf-demo-ptcloud-ru]]
+- [[posthog-npe-ptcloud-ru]]
+- [[posthog-api-npe-ptcloud-ru]]
+- [[old-af-ptcloud-ru]]
+- [[npe-ptcloud-ru]]
+- [[new-afbusrep-ptcloud-ru]]
+- [[new-af-ptcloud-ru]]
+- [[my-app-teleport-test-ptcloud-ru]]
+- [[monitoring-sre-ptcloud-ru]]
+- [[monitoring-ptcloud-ru]]
+- [[lp-npe-ptcloud-ru]]
+- [[lmp-ptcloud-ru]]
+- [[lmp-npe-ptcloud-ru]]
+- [[lmp-dev-ptcloud-ru]]
+- [[lmp-demo-ptcloud-ru]]
+- [[lmp-agent-npe-ptcloud-ru]]
+- [[landing-page-ptcloud-ru]]
+- [[landing-page-6r304wmk81p6-ptcloud-ru]]
+- [[kv-sre-ptcloud-ru]]
+- [[kv-ptcloud-ru]]
+- [[kv-test-ptcloud-ru]]
+- [[homepage-npe-ptcloud-ru]]
+- [[grafana-ptcloud-ru]]
+- [[grafana-npe-ptcloud-ru]]
+- [[grafana-infra-ptcloud-ru]]
+- [[gitea-ptcloud-ru]]
+- [[gf-asi-ptcloud-ru]]
+- [[demo-af-ptcloud-ru]]
+- [[crt-ptcloud-ru]]
+- [[crt-test-ptcloud-ru]]
+- [[crt-test-npe-ptcloud-ru]]
+- [[cr-ptcloud-ru]]
+- [[countly-api-npe-ptcloud-ru]]
+- [[bbs-ptcloud-ru]]
+- [[bbs-npe-ptcloud-ru]]
+- [[bbs-full-ptcloud-ru]]
+- [[bbs-test-ptcloud-ru]]
+- [[auth-ptcloud-ru]]
+- [[auth-npe-ptcloud-ru]]
+- [[auth-af-ptcloud-ru]]
+- [[auth-test-ptcloud-ru]]
+- [[auth-dev-ptcloud-ru]]
+- [[argocd-ptcloud-ru]]
+- [[afbusrep-sre-ptcloud-ru]]
+- [[afbusrep-ptcloud-ru]]
+- [[afbusrep-old-internal-ptcloud-ru]]
+- [[af-ptcloud-ru]]
+- [[af-migration-sre-ptcloud-ru]]
+- [[af-migration-ptcloud-ru]]
+- [[af-02-ptcloud-ru]]
+- [[af-02-prod-ptcloud-ru]]

@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "tool": "TheN0thing",
+    "version": "11.0",
+    "timestamp": "2026-07-08T06:51:23+00:00",
+    "duration": 31040,
+    "target": "goodchop.com",
+    "type": "domain"
+  },
+  "summary": {
+    "subdomains": 186,
+    "ips": 26,
+    "asns": 0,
+    "cidrs": 0,
+    "urls": 80,
+    "ports": 22,
+    "vulns": 0,
+    "cloud": 0,
+    "waf": 24,
+    "tech": 0
+  },
+  "securitytrails": {
+    "subdomains": 0,
+    "historical_ips": 0,
+    "associated_domains": 0
+  },
+  "advanced": {
+    "wayback": 0,
+    "otx": 0,
+    "virustotal": 27,
+    "axfr_records": 0,
+    "zonewalk": 0,
+    "permutations": 99,
+    "recursive": 1,
+    "ai_predicted": 0,
+    "buckets": 225,
+    "buckets_open": 19,
+    "vhosts": 248,
+    "cname_chains": 26,
+    "cname_thirdparty": 4,
+    "wildcard_dns": "false",
+    "dnssec": "not enabled on goodchop.com"
+  },
+  "health": {
+    "errors": 0,
+    "warnings": 21,
+    "log": "/sec/root/.config/then0thing/logs/TheN0thing.sh_20260707_221403.log"
+  }
+}

@@ -238,7 +238,6 @@ class RedTeamCriticAgent:
 
     def _evaluate_evidence_quality(self, finding: Dict) -> Optional[RedTeamCritique]:
         """Evaluate evidence quality from attacker perspective."""
-        evidence = finding.get("evidence", [])
         description = finding.get("description", "")
 
         # Check for speculative language

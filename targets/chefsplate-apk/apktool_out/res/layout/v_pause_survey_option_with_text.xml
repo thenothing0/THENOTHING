@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView android:id="@id/layoutPauseSurveyOptions" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout android:orientation="vertical" android:background="@color/page_background_alternative" android:padding="@dimen/spacing_sm_2" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <include android:id="@id/viewPauseSurveyHeader" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" layout="@layout/v_pause_survey_header" />
+        <LinearLayout android:orientation="vertical" android:id="@id/layoutSurveyOptionContainer" android:background="@drawable/bg_green_button_border_rounded" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_1" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@id/viewPauseSurveyHeader">
+            <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs">
+                <TextView android:id="@id/textViewOptionLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/PauseSurveyLabel" />
+            </LinearLayout>
+            <EditText android:id="@id/editText" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/PauseSurveyEditText" />
+        </LinearLayout>
+        <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@id/layoutSurveyOptionContainer">
+            <com.hellofresh.design.component.button.ZestSecondaryButtonView android:id="@id/buttonBackFromOption" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" app:zestText="Cancel" />
+            <Space android:layout_width="@dimen/spacing_sm_2" android:layout_height="0.0dip" />
+            <com.hellofresh.design.component.button.ZestPrimaryButtonView android:id="@id/buttonSend" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" app:zestText="Send" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

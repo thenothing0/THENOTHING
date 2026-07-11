@@ -6,9 +6,8 @@
 """
 
 import logging
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List
 
-from hydra.swarm.base_agent import BaseAgent
 from hydra.memory.bus import MemoryBus
 
 logger = logging.getLogger("hydra.swarm.factory")

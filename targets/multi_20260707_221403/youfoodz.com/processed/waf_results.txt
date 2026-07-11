@@ -1,0 +1,19 @@
+[*] Checking http://104.18.37.232:2095
+[*] Checking http://104.18.37.232:2096
+[*] Checking http://104.18.37.232:8880
+[*] Checking http://108.156.152.123
+[*] Checking http://108.156.152.50
+[*] Checking http://108.156.152.58
+[*] Checking http://13.227.146.107
+[*] Checking http://click.link.youfoodz.com
+[*] Checking http://cloud.link.youfoodz.com
+[*] Checking http://commsclick.youfoodz.com
+[*] Checking http://links.youfoodz.com:2086
+[*] Checking http://media.youfoodz.com
+[*] Checking http://pages.e.youfoodz.com
+[*] Checking https://63.35.200.242
+[*] Checking https://bob.youfoodz.com
+[~] Number of requests: 1
+[~] Number of requests: 2
+[~] Number of requests: 4
+[~] Number of requests: 7

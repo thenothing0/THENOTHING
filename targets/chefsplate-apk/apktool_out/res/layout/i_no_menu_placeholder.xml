@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:id="@id/layoutNoMenuPlaceholder" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_700" android:gravity="center" android:id="@id/textViewNoMenuTitle" android:paddingTop="@dimen/spacing_xs" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_centerInParent="true" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" />
+    <ImageView android:id="@id/imageViewNoMenu" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@null" android:layout_above="@id/textViewNoMenuTitle" android:layout_centerHorizontal="true" />
+</RelativeLayout>

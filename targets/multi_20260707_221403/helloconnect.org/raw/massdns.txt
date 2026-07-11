@@ -1,0 +1,8 @@
+www.helloconnect.org. A 104.18.32.95
+www.helloconnect.org. A 172.64.155.161
+alt4.aspmx.l.google.com. A 192.178.230.26
+alt1.aspmx.l.google.com. A 192.178.158.26
+aspmx.l.google.com. A 142.251.127.26
+helloconnect.org. A 148.72.90.67
+alt2.aspmx.l.google.com. A 142.251.127.27
+alt3.aspmx.l.google.com. A 172.253.152.27

@@ -34,7 +34,7 @@ class RedisConfig:
     port: int = int(os.getenv("REDIS_PORT", "6379"))
     password: str = os.getenv("REDIS_PASSWORD", "")
     db: int = int(os.getenv("REDIS_DB", "0"))
-    
+
     @property
     def url(self) -> str:
         auth = f":{self.password}@" if self.password else ""
@@ -49,7 +49,7 @@ class PostgresConfig:
     user: str = os.getenv("POSTGRES_USER", "hydra")
     password: str = os.getenv("POSTGRES_PASSWORD", "hydra_secret")
     database: str = os.getenv("POSTGRES_DB", "hydra")
-    
+
     @property
     def dsn(self) -> str:
         return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
@@ -205,27 +205,27 @@ class ObservabilityConfig:
 
 class HydraConfig:
     """Master configuration singleton."""
-    
+
     _instance: Optional["HydraConfig"] = None
-    
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._initialized = False
         return cls._instance
-    
+
     def __init__(self):
         if self._initialized:
             return
         self._initialized = True
-        
+
         self.redis = RedisConfig()
         self.postgres = PostgresConfig()
         self.swarm = SwarmConfig()
         self.mcp = MCPConfig()
         self.learning = LearningConfig()
         self.attack_graph = AttackGraphConfig()
-        
+
         # New v2.0 subsystem configs
         self.cost = CostConfig()
         self.sandbox = SandboxConfig()
@@ -237,15 +237,15 @@ class HydraConfig:
         self.semantic_memory = SemanticMemoryConfig()
         self.plugins = PluginConfig()
         self.observability = ObservabilityConfig()
-        
+
         # AI Providers
         self.ai_providers = self._load_ai_providers()
-        
+
         # Execution mode
         self.distributed = os.getenv("HYDRA_DISTRIBUTED", "false").lower() == "true"
         self.node_id = os.getenv("HYDRA_NODE_ID", "node-0")
         self.node_role = os.getenv("HYDRA_NODE_ROLE", "all")  # all | coordinator | worker
-        
+
         # Security
         self.api_keys = {
             "shodan": os.getenv("SHODAN_API_KEY", ""),
@@ -255,13 +255,13 @@ class HydraConfig:
             "censys_id": os.getenv("CENSYS_ID", ""),
             "censys_secret": os.getenv("CENSYS_SECRET", ""),
         }
-        
+
         logger.info(f"THENOTHING config loaded — node={self.node_id} distributed={self.distributed}")
-    
+
     def _load_ai_providers(self) -> Dict[str, AIProviderConfig]:
         """Load all AI provider configurations from environment."""
         providers = {}
-        
+
         # OpenAI
         openai_key = os.getenv("OPENAI_API_KEY", "")
         providers["openai"] = AIProviderConfig(
@@ -273,7 +273,7 @@ class HydraConfig:
             cost_per_1k_tokens=0.005,
             capabilities=["reasoning", "code_analysis", "report_generation", "vuln_classification"],
         )
-        
+
         # Anthropic Claude
         claude_key = os.getenv("ANTHROPIC_API_KEY", "")
         providers["anthropic"] = AIProviderConfig(
@@ -285,7 +285,7 @@ class HydraConfig:
             cost_per_1k_tokens=0.003,
             capabilities=["reasoning", "code_analysis", "exploit_analysis", "report_generation"],
         )
-        
+
         # Ollama (Local)
         ollama_url = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
         providers["ollama"] = AIProviderConfig(
@@ -296,7 +296,7 @@ class HydraConfig:
             cost_per_1k_tokens=0.0,
             capabilities=["reasoning", "code_analysis", "fast_classification"],
         )
-        
+
         # Custom API
         custom_url = os.getenv("CUSTOM_LLM_URL", "")
         if custom_url:
@@ -308,13 +308,13 @@ class HydraConfig:
                 model=os.getenv("CUSTOM_LLM_MODEL", "default"),
                 capabilities=["reasoning"],
             )
-        
+
         return providers
-    
+
     def get_enabled_providers(self) -> Dict[str, AIProviderConfig]:
         """Return only enabled AI providers."""
         return {k: v for k, v in self.ai_providers.items() if v.enabled}
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Serialize configuration for inspection."""
         return {

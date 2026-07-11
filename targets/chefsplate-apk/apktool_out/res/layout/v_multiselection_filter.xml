@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="center" android:id="@id/progressView" style="@style/wrapped" />
+    <com.hellofresh.sharedui.view.FastScrollRecyclerView android:id="@id/recyclerView" android:layout_width="fill_parent" android:layout_height="fill_parent" app:bubbleColor="@color/primary_600" app:handleColor="@color/neutral_700" />
+</merge>

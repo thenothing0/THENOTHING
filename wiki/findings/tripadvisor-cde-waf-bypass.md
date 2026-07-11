@@ -1,17 +1,27 @@
 ---
 type: finding
-aliases: ["CDE WAF bypass", "REPORT_01", "tamg.cloud WAF bypass"]
-tags: [tamg-cloud, cde, waf-gap, waf-bypass, pci-dss, payment]
-target: "[[tripadvisor]]"
+aliases:
+- CDE WAF bypass
+- REPORT_01
+- tamg.cloud WAF bypass
+tags:
+- tamg-cloud
+- cde
+- waf-gap
+- waf-bypass
+- pci-dss
+- payment
+target: '[[tripadvisor]]'
 host: api.production.cde.tamg.cloud
 scope_status: in-scope
 status: submitted
 severity: P2
-report: "../output/tripadvisor/REPORT_1_CDE_WAF_BYPASS.md"
-reward: ""
 created: 2026-05-30
-updated: 2026-05-30
+updated: '2026-06-26'
+report: ../output/tripadvisor/REPORT_1_CDE_WAF_BYPASS.md
+reward: ''
 ---
+
 # CDE Payment API — Root-Only WAF Enforcement Bypassed (path + method)
 
 > P2 (CWE-693). The WAF on the **Tier-1 CDE payment API** `api.production.cde.tamg.cloud`
@@ -69,3 +79,6 @@ Adjacent CDE hosts to audit for the same rule: `internalapi.production.cde.tamg.
 
 ## Status / triage
 - Submitted as REPORT_01. Response: pending.
+
+## Chains (discovered)
+- [[tripadvisor-estate-waf-gap]]

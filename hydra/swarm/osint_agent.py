@@ -5,10 +5,8 @@
 ╚══════════════════════════════════════════════════════════════╝
 """
 
-import asyncio
 import logging
-import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from hydra.swarm.base_agent import BaseAgent
 from hydra.memory.bus import MemoryBus, Task
@@ -79,7 +77,6 @@ class OSINTAgent(BaseAgent):
             return {"error": "OSINT engine not configured", "target": target}
 
         try:
-            from hydra.osint import OSINTIntelligenceEngine
             report = await self._osint_engine.run_full_osint(target)
             return {
                 "target": target,

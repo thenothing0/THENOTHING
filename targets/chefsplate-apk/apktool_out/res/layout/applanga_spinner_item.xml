@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView android:textColor="@color/applanga_blue" android:textColorHint="#ff3099d5" android:ellipsize="end" android:gravity="center" android:background="@drawable/applanga_spinner_selector" android:layout_width="fill_parent" android:layout_height="46.0dip" android:hint="@string/ID_APPLANGA_DRAFTMENU_TAGSELECT" android:singleLine="true" style="?android:spinnerItemStyle"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

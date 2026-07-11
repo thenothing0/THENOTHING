@@ -1,0 +1,101 @@
+/* HYDRA TUI — Hacker theme (green-on-black) */
+
+Screen {
+    background: #000000;
+    color: #00ff00;
+}
+
+#workspace {
+    layout: horizontal;
+    height: 1fr;
+}
+
+#main-area {
+    width: 1fr;
+    layout: vertical;
+}
+
+ConversationLog {
+    height: 1fr;
+    background: #000000;
+    scrollbar-background: #0a0a0a;
+    scrollbar-color: #003300;
+    scrollbar-size: 1 1;
+}
+
+CommandInput {
+    background: #0a0a0a;
+    color: #00ff00;
+    height: 1;
+}
+
+CommandInput:focus {
+    background: #0d1a00;
+}
+
+StatusBar {
+    dock: bottom;
+    background: #0a0a0a;
+    color: #008800;
+    height: 1;
+}
+
+Sidebar {
+    background: #000000;
+    border-right: solid #003300;
+    width: 28;
+    padding: 1;
+}
+
+WorkflowBar {
+    height: 1;
+    background: #0a0a0a;
+    padding: 0 1;
+}
+
+BottomPanel {
+    height: 12;
+    background: #000000;
+    border-top: solid #003300;
+    display: none;
+    scrollbar-size: 1 1;
+}
+
+BottomPanel.open {
+    display: block;
+}
+
+ContextDrawer {
+    width: 45;
+    background: #0a0a0a;
+    border-left: solid #003300;
+    padding: 1 2;
+    display: none;
+}
+
+ContextDrawer.open {
+    display: block;
+}
+
+Inspector {
+    background: #000000;
+    border: solid #003300;
+    padding: 1 2;
+    display: none;
+    layer: overlay;
+    width: 100%;
+    height: 100%;
+}
+
+Inspector.open {
+    display: block;
+}
+
+ToolOutput {
+    height: 1fr;
+    background: #000000;
+}
+
+.hidden {
+    display: none;
+}

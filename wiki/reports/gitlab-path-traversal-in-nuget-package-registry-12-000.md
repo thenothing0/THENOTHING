@@ -1,0 +1,47 @@
+---
+type: report
+tags:
+- report
+- auto
+target: '[[gitlab]]'
+severity: medium
+created: '2026-06-26'
+updated: '2026-06-26'
+source: https://hackerone.com/reports/822262
+vuln_class: path_traversal
+asset_type: unknown
+learning_score: 4
+learning_score_rationale: base 4 (mid class 'path_traversal')
+unresolved_references:
+- path-traversal
+---
+
+# GitLab — Path traversal in Nuget Package Registry ($12,000)
+
+> Reusable lesson distilled from a disclosed report — see the intel page [[gitlab-path-traversal-in-nuget-package-registry-12-000-intel]].
+
+## Distilled intelligence
+- **Root cause:** unknown  
+  <sub>provenance: not found</sub>
+- **Trust-boundary failure:** unknown  
+  <sub>provenance: not found</sub>
+- **Exploitation sequence:**   
+  <sub>provenance: not found</sub>
+- **Escalation / impact:** unknown  
+  <sub>provenance: not found</sub>
+- **Impact:** unknown  
+  <sub>provenance: not found</sub>
+- **Severity reasoning:** unknown  
+  <sub>provenance: no explicit severity statement</sub>
+- **Attacker assumptions:** unknown  
+  <sub>provenance: not found</sub>
+
+## Why the learning_score
+- **4/10** — base 4 (mid class 'path_traversal')
+- signals: none
+
+## Unresolved references (recorded, not created)
+- `path-traversal` — no page exists (Phase C may create it)
+
+## Related
+- Intel: [[gitlab-path-traversal-in-nuget-package-registry-12-000-intel]] · Target: [[gitlab]]

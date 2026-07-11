@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.compose.ui.platform.ComposeView android:id="@id/bannerContainer" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <com.hellofresh.design.component.feedbackbar.ZestFeedbackBarView android:id="@id/deliveryBannerView" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_1" />
+    <com.hellofresh.features.menuviewinterface.ui.view.MenuViewInterfaceView android:id="@id/deliveryLayerBar" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <com.hellofresh.features.legacy.ui.flows.deliveryheader.state.DeliveryStateView android:id="@id/deliveryStateItem" android:background="@color/elevation_base" android:paddingTop="@dimen/spacing_sm_2" android:paddingBottom="@dimen/spacing_xs" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" android:layout_marginEnd="-8.0dip" />
+    <include android:id="@id/divider" layout="@layout/v_divider" />
+    <com.hellofresh.features.legacy.ui.flows.deliveryheader.actions.DeliveryActionsView android:id="@id/deliveryActionsView" android:background="@color/page_background_alternative" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:minHeight="48.0dip" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" />
+</LinearLayout>

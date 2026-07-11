@@ -1,0 +1,8 @@
+http://bcrc.io
+http://bcrc.io:8080
+http://dev-lnk.bcrc.io
+http://lnk.bcrc.io
+http://trk.bcrc.io
+https://dev-lnk.bcrc.io
+https://lnk.bcrc.io
+https://trk.bcrc.io

@@ -1,0 +1,3 @@
+DMARC: v=DMARC1; p=quarantine; sp=quarantine; rua=mailto:nxtoj-9849@rua.dmarc.emailanalyst.com,mailto:dmarc_agg@dmarc.everest.email; ruf=mailto:nxtoj-9849@ruf.dmarc.emailanalyst.com,mailto:dmarc_fr@dmarc.everest.email; adkim=r; aspf=r; ri=43200
+DKIM[google]: present
+DKIM[k1]: present

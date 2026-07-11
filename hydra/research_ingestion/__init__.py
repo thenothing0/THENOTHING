@@ -63,34 +63,40 @@ class ExploitPattern:
 # ── Extraction Patterns ──────────────────────
 
 VULN_TYPE_PATTERNS = {
-    "xss": [r"cross.?site.?script", r"\bxss\b", r"reflected.?xss", r"stored.?xss", r"dom.?xss"],
-    "sqli": [r"sql.?inject", r"\bsqli\b", r"union.?select", r"blind.?sql"],
-    "ssrf": [r"server.?side.?request", r"\bssrf\b", r"internal.?request"],
-    "idor": [r"insecure.?direct.?object", r"\bidor\b", r"broken.?access"],
-    "rce": [r"remote.?code.?exec", r"\brce\b", r"command.?inject"],
-    "auth_bypass": [r"auth(entication)?.?bypass", r"jwt.?bypass", r"session.?fixation"],
-    "ssrf": [r"server.?side.?request", r"\bssrf\b"],
-    "ssti": [r"server.?side.?template", r"\bssti\b", r"template.?inject"],
-    "csrf": [r"cross.?site.?request.?forg", r"\bcsrf\b"],
-    "xxe": [r"xml.?external.?entity", r"\bxxe\b"],
-    "deserialization": [r"deserializ", r"unserialize", r"pickle", r"java\.io"],
-    "path_traversal": [r"path.?travers", r"directory.?travers", r"local.?file.?incl", r"\blfi\b"],
-    "open_redirect": [r"open.?redirect", r"url.?redirect"],
-    "race_condition": [r"race.?condition", r"toctou", r"concurrency"],
+    "xss": [re.compile(r"cross.?site.?script"), re.compile(r"\bxss\b"), re.compile(r"reflected.?xss"), re.compile(r"stored.?xss"), re.compile(r"dom.?xss")],
+    "sqli": [re.compile(r"sql.?inject"), re.compile(r"\bsqli\b"), re.compile(r"union.?select"), re.compile(r"blind.?sql")],
+    "ssrf": [re.compile(r"server.?side.?request"), re.compile(r"\bssrf\b"), re.compile(r"internal.?request")],
+    "idor": [re.compile(r"insecure.?direct.?object"), re.compile(r"\bidor\b"), re.compile(r"broken.?access")],
+    "rce": [re.compile(r"remote.?code.?exec"), re.compile(r"\brce\b"), re.compile(r"command.?inject")],
+    "auth_bypass": [re.compile(r"auth(entication)?.?bypass"), re.compile(r"jwt.?bypass"), re.compile(r"session.?fixation")],
+    "ssti": [re.compile(r"server.?side.?template"), re.compile(r"\bssti\b"), re.compile(r"template.?inject")],
+    "csrf": [re.compile(r"cross.?site.?request.?forg"), re.compile(r"\bcsrf\b")],
+    "xxe": [re.compile(r"xml.?external.?entity"), re.compile(r"\bxxe\b")],
+    "deserialization": [re.compile(r"deserializ"), re.compile(r"unserialize"), re.compile(r"pickle"), re.compile(r"java\.io")],
+    "path_traversal": [re.compile(r"path.?travers"), re.compile(r"directory.?travers"), re.compile(r"local.?file.?incl"), re.compile(r"\blfi\b")],
+    "open_redirect": [re.compile(r"open.?redirect"), re.compile(r"url.?redirect")],
+    "race_condition": [re.compile(r"race.?condition"), re.compile(r"toctou"), re.compile(r"concurrency")],
 }
 
 PAYLOAD_EXTRACTION_PATTERNS = [
-    r'(?:payload|vector|poc|input)\s*[:=]\s*["\'](.+?)["\']',
-    r'(?:curl|wget|http)\s+.*?(?:[\'"](https?://\S+)["\'])',
-    r'```(?:http|bash|sh|curl)?\s*\n(.+?)\n```',
+    re.compile(r'(?:payload|vector|poc|input)\s*[:=]\s*["\'](.+?)["\']'),
+    re.compile(r'(?:curl|wget|http)\s+.*?(?:[\'"](https?://\S+)["\'])'),
+    re.compile(r'```(?:http|bash|sh|curl)?\s*\n(.+?)\n```', re.DOTALL),
 ]
 
 SEVERITY_PATTERNS = {
-    "critical": [r"\bcritical\b", r"cvss.{0,10}9\.\d", r"\brce\b", r"remote.?code"],
-    "high": [r"\bhigh\b", r"cvss.{0,10}[7-8]\.\d", r"account.?takeover", r"\bato\b"],
-    "medium": [r"\bmedium\b", r"cvss.{0,10}[4-6]\.\d"],
-    "low": [r"\blow\b", r"cvss.{0,10}[1-3]\.\d", r"informational"],
+    "critical": [re.compile(r"\bcritical\b"), re.compile(r"cvss.{0,10}9\.\d"), re.compile(r"\brce\b"), re.compile(r"remote.?code")],
+    "high": [re.compile(r"\bhigh\b"), re.compile(r"cvss.{0,10}[7-8]\.\d"), re.compile(r"account.?takeover"), re.compile(r"\bato\b")],
+    "medium": [re.compile(r"\bmedium\b"), re.compile(r"cvss.{0,10}[4-6]\.\d")],
+    "low": [re.compile(r"\blow\b"), re.compile(r"cvss.{0,10}[1-3]\.\d"), re.compile(r"informational")],
 }
+
+
+_STEP_PATTERNS = [
+    re.compile(r'(?:^|\n)\s*\d+[\.\)]\s*(.+)', re.IGNORECASE | re.MULTILINE),
+    re.compile(r'(?:^|\n)\s*[-*]\s*(.+)', re.IGNORECASE | re.MULTILINE),
+    re.compile(r'(?:step|phase)\s*\d+\s*[:\.]\s*(.+)', re.IGNORECASE | re.MULTILINE),
+]
 
 
 class ResearchIngestionEngine:
@@ -166,7 +172,7 @@ class ResearchIngestionEngine:
         found = []
         for vtype, patterns in VULN_TYPE_PATTERNS.items():
             for pattern in patterns:
-                if re.search(pattern, content_lower):
+                if pattern.search(content_lower):
                     found.append(vtype)
                     break
         return found
@@ -178,13 +184,8 @@ class ResearchIngestionEngine:
 
         # Extract steps (numbered lists, bullet points)
         steps = []
-        step_patterns = [
-            r'(?:^|\n)\s*\d+[\.\)]\s*(.+)',
-            r'(?:^|\n)\s*[-*]\s*(.+)',
-            r'(?:step|phase)\s*\d+\s*[:\.]\s*(.+)',
-        ]
-        for pattern in step_patterns:
-            matches = re.findall(pattern, content, re.IGNORECASE | re.MULTILINE)
+        for pattern in _STEP_PATTERNS:
+            matches = pattern.findall(content)
             steps.extend(matches[:10])
 
         if not steps:
@@ -207,7 +208,7 @@ class ResearchIngestionEngine:
     def _extract_payloads(self, content: str) -> List[str]:
         payloads = []
         for pattern in PAYLOAD_EXTRACTION_PATTERNS:
-            matches = re.findall(pattern, content, re.DOTALL)
+            matches = pattern.findall(content)
             payloads.extend(matches[:5])
         return payloads[:10]
 
@@ -225,7 +226,7 @@ class ResearchIngestionEngine:
         content_lower = content.lower()
         for sev, patterns in SEVERITY_PATTERNS.items():
             for pattern in patterns:
-                if re.search(pattern, content_lower):
+                if pattern.search(content_lower):
                     return sev
         return "medium"
 

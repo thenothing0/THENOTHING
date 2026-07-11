@@ -145,8 +145,8 @@ class CloudSecurityEngine:
     def analyze_headers(self, headers: Dict[str, str], url: str = "") -> List[CloudAsset]:
         """Detect cloud providers from HTTP headers."""
         assets = []
-        header_str = json.dumps(headers).lower() if headers else ""
         import json
+        header_str = json.dumps(headers).lower() if headers else ""
 
         # AWS
         if any(h in header_str for h in ["x-amz-", "amazons3", "cloudfront", "x-amzn-"]):

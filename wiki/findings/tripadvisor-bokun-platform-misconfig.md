@@ -1,17 +1,27 @@
 ---
 type: finding
-aliases: ["Bókun mega-report", "REPORT_09", "Bokun platform misconfig"]
-tags: [bokun, waf-gap, api-abuse, clickjacking, info-disclosure, subsidiary]
-target: "[[tripadvisor]]"
-host: "*.bokun.io"
+aliases:
+- Bókun mega-report
+- REPORT_09
+- Bokun platform misconfig
+tags:
+- bokun
+- waf-gap
+- api-abuse
+- clickjacking
+- info-disclosure
+- subsidiary
+target: '[[tripadvisor]]'
+host: '*.bokun.io'
 scope_status: in-scope
 status: submitted
 severity: P2
-report: "../output/tripadvisor/REPORT_9_BOKUN_PLATFORM_MISCONFIG.md"
-reward: ""
 created: 2026-05-30
-updated: 2026-05-30
+updated: '2026-06-26'
+report: ../output/tripadvisor/REPORT_9_BOKUN_PLATFORM_MISCONFIG.md
+reward: ''
 ---
+
 # Bókun Platform — Systemic Security Misconfiguration (12 findings)
 
 > P2 mega-report against the Bókun booking platform (Tripadvisor subsidiary). 12 distinct
@@ -73,3 +83,9 @@ realizes the mega-report tactic in [[severity-calibration]].
 ## Status / triage
 - Submitted as REPORT_09. Response: pending. (Distinct from the **N/A** Tripadvisor reports —
   REPORT_19/03 — which failed on the [[public-api-key-pitfall]]; this one rests on data/abuse, not key secrecy.)
+
+## Patterns (discovered)
+- [[ssrf-pattern]]
+
+## Chains (discovered)
+- [[tripadvisor-estate-waf-gap]]

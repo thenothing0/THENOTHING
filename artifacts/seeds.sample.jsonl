@@ -1,0 +1,12 @@
+{"url": "https://blog.doyensec.com/2025/01/30/oauth-common-vulnerabilities.html", "vuln_class": "oauth", "tier": "deep"}
+{"url": "https://securityblog.omegapoint.se/en/writeup-authentik-cve-2024-52289/", "vuln_class": "oauth", "tier": "deep"}
+{"url": "https://squidhacker.com/2025/05/mastering-server-side-request-forgery-ssrf-exploitation-in-2025/", "vuln_class": "ssrf", "tier": "deep"}
+{"url": "https://corneacristian.medium.com/top-25-idor-bug-bounty-reports-ba8cd59ad331", "vuln_class": "idor", "tier": "deep"}
+{"url": "https://0xpatrik.com/subdomain-takeover-basics/", "vuln_class": "subdomain_takeover", "tier": "deep"}
+{"url": "https://portswigger.net/web-security/xxe", "vuln_class": "xxe", "tier": "deep"}
+{"url": "https://portswigger.net/web-security/ssrf", "vuln_class": "ssrf", "tier": "deep"}
+{"url": "https://portswigger.net/web-security/access-control/idor", "vuln_class": "idor", "tier": "deep"}
+{"url": "https://portswigger.net/web-security/oauth", "vuln_class": "oauth", "tier": "deep"}
+{"url": "https://portswigger.net/web-security/sql-injection", "vuln_class": "sqli", "tier": "deep"}
+{"url": "https://portswigger.net/web-security/cross-site-scripting", "vuln_class": "xss", "tier": "deep"}
+{"url": "https://portswigger.net/web-security/csrf", "vuln_class": "csrf", "tier": "deep"}

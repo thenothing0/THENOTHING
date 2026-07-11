@@ -1,0 +1,3 @@
+content.crm.chefsplate.com -> dw7bgrz9bvfqm.cloudfront.net.
+live-vercel.chefsplate.com -> live-vercel.chefsplate.com.cdn.cloudflare.net.
+staging-vercel.chefsplate.com -> staging-vercel.chefsplate.com.cdn.cloudflare.net.

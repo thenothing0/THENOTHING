@@ -442,7 +442,7 @@ class CognitiveLoop:
             techs = list({obs.data.get("name", "") for obs in tech_obs if obs.data.get("name")})
             if techs:
                 beliefs.append(Belief(
-                    id=f"belief_tech_stack",
+                    id="belief_tech_stack",
                     belief_type="tech_stack",
                     statement=f"Target uses: {', '.join(techs)}",
                     confidence=BeliefConfidence.HIGH if len(tech_obs) > 2 else BeliefConfidence.MEDIUM,

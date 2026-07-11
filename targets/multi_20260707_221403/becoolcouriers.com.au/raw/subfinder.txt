@@ -1,0 +1,10 @@
+api.becoolcouriers.com.au
+dev.n8n.internal.becoolcouriers.com.au
+intranet.becoolcouriers.com.au
+n8n.internal.becoolcouriers.com.au
+portal.becoolcouriers.com.au
+portalv2-dev.becoolcouriers.com.au
+portalv2.becoolcouriers.com.au
+sorter.becoolcouriers.com.au
+sorter2.becoolcouriers.com.au
+wms.becoolcouriers.com.au

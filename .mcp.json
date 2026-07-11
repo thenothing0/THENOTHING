@@ -8,6 +8,10 @@
         "PYTHONUNBUFFERED": "1",
         "HYDRA_TOR": "1"
       }
+    },
+    "burp": {
+      "command": "java",
+      "args": ["-jar", "/home/thenothing/Desktop/mcp-proxy.jar", "--sse-url", "http://127.0.0.1:9876"]
     }
   }
 }

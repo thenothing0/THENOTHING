@@ -1,7 +1,7 @@
 """
 ╔══════════════════════════════════════════════════════════════╗
-║  Observability — Prometheus Metrics, Tracing, Health       ║
-║  Full production monitoring stack integration              ║
+║  Observability — Metrics, Tracing, Health, Telemetry,      ║
+║  Structured Logging, Crash Diagnostics, Resources          ║
 ╚══════════════════════════════════════════════════════════════╝
 """
 
@@ -9,15 +9,29 @@ import logging
 import time
 import threading
 from typing import Any, Dict, List, Optional
-from dataclasses import dataclass, field
 
 logger = logging.getLogger("hydra.observability")
 
+# ── Stage 3: production observability (re-exports) ───────────────────────────
+from hydra.observability.logging import (  # noqa: E402, F401
+    configure_logging,
+    CorrelationFilter,
+    JSONFormatter,
+    set_correlation_id,
+    get_correlation_id,
+)
+from hydra.observability.telemetry import telemetry  # noqa: E402, F401
+from hydra.observability.diagnostics import diagnostics  # noqa: E402, F401
+from hydra.observability.health import health as health_registry  # noqa: E402, F401
+from hydra.observability.resources import resources  # noqa: E402, F401
+
+
+# ── Pre-existing classes (backward compatible) ───────────────────────────────
 
 class MetricsCollector:
     """
     Prometheus-compatible metrics collector.
-    
+
     Tracks: scan duration, model latency, tool success rate,
     false positive rate, agent health, queue depths.
     """
@@ -171,7 +185,7 @@ class DistributedTracer:
             return list(self._traces.get(trace_id, []))
 
 
-# Global metrics instance
+# Global instances (pre-existing — backward compatible)
 metrics = MetricsCollector()
 health = HealthMonitor()
 tracer = DistributedTracer()

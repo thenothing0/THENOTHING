@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" style="@style/matchedHorizontally"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textColor="@color/neutral_800" android:id="@id/textViewHeader" android:paddingTop="@dimen/spacing_sm_2" android:paddingBottom="@dimen/spacing_sm_2" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xxs" android:layout_marginBottom="@dimen/spacing_xxs" style="@style/RecipeDetailsTitle" />
+    <include layout="@layout/v_divider" />
+    <ScrollView android:layout_width="fill_parent" android:layout_height="0.0dip" android:fillViewport="true" android:layout_weight="1.0">
+        <LinearLayout android:orientation="vertical" android:id="@id/timersContainer" style="@style/matchedHorizontally" />
+    </ScrollView>
+    <LinearLayout android:gravity="end" android:paddingTop="2.0dip" android:paddingBottom="5.0dip" android:layout_marginTop="5.0dip" android:layout_weight="0.0" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" style="@style/matchedHorizontally">
+        <Button android:id="@id/buttonDone" style="@style/buttonNoBackground.Green" />
+    </LinearLayout>
+</LinearLayout>

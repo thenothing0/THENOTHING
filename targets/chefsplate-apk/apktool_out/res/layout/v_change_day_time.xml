@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:layout_gravity="center_horizontal" android:id="@id/textViewChangeDay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_1" android:layout_marginBottom="@dimen/spacing_sm_1" style="@style/Theme.HelloFresh.TextView.EditDelivery.Description" />
+    <FrameLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerViewChangeDay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="@dimen/spacing_lg_1" android:layout_marginEnd="@dimen/spacing_lg_1" />
+        <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="center" android:id="@id/progressView" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </FrameLayout>
+    <TextView android:layout_gravity="center_horizontal" android:id="@id/textViewDeliveryWindows" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" android:layout_marginBottom="@dimen/base_level2_5" style="@style/Theme.HelloFresh.TextView.EditDelivery.Description" />
+    <androidx.recyclerview.widget.RecyclerView android:layout_gravity="center_horizontal" android:id="@id/recyclerViewTimeWindows" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginStart="@dimen/spacing_lg_1" android:layout_marginEnd="@dimen/spacing_lg_1" />
+    <TextView android:gravity="center" android:layout_gravity="center" android:id="@id/textViewPrice" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" android:layout_marginBottom="@dimen/spacing_sm_2" android:lineSpacingExtra="@dimen/spacing_xxs" android:layout_marginStart="@dimen/spacing_md_1" android:layout_marginEnd="@dimen/spacing_md_1" style="@style/Theme.HelloFresh.TextView.EditDelivery.Description" />
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/spacing_md_2" android:layout_marginStart="@dimen/spacing_md_2" android:layout_marginEnd="@dimen/spacing_md_2">
+        <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonCancel" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginEnd="@dimen/spacing_xxs" app:zestBtnType="outlined" app:zestText="Cancel" />
+        <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonNext" android:visibility="gone" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="@dimen/spacing_xxs" app:zestBtnType="filled" app:zestText="Next" />
+    </LinearLayout>
+</LinearLayout>

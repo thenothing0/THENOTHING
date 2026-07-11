@@ -1,0 +1,2 @@
+SPF: v=spf1 include:sendgrid.net include:mail.zendesk.com include:_spf.google.com include:servers.mcsv.net ~all
+DMARC: v=DMARC1; p=quarantine; sp=reject; rua=mailto:nxtoj-9849@rua.dmarc.emailanalyst.com; ruf=mailto:nxtoj-9849@ruf.dmarc.emailanalyst.com; adkim=r; aspf=r; ri=43200; fo=1

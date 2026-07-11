@@ -9,15 +9,10 @@ No mock outputs. No fake results.
 """
 
 import asyncio
-import json
 import logging
-import os
 import shutil
-import subprocess
-import tempfile
 import time
 from typing import Any, Dict, List, Optional
-from pathlib import Path
 
 from hydra.config import get_config, WORDLISTS_DIR
 
@@ -186,7 +181,7 @@ class MCPToolServer:
     All tools are executed as real subprocesses.
     No mocking, no faking, no simulation.
     """
-    
+
     def __init__(self):
         self.config = get_config()
         self._available_tools: Dict[str, bool] = {}
@@ -202,28 +197,28 @@ class MCPToolServer:
     def set_artifact_store(self, artifact_store):
         """Attach artifact store — auto-saves all tool outputs."""
         self._artifact_store = artifact_store
-    
+
     async def initialize(self):
         """Detect available tools on the system."""
         logger.info("🔧 MCP Tool Server initializing — detecting tools...")
-        
+
         for name, tool_def in TOOL_REGISTRY.items():
             binary = tool_def["binary"]
             path = shutil.which(binary)
             self._available_tools[name] = path is not None
             status = f"✅ {binary}" if path else f"❌ {binary} (not found)"
             logger.info(f"  {status}")
-        
+
         available = sum(1 for v in self._available_tools.values() if v)
         total = len(self._available_tools)
         logger.info(f"🔧 {available}/{total} tools available")
-    
+
     def get_available_tools(self) -> Dict[str, bool]:
         return dict(self._available_tools)
-    
+
     def get_missing_tools(self) -> List[str]:
         return [name for name, avail in self._available_tools.items() if not avail]
-    
+
     async def execute_tool(
         self,
         tool_name: str,
@@ -242,7 +237,7 @@ class MCPToolServer:
             Dict with keys: success, output, stderr, elapsed, tool_used
         """
         timeout = timeout or self.config.mcp.tool_timeout
-        
+
         # ── SCOPE ENFORCEMENT GATE ─────────────────
         target = params.get("target", "")
         if self._scope_engine and self._scope_engine.is_loaded and target:
@@ -252,7 +247,7 @@ class MCPToolServer:
                 return {"success": False, "error": f"Scope violation: {scope_check.reason}",
                         "output": "", "tool_used": tool_name, "blocked_by_scope": True,
                         "policy_violations": scope_check.policy_violations}
-        
+
         # Resolve logical name to physical tool
         physical_tool = params.pop("tool", None)
         if not physical_tool:
@@ -264,29 +259,29 @@ class MCPToolServer:
                     break
             if not physical_tool:
                 physical_tool = aliases[0] if aliases else tool_name
-        
+
         tool_def = TOOL_REGISTRY.get(physical_tool)
         if not tool_def:
             return {"success": False, "error": f"Unknown tool: {physical_tool}",
                     "output": "", "tool_used": physical_tool}
-        
+
         # Check availability
         if not self._available_tools.get(physical_tool):
             return {"success": False,
                     "error": f"Tool not installed: {physical_tool}. Run setup.sh to install.",
                     "output": "", "tool_used": physical_tool}
-        
+
         # Build command
         try:
             cmd = tool_def["build_cmd"](params)
         except Exception as e:
             return {"success": False, "error": f"Failed to build command: {e}",
                     "output": "", "tool_used": physical_tool}
-        
+
         # Execute via subprocess
         logger.info(f"▶️  Executing: {' '.join(cmd)}")
         start = time.time()
-        
+
         try:
             stdin_data = None
             # Support piped input via _stdin param or targets list
@@ -294,25 +289,25 @@ class MCPToolServer:
                 stdin_data = params.pop("_stdin")
             elif tool_def.get("stdin_mode") and "targets" in params:
                 stdin_data = "\n".join(params["targets"])
-            
+
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
                 stdin=asyncio.subprocess.PIPE if stdin_data else None,
             )
-            
+
             stdout, stderr = await asyncio.wait_for(
                 proc.communicate(input=stdin_data.encode() if stdin_data else None),
                 timeout=timeout,
             )
-            
+
             elapsed = time.time() - start
             stdout_str = stdout.decode("utf-8", errors="replace")
             stderr_str = stderr.decode("utf-8", errors="replace")
-            
+
             success = proc.returncode == 0
-            
+
             # Track stats
             if physical_tool not in self._execution_stats:
                 self._execution_stats[physical_tool] = {
@@ -322,12 +317,12 @@ class MCPToolServer:
             stats["total"] += 1
             stats["success" if success else "failed"] += 1
             stats["total_time"] += elapsed
-            
+
             logger.info(
                 f"{'✅' if success else '⚠️'} {physical_tool} completed "
                 f"in {elapsed:.1f}s (rc={proc.returncode})"
             )
-            
+
             result = {
                 "success": success,
                 "output": stdout_str,
@@ -336,7 +331,7 @@ class MCPToolServer:
                 "elapsed": round(elapsed, 2),
                 "tool_used": physical_tool,
             }
-            
+
             # ── AUTO-SAVE ARTIFACTS ────────────────
             if self._artifact_store and target:
                 try:
@@ -347,9 +342,9 @@ class MCPToolServer:
                             target, "logs", f"{physical_tool}_stderr", stderr_str)
                 except Exception:
                     pass  # Never fail a scan because of artifact saving
-            
+
             return result
-            
+
         except asyncio.TimeoutError:
             elapsed = time.time() - start
             logger.warning(f"⏰ {physical_tool} timed out after {elapsed:.1f}s")
@@ -362,6 +357,6 @@ class MCPToolServer:
         except Exception as e:
             return {"success": False, "error": str(e),
                     "output": "", "tool_used": physical_tool}
-    
+
     def get_stats(self) -> Dict[str, Any]:
         return dict(self._execution_stats)

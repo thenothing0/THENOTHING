@@ -1,0 +1,101 @@
+/* HYDRA TUI — Monokai theme */
+
+Screen {
+    background: #272822;
+    color: #f8f8f2;
+}
+
+#workspace {
+    layout: horizontal;
+    height: 1fr;
+}
+
+#main-area {
+    width: 1fr;
+    layout: vertical;
+}
+
+ConversationLog {
+    height: 1fr;
+    background: #272822;
+    scrollbar-background: #3e3d32;
+    scrollbar-color: #75715e;
+    scrollbar-size: 1 1;
+}
+
+CommandInput {
+    background: #3e3d32;
+    color: #f8f8f2;
+    height: 1;
+}
+
+CommandInput:focus {
+    background: #49483e;
+}
+
+StatusBar {
+    dock: bottom;
+    background: #3e3d32;
+    color: #75715e;
+    height: 1;
+}
+
+Sidebar {
+    background: #272822;
+    border-right: solid #75715e;
+    width: 28;
+    padding: 1;
+}
+
+WorkflowBar {
+    height: 1;
+    background: #3e3d32;
+    padding: 0 1;
+}
+
+BottomPanel {
+    height: 12;
+    background: #272822;
+    border-top: solid #75715e;
+    display: none;
+    scrollbar-size: 1 1;
+}
+
+BottomPanel.open {
+    display: block;
+}
+
+ContextDrawer {
+    width: 45;
+    background: #3e3d32;
+    border-left: solid #75715e;
+    padding: 1 2;
+    display: none;
+}
+
+ContextDrawer.open {
+    display: block;
+}
+
+Inspector {
+    background: #272822;
+    border: solid #75715e;
+    padding: 1 2;
+    display: none;
+    layer: overlay;
+    width: 100%;
+    height: 100%;
+}
+
+Inspector.open {
+    display: block;
+}
+
+ToolOutput {
+    height: 1fr;
+    background: #272822;
+}
+
+.hidden {
+    display: none;
+}

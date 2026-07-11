@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="new_code_message">أرسلنا إليك رمزاً جديداً</string>
+    <string name="paypal_auth_common_header_back_press">زر الرجوع</string>
+    <string name="paypal_auth_common_header_close">إغلاق</string>
+    <string name="paypal_auth_common_header_paypal_logo">شعار PayPal</string>
+    <string name="paypal_auth_otp_login_back_press">اضغط زر الرجوع</string>
+    <string name="paypal_auth_otp_login_check_code">تحقق من الرمز الخاص بك وحاوِل مجدداً.</string>
+    <string name="paypal_auth_otp_login_close">إغلاق</string>
+    <string name="paypal_auth_otp_login_code_expired">انتهت صلاحية الرمز الخاص بك. اطلب الرمز الجديد.</string>
+    <string name="paypal_auth_otp_login_code_sent_to">تم إرسال الرمز إلى %1$s</string>
+    <string name="paypal_auth_otp_login_error_use_password_instead">استخدام كلمة المرور بدلاً من ذلك</string>
+    <string name="paypal_auth_otp_login_get_a_code">طلب رمز</string>
+    <string name="paypal_auth_otp_login_get_new_code">طلب رمز جديد</string>
+    <string name="paypal_auth_otp_login_log_in">تسجيل الدخول</string>
+    <string name="paypal_auth_otp_login_log_in_fast_with_a_one_time_code">تسجيل الدخول سريعاً برمز لمرة واحدة</string>
+    <string name="paypal_auth_otp_login_otp_phone_header">"أدخِل رمز المرور لمرة واحدة 
+ الخاص بك"</string>
+    <string name="paypal_auth_otp_login_paypal_logo">شعار PayPal</string>
+    <string name="paypal_auth_otp_login_paypal_logo_content_description">شعار PayPal</string>
+    <string name="paypal_auth_otp_login_phone_text">الهاتف</string>
+    <string name="paypal_auth_otp_login_something_went_wrong">حدث خطأ ما</string>
+    <string name="paypal_auth_otp_login_tcpa_consent">عندما تختار المتابعة، فأنت تؤكد أنك مفوّض باستخدام رقم الهاتف هذا وتوافق على تلقي الرسائل النصية. قد يتم تطبيق رسوم شركة الاتصالات.</string>
+    <string name="paypal_auth_otp_login_try_again_later">يمكنك المحاولة مجدداً أو تسجيل الدخول بكلمة مرورك.</string>
+    <string name="paypal_auth_otp_login_use_password_instead">استخدام كلمة المرور بدلاً من ذلك</string>
+    <string name="paypal_auth_otp_login_we_ll_send_a_code_to">سنرسل رمزاً إلى:</string>
+    <string name="paypal_auth_otp_phone_login_screen_change">تغيير</string>
+    <string name="paypal_auth_split_login_email">البريد الإلكتروني</string>
+    <string name="paypal_auth_split_login_enter_an_email_address">أدخل عنوان بريد إلكتروني.</string>
+    <string name="paypal_auth_split_login_enter_your_email_to_get_started">أدرِج بريدك الإلكتروني للبدء.</string>
+    <string name="paypal_auth_split_login_forgot_your_login_info">هل نسيت بيانات تسجيل دخولك؟</string>
+    <string name="paypal_auth_split_login_next">التالي</string>
+    <string name="paypal_auth_split_login_pay_with_paypal">الدفع عبر PayPal</string>
+</resources>

@@ -9,6 +9,7 @@ preserve unknown frontmatter keys, so hand-authored pages are never clobbered.
 
 from __future__ import annotations
 
+import functools
 import os
 import time
 from dataclasses import dataclass, field
@@ -49,7 +50,7 @@ class WikiPage:
     meta: Dict = field(default_factory=dict)
     body: str = ""
 
-    @property
+    @functools.cached_property
     def links(self) -> List[str]:
         """All [[wikilink]] slugs referenced by this page (frontmatter + body)."""
         return extract_wikilinks(self.path.read_text(encoding="utf-8")

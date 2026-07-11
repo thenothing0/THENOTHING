@@ -1,0 +1,4 @@
+shop.goodchop.com
+mobile.goodchop.com
+media.goodchop.com
+www.goodchop.com

@@ -1,0 +1,6 @@
+/./
+/api/raw-data
+/ws/raw-data
+https://github.com/zloirock/core-js
+https://github.com/zloirock/core-js/blob/v3.21.1/LICENSE
+https://heatmap-events-collector.instapage.com

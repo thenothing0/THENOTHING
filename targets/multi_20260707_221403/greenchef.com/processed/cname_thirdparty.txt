@@ -1,0 +1,2 @@
+live-vercel.greenchef.com -> live-vercel.greenchef.com.cdn.cloudflare.net.
+staging-vercel.greenchef.com -> staging-vercel.greenchef.com.cdn.cloudflare.net.

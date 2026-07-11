@@ -1,0 +1,40 @@
+2026/07/07 23:13:53 INFO result 🤖 target=http://143.204.130.68:80 status-code=403 title="ERROR: The request could not be satisfied" have-screenshot=true
+2026/07/07 23:13:54 INFO result 🤖 target=http://143.204.130.83:80 status-code=403 title="ERROR: The request could not be satisfied" have-screenshot=true
+2026/07/07 23:13:55 INFO result 🤖 target=http://143.204.130.88:80 status-code=403 title="ERROR: The request could not be satisfied" have-screenshot=true
+2026/07/07 23:13:57 INFO result 🤖 target=http://143.204.130.92:80 status-code=403 title="ERROR: The request could not be satisfied" have-screenshot=true
+2026/07/07 23:13:58 ERRO failed to witness target target=http://143.204.130.83:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/07 23:13:58 INFO result 🤖 target=http://3.230.124.158:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/07 23:14:00 ERRO failed to witness target target=http://143.204.130.92:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/07 23:14:00 INFO result 🤖 target=http://34.234.48.164:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/07 23:14:02 INFO result 🤖 target=http://44.218.228.250:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/07 23:14:03 ERRO failed to witness target target=http://143.204.130.88:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/07 23:14:03 INFO result 🤖 target=http://52.222.177.52:80 status-code=403 title="ERROR: The request could not be satisfied" have-screenshot=true
+2026/07/07 23:14:05 ERRO failed to witness target target=http://143.204.130.68:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/07 23:14:05 INFO result 🤖 target=http://52.222.177.57:80 status-code=403 title="ERROR: The request could not be satisfied" have-screenshot=true
+2026/07/07 23:14:06 INFO result 🤖 target=http://44.218.228.250:80 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:06 INFO result 🤖 target=http://3.230.124.158:80 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:06 INFO result 🤖 target=http://34.234.48.164:80 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:06 ERRO failed to witness target target=http://52.222.177.52:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/07 23:14:07 ERRO failed to witness target target=http://intranet.becoolcouriers.com.au:443 err="page load error net::ERR_EMPTY_RESPONSE"
+2026/07/07 23:14:07 ERRO failed to witness target target=https://107.21.108.229:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/07 23:14:08 ERRO failed to witness target target=https://3.104.100.8:80 err="page load error net::ERR_CONNECTION_REFUSED"
+2026/07/07 23:14:08 INFO result 🤖 target=http://api.becoolcouriers.com.au:80 status-code=200 title="" have-screenshot=true
+2026/07/07 23:14:10 ERRO failed to witness target target=https://3.230.124.158:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/07 23:14:11 INFO result 🤖 target=https://107.21.108.229:443 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:11 ERRO failed to witness target target=https://3.27.101.70:80 err="page load error net::ERR_CONNECTION_REFUSED"
+2026/07/07 23:14:12 ERRO failed to witness target target=http://52.222.177.57:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/07 23:14:13 INFO result 🤖 target=https://3.104.100.8:443 status-code=200 title="" have-screenshot=true
+2026/07/07 23:14:13 INFO result 🤖 target=https://3.230.124.158:443 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:13 INFO result 🤖 target=http://portal.becoolcouriers.com.au:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/07 23:14:14 INFO result 🤖 target=http://portal.becoolcouriers.com.au:80 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:14 ERRO failed to witness target target=https://44.218.228.250:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/07 23:14:15 INFO result 🤖 target=https://3.27.101.70:443 status-code=200 title="" have-screenshot=true
+2026/07/07 23:14:15 ERRO failed to witness target target=https://portalv2.becoolcouriers.com.au:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/07 23:14:16 ERRO failed to witness target target=http://api.becoolcouriers.com.au:443 err="page load error net::ERR_CONNECTION_RESET"
+2026/07/07 23:14:16 ERRO failed to witness target target=https://34.234.48.164:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/07 23:14:16 INFO result 🤖 target=https://34.234.48.164:443 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:17 INFO result 🤖 target=https://44.218.228.250:443 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:25 INFO result 🤖 target=http://107.21.108.229:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/07 23:14:25 INFO result 🤖 target=http://107.21.108.229:80 status-code=200 title=Tracking have-screenshot=true
+2026/07/07 23:14:25 INFO result 🤖 target=http://intranet.becoolcouriers.com.au:80 status-code=200 title="Sign in - Google Accounts" have-screenshot=true
+2026/07/07 23:14:30 INFO result 🤖 target=https://portalv2.becoolcouriers.com.au:443 status-code=200 title="Portal v2" have-screenshot=true

@@ -15,7 +15,7 @@ logger = logging.getLogger("hydra.ai.safety")
 class HallucinationDefense:
     """
     Prevents hallucinated findings from being reported.
-    
+
     Rules:
       - No finding without evidence
       - No finding without reproduction path
@@ -42,7 +42,7 @@ class HallucinationDefense:
     ) -> Dict[str, Any]:
         """
         Validate a finding against hallucination criteria.
-        
+
         Returns validation result with hallucination score.
         """
         issues = []
@@ -157,7 +157,7 @@ class HallucinationDefense:
     def evidence_check(self, finding: Dict[str, Any]) -> bool:
         """
         Strict evidence check.
-        
+
         A finding CANNOT be reported without:
           - Evidence
           - Reproduction path

@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build tools
+        run: pip install build twine
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Validate distributions
+        run: twine check dist/*
+
+      - name: Smoke-test install in clean venv
+        run: |
+          python -m venv /tmp/release-test
+          /tmp/release-test/bin/pip install dist/hydra_security-*.whl
+          /tmp/release-test/bin/python -c "
+          from hydra import __version__
+          assert __version__, 'version not set'
+          print(f'hydra-security {__version__} installed OK')
+          "
+          rm -rf /tmp/release-test
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+
+      # Uncomment when ready to publish to PyPI:
+      # - name: Publish to PyPI
+      #   env:
+      #     TWINE_USERNAME: __token__
+      #     TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      #   run: twine upload dist/*

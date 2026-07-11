@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:id="@id/centeredHeaderRoot" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_none" android:paddingEnd="@dimen/spacing_sm_2"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:gravity="center_horizontal" android:layout_gravity="center_horizontal" android:id="@id/centeredTitle" android:focusable="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_1" android:layout_marginBottom="@dimen/spacing_sm_2" style="@style/Theme.HelloFresh.TextView.RateRecipe.Header" />
+    <ImageView android:layout_gravity="center_horizontal" android:id="@id/centeredEmoji" android:layout_width="@dimen/spacing_xl_2" android:layout_height="@dimen/spacing_xl_2" android:contentDescription="@null" />
+    <TextView android:gravity="center" android:id="@id/centeredStarsText" android:focusable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/Theme.HelloFresh.TextView.RateRecipe" />
+    <com.hellofresh.design.component.rating.ZestInteractiveRatingButtonView android:layout_gravity="center_horizontal" android:id="@id/centeredRatingBar" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/spacing_sm_2" style="@style/RatingStars" />
+    <View android:id="@id/ratingDivider" android:background="@color/neutral_400" android:layout_width="fill_parent" android:layout_height="1.0dip" android:layout_marginStart="@dimen/spacing_none" />
+</LinearLayout>

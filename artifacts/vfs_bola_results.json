@@ -1,0 +1,136 @@
+{
+  "baseline_A": {
+    "status": 200,
+    "body": {
+      "data": null,
+      "error": {
+        "code": 1041,
+        "description": "No Applicant exists",
+        "type": "Error"
+      }
+    }
+  },
+  "baseline_B": {
+    "status": 200,
+    "body": {
+      "data": null,
+      "error": {
+        "code": 1041,
+        "description": "No Applicant exists",
+        "type": "Error"
+      }
+    }
+  },
+  "bola_A_token_B_user": {
+    "status": 401,
+    "body": {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.2",
+      "title": "Unauthorized",
+      "status": 401,
+      "traceId": "00-a741cf45a4969fd3a378933ed3b8e598-d8c0068a4ace9883-00"
+    }
+  },
+  "bola_B_token_A_user": {
+    "status": 401,
+    "body": {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.2",
+      "title": "Unauthorized",
+      "status": 401,
+      "traceId": "00-ff0f1f68066bdadaf914d3c314da134d-cb3bd2daa76fb543-00"
+    }
+  },
+  "mass_['role']": {
+    "status": 200,
+    "body": {
+      "data": null,
+      "error": {
+        "code": 1041,
+        "description": "No Applicant exists",
+        "type": "Error"
+      }
+    }
+  },
+  "mass_['isAdmin']": {
+    "status": 200,
+    "body": {
+      "data": null,
+      "error": {
+        "code": 1041,
+        "description": "No Applicant exists",
+        "type": "Error"
+      }
+    }
+  },
+  "mass_['status']": {
+    "status": 200,
+    "body": {
+      "data": null,
+      "error": {
+        "code": 1041,
+        "description": "No Applicant exists",
+        "type": "Error"
+      }
+    }
+  },
+  "mass_['role', 'isAdmin', 'status']": {
+    "status": 200,
+    "body": {
+      "data": null,
+      "error": {
+        "code": 1041,
+        "description": "No Applicant exists",
+        "type": "Error"
+      }
+    }
+  },
+  "enum_/appointment/applicant": {
+    "status": 404,
+    "body": ""
+  },
+  "enum_/appointment/document": {
+    "status": 404,
+    "body": ""
+  },
+  "enum_/appointment/order": {
+    "status": 404,
+    "body": ""
+  },
+  "enum_/appointment/schedule": {
+    "status": 401,
+    "body": {
+      "code": "401101",
+      "description": "Invalid Request"
+    }
+  },
+  "enum_/appointment/slot": {
+    "status": 404,
+    "body": ""
+  },
+  "enum_/appointment/visaCategory": {
+    "status": 404,
+    "body": ""
+  },
+  "enum_/appointment/refund": {
+    "status": 404,
+    "body": ""
+  },
+  "enum_/appointment/payment": {
+    "status": 404,
+    "body": ""
+  },
+  "enum_/user/profile": {
+    "status": 404,
+    "body": ""
+  },
+  "enum_/user/login": {
+    "status": 403,
+    "body": {
+      "code": "403102",
+      "description": "Forbidden"
+    }
+  },
+  "enum_/auth/jwtToken": {
+    "status": 404,
+    "body": "Not Found"
+  }
+}

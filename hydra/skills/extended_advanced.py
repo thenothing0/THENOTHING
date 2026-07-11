@@ -1,5 +1,5 @@
 """Extended Auth, API, Cloud, Business Logic, AI, CI/CD, Frontend, Mobile, OSINT, Exploit Chain skills."""
-from hydra.skills import Skill, SkillCategory as C, Severity as S, ExploitHypothesis as EH, ValidationRule
+from hydra.skills import Skill, SkillCategory as C, Severity as S, ExploitHypothesis as EH
 
 def _h(id,t,d,steps,sev=S.HIGH,cwe="",pay=None):
     return EH(id=id,title=t,description=d,test_steps=steps,severity=sev,cwe=cwe,payloads=pay or [])

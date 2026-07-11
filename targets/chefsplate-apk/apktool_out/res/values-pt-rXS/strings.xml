@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="new_code_message">Enviámos-lhe um novo código</string>
+    <string name="paypal_auth_common_header_back_press">para trás</string>
+    <string name="paypal_auth_common_header_close">fechar</string>
+    <string name="paypal_auth_common_header_paypal_logo">Logótipo do PayPal</string>
+    <string name="paypal_auth_otp_login_back_press">para trás</string>
+    <string name="paypal_auth_otp_login_check_code">Verifique o código e tente novamente.</string>
+    <string name="paypal_auth_otp_login_close">fechar</string>
+    <string name="paypal_auth_otp_login_code_expired">O seu código expirou. Obtenha um novo código.</string>
+    <string name="paypal_auth_otp_login_code_sent_to">Código enviado para %1$s</string>
+    <string name="paypal_auth_otp_login_error_use_password_instead">Usar a palavra-passe</string>
+    <string name="paypal_auth_otp_login_get_a_code">Obter código</string>
+    <string name="paypal_auth_otp_login_get_new_code">Obter novo código</string>
+    <string name="paypal_auth_otp_login_log_in">Iniciar sessão</string>
+    <string name="paypal_auth_otp_login_log_in_fast_with_a_one_time_code">Iniciar sessão rapidamente com um código de utilização única</string>
+    <string name="paypal_auth_otp_login_otp_phone_header">"Introduzir o seu 
+ código de utilização única"</string>
+    <string name="paypal_auth_otp_login_paypal_logo">Logótipo do PayPal</string>
+    <string name="paypal_auth_otp_login_paypal_logo_content_description">Logótipo do PayPal</string>
+    <string name="paypal_auth_otp_login_phone_text">telemóvel</string>
+    <string name="paypal_auth_otp_login_something_went_wrong">Tudo indica que ocorreu um erro técnico</string>
+    <string name="paypal_auth_otp_login_tcpa_consent">Ao continuar, confirma que está autorizado(a) a usar este número de telefone e aceita receber SMSs. Podem ser aplicadas tarifas pela sua operadora.</string>
+    <string name="paypal_auth_otp_login_try_again_later">Pode tentar novamente mais tarde ou iniciar sessão com a sua palavra-passe.</string>
+    <string name="paypal_auth_otp_login_use_password_instead">Usar a palavra-passe</string>
+    <string name="paypal_auth_otp_login_we_ll_send_a_code_to">Vamos enviar um código para:</string>
+    <string name="paypal_auth_otp_phone_login_screen_change">Alterar</string>
+    <string name="paypal_auth_split_login_email">Endereço de e-mail</string>
+    <string name="paypal_auth_split_login_enter_an_email_address">Introduza um endereço de e-mail.</string>
+    <string name="paypal_auth_split_login_enter_your_email_to_get_started">Introduza o seu e-mail para começar.</string>
+    <string name="paypal_auth_split_login_forgot_your_login_info">Esqueceu-se dos dados de início de sessão?</string>
+    <string name="paypal_auth_split_login_next">Seguinte</string>
+    <string name="paypal_auth_split_login_pay_with_paypal">Pagar com PayPal</string>
+</resources>

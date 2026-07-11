@@ -255,10 +255,10 @@ class APISecurityEngine:
                     severity="high", confidence=0.5,
                     cwe="CWE-639",
                     reproduction=[
-                        f"Authenticate as User A",
+                        "Authenticate as User A",
                         f"Send {ep.method} {ep.path} with User A's resource ID",
-                        f"Authenticate as User B",
-                        f"Send same request — check if User B can access User A's resource",
+                        "Authenticate as User B",
+                        "Send same request — check if User B can access User A's resource",
                     ],
                     metadata={"params": [p["name"] for p in ep.params if "id" in p["name"].lower()]},
                 )
@@ -285,7 +285,7 @@ class APISecurityEngine:
                     reproduction=[
                         f"Send {ep.method} {ep.path} with normal parameters",
                         f"Add extra fields: {', '.join(dangerous_fields[:5])}",
-                        f"Check if any were accepted and persisted",
+                        "Check if any were accepted and persisted",
                     ],
                 )
                 candidates.append(vuln)

@@ -118,3 +118,23 @@ jobs:
             tests/safety tests/hitl tests/engagement tests/mcp_registry \
             tests/test_authorization.py tests/test_scope.py \
             tests/mcp/test_tool_contract.py
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install build tools
+        run: pip install build twine
+      - name: Build sdist and wheel
+        run: python -m build
+      - name: Validate distributions
+        run: twine check dist/*
+      - name: Smoke-test install in clean venv
+        run: |
+          python -m venv /tmp/hydra-test-venv
+          /tmp/hydra-test-venv/bin/pip install dist/hydra_security-*.whl
+          /tmp/hydra-test-venv/bin/python -c "from hydra import __version__; assert __version__"
+          rm -rf /tmp/hydra-test-venv

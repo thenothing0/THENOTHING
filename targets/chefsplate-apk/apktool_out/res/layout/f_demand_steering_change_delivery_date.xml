@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView android:id="@id/viewUltimateUnpauseRoot" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <TextView android:textAppearance="@style/HFText.HeadlineSmall" android:textColor="@color/neutral_800" android:layout_gravity="center_horizontal" android:id="@id/textViewTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAlignment="center" android:layout_marginHorizontal="@dimen/spacing_md_1" android:layout_marginVertical="@dimen/spacing_xs" />
+        <com.hellofresh.features.legacy.ui.flows.subscription.overview.deliveries.views.ChangeDeliveryDateTimeView android:id="@id/changeDeliveryDayView" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

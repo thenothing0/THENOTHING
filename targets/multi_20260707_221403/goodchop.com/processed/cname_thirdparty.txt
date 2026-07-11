@@ -1,0 +1,4 @@
+account.goodchop.com -> shops.myshopify.com.
+live-vercel.goodchop.com -> live-vercel.goodchop.com.cdn.cloudflare.net.
+shop.goodchop.com -> shops.myshopify.com.
+staging-vercel.goodchop.com -> staging-vercel.goodchop.com.cdn.cloudflare.net.

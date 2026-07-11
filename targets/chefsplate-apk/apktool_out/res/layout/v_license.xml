@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textAppearance="@style/HFText.BodyMediumRegular" android:id="@id/textViewName" android:paddingTop="@dimen/spacing_xs" android:paddingBottom="@dimen/spacing_xxs" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" />
+    <TextView android:textAppearance="@style/HFText.BodyExtraSmallRegular" android:id="@id/textViewLicence" android:paddingBottom="@dimen/spacing_sm_2" android:layout_width="fill_parent" android:layout_height="wrap_content" android:lineSpacingExtra="3.0dip" android:textAlignment="textStart" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" />
+    <include android:id="@id/viewDivider" layout="@layout/v_divider" />
+</LinearLayout>

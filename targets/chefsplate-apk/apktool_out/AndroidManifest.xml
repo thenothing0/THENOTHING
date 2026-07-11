@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><manifest xmlns:android="http://schemas.android.com/apk/res/android" android:compileSdkVersion="35" android:compileSdkVersionCodename="15" android:requiredSplitTypes="base__abi,base__density" android:splitTypes="" package="com.chefsplate.ChefsPlate" platformBuildVersionCode="35" platformBuildVersionName="15">
+    <permission android:name="com.chefsplate.ChefsPlate.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:maxSdkVersion="29" android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:maxSdkVersion="32" android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.APP_EMAIL"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.DIAL"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO"/>
+            <data android:host="*" android:scheme="smsto"/>
+        </intent>
+        <package android:name="com.facebook.orca"/>
+        <package android:name="com.facebook.katana"/>
+        <package android:name="com.whatsapp"/>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="http"/>
+        </intent>
+        <package android:name="com.venmo"/>
+        <package android:name="com.paypal.android.p2pmobile"/>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService"/>
+        </intent>
+        <package android:name="com.tencent.mm"/>
+        <package android:name="com.myklarnamobile"/>
+        <package android:name="com.google.android.apps.maps"/>
+        <intent>
+            <action android:name="ch.twint.action.TWINT_PAYMENT"/>
+        </intent>
+        <intent>
+            <action android:name="ch.twint.action.TWINT_UOF_REGISTRATION"/>
+        </intent>
+        <intent>
+            <action android:name="org.chromium.intent.action.PAY"/>
+        </intent>
+        <intent>
+            <action android:name="org.chromium.intent.action.IS_READY_TO_PAY"/>
+        </intent>
+        <intent>
+            <action android:name="org.chromium.intent.action.UPDATE_PAYMENT_DETAILS"/>
+        </intent>
+    </queries>
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService"/>
+        </intent>
+    </queries>
+    <uses-feature android:name="android.software.picture_in_picture" android:required="false"/>
+    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="com.chefsplate.ChefsPlate.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"/>
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION"/>
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID"/>
+    <uses-permission android:name="android.permission.MODIFY_TOUCH_MODE_STATE"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"/>
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+    <permission android:name="com.chefsplate.ChefsPlate.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" android:protectionLevel="signature"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
+    <application android:allowBackup="false" android:appComponentFactory="androidx.core.app.CoreComponentFactory" android:extractNativeLibs="false" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:largeHeap="true" android:name="com.hellofresh.androidapp.HelloFreshApplication" android:requestLegacyExternalStorage="true" android:resizeableActivity="true" android:supportsRtl="true" android:theme="@style/Theme.HelloFresh" android:usesCleartextTraffic="false">
+        <meta-data android:name="firebase_performance_collection_enabled" android:value="false"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.provider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
+        </provider>
+        <provider android:authorities="com.chefsplate.ChefsPlate.androidx-startup" android:exported="false" android:name="androidx.startup.InitializationProvider">
+            <meta-data android:name="app.cash.paykit.core.CashAppPayInitializer" android:value="androidx.startup"/>
+            <meta-data android:name="androidx.emoji2.text.EmojiCompatInitializer" android:value="androidx.startup"/>
+            <meta-data android:name="androidx.lifecycle.ProcessLifecycleInitializer" android:value="androidx.startup"/>
+            <meta-data android:name="androidx.profileinstaller.ProfileInstallerInitializer" android:value="androidx.startup"/>
+        </provider>
+        <activity android:exported="true" android:name="com.hellofresh.features.legacy.ui.flows.launch.LaunchActivity" android:screenOrientation="portrait" android:theme="@style/Theme.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:configChanges="orientation|screenSize" android:launchMode="singleTask" android:name="com.hellofresh.features.legacy.ui.flows.login.LoginSignUpActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:configChanges="navigation|orientation|screenSize" android:label="@string/app_name" android:launchMode="singleTask" android:name="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait" android:theme="@style/Theme.Splash" android:windowSoftInputMode="adjustNothing|stateAlwaysHidden"/>
+        <activity android:name="com.hellofresh.features.legacy.ui.flows.main.more.appsettings.AppSettingsActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:exported="false" android:name="com.hellofresh.features.legacy.ui.flows.subscription.SubscriptionActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:exported="false" android:name="com.hellofresh.features.legacy.ui.flows.subscription.settings.PlanSettingsActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.subscription.SubscriptionActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="orientation|screenSize|uiMode" android:exported="false" android:name="com.hellofresh.features.legacy.ui.flows.main.shop.purchase.ShopPurchaseActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="orientation|screenSize|uiMode" android:exported="false" android:name="com.hellofresh.features.legacy.features.mailsubscriptionconfirmation.ui.screen.MailSubscriptionConfirmationActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.legacy.ui.flows.main.more.appsettings.country.CountrySelectionActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.more.appsettings.AppSettingsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.legacy.ui.flows.main.more.appsettings.country.reactnative.CountrySelectionReactNativeActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.more.appsettings.AppSettingsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.legacy.ui.flows.main.settings.editpassword.ChangePasswordActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.legacy.ui.flows.main.settings.editemail.ChangeEmailActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:exported="false" android:name="com.hellofresh.features.legacy.ui.flows.main.more.appsettings.OpenSourceLicensesActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.more.appsettings.AppSettingsActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize" android:name="com.facebook.FacebookActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity android:configChanges="orientation|screenSize" android:name="com.hellofresh.features.legacy.ui.flows.main.recipe.search.RecipeSearchActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh.GreyToolbar" android:windowSoftInputMode="stateVisible"/>
+        <activity android:name="com.hellofresh.features.legacy.ui.flows.main.tabs.explore.ExploreActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.main.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="orientation|screenSize" android:exported="false" android:name="com.hellofresh.features.legacy.ui.flows.subscription.settings.cancellation.CancellationFunnelActivity" android:parentActivityName="com.hellofresh.features.legacy.ui.flows.subscription.settings.PlanSettingsActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize"/>
+        <activity android:exported="true" android:launchMode="singleTask" android:name="com.braintreepayments.popupbridge.PopupBridgeActivity" android:permission="" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="com.chefsplate.chefsplate.popupbridge"/>
+            </intent-filter>
+        </activity>
+        <activity android:exported="false" android:name="com.hellofresh.features.legacy.ui.flows.main.settings.datatracking.DataTrackingActivity" android:screenOrientation="portrait"/>
+        <activity android:exported="true" android:launchMode="singleTop" android:name="com.hellofresh.features.legacy.ui.flows.subscription.settings.changepaymentmethod.ChangePaymentMethodActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="com.chefsplate.ChefsPlate.web" android:scheme="adyencheckout"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="com.hellofresh.features.debugsettings.ui.screen.ExperimentsToggleActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.legacy.features.home.ui.screen.HomeActivity" android:screenOrientation="portrait"/>
+        <service android:enabled="true" android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
+        <service android:exported="false" android:name="com.hellofresh.comms.pushnotifications.PushMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <receiver android:name="com.hellofresh.features.legacy.receiver.SharingTargetReceiver"/>
+        <receiver android:exported="true" android:name="com.hellofresh.androidapp.receiver.InstallReceiver">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:exported="false" android:name="com.hellofresh.androidapp.receiver.CustomAccessTokenExpirationBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.facebook.sdk.ACTION_CURRENT_ACCESS_TOKEN_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <meta-data android:name="ApplangaRunBackgroundThread" android:value="false"/>
+        <meta-data android:name="ApplangaEnableReflection" android:value="false"/>
+        <meta-data android:name="ApplangaUpdateGroups" android:value="products"/>
+        <meta-data android:name="ApplangaLogCache" android:value="true"/>
+        <meta-data android:name="ApplangaLogLevel" android:value="v"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+        <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled" android:value="false"/>
+        <meta-data android:name="com.facebook.sdk.AutoInitEnabled" android:value="true"/>
+        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="false"/>
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false"/>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/google_maps_key"/>
+        <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts"/>
+        <meta-data android:name="google_analytics_deferred_deep_link_enabled" android:value="true"/>
+        <meta-data android:name="google_analytics_default_allow_analytics_storage" android:value="false"/>
+        <meta-data android:name="google_analytics_default_allow_ad_storage" android:value="false"/>
+        <meta-data android:name="google_analytics_default_allow_ad_user_data" android:value="false"/>
+        <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false"/>
+        <activity android:name="com.hellofresh.features.giftsanddiscounts.ui.GiftAndDiscountActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.standalonewallet.landing.ui.StandaloneWalletActivity" android:theme="@style/Theme.HelloFresh"/>
+        <activity android:name="com.hellofresh.features.browsebycategories.ui.BrowseByCategoriesActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.loyaltyprogram.onboarding.ui.LoyaltyProgramOnboardingActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh.WhiteStatusBar"/>
+        <activity android:exported="false" android:name="com.hellofresh.features.loyaltyprogram.hub.ui.view.celebration.fullscreen.MilestoneCelebrationActivity" android:screenOrientation="portrait"/>
+        <activity android:exported="false" android:name="com.hellofresh.features.loyaltyprogram.enrollmentsclosed.ui.LoyaltyProgramEnrollmentsClosedActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh.WhiteStatusBar"/>
+        <activity android:exported="false" android:name="com.hellofresh.features.loyaltyprogram.about.ui.LoyaltyProgramAboutActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="orientation|screenSize" android:exported="false" android:name="com.hellofresh.features.reactivationwebview.ui.view.SubscriptionReactivationActivity" android:screenOrientation="fullSensor"/>
+        <activity android:name="com.hellofresh.features.food.seasonal.legacy.landing.SeasonalLandingActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.food.seasonal.legacy.description.SeasonalDescriptionActivity" android:parentActivityName="com.hellofresh.features.food.seasonal.legacy.landing.SeasonalLandingActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh.TranslucentStatus"/>
+        <activity android:name="com.hellofresh.features.food.seasonal.legacy.postpurchase.SeasonalPostPurchaseActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh.TranslucentStatus"/>
+        <activity android:exported="true" android:launchMode="singleTop" android:name="com.hellofresh.payment.ui.PaymentScreenActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="com.chefsplate.ChefsPlate.native" android:scheme="adyencheckout"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="com.hellofresh.features.notificationcenter.ui.screen.InboxActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.notificationcenter.deeplink.InboxDeepLinkResolverActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <service android:exported="false" android:name="com.hellofresh.features.paymentmethods.adyen.AdyenDropInService"/>
+        <activity android:name="com.hellofresh.core.payment.verification.PaymentUnskipVerificationActivity" android:theme="@style/Theme.HelloFresh"/>
+        <activity android:name="com.hellofresh.features.impossibletomiss.shared.ui.ImpossibleToMissActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="navigation|orientation|screenSize" android:label="@string/app_name" android:launchMode="singleTask" android:name="com.hellofresh.features.food.cookingsteps.ui.RecipeCookingStepsActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh.TranslucentStatus"/>
+        <activity android:name="com.hellofresh.features.languageselection.ui.screen.LanguageSelectionActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.food.myrecipes.ui.MyRecipesActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh"/>
+        <activity android:name="com.hellofresh.features.seamlessSelfReporting.ui.SeamlessSelfReportingActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.loyaltychallenge.ui.hub.LoyaltyChallengeHubActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh.DialogFullScreen"/>
+        <activity android:name="com.hellofresh.features.food.nutritionalcard.ui.view.NutritionalCardActivity" android:screenOrientation="portrait" android:theme="@style/Theme.HelloFresh"/>
+        <activity android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize" android:exported="true" android:name="com.hellofresh.features.deeplinkhandler.ui.DeepLinkHandlerActivity" android:permission="" android:theme="@style/Theme.HelloFresh.NoDisplay">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https"/>
+                <data android:scheme="http"/>
+                <data android:host="www.chefsplate.com"/>
+                <data android:pathPattern="/account/.*"/>
+                <data android:pathPattern="/account-raf/.*"/>
+                <data android:pathPattern="/account-raf"/>
+                <data android:pathPattern="/account-settings/order-history"/>
+                <data android:pathPattern="/account-settings/gifts-and-offers/.*"/>
+                <data android:pathPattern="/account-settings/subscription-settings"/>
+                <data android:pathPattern="/account-settings/subscription-settings/.*"/>
+                <data android:pathPattern="/account-settings/payment-methods"/>
+                <data android:pathPattern="/achievements"/>
+                <data android:pathPattern="/delivery-tracking"/>
+                <data android:pathPattern="/delivery-tracking/.*"/>
+                <data android:pathPattern="/freebie/.*"/>
+                <data android:pathPattern="/freebie"/>
+                <data android:pathPattern="/freebies/.*"/>
+                <data android:pathPattern="/freebies"/>
+                <data android:pathPattern="/helloshare/.*"/>
+                <data android:pathPattern="/helloshare"/>
+                <data android:pathPattern="/inbox/.*"/>
+                <data android:pathPattern="/inbox"/>
+                <data android:pathPattern="/loyalty-challenge"/>
+                <data android:pathPattern="/loyalty"/>
+                <data android:pathPattern="/m/login/.*"/>
+                <data android:pathPattern="/m/login"/>
+                <data android:pathPattern="/m/register/.*"/>
+                <data android:pathPattern="/m/register"/>
+                <data android:pathPattern="/mail/subscribe"/>
+                <data android:pathPattern="/mail/settings"/>
+                <data android:pathPattern="/my-account/deliveries/delivery-support"/>
+                <data android:pathPattern="/my-account/deliveries/menu"/>
+                <data android:pathPattern="/my-account/deliveries/menu/.*"/>
+                <data android:pathPattern="/my-account/deliveries/past-deliveries"/>
+                <data android:pathPattern="/my-account/deliveries/tracking"/>
+                <data android:pathPattern="/newsfeed/.*"/>
+                <data android:pathPattern="/newsfeed"/>
+                <data android:pathPattern="/onboarding/paswordless-modal"/>
+                <data android:pathPattern="/passwordless/login/finish"/>
+                <data android:pathPattern="/pay"/>
+                <data android:pathPattern="/plans"/>
+                <data android:pathPattern="/plans/.*"/>
+                <data android:pathPattern="/reactivate"/>
+                <data android:pathPattern="/reactivate/.*"/>
+                <data android:pathPattern="/recipe-rating"/>
+                <data android:pathPattern="/recipes/.*"/>
+                <data android:pathPattern="/recipes"/>
+                <data android:pathPattern="/referral"/>
+                <data android:pathPattern="/referrals/.*"/>
+                <data android:pathPattern="/referrals"/>
+                <data android:pathPattern="/seasonal-boxes/.*"/>
+                <data android:pathPattern="/seasonal-boxes"/>
+                <data android:pathPattern="/settings/.*"/>
+                <data android:pathPattern="/settings"/>
+                <data android:pathPattern="/shop/.*"/>
+                <data android:pathPattern="/shop"/>
+                <data android:pathPattern="/store/.*"/>
+                <data android:pathPattern="/store"/>
+                <data android:pathPattern="/subscriptions/.*"/>
+                <data android:pathPattern="/subscriptions"/>
+                <data android:pathPrefix="/uni"/>
+                <data android:pathPrefix="/uni/.*"/>
+                <data android:pathPattern="/uni/wf"/>
+                <data android:pathPattern="/settings/app-os"/>
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="chefsplate"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="com.hellofresh.features.onboarding.presentation.OnboardingActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.cookbookreact.ui.SocialRecipeActivity" android:theme="@style/Theme.HelloFresh" android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize" android:exported="false" android:launchMode="singleTask" android:name="com.hellofresh.features.cookbookreact.pip.SocialRecipeTutorialVideoActivity" android:resizeableActivity="true" android:supportsPictureInPicture="true" android:theme="@style/Theme.HelloFresh"/>
+        <activity android:name="com.hellofresh.features.recipehubreact.ui.RecipeHubActivity" android:theme="@style/Theme.HelloFresh"/>
+        <activity android:name="com.hellofresh.features.seasonalbox.ui.LandingActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.seasonal.ui.SeasonalActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.webbrowser.ui.WebBrowserActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.hellofresh.features.betaprogram.ui.screen.BetaProgramActivity" android:theme="@style/Theme.HelloFresh"/>
+        <activity android:exported="false" android:name="com.hellofresh.features.personalinfo.ui.PersonalInfoActivity" android:screenOrientation="portrait"/>
+        <activity android:configChanges="orientation|screenSize" android:name="com.hellofresh.features.shoplanding.ui.ShopActivity" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <service android:exported="false" android:name="com.iterable.iterableapi.IterableFirebaseMessagingService">
+            <intent-filter android:priority="-1">
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <receiver android:exported="false" android:name="com.iterable.iterableapi.IterablePushActionReceiver">
+            <intent-filter>
+                <action android:name="com.iterable.push.ACTION_PUSH_ACTION"/>
+            </intent-filter>
+        </receiver>
+        <activity android:excludeFromRecents="true" android:exported="false" android:launchMode="singleInstance" android:name="com.iterable.iterableapi.IterableTrampolineActivity" android:theme="@style/TrampolineActivity.Transparent"/>
+        <activity android:exported="true" android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"/>
+        <activity android:exported="true" android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"/>
+        <activity android:exported="true" android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"/>
+        <uses-library android:name="androidx.security" android:required="false"/>
+        <activity android:label="@string/mcsdk_notification_activity_label" android:launchMode="singleInstance" android:name="com.salesforce.marketingcloud.notifications.NotificationOpenActivity" android:taskAffinity="com.chefsplate.ChefsPlate.NotificationOpenActivity" android:theme="@android:style/Theme.Translucent"/>
+        <activity android:label="@string/mcsdk_iam_activity_label" android:name="com.salesforce.marketingcloud.messages.iam.IamModalActivity" android:theme="@style/McSdk.Modal"/>
+        <activity android:label="@string/mcsdk_iam_activity_label" android:name="com.salesforce.marketingcloud.messages.iam.IamBannerActivity" android:theme="@style/McSdk.Banner"/>
+        <activity android:configChanges="orientation|screenSize" android:label="@string/mcsdk_iam_activity_label" android:name="com.salesforce.marketingcloud.messages.iam.IamFullscreenActivity" android:theme="@style/McSdk.Fullscreen"/>
+        <activity android:configChanges="orientation|screenSize" android:label="@string/mcsdk_iam_activity_label" android:name="com.salesforce.marketingcloud.messages.iam.IamFullImageFillActivity" android:theme="@style/McSdk.Fullscreen"/>
+        <receiver android:exported="false" android:name="com.salesforce.marketingcloud.location.LocationReceiver"/>
+        <service android:exported="false" android:name="com.salesforce.marketingcloud.MCService" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:exported="false" android:name="com.salesforce.marketingcloud.NotificationOpenedService"/>
+        <receiver android:enabled="true" android:exported="false" android:name="com.salesforce.marketingcloud.MCReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+                <action android:name="com.chefsplate.ChefsPlate.com.salesforce.marketingcloud.WAKE_FOR_ALARM"/>
+            </intent-filter>
+        </receiver>
+        <service android:exported="false" android:name="com.salesforce.marketingcloud.messages.push.MCFirebaseMessagingService">
+            <intent-filter android:priority="-1">
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <provider android:authorities="com.chefsplate.ChefsPlate.com.salesforce.marketingcloud.initprovider" android:enabled="true" android:exported="false" android:name="com.salesforce.marketingcloud.MCInitContentProvider"/>
+        <service android:foregroundServiceType="location" android:name="org.altbeacon.beacon.service.BeaconService"/>
+        <receiver android:exported="true" android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver" android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+            </intent-filter>
+            <meta-data android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED" android:value="true"/>
+        </receiver>
+        <service android:directBootAware="true" android:exported="false" android:name="com.google.firebase.messaging.FirebaseMessagingService">
+            <intent-filter android:priority="-500">
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service android:directBootAware="true" android:exported="false" android:name="com.google.firebase.components.ComponentDiscoveryService">
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.firestore.FirebaseFirestoreKtxRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.firestore.FirestoreRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.perf.FirebasePerfKtxRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.perf.FirebasePerfRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.remoteconfig.FirebaseRemoteConfigKtxRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.remoteconfig.RemoteConfigRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.crashlytics.FirebaseCrashlyticsKtxRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.crashlytics.CrashlyticsRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.sessions.FirebaseSessionsRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.abt.component.AbtRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+        </service>
+        <activity android:name="com.hellofresh.features.foodprofile.ui.FoodProfileActivity" android:theme="@style/Theme.HelloFresh"/>
+        <activity android:exported="true" android:launchMode="singleTask" android:name="com.braintreepayments.api.BraintreeDeepLinkActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <data android:scheme="com.chefsplate.ChefsPlate.braintree.deeplinkhandler"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+        </activity>
+        <service android:directBootAware="false" android:enabled="@bool/enable_system_alarm_service_default" android:exported="false" android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"/>
+        <service android:directBootAware="false" android:enabled="@bool/enable_system_job_service_default" android:exported="true" android:name="androidx.work.impl.background.systemjob.SystemJobService" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:directBootAware="false" android:enabled="@bool/enable_system_foreground_service_default" android:exported="false" android:name="androidx.work.impl.foreground.SystemForegroundService"/>
+        <receiver android:directBootAware="false" android:enabled="true" android:exported="false" android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"/>
+        <receiver android:directBootAware="false" android:enabled="false" android:exported="false" android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:directBootAware="false" android:enabled="false" android:exported="false" android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy">
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_OKAY"/>
+                <action android:name="android.intent.action.BATTERY_LOW"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:directBootAware="false" android:enabled="false" android:exported="false" android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy">
+            <intent-filter>
+                <action android:name="android.intent.action.DEVICE_STORAGE_LOW"/>
+                <action android:name="android.intent.action.DEVICE_STORAGE_OK"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:directBootAware="false" android:enabled="false" android:exported="false" android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:directBootAware="false" android:enabled="false" android:exported="false" android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:directBootAware="false" android:enabled="@bool/enable_system_alarm_service_default" android:exported="false" android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver">
+            <intent-filter>
+                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:directBootAware="false" android:enabled="true" android:exported="true" android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver" android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS"/>
+            </intent-filter>
+        </receiver>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.processout.sdk.ui.checkout.DynamicCheckoutActivity" android:theme="@style/Theme.ProcessOut.Compose"/>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.processout.sdk.ui.napm.NativeAlternativePaymentActivity" android:theme="@style/Theme.ProcessOut.BottomSheet"/>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.processout.sdk.ui.card.tokenization.CardTokenizationActivity" android:theme="@style/Theme.ProcessOut.BottomSheet"/>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.processout.sdk.ui.card.update.CardUpdateActivity" android:theme="@style/Theme.ProcessOut.BottomSheet"/>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.processout.sdk.ui.card.scanner.CardScannerActivity" android:theme="@style/Theme.ProcessOut.BottomSheet"/>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.processout.sdk.ui.savedpaymentmethods.SavedPaymentMethodsActivity" android:theme="@style/Theme.ProcessOut.BottomSheet"/>
+        <meta-data android:name="com.google.android.gms.wallet.api.enabled" android:value="true"/>
+        <activity android:name="androidx.activity.ComponentActivity"/>
+        <activity android:name="com.facebook.CustomTabMainActivity"/>
+        <activity android:exported="true" android:name="com.facebook.CustomTabActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="cct.com.chefsplate.ChefsPlate" android:scheme="fbconnect"/>
+            </intent-filter>
+        </activity>
+        <provider android:authorities="com.chefsplate.ChefsPlate.FacebookInitProvider" android:exported="false" android:name="com.facebook.internal.FacebookInitProvider"/>
+        <receiver android:exported="false" android:name="com.facebook.AuthenticationTokenManager$CurrentAuthenticationTokenChangedBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.facebook.sdk.ACTION_CURRENT_AUTHENTICATION_TOKEN_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <activity android:exported="true" android:launchMode="singleTask" android:name="com.adyen.checkout.dropin.internal.ui.DropInActivity" android:theme="@style/AdyenCheckout.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="com.chefsplate.ChefsPlate" android:path="" android:scheme="adyencheckout"/>
+                <data android:host="com.chefsplate.ChefsPlate" android:path="/" android:scheme="adyencheckout"/>
+            </intent-filter>
+        </activity>
+        <service android:exported="false" android:name="com.adyen.checkout.dropin.SessionDropInService"/>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.processout.sdk.ui.nativeapm.PONativeAlternativePaymentMethodActivity" android:theme="@style/Theme.ProcessOut.Default"/>
+        <activity android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|orientation|screenLayout|screenSize|smallestScreenSize|uiMode" android:exported="false" android:launchMode="singleTask" android:name="com.processout.sdk.ui.web.customtab.POCustomTabAuthorizationActivity" android:theme="@style/Theme.ProcessOut.Transparent"/>
+        <activity android:exported="true" android:name="com.processout.sdk.ui.web.customtab.POCustomTabRedirectActivity" android:theme="@style/Theme.ProcessOut.Transparent">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="processout" android:pathPrefix="/return" android:scheme="com.chefsplate.ChefsPlate"/>
+            </intent-filter>
+        </activity>
+        <activity android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|keyboard|keyboardHidden|layoutDirection|locale|orientation|screenLayout|screenSize|smallestScreenSize|uiMode" android:exported="false" android:launchMode="singleTop" android:name="com.processout.sdk.ui.web.webview.POWebViewAuthorizationActivity" android:theme="@style/Theme.ProcessOut.Transparent"/>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.paypal.pyplcheckout.ui.feature.home.activities.PYPLHomeActivity" android:screenOrientation="portrait" android:taskAffinity="com.pyplcheckout.task" android:theme="@style/PYPLAppTheme" android:windowSoftInputMode="adjustResize"/>
+        <activity android:exported="true" android:launchMode="singleTask" android:name="com.paypal.pyplcheckout.ui.feature.home.activities.PYPLInitiateCheckoutActivity" android:screenOrientation="portrait" android:theme="@style/PYPLAppFullScreenTheme">
+            <intent-filter android:autoVerify="true">
+                <data android:host="paypalxo" android:scheme="com.chefsplate.ChefsPlate"/>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+        </activity>
+        <activity android:excludeFromRecents="true" android:exported="true" android:name="com.paypal.openid.RedirectUriReceiverActivity" android:screenOrientation="portrait" android:theme="@style/PYPLAppTheme">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="paypalpay" android:scheme="com.chefsplate.ChefsPlate"/>
+            </intent-filter>
+        </activity>
+        <activity android:exported="false" android:launchMode="singleTop" android:name="com.paypal.pyplcheckout.ui.feature.threeds.ThreeDS20Activity" android:screenOrientation="portrait" android:taskAffinity="com.pyplcheckout.threeds" android:theme="@style/PYPLAppTheme"/>
+        <activity android:name="com.paypal.authcore.authentication.TokenActivity"/>
+        <activity android:exported="false" android:launchMode="singleTask" android:name="com.paypal.openid.AuthorizationManagementActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity android:configChanges="colorMode|density|fontScale|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode" android:label="ShowkaseBrowserActivity" android:name="com.airbnb.android.showkase.ui.ShowkaseBrowserActivity" android:theme="@style/Theme.App.NoActionBar"/>
+        <service android:enabled="true" android:exported="false" android:name="com.google.firebase.sessions.SessionLifecycleService"/>
+        <service android:enabled="true" android:exported="false" android:name="com.google.android.gms.tagmanager.TagManagerService"/>
+        <activity android:exported="true" android:name="com.google.android.gms.tagmanager.TagManagerPreviewActivity" android:noHistory="true">
+            <intent-filter>
+                <data android:scheme="tagmanager.c.com.chefsplate.ChefsPlate"/>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+        </activity>
+        <property android:name="android.adservices.AD_SERVICES_CONFIG" android:resource="@xml/ga_ad_services_config"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.firebaseinitprovider" android:directBootAware="true" android:exported="false" android:initOrder="100" android:name="com.google.firebase.provider.FirebaseInitProvider"/>
+        <service android:directBootAware="true" android:exported="false" android:name="androidx.room.MultiInstanceInvalidationService"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.evinced.provider" android:enabled="true" android:exported="false" android:name="com.evinced.inappsdk.EvContentProvider"/>
+        <activity android:exported="false" android:label="" android:name="pub.devrel.easypermissions.AppSettingsDialogHolderActivity" android:theme="@style/EasyPermissions.Transparent"/>
+        <service android:enabled="false" android:exported="false" android:name="androidx.camera.core.impl.MetadataHolderService">
+            <meta-data android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER" android:value="androidx.camera.camera2.Camera2Config$DefaultProvider"/>
+        </service>
+        <activity android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize" android:exported="false" android:launchMode="singleTask" android:name="com.klarna.mobile.sdk.activity.KlarnaRedirectLauncherActivity" android:theme="@style/Theme.AppCompat.RedirectLauncher_KlarnaInAppSDK"/>
+        <activity android:exported="false" android:name="com.klarna.mobile.sdk.activity.KlarnaRedirectReceiverActivity"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.klarna.provider" android:exported="false" android:name="com.klarna.mobile.KlarnaInitProvider"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.klarna.fileprovider.share" android:exported="false" android:grantUriPermissions="true" android:name="com.klarna.mobile.KlarnaShareFileProvider">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/klarna_mobile_sdk_share_file_paths"/>
+        </provider>
+        <service android:directBootAware="true" android:exported="false" android:name="com.google.mlkit.common.internal.MlKitComponentDiscoveryService">
+            <meta-data android:name="com.google.firebase.components:com.google.mlkit.vision.text.internal.TextRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+            <meta-data android:name="com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar" android:value="com.google.firebase.components.ComponentRegistrar"/>
+        </service>
+        <provider android:authorities="com.chefsplate.ChefsPlate.mlkitinitprovider" android:exported="false" android:initOrder="99" android:name="com.google.mlkit.common.internal.MlKitInitProvider"/>
+        <activity android:exported="true" android:launchMode="singleTask" android:name="com.adyen.threeds2.internal.ui.activity.ChallengeActivity" android:theme="@style/ThreeDS2Theme.Internal" android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="com.chefsplate.ChefsPlate" android:scheme="adyen3ds2"/>
+            </intent-filter>
+        </activity>
+        <activity android:excludeFromRecents="true" android:exported="false" android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <service android:exported="true" android:name="com.google.android.gms.auth.api.signin.RevocationBoundService" android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION" android:visibleToInstantApps="true"/>
+        <receiver android:enabled="true" android:exported="false" android:name="com.google.android.gms.measurement.AppMeasurementReceiver"/>
+        <service android:enabled="true" android:exported="false" android:name="com.google.android.gms.measurement.AppMeasurementService"/>
+        <service android:enabled="true" android:exported="false" android:name="com.google.android.gms.measurement.AppMeasurementJobService" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <activity android:exported="false" android:name="com.google.android.gms.common.api.GoogleApiActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity android:exported="true" android:name="androidx.compose.ui.tooling.PreviewActivity"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.com.salesforce.marketingcloud.sfmcsdk.initprovider" android:enabled="true" android:exported="false" android:name="com.salesforce.marketingcloud.sfmcsdk.SFMCSdkInitContentProvider"/>
+        <receiver android:enabled="true" android:exported="false" android:name="com.salesforce.marketingcloud.sfmcsdk.SFMCSdkReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+        <service android:exported="false" android:name="com.salesforce.marketingcloud.sfmcsdk.SFMCSdkJobIntentService" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <uses-library android:name="android.ext.adservices" android:required="false"/>
+        <uses-library android:name="androidx.window.extensions" android:required="false"/>
+        <uses-library android:name="androidx.window.sidecar" android:required="false"/>
+        <receiver android:directBootAware="false" android:enabled="true" android:exported="true" android:name="androidx.profileinstaller.ProfileInstallReceiver" android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SKIP_FILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION"/>
+            </intent-filter>
+        </receiver>
+        <provider android:authorities="com.chefsplate.ChefsPlate.com.squareup.picasso" android:exported="false" android:name="com.squareup.picasso.PicassoProvider"/>
+        <service android:exported="false" android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery">
+            <meta-data android:name="backend:com.google.android.datatransport.cct.CctBackendFactory" android:value="cct"/>
+        </service>
+        <service android:exported="false" android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <receiver android:exported="false" android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.provider" android:exported="false" android:grantUriPermissions="true" android:name="com.ReactNativeBlobUtil.Utils.FileProvider">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
+        </provider>
+        <provider android:authorities="com.chefsplate.ChefsPlate.fileprovider" android:exported="false" android:grantUriPermissions="true" android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths"/>
+        </provider>
+        <meta-data android:name="com.facebook.soloader.enabled" android:value="false"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.adjust-lifecycle-provider" android:exported="false" android:name="com.adjust.sdk.SystemLifecycleContentProvider"/>
+        <activity android:exported="false" android:name="com.jakewharton.processphoenix.ProcessPhoenix" android:process=":phoenix" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <meta-data android:name="Fuss" android:value="3"/>
+        <activity android:exported="false" android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity" android:stateNotNeeded="true" android:theme="@style/Theme.PlayCore.Transparent"/>
+        <provider android:authorities="com.chefsplate.ChefsPlate.CCInitProvider" android:enabled="true" android:exported="false" android:name="com.cardinalcommerce.a.setOutlineSpotShadowColor"/>
+        <activity android:exported="false" android:name="com.cardinalcommerce.shared.cs.userinterfaces.ChallengeHTMLView" android:theme="@style/CardinalSDKTheme.ActionBar"/>
+        <activity android:exported="false" android:name="com.cardinalcommerce.shared.cs.userinterfaces.ChallengeNativeView" android:theme="@style/CardinalSDKTheme.ActionBar" android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+        <meta-data android:name="com.android.vending.splits.required" android:value="true"/>
+        <meta-data android:name="com.android.stamp.source" android:value="https://play.google.com/store"/>
+        <meta-data android:name="com.android.stamp.type" android:value="STAMP_TYPE_DISTRIBUTION_APK"/>
+        <meta-data android:name="com.android.vending.splits" android:resource="@xml/splits0"/>
+        <meta-data android:name="com.android.vending.derived.apk.id" android:value="2"/>
+    </application>
+</manifest>

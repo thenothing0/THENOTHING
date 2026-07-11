@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:paddingBottom="@dimen/spacing_xs" android:scrollbars="vertical" android:clipChildren="false" android:clipToPadding="false" android:layout_width="fill_parent" android:layout_height="fill_parent" app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <include android:visibility="gone" layout="@layout/i_no_menu_placeholder" />
+    <include android:visibility="gone" layout="@layout/i_no_internet_placeholder" />
+    <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="center" android:id="@id/progressView" style="@style/wrapped" />
+</FrameLayout>

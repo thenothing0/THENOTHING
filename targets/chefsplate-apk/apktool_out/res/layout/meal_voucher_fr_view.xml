@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.google.android.material.textfield.TextInputLayout android:id="@id/textInputLayout_mealVoucherFRCardNumber" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/AdyenCheckout.TextInputLayout">
+        <com.adyen.checkout.giftcard.internal.ui.view.GiftCardNumberInput android:id="@id/editText_mealVoucherFRCardNumber" android:nextFocusDown="@id/editText_mealVoucherFRExpiryDate" android:nextFocusForward="@id/editText_mealVoucherFRExpiryDate" style="@style/AdyenCheckout.MealVoucherFR.CardNumberInput" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:baselineAligned="false">
+        <com.google.android.material.textfield.TextInputLayout android:id="@id/textInputLayout_mealVoucherFRExpiryDate" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginEnd="@dimen/standard_half_margin" style="@style/AdyenCheckout.TextInputLayout">
+            <com.adyen.checkout.ui.core.internal.ui.view.ExpiryDateInput android:id="@id/editText_mealVoucherFRExpiryDate" android:nextFocusDown="@id/editText_mealVoucherFRSecurityCode" android:nextFocusForward="@id/editText_mealVoucherFRSecurityCode" style="@style/AdyenCheckout.MealVoucherFR.ExpiryDateInput" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:id="@id/textInputLayout_mealVoucherFRSecurityCode" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="@dimen/standard_half_margin" style="@style/AdyenCheckout.TextInputLayout">
+            <com.adyen.checkout.ui.core.internal.ui.view.AdyenTextInputEditText android:id="@id/editText_mealVoucherFRSecurityCode" style="@style/AdyenCheckout.MealVoucherFR.SecurityCodeInput" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+</merge>

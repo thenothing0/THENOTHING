@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.hellofresh.features.legacy.features.home.ui.view.component.RecipeThumbnailView android:id="@id/homeRecipeThumbnail" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+    <com.hellofresh.core.food.recipecustomization.api.ui.view.nudge.CustomizationNudgeView android:id="@id/homeRecipeCustomizationNudge" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginTop="@dimen/spacing_xs" android:layout_marginEnd="@dimen/spacing_xs" />
+</androidx.constraintlayout.widget.ConstraintLayout>

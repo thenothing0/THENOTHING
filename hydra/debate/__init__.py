@@ -366,7 +366,6 @@ class DebateEngine:
         outcome = self._compute_verdict(finding, arguments, time.time() - start)
         self._history.append(outcome)
 
-        level = "INFO" if outcome.verdict == Verdict.ACCEPTED else "WARNING"
         logger.log(
             logging.INFO if outcome.verdict == Verdict.ACCEPTED else logging.WARNING,
             f"Debate [{finding.id}] {outcome.verdict.value} "

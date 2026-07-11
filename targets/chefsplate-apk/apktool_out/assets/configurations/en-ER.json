@@ -1,0 +1,952 @@
+{
+  "availableCountries": [
+    "AO",
+    "ER"
+  ],
+  "availableLocales": {
+    "AO": [
+      "en-AU"
+    ],
+    "ER": [
+      "en-US"
+    ]
+  },
+  "country": "er",
+  "features": {
+    "accountDeletionV2": {
+      "enabled": true,
+      "minVersion": "26.6"
+    },
+    "addOnsCategoryNewIcon": {
+      "enabled": true
+    },
+    "addOnsInEos": {
+      "addonsCarouselCount": 5,
+      "addonsListCount": 3,
+      "category": "dessert",
+      "enabled": true
+    },
+    "addOnsPromoIconToggle": {
+      "enabled": true
+    },
+    "addOnsSections": {
+      "enabled": true
+    },
+    "additionalNutritionalInfo": {
+      "enabled": true
+    },
+    "adjustPurchaseEvent": {
+      "enabled": true
+    },
+    "allergensDisclaimer": {
+      "enabled": true
+    },
+    "analytics": {
+      "salesForce": {
+        "enabled": true
+      },
+      "swrve": {
+        "enabled": true
+      }
+    },
+    "appForceUpdate": {
+      "android_min_version_code": 2951,
+      "enabled": true,
+      "minSupportedVersion": "25.20"
+    },
+    "appReview": {
+      "enabled": true
+    },
+    "autoSave": {
+      "enabled": false,
+      "minVersion": "24.16",
+      "showOnboarding": false
+    },
+    "balancePriceIntegration": {
+      "enabled": true
+    },
+    "bffMenusHome": {
+      "enabled": false
+    },
+    "billingTransparency": {
+      "enabled": false
+    },
+    "billingTransparencyOnCart": {
+      "enabled": false
+    },
+    "chargeAtMealSelection": {
+      "enabled": false
+    },
+    "collectionsAndFiltering": {
+      "collectionsHandles": [
+        "prep-ahead",
+        "staff-picks",
+        "top-hits",
+        "fall-flavors",
+        "fathers-day",
+        "quick-and-easy",
+        "veggie",
+        "nutrish-and-delish"
+      ],
+      "enabled": true
+    },
+    "conceptOfChoice": {
+      "contactPhoneNumber": "+19732104915",
+      "enabled": true
+    },
+    "contactCustomerCare": {
+      "enabled": false,
+      "url": "https://www.everyplate.com/contact"
+    },
+    "crmDiscountCommunication": {
+      "enabled": false
+    },
+    "customerWalletAddons": {
+      "enabled": true
+    },
+    "customerWalletFreeAddons": {
+      "enabled": true
+    },
+    "customerWalletFreeForLife": {
+      "enabled": true
+    },
+    "customerWalletFreeXForLife": {
+      "enabled": true
+    },
+    "customerWalletHome": {
+      "enabled": true
+    },
+    "customerWalletMultipleSurcharges": {
+      "enabled": true,
+      "minVersion": "24.16"
+    },
+    "customerWalletMyMenu": {
+      "enabled": true
+    },
+    "deliveryCheckIn": {
+      "contactPageUrl": "https://www.everyplate.com/contact",
+      "enabled": true
+    },
+    "deliveryCheckInChatOnly": {
+      "chatWebPageUrl": "https://www.everyplate.com/contact",
+      "customerCareAvailabilityQueueId": "f757209d-5bb2-4d59-8480-237f3f79b63a",
+      "enabled": false
+    },
+    "deliveryCheckInCopyTesting": {
+      "enabled": false
+    },
+    "deliveryCheckInFinal": {
+      "certWebPageURL": "https://www.everyplate.com/contact",
+      "chatWebPageUrl": "https://www.everyplate.com/contact",
+      "contactPageUrl": "https://www.everyplate.com/contact",
+      "enabled": false
+    },
+    "deliveryCheckInHomeScreen": {
+      "enabled": false
+    },
+    "deliveryCheckInImpossibleToMiss": {
+      "enabled": false
+    },
+    "deliveryCheckInPastDeliveries": {
+      "enabled": false
+    },
+    "deliveryTracking": {
+      "enabled": false
+    },
+    "discountCommunicationManageWeek": {
+      "enabled": false,
+      "rollout": false
+    },
+    "discountCommunicationTooltip": {
+      "enabled": false,
+      "rollout": false
+    },
+    "donation": {
+      "enabled": false
+    },
+    "earlyAndDeliveryCheckIn": {
+      "enabled": true
+    },
+    "editableOrderSummaryFutureWeeksShowPriceDetails": {
+      "enabled": true,
+      "minVersion": "23.30"
+    },
+    "editableOrderSummaryV2": {
+      "enabled": true,
+      "minVersion": "22.50"
+    },
+    "enhancedVouchers": {
+      "enabled": true
+    },
+    "expiredTokenVisibility": {
+      "enabled": false
+    },
+    "extraMealsPromoCard": {
+      "basePriceIncludesShipping": true,
+      "enabled": true,
+      "minimumDiscountPercentage": 10
+    },
+    "facebookLogin": {
+      "enabled": true
+    },
+    "giftCards": {
+      "enabled": false
+    },
+    "googleLogin": {
+      "enabled": true
+    },
+    "guestHomeRevamp": {
+      "enabled": true,
+      "minVersion": "25.26"
+    },
+    "helloFriendsHighlightingValueForFriends": {
+      "enabled": true
+    },
+    "helloFriendsSocialProof": {
+      "enabled": true
+    },
+    "hideNonActionablePausedWeek": {
+      "enabled": true
+    },
+    "hideVoucherCode": {
+      "enabled": true
+    },
+    "holidayBanner": {
+      "enabled": true
+    },
+    "holidayShiftSeasonalBanner": {
+      "enabled": true
+    },
+    "home": {
+      "enabled": true
+    },
+    "homeReactivationBanners": {
+      "enabled": true
+    },
+    "homeTopBannerCarousel": {
+      "enabled": true
+    },
+    "inboxNotificationForTokenExpiry": {
+      "enabled": false
+    },
+    "languageSelector": {
+      "availableLanguages": null,
+      "enabled": false
+    },
+    "launchNativeTopUpInSettings": {
+      "enabled": true
+    },
+    "localizationKeysLogging": {
+      "enabled": true,
+      "inverseProbability": 1000,
+      "logDynamicKeys": true
+    },
+    "manageWeek": {
+      "donate": false,
+      "enabled": true,
+      "reschedule": true,
+      "resize": true
+    },
+    "megaAddons": {
+      "categoryImageUrl": "https://img.hellofresh.com/hellofresh_website/addons-categories/us/[CATEGORY_KEY].jpg",
+      "enabled": true
+    },
+    "menuViewInterface": {
+      "enabled": true
+    },
+    "missingTranslationsLogging": {
+      "enabled": false
+    },
+    "multiweekDiscountMyDeliveries": {
+      "enabled": true
+    },
+    "newWeeklyNav": {
+      "enabled": false,
+      "minVersion": "24.16"
+    },
+    "newsletterOptIn": {
+      "enabled": false
+    },
+    "notificationChannels": {
+      "channels": [
+        {
+          "channel": "notification_channel_productAnnouncements",
+          "importance": 3,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_hellofreshGifts",
+          "importance": 3,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_specialOffers",
+          "importance": 3,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_kitchenTips",
+          "importance": 3,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_weeklyMenuReminders",
+          "importance": 4,
+          "visible": true
+        },
+        {
+          "channel": "notification_channel_transactional",
+          "importance": 3,
+          "visible": false
+        }
+      ],
+      "enabled": true
+    },
+    "onboardingPromo": {
+      "enabled": false
+    },
+    "oneOffsAndCreditsCommunication": {
+      "enabled": true,
+      "rollout": false
+    },
+    "passwordless_login": {
+      "enabled": false,
+      "minVersion": "23.26"
+    },
+    "pastDeliveries": {
+      "enabled": true,
+      "minVersion": "23.34"
+    },
+    "pauseSurvey2Relaunch": {
+      "enabled": true,
+      "handles": [
+        "veggie-plans",
+        "wine-club-red",
+        "wine-club-white"
+      ]
+    },
+    "pauseSurveyOptionsLevel2": {
+      "enabled": true
+    },
+    "pauseSurveyOptionsLevel3": {
+      "enabled": true
+    },
+    "payNowBannerFeatureToggle": {
+      "enabled": true
+    },
+    "paymentVerificationOnMealSelection": {
+      "enabled": false
+    },
+    "physicalDeliveryCheckIn": {
+      "enabled": true
+    },
+    "planMenuSeparation": {
+      "enabled": true
+    },
+    "preferenceOnboarding": {
+      "enabled": false
+    },
+    "purecloudSupport": {
+      "enabled": false,
+      "url": "https://www.everyplate.com/contact"
+    },
+    "reactivationBannerRevamp": {
+      "enabled": true
+    },
+    "reactivationCTACopy": {
+      "enabled": true
+    },
+    "reactivationDiscountBreakdown": {
+      "enabled": true
+    },
+    "reactivationDiscountPriceCalculation": {
+      "enabled": true
+    },
+    "reactivationDisplayDeliveryDate": {
+      "enabled": true
+    },
+    "reactivationDynamicBannerMessage": {
+      "enabled": true
+    },
+    "reactivationGlobalButton": {
+      "enabled": false
+    },
+    "reactivationGlobalPinnedButton": {
+      "enabled": true
+    },
+    "reactivationHome": {
+      "configuration": {
+        "reactivationBanners": [
+          {
+            "backgroundColor": "#B2F1FF",
+            "campaignCategory": "reactivation",
+            "campaignID": "bbce407d-de6e-4d8b-97de-74e476fd552c",
+            "campaignName": "On-site_mydelivery_promo_US_EC-C_MB_10_10_sk_____",
+            "fontColor": "#242424",
+            "headline": "home.reactivation.promotionalbanners.marketbanner.headline",
+            "imageURL": "https://cdn.hellofresh.com/cg/cms/banners/reactivations/reactivation-banner.png",
+            "linkURL": "everyplate://account/subscription/reactivation/[SUBSCRIPTION_ID]",
+            "message": "home.reactivation.promotionalbanners.marketbanner.body",
+            "type": "topBanner"
+          }
+        ]
+      },
+      "enabled": true
+    },
+    "reactivationMyMenuUrgencyBanner": {
+      "enabled": true
+    },
+    "reactivationNativeVoucher": {
+      "enabled": true
+    },
+    "reactivationOneCta": {
+      "enabled": true
+    },
+    "reactivationOrderedTipList": {
+      "enabled": true
+    },
+    "reactivationPersonalisedOnSiteOffer": {
+      "enabled": false
+    },
+    "reactivationPriceInGlobalButton": {
+      "enabled": true
+    },
+    "reactivationPromoBannerRedesign": {
+      "enabled": true
+    },
+    "reactivationPromoRelocation": {
+      "enabled": true
+    },
+    "reactivationPromoSegmentationToggle": {
+      "enabled": true
+    },
+    "reactivationPromoUrgencyBanner": {
+      "enabled": true
+    },
+    "reactivationPromoUrgencyBannerCopyToggle": {
+      "enabled": true
+    },
+    "reactivationPromoUrgencyBannerToggle": {
+      "enabled": true
+    },
+    "reactivationRedesign": {
+      "enabled": false
+    },
+    "reactivationReferralPromotionToggle": {
+      "enabled": false
+    },
+    "reactivationSeamlessNativeJourneyToggle": {
+      "enabled": true
+    },
+    "reactivationTipListFollowUpToggle": {
+      "enabled": true
+    },
+    "reactivationTipListRelocation": {
+      "enabled": true
+    },
+    "reactivationTotalPriceInGlobalButton": {
+      "enabled": true
+    },
+    "reactivationUpcomingMenu": {
+      "enabled": true
+    },
+    "reactivationVoucherDiscoverability": {
+      "enabled": true
+    },
+    "reactivationVoucherProvider": {
+      "enabled": true
+    },
+    "reactivationWebViewOnStartup": {
+      "enabled": false
+    },
+    "reactivationYellowPromoBannerCopy": {
+      "enabled": true
+    },
+    "reactivation_price_in_cta": {
+      "enabled": true
+    },
+    "recipeArchiveBlocked": {
+      "enabled": true
+    },
+    "recipeReviewSocial": {
+      "enabled": true
+    },
+    "recipeSignaletic": {
+      "calorieSmartTags": {
+        "calorie-smart": true
+      },
+      "enabled": false,
+      "quickRecipeTags": {
+        "quick": true
+      },
+      "signaleticColorCombinations": {
+        "calorieSmart": [
+          "Calorie Smart",
+          "#09766A",
+          "#E3F9FF"
+        ],
+        "discovery": [
+          "Seasonal",
+          "#B80059",
+          "#FFE6F2"
+        ],
+        "familyFeast": [
+          "Family feast",
+          "#7C0000",
+          "#FFCCCA"
+        ],
+        "familyFriendly": [
+          "Family friendly",
+          "#A43700",
+          "#FFF3E3"
+        ],
+        "glutenFree": [
+          "Gluten free",
+          "#75451A",
+          "#F7EDCD"
+        ],
+        "quickPrep": [
+          "Quick prep",
+          "#001DB2",
+          "#DEEAFF"
+        ],
+        "regular": [
+          "Regular",
+          "#B26030",
+          "#E8E8E8"
+        ],
+        "spicy": [
+          "Spicy",
+          "#B30000",
+          "#FFEAF9"
+        ],
+        "text": [
+          "Text",
+          "#B26030",
+          "transparent"
+        ],
+        "vegan": [
+          "Vegan",
+          "#09766A",
+          "#DFF9EF"
+        ],
+        "veggie": [
+          "Veggie",
+          "#067A46",
+          "#E4FABF"
+        ]
+      },
+      "tagStyles": {
+        "3-course-meal": {
+          "backgroundColor": "#FFCCCA",
+          "color": "#676767"
+        },
+        "4-servings": {
+          "backgroundColor": "#FFCCCA",
+          "color": "#7C0000"
+        },
+        "discovery": {
+          "backgroundColor": "#FFE6F2",
+          "color": "#B80059"
+        },
+        "easy": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "easy-cleanup": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "easy-prep": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "great-to-grill": {
+          "backgroundColor": "#FFEAF9",
+          "color": "#B30000"
+        },
+        "lightning-prep": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "one-pan": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "one-pot-wonder": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "oven-ready": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "plant-based": {
+          "backgroundColor": "#DFF9EF",
+          "color": "#09766A"
+        },
+        "quick": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "quick-prep": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "sheet-pan": {
+          "backgroundColor": "#DEEAFF",
+          "color": "#001DB2"
+        },
+        "spicy": {
+          "backgroundColor": "#FFEAF9",
+          "color": "#B30000"
+        },
+        "trays-included": {
+          "backgroundColor": "#E8E8E8",
+          "color": "#676767"
+        },
+        "veggie": {
+          "backgroundColor": "#E4FABF",
+          "color": "#067A46"
+        }
+      },
+      "tagsToIconsMap": {
+        "calorie-smart": "caloriesmart",
+        "easy-cleanup": "quick",
+        "familyfriendly": false,
+        "lightning-prep": "quick",
+        "max-20-percent-carbs": false,
+        "one-pan": "quick",
+        "one-pot-wonder": "quick",
+        "oven-ready": "quick",
+        "plant-based": "plant-based",
+        "spicy": "spicy",
+        "vegan": "vegan",
+        "vegetarian": "veggie",
+        "veggie": "veggie"
+      }
+    },
+    "rollingCutoff": {
+      "enabled": true
+    },
+    "sameDayPayment": {
+      "enabled": true
+    },
+    "scaledCustomization": {
+      "enabled": false,
+      "minVersion": "23.36"
+    },
+    "seamlessBoxDowngrade": {
+      "enabled": true
+    },
+    "seamlessRescheduling": {
+      "disabledWeeks": [
+
+      ],
+      "enabled": false,
+      "isPermanentSwitchEnabled": false
+    },
+    "seamlessSelfReporting": {
+      "chatURL": "https://www.everyplate.com/contact",
+      "enabled": false,
+      "entireMealReportingDisabled": false,
+      "minVersion": "23.20"
+    },
+    "seasonalBox": {
+      "active": [
+
+      ],
+      "enabled": false,
+      "productFamilies": [
+
+      ]
+    },
+    "sfNotificationScreen": {
+      "enabled": true
+    },
+    "sharingOptionsForReferrals": {
+      "enabled": false
+    },
+    "showBlockedMessage": {
+      "enabled": true,
+      "url": "https://www.everyplate.com/faq"
+    },
+    "standaloneWallet": {
+      "contactURL": "https://www.everyplate.com/contact",
+      "enabled": true,
+      "faq": [
+        {
+          "answer": "wallet.faq.promo-code-not-working.answer",
+          "key": "promo-code-not-working",
+          "question": "wallet.faq.promo-code-not-working.question"
+        },
+        {
+          "answer": "wallet.faq.where-are-my-freemeals.us.answer",
+          "key": "where-are-my-freemeals.us",
+          "question": "wallet.faq.where-are-my-freemeals.us.question"
+        },
+        {
+          "answer": "wallet.faq.add.more.discounts.answer",
+          "key": "add.more.discounts",
+          "question": "wallet.faq.add.more.discounts.question"
+        },
+        {
+          "answer": "wallet.faq.more-codes.applied.answer",
+          "key": "more-codes.applied",
+          "question": "wallet.faq.more-codes.applied.question"
+        },
+        {
+          "answer": "wallet.faq.skip-a-week.answer",
+          "key": "skip-a-week",
+          "question": "wallet.faq.skip-a-week.question"
+        },
+        {
+          "answer": "wallet.faq.where-are-my-credits.answer",
+          "key": "where-are-my-credits",
+          "question": "wallet.faq.where-are-my-credits.question"
+        }
+      ]
+    },
+    "tisDelayed": {
+      "enabled": true
+    },
+    "tisEarlyDelayedMVP": {
+      "enabled": false
+    },
+    "topUpOrderSummary": {
+      "enabled": true
+    },
+    "topUpWallet": {
+      "enabled": false
+    },
+    "trackingConsentManagement": {
+      "enabled": false
+    },
+    "ultimateUnpauseBanner": {
+      "enabled": true
+    },
+    "understandingMultiWeekDiscount": {
+      "enabled": true,
+      "rollout": true
+    },
+    "updateSubscriberPreferences": {
+      "enabled": true
+    },
+    "usabillaIntegration": {
+      "enabled": false,
+      "usabillaFormId": "5f5a4fc8b544fa466c3cc547"
+    },
+    "useComboVoucherValidation": {
+      "enabled": false
+    },
+    "useWalletVoucherLegacyExperience": {
+      "enabled": true,
+      "maxVersion": "23.32"
+    },
+    "userActionBasedFlow": {
+      "futureWeeks": 6
+    },
+    "voiceControl": {
+      "enabled": true,
+      "instructions": {
+        "next": [
+          "next",
+          "forward"
+        ],
+        "previous": [
+          "previous",
+          "back"
+        ],
+        "read": [
+          "read"
+        ],
+        "startTimer": [
+          "start timer"
+        ],
+        "stopTimer": [
+          "stop timer"
+        ]
+      },
+      "search": true
+    },
+    "weeklyDiscountBadges": {
+      "enabled": true,
+      "minVersion": "23.38"
+    },
+    "whatsappIntegration": {
+      "enabled": false,
+      "phoneNumber": ""
+    }
+  },
+  "home": {
+    "order": [
+      "greeting",
+      "reactivation",
+      "topBanner",
+      "deliveries",
+      "promotionalBanners"
+    ],
+    "segments": [
+      {
+        "headline": "home.greeting.headline",
+        "id": "greeting",
+        "message": "home.greeting.message",
+        "type": "greetingType"
+      },
+      {
+        "id": "reactivation",
+        "tips": true,
+        "tipsList": [
+          {
+            "icon": "ic_money_stack_24",
+            "subtitle": "home.reactivation.tips.cheaperThanTakeout.subtitle",
+            "title": "home.reactivation.tips.cheaperThanTakeout.title"
+          },
+          {
+            "icon": "ic_calendar_24",
+            "subtitle": "home.reactivation.tips.noCommitment.subtitle",
+            "title": "home.reactivation.tips.noCommitment.title"
+          },
+          {
+            "icon": "ic_my_menu_outline_24",
+            "subtitle": "home.reactivation.tips.choicesEveryWeek.subtitle",
+            "title": "home.reactivation.tips.choicesEveryWeek.title"
+          },
+          {
+            "icon": "ic_leaf_24",
+            "subtitle": "home.reactivation.tips.reductionInFoodWaste.subtitle",
+            "title": "home.reactivation.tips.reductionInFoodWaste.title"
+          }
+        ],
+        "type": "reactivationType"
+      },
+      {
+        "header": {
+          "linkTitleKey": "home.nextDeliveries.linkTitle",
+          "linkURL": "everyplate://subscriptions/editableWeek",
+          "titleKey": "home.nextDeliveries.headline"
+        },
+        "id": "deliveries",
+        "type": "deliveriesType",
+        "weeks": [
+          0,
+          1
+        ]
+      },
+      {
+        "id": "topBanner",
+        "priorities": [
+          {
+            "backgroundColor": "#B2F1FF",
+            "backgroundImageURL": null,
+            "campaignCategory": "RAF-TopBanner",
+            "campaignID": "5525",
+            "campaignName": "learnAboutHelloShare",
+            "fontColor": "242424",
+            "headline": "home.topBanner.raf.header",
+            "imageURL": "https://img.hellofresh.com/q_auto/mobile/home/RAF_LearnAboutHelloShare_DiscountBox.png",
+            "isDismissable": true,
+            "linkURL": "everyplate://helloshare?origin=home-screen-panel",
+            "message": "home.topBanner.raf.body"
+          }
+        ],
+        "type": "topBannerType"
+      },
+      {
+        "banners": [
+          {
+            "backgroundColor": "#007885",
+            "campaignCategory": "RAF",
+            "campaignID": "5",
+            "campaignName": "helloShare",
+            "fontColor": "#ffffff",
+            "headline": "home.promotionalBanners.giveoff.headline",
+            "imageURL": "https://cdn.hellofresh.com/er/cms/banners/raf/raf-banner.png",
+            "linkURL": "everyplate://helloshare?origin=home-screen-panel&type=credit&openIntent=creditModal",
+            "message": "home.promotionalBanners.giveoff.message",
+            "subHeadline": "home.promotionalBanners.giveoff.subHeadline",
+            "type": "bigBanner"
+          },
+          {
+            "campaignCategory": "openArchive",
+            "campaignID": "3",
+            "campaignName": "homeMenu",
+            "headline": "home.promotionalBanners.cookbook.headline",
+            "imageURL": "https://img.hellofresh.com/q_auto/android/cookbook2.png",
+            "linkURL": "everyplate://recipes",
+            "message": "home.promotionalBanners.cookbook.message",
+            "type": "disclosureBanner"
+          }
+        ],
+        "header": {
+          "linkTitleKey": "home.nextDeliveries.linkTitle",
+          "linkURL": "everyplate://inbox",
+          "titleKey": "home.promotionalBanners.headline"
+        },
+        "id": "promotionalBanners",
+        "reactivationBanners": [
+          {
+            "backgroundColor": "#B2F1FF",
+            "campaignCategory": "reactivation",
+            "campaignID": "bbce407d-de6e-4d8b-97de-74e476fd552c",
+            "campaignName": "On-site_mydelivery_promo_US_EC-C_MB_10_10_sk_____",
+            "fontColor": "#242424",
+            "headline": "home.reactivation.promotionalbanners.marketbanner.headline",
+            "imageURL": "https://cdn.hellofresh.com/cg/cms/banners/reactivations/reactivation-banner.png",
+            "linkURL": "everyplate://account/subscription/reactivation/[SUBSCRIPTION_ID]?c=1S-EYISE",
+            "message": "home.reactivation.promotionalbanners.marketbanner.body",
+            "type": "topBanner"
+          },
+          {
+            "campaignCategory": "openArchive",
+            "campaignID": "3",
+            "campaignName": "homeMenu",
+            "headline": "home.promotionalBanners.cookbook.headline",
+            "imageURL": "https://img.hellofresh.com/q_auto/android/cookbook2.png",
+            "linkURL": "everyplate://recipes",
+            "message": "home.promotionalBanners.cookbook.message",
+            "type": "disclosureBanner"
+          }
+        ],
+        "type": "promotionalBannersType"
+      }
+    ]
+  },
+  "id": "3afa3b4b-48cf-4107-87f0-95d8aa72b08c",
+  "locale": {
+    "country": "er",
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$"
+    },
+    "key": "en-US",
+    "language": {
+      "code": "en",
+      "name": "English"
+    },
+    "timezone": "America/Los_Angeles",
+    "timezone_offset": "-0700"
+  },
+  "website": {
+    "links": {
+      "addToCart": "/checkout-form/address?sku=[PRODUCT_HANDLE]",
+      "app_privacy": "/privacy-policy",
+      "checkout_form": "/checkout-form/address",
+      "checkout_success": "/checkout-success",
+      "email_preferences": "/settings/notifications?token=[TOKEN]",
+      "faq": "/faq",
+      "gift_cards": "/gift",
+      "order_history": "/settings/orders",
+      "payment_change": "/settings/account/payment-method",
+      "payment_cipr": "/settings/orders?popCIPR=true&workflow=[WORKFLOW]&locale=en-US&hfweek=[HFWEEK]",
+      "payment_wallet": "/settings/payments",
+      "plan_settings": "/settings/plan",
+      "product_selection": "/plans",
+      "subscription_cancellation": "/cancellation",
+      "terms": "/terms",
+      "webview_reactivation": "/settings/plan/reactivate"
+    },
+    "url": "https://www.everyplate.com"
+  }
+}

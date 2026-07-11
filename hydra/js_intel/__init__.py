@@ -130,6 +130,17 @@ FRAMEWORK_PATTERNS = {
     "Vite": [re.compile(r'/@vite/|import\.meta\.hot')],
 }
 
+_PATH_PARAM_RE = re.compile(r'\{(\w+)\}|:(\w+)')
+_SOURCE_MAP_RE = re.compile(r'//[#@]\s*sourceMappingURL=(\S+)')
+_WEBPACK_CHUNK_RE = re.compile(r'webpackChunk[A-Za-z_]*\s*\.\s*push\s*\(\s*\[\s*\[([^\]]+)\]')
+_ROUTE_PATTERNS = [
+    re.compile(r'''<Route[^>]+path=["']([^"']+)["']'''),
+    re.compile(r'''path:\s*["']([^"']+)["']'''),
+    re.compile(r'''navigate\s*\(\s*["']([^"']+)["']'''),
+    re.compile(r'''router\.push\s*\(\s*["']([^"']+)["']'''),
+    re.compile(r'''Link\s+(?:href|to)=["']([^"']+)["']'''),
+]
+
 
 class JavaScriptIntelligenceEngine:
     """
@@ -234,7 +245,7 @@ class JavaScriptIntelligenceEngine:
                            for kw in ["Authorization", "Bearer", "token", "auth", "jwt"])
 
                 # Extract path params
-                params = re.findall(r'\{(\w+)\}|:(\w+)', path)
+                params = _PATH_PARAM_RE.findall(path)
                 param_names = [p[0] or p[1] for p in params]
 
                 result.endpoints.append(JSEndpoint(
@@ -291,23 +302,16 @@ class JavaScriptIntelligenceEngine:
     def _detect_webpack(self, source: str, result: JSAnalysisResult):
         """Detect webpack chunks and source maps."""
         # Source map references
-        map_refs = re.findall(r'//[#@]\s*sourceMappingURL=(\S+)', source)
+        map_refs = _SOURCE_MAP_RE.findall(source)
         result.source_maps.extend(map_refs)
 
         # Webpack chunk names
-        chunks = re.findall(r'webpackChunk[A-Za-z_]*\s*\.\s*push\s*\(\s*\[\s*\[([^\]]+)\]', source)
+        chunks = _WEBPACK_CHUNK_RE.findall(source)
         result.webpack_chunks.extend(chunks)
 
     def _extract_routes(self, source: str, result: JSAnalysisResult):
         """Extract client-side routes (React Router, Next.js, etc.)."""
-        route_patterns = [
-            re.compile(r'''<Route[^>]+path=["']([^"']+)["']'''),
-            re.compile(r'''path:\s*["']([^"']+)["']'''),
-            re.compile(r'''navigate\s*\(\s*["']([^"']+)["']'''),
-            re.compile(r'''router\.push\s*\(\s*["']([^"']+)["']'''),
-            re.compile(r'''Link\s+(?:href|to)=["']([^"']+)["']'''),
-        ]
-        for pattern in route_patterns:
+        for pattern in _ROUTE_PATTERNS:
             matches = pattern.findall(source)
             for route in matches:
                 if route not in result.hidden_routes and route.startswith("/"):

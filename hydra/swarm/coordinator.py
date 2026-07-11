@@ -8,7 +8,7 @@
 import asyncio
 import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from hydra.memory.bus import MemoryBus, Task, TaskPriority, TaskStatus
 from hydra.config import get_config
@@ -28,7 +28,7 @@ class CoordinatorAgent:
       5. Make priority decisions based on findings
       6. Trigger the learning engine on completion
     """
-    
+
     # Scan phases define the task pipeline
     SCAN_PHASES = [
         {
@@ -77,7 +77,7 @@ class CoordinatorAgent:
             "depends_on": "validation",
         },
     ]
-    
+
     def __init__(self, bus: MemoryBus, scope_engine=None, planner=None):
         self.bus = bus
         self.config = get_config()
@@ -102,7 +102,7 @@ class CoordinatorAgent:
         """Accept an ExecutionPlan from the Planner Agent."""
         self._planner_plans[scan_id] = plan
         logger.info(f"📋 Plan accepted for scan {scan_id}: {len(plan.steps)} steps")
-    
+
     async def start_scan(self, target: str, options: Optional[Dict[str, Any]] = None) -> str:
         """
         Initiate a full scan pipeline for a target.
@@ -111,7 +111,7 @@ class CoordinatorAgent:
             scan_id: Unique identifier for this scan.
         """
         options = options or {}
-        
+
         # Create scan state
         scan_id = f"scan-{int(time.time())}-{hash(target) % 10000:04d}"
         scan_state = {
@@ -129,18 +129,18 @@ class CoordinatorAgent:
                 "tasks_failed": 0,
             },
         }
-        
+
         await self.bus.set_state(f"scan:{scan_id}", scan_state)
         self._active_scans[scan_id] = scan_state
         self._phase_tracker[scan_id] = {}
-        
+
         logger.info(f"🎯 Scan started: {scan_id} → {target}")
-        
+
         # Launch the first phase
         await self._launch_phase(scan_id, target, self.SCAN_PHASES[0], options)
-        
+
         return scan_id
-    
+
     async def _launch_phase(
         self,
         scan_id: str,
@@ -151,7 +151,7 @@ class CoordinatorAgent:
         """Launch all tasks for a given scan phase."""
         phase_name = phase_config["phase"]
         agent_type = phase_config["agent_type"]
-        
+
         # ── MANDATORY SCOPE VALIDATION ──────────
         if self._scope_engine and self._scope_engine.is_loaded:
             scope_check = self._scope_engine.validate_target(target)
@@ -161,18 +161,18 @@ class CoordinatorAgent:
                     f"{scope_check.reason}"
                 )
                 return
-        
+
         logger.info(f"📋 Launching phase: {phase_name} for scan {scan_id}")
-        
+
         # Update scan state
         scan_state = await self.bus.get_state(f"scan:{scan_id}")
         if scan_state:
             scan_state["current_phase"] = phase_name
             await self.bus.set_state(f"scan:{scan_id}", scan_state)
-        
+
         # Gather context from previous phases
         context = await self._gather_phase_context(scan_id, phase_name)
-        
+
         task_ids = []
         for task_def in phase_config["tasks"]:
             task = Task(
@@ -193,34 +193,34 @@ class CoordinatorAgent:
             )
             task_id = await self.bus.push_task(task)
             task_ids.append(task_id)
-        
+
         # Track phase tasks
         self._phase_tracker[scan_id][phase_name] = {
             "task_ids": task_ids,
             "status": "running",
             "started_at": time.time(),
         }
-        
+
         logger.info(
             f"📤 Phase '{phase_name}' launched with {len(task_ids)} tasks "
             f"for agent type '{agent_type}'"
         )
-    
+
     async def _gather_phase_context(self, scan_id: str, current_phase: str) -> Dict[str, Any]:
         """Gather results from all previous phases as context for the current phase."""
         context = {}
-        
+
         for phase_config in self.SCAN_PHASES:
             phase_name = phase_config["phase"]
             if phase_name == current_phase:
                 break
-            
+
             phase_results = await self.bus.get_list(f"phase_results:{scan_id}:{phase_name}")
             if phase_results:
                 context[phase_name] = phase_results
-        
+
         return context
-    
+
     async def run(self):
         """
         Main coordinator loop.
@@ -229,9 +229,9 @@ class CoordinatorAgent:
         """
         self._running = True
         tick_interval = self.config.swarm.coordinator_tick_interval
-        
+
         logger.info("🎛️  Coordinator Agent started")
-        
+
         while self._running:
             try:
                 await self._tick()
@@ -241,25 +241,25 @@ class CoordinatorAgent:
             except Exception as e:
                 logger.error(f"Coordinator tick error: {e}")
                 await asyncio.sleep(1)
-        
+
         logger.info("🎛️  Coordinator Agent stopped")
-    
+
     async def _tick(self):
         """Single coordinator tick — check progress and advance phases."""
         for scan_id in list(self._active_scans.keys()):
             scan_state = await self.bus.get_state(f"scan:{scan_id}")
             if not scan_state or scan_state.get("status") != "running":
                 continue
-            
+
             current_phase = scan_state.get("current_phase")
             phase_info = self._phase_tracker.get(scan_id, {}).get(current_phase)
-            
+
             if not phase_info:
                 continue
-            
+
             # Track which task results we've already collected
             collected = phase_info.get("_collected", set())
-            
+
             # Check if all tasks in current phase are done
             all_done = True
             for task_id in phase_info["task_ids"]:
@@ -267,7 +267,7 @@ class CoordinatorAgent:
                 if task and task.status not in (TaskStatus.COMPLETED, TaskStatus.FAILED):
                     all_done = False
                     break
-                
+
                 # Collect results from completed tasks (only once per task)
                 if (task and task.status == TaskStatus.COMPLETED
                         and task.result and task_id not in collected):
@@ -276,13 +276,13 @@ class CoordinatorAgent:
                         task.result
                     )
                     collected.add(task_id)
-            
+
             phase_info["_collected"] = collected
-            
+
             if all_done:
                 phase_info["status"] = "completed"
                 scan_state["phases_completed"].append(current_phase)
-                
+
                 # Find and launch next phase
                 next_phase = self._get_next_phase(current_phase)
                 if next_phase:
@@ -297,15 +297,15 @@ class CoordinatorAgent:
                     scan_state["status"] = "completed"
                     scan_state["completed_at"] = time.time()
                     logger.info(f"🏁 Scan completed: {scan_id}")
-                    
+
                     # Trigger learning engine
                     await self.bus.publish("scan_completed", {
                         "scan_id": scan_id,
                         "target": scan_state["target"],
                     })
-                
+
                 await self.bus.set_state(f"scan:{scan_id}", scan_state)
-    
+
     def _get_next_phase(self, current_phase: str) -> Optional[Dict[str, Any]]:
         """Get the next phase configuration after the current one."""
         found_current = False
@@ -315,11 +315,11 @@ class CoordinatorAgent:
             if phase_config["phase"] == current_phase:
                 found_current = True
         return None
-    
+
     async def get_scan_status(self, scan_id: str) -> Optional[Dict[str, Any]]:
         """Get the current status of a scan."""
         return await self.bus.get_state(f"scan:{scan_id}")
-    
+
     async def cancel_scan(self, scan_id: str):
         """Cancel a running scan."""
         scan_state = await self.bus.get_state(f"scan:{scan_id}")
@@ -328,7 +328,7 @@ class CoordinatorAgent:
             scan_state["cancelled_at"] = time.time()
             await self.bus.set_state(f"scan:{scan_id}", scan_state)
             logger.info(f"🚫 Scan cancelled: {scan_id}")
-    
+
     async def inject_priority_task(self, scan_id: str, task: Task):
         """
         Inject a high-priority task mid-scan.
@@ -339,7 +339,7 @@ class CoordinatorAgent:
         task.metadata["injected"] = True
         await self.bus.push_task(task)
         logger.info(f"⚡ Priority task injected: {task.task_type} → {task.agent_type}")
-    
+
     async def stop(self):
         """Stop the coordinator."""
         self._running = False

@@ -16,11 +16,11 @@ logger = logging.getLogger("hydra.agent.recon")
 class ReconAgent(BaseAgent):
     AGENT_TYPE = "recon"
     AGENT_NAME = "Recon Agent"
-    
+
     def __init__(self, bus: MemoryBus, mcp_client=None):
         super().__init__(bus)
         self.mcp = mcp_client
-    
+
     async def execute(self, task: Task) -> Dict[str, Any]:
         handlers = {
             "subdomain_enum": self._subdomain_enum,
@@ -31,12 +31,12 @@ class ReconAgent(BaseAgent):
         if not handler:
             raise ValueError(f"Unknown task type: {task.task_type}")
         return await handler(task)
-    
+
     async def _subdomain_enum(self, task: Task) -> Dict[str, Any]:
         target = task.payload["target"]
         self.logger.info(f"Enumerating subdomains for: {target}")
         subdomains = set()
-        
+
         for tool in ["subfinder", "amass"]:
             try:
                 result = await self.mcp.execute_tool("subdomain_enum", {
@@ -49,14 +49,14 @@ class ReconAgent(BaseAgent):
                             subdomains.add(line.lower())
             except Exception as e:
                 self.logger.warning(f"{tool} failed: {e}")
-        
+
         subdomain_list = sorted(subdomains)
         await self.bus.set_state(
             f"assets:{task.payload.get('scan_id')}:subdomains", subdomain_list
         )
         return {"task_type": "subdomain_enum", "target": target,
                 "subdomains": subdomain_list, "count": len(subdomain_list)}
-    
+
     async def _http_probe(self, task: Task) -> Dict[str, Any]:
         target = task.payload["target"]
         context = task.payload.get("context", {})
@@ -67,7 +67,7 @@ class ReconAgent(BaseAgent):
                 subdomains.extend(r.get("subdomains", []))
         if not subdomains:
             subdomains = [target]
-        
+
         live_hosts = []
         batch_size = 50
         for i in range(0, len(subdomains), batch_size):
@@ -83,14 +83,14 @@ class ReconAgent(BaseAgent):
                             live_hosts.append(line)
             except Exception as e:
                 self.logger.warning(f"httpx probe failed: {e}")
-        
+
         return {"task_type": "http_probe", "target": target,
                 "live_hosts": live_hosts, "count": len(live_hosts)}
-    
+
     async def _endpoint_discovery(self, task: Task) -> Dict[str, Any]:
         target = task.payload["target"]
         endpoints = set()
-        
+
         for tool in ["katana", "gau"]:
             try:
                 result = await self.mcp.execute_tool("endpoint_discovery", {
@@ -102,6 +102,6 @@ class ReconAgent(BaseAgent):
                             endpoints.add(line.strip())
             except Exception as e:
                 self.logger.warning(f"{tool} failed: {e}")
-        
+
         return {"task_type": "endpoint_discovery", "target": target,
                 "endpoints": sorted(endpoints), "count": len(endpoints)}

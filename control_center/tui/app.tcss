@@ -1,0 +1,128 @@
+/* HYDRA v2.0 — chat-first structural layout.
+   Colour comes from the active native theme ($variables); this file only
+   defines structure, docking, layers, and visibility. */
+
+Screen {
+    layout: vertical;
+    layers: base overlay;
+    background: $surface;
+    color: $foreground;
+}
+
+/* ── Top header ── */
+HeaderBar {
+    dock: top;
+    height: 1;
+    background: $panel;
+    color: $foreground;
+    padding: 0 1;
+}
+
+/* ── Body: optional sidebar + conversation column ── */
+#body {
+    height: 1fr;
+    layout: horizontal;
+}
+
+SessionSidebar {
+    width: 32;
+    background: $panel;
+    border-right: solid $primary 40%;
+    padding: 1 1;
+    display: none;
+}
+SessionSidebar.visible {
+    display: block;
+}
+
+#center {
+    width: 1fr;
+    layout: vertical;
+}
+
+ChatView {
+    height: 1fr;
+    background: $surface;
+    scrollbar-background: $panel;
+    scrollbar-color: $primary 40%;
+    scrollbar-size: 1 1;
+}
+
+/* ── Bottom prompt ── */
+CommandInput {
+    height: auto;
+    max-height: 8;
+    background: $panel;
+    color: $foreground;
+    border: none;
+    padding: 0 1;
+}
+CommandInput:focus {
+    background: $boost;
+}
+
+/* ── Collapsible task panel (above status) ── */
+TaskPanel {
+    height: auto;
+    max-height: 12;
+    background: $panel;
+    border-top: solid $primary 40%;
+    display: none;
+}
+TaskPanel.visible {
+    display: block;
+}
+
+/* ── Bottom status ── */
+StatusBar {
+    dock: bottom;
+    height: 1;
+    background: $panel;
+    color: $foreground;
+}
+
+/* ── Overlays ── */
+NotificationCenter {
+    layer: overlay;
+    dock: right;
+    width: 46;
+    height: 100%;
+    background: $panel;
+    border-left: solid $primary 50%;
+    padding: 1 2;
+    display: none;
+}
+NotificationCenter.visible {
+    display: block;
+}
+
+Inspector {
+    layer: overlay;
+    width: 100%;
+    height: 100%;
+    background: $surface;
+    border: solid $primary 40%;
+    padding: 1 2;
+    display: none;
+}
+Inspector.open {
+    display: block;
+}
+
+ContextDrawer {
+    layer: overlay;
+    dock: right;
+    width: 50;
+    height: 100%;
+    background: $panel;
+    border-left: solid $primary 40%;
+    padding: 1 2;
+    display: none;
+}
+ContextDrawer.open {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}

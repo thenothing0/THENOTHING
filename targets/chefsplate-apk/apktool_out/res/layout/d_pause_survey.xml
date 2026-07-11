@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:id="@id/rootLayoutPauseSurvey" android:background="@color/page_background_alternative" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.core.widget.NestedScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <ImageView android:id="@id/imageViewPin" android:layout_width="36.0dip" android:layout_height="8.0dip" android:layout_marginTop="@dimen/spacing_xs" android:src="@drawable/slider_pin" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+            <com.hellofresh.features.pausesurvey.ui.views.PauseSurveyOptionsListView android:id="@id/optionsListView" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_3" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+            <com.hellofresh.features.pausesurvey.ui.views.PauseSurveyOptionWithTextView android:id="@id/optionWithTextView" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_3" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+            <com.hellofresh.features.pausesurvey.ui.views.PauseSurveyConfirmationView android:id="@id/confirmationView" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_3" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+            <ImageButton android:id="@id/imageViewClosePopup" android:background="?selectableItemBackgroundBorderless" android:padding="@dimen/spacing_sm_2" android:focusable="true" android:clickable="true" android:layout_width="@dimen/touch_target_size" android:layout_height="@dimen/touch_target_size" android:src="@drawable/ic_close_outline_24" android:layout_marginEnd="@dimen/spacing_xxs" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

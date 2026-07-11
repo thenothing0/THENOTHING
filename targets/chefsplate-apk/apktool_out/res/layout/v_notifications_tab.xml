@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:textAppearance="@style/HFText.BodySmallBold" android:textColor="@color/notifications_custom_tab_title_color_selector" android:id="@id/textViewTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintEnd_toStartOf="@id/imageViewBadge" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    <ImageView android:id="@id/imageViewBadge" android:visibility="gone" android:layout_width="@dimen/base_level3" android:layout_height="@dimen/base_level3" android:src="@drawable/bg_notification_badge" android:layout_marginStart="@dimen/spacing_xxs" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toEndOf="@id/textViewTitle" app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

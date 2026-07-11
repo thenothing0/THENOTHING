@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.compose.ui.platform.ComposeView android:id="@id/compose_weekly_nav_view" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <com.hellofresh.features.legacy.view.material.tabs.CustomTabLayout android:id="@id/tabLayoutWeeklyNav" android:background="@color/neutral_100" android:layout_width="fill_parent" android:layout_height="90.0dip" app:layout_scrollFlags="scroll" app:tabContentStart="@dimen/spacing_xs" app:tabGravity="fill" app:tabIndicatorFullWidth="true" app:tabMinWidth="90.0dip" app:tabMode="scrollable" app:tabPaddingBottom="@dimen/spacing_md_1" app:tabPaddingEnd="@dimen/spacing_xxs" app:tabPaddingStart="@dimen/spacing_xxs" app:tabPaddingTop="@dimen/spacing_xs" />
+    <com.hellofresh.features.legacy.view.ConfigurableViewPager android:id="@id/viewPagerDeliveriesHeader" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+</LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/primary_200" />
+    <padding android:left="@dimen/spacing_sm_1" android:right="6.0dip" />
+    <corners android:radius="@dimen/corner_radius_full" />
+    <size android:height="@dimen/filter_category_tab_badge_size" android:width="@dimen/filter_category_tab_badge_size" />
+</shape>

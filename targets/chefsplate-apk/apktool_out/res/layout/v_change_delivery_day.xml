@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:id="@id/layoutChangeDay" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:layout_gravity="center_horizontal" android:id="@id/textViewChangeDayTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" style="@style/Theme.HelloFresh.TextView.EditDelivery.Title" />
+    <com.hellofresh.features.legacy.ui.flows.subscription.overview.deliveries.views.ChangeDeliveryDateTimeView android:id="@id/changeDeliveryDayView" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+</LinearLayout>

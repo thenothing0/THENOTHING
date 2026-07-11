@@ -25,7 +25,7 @@ import base64
 import binascii
 import re
 from typing import Dict, List, Optional
-from urllib.parse import parse_qs, parse_qsl, urlencode, urlparse, urlunparse
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 # OAuth scopes that are notably broad / sensitive when granted to a third party.
 _BROAD_SCOPES = {"*", "all", "admin", "openid profile email offline_access", "read_write",

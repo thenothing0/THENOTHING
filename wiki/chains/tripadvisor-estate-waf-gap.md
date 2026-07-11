@@ -1,13 +1,26 @@
 ---
 type: chain
-aliases: ["estate-wide WAF gap", "Tripadvisor group WAF gap", "systemic WAF coverage gap"]
-tags: [waf-gap, chaining, subsidiary, systemic, pci-dss]
-target: "[[tripadvisor]]"
+aliases:
+- estate-wide WAF gap
+- Tripadvisor group WAF gap
+- systemic WAF coverage gap
+tags:
+- waf-gap
+- chaining
+- subsidiary
+- systemic
+- pci-dss
+target: '[[tripadvisor]]'
 severity: P2
-nodes: ["[[tripadvisor-cde-waf-bypass]]", "[[tripadvisor-bokun-platform-misconfig]]"]
 created: 2026-05-30
-updated: 2026-05-30
+updated: '2026-06-26'
+nodes:
+- '[[tripadvisor-cde-waf-bypass]]'
+- '[[tripadvisor-bokun-platform-misconfig]]'
+- tripadvisor-bokun-platform-misconfig
+- tripadvisor-cde-waf-bypass
 ---
+
 # Tripadvisor Estate-Wide WAF-Gap Chain
 
 > Not a single-host exploit chain but a **systemic-posture chain**: the same WAF-coverage failure

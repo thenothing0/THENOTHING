@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_800" android:id="@id/textViewTitle" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_1" />
+    <TextView android:textAppearance="@style/HFText.BodyMediumRegular" android:textColor="@color/neutral_800" android:id="@id/textViewBody" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" />
+    <CheckBox android:textAppearance="@style/HFText.BodySmallRegular" android:textColor="@color/neutral_800_80" android:ellipsize="end" android:id="@id/checkBoxNewsletterOptIn" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:includeFontPadding="false" android:layout_marginStart="@dimen/spacing_xs" android:layout_marginEnd="@dimen/spacing_sm_2" />
+    <TextView android:textAppearance="@style/HFText.BodySmallRegular" android:textColor="@color/neutral_800_80" android:ellipsize="end" android:id="@id/textViewTermAndPrivacyPolicy" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:includeFontPadding="false" />
+</LinearLayout>

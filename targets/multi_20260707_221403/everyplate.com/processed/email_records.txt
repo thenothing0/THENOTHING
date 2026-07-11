@@ -1,0 +1,1 @@
+DMARC: v=DMARC1; p=quarantine; sp=quarantine; pct=100; rua=mailto:dmarc_agg@dmarc.everest.email,mailto:nxtoj-9849@rua.dmarc.emailanalyst.com; ruf=mailto:dmarc_fr@dmarc.everest.email,mailto:nxtoj-9849@ruf.dmarc.emailanalyst.com;  adkim=r; aspf=r; ri=43200; fo=1; rf=afrf

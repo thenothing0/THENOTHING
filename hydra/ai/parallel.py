@@ -6,7 +6,6 @@
 """
 
 import asyncio
-import json
 import logging
 import time
 from typing import Any, Dict, List, Optional
@@ -31,7 +30,7 @@ class ParallelModelEngine:
     ) -> Dict[str, Any]:
         """
         Send prompt to multiple providers in parallel.
-        
+
         Returns combined result with confidence comparison.
         """
         if not self.ai or not self.ai._providers:

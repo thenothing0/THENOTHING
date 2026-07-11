@@ -10,7 +10,6 @@
 import asyncio
 import json
 import logging
-import os
 import sys
 import time
 from pathlib import Path
@@ -25,12 +24,11 @@ if sys.platform == "win32":
         pass
 
 # ── Config + infra (always available) ────────
-from hydra.config import get_config, LOGS_DIR, RESULTS_DIR
+from hydra.config import get_config, LOGS_DIR
 
 # ── Core subsystems (gracefully imported) ────
 from hydra.mcp.tool_server import MCPToolServer
 from hydra.mcp.client import MCPClient
-from hydra.memory.bus import MemoryBus
 
 # ═══════════════════════════════════════════════
 #  CLI — argparse (no extra deps required)
@@ -91,7 +89,7 @@ def rprint(msg: str, **kw):
 #  Logging setup
 # ═══════════════════════════════════════════════
 
-def setup_logging(verbose: bool = False):
+def setup_logging(verbose: bool = False, json_logs: bool = False):
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     level = logging.DEBUG if verbose else logging.INFO
 
@@ -113,6 +111,9 @@ def setup_logging(verbose: bool = False):
     )
     for lib in ["urllib3", "aiohttp", "asyncio", "httpx", "httpcore"]:
         logging.getLogger(lib).setLevel(logging.WARNING)
+
+    from hydra.observability.logging import configure_logging
+    configure_logging(json_output=json_logs, level="DEBUG" if verbose else "INFO")
 
 
 # ═══════════════════════════════════════════════
@@ -155,6 +156,8 @@ def build_parser():
     p.add_argument("--llm-base-url", default="", help="Override LLM base URL (openai-compat)")
     p.add_argument("--resume", default="", metavar="SESSION_ID",
                    help="Resume a saved session and print a recap")
+    p.add_argument("--json-logs", action="store_true",
+                   help="Emit structured JSON log lines")
     return p
 
 
@@ -781,7 +784,7 @@ class HydraEngine:
           - Collaborative Swarm (multi-agent coordination)
           - Debate System (multi-agent adversarial validation)
         """
-        from hydra.cognitive import CognitivePhase, Observation, CognitiveLoop
+        from hydra.cognitive import CognitivePhase, Observation
 
         if not self._cognitive_loop:
             logger.warning("Cognitive loop not available — falling back to full_auto")
@@ -826,7 +829,6 @@ class HydraEngine:
 
         # Initialize guardrails for target scope
         if self._guardrails:
-            from hydra.guardrails import ActionType
             target_check = self._guardrails.check_target(self.target)
             if not target_check.allowed:
                 logger.error(f"🚫 Target blocked by guardrails: {target_check.reason}")
@@ -1207,7 +1209,7 @@ class HydraEngine:
         cognitive_summary = cognitive.get_summary()
         engine_ref._save_json("reports/cognitive_summary.json", cognitive_summary)
 
-        logger.info(f"\n[bold]🧠 Cognitive Pipeline Complete[/bold]")
+        logger.info("\n[bold]🧠 Cognitive Pipeline Complete[/bold]")
         logger.info(f"  Cycles:         {cognitive_summary['cycles']}")
         logger.info(f"  Understanding:  {cognitive_summary['understanding']:.0%}")
         logger.info(f"  Observations:   {cognitive_summary['observations']}")
@@ -1317,14 +1319,14 @@ class HydraEngine:
 
         # Record in audit trail
         if self._audit_trail:
-            from hydra.audit import DecisionCategory, EvidenceItem, EvidenceType
+            from hydra.audit import DecisionCategory
             self._audit_trail.record(
                 category=DecisionCategory.TARGET_SELECT,
                 action=f"Selected target: {best.name}",
                 rationale=f"Score {best.composite_score:.3f} — max bounty ${best.max_bounty:,.0f}",
                 chain_of_thought=[
                     f"Discovered {len(programs)} programs across platforms",
-                    f"Scored all programs with multi-factor analysis",
+                    "Scored all programs with multi-factor analysis",
                     f"Selected {best.name} as top target (score={best.composite_score:.3f})",
                     f"Researcher profile: {self._researcher_profiles.active.name if self._researcher_profiles else 'balanced'}",
                 ],
@@ -1333,7 +1335,6 @@ class HydraEngine:
 
         # Check guardrails for each in-scope asset
         if self._guardrails and best.in_scope:
-            from hydra.guardrails import ActionType
             self._guardrails.load_from_scope_assets(
                 [{"asset": a.asset, "asset_type": a.asset_type.value}
                  for a in best.in_scope],
@@ -1380,7 +1381,7 @@ class HydraEngine:
         if self._audit_trail:
             self._audit_trail.persist()
 
-        logger.info(f"\n[bold]🏆 Bounty Hunt Complete[/bold]")
+        logger.info("\n[bold]🏆 Bounty Hunt Complete[/bold]")
         logger.info(f"  Target:    {best.name}")
         logger.info(f"  Findings:  [{'red' if self.findings else 'green'}]{len(self.findings)}[/]")
         logger.info(f"  Campaign:  {campaign.id}")
@@ -1634,7 +1635,7 @@ def print_summary(summary: Dict):
 
     recon = summary.get("recon", {})
     if recon:
-        rprint(f"\n  [bold]Recon:[/bold]")
+        rprint("\n  [bold]Recon:[/bold]")
         for k, v in recon.items():
             rprint(f"    {k}: {v}")
 
@@ -1665,7 +1666,7 @@ async def async_main():
 
     # Banner
     print(BANNER)
-    setup_logging(args.verbose)
+    setup_logging(args.verbose, json_logs=getattr(args, "json_logs", False))
 
     # ── List workflows ─────────────
     if args.list_workflows:

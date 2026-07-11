@@ -9,7 +9,6 @@ exactly that location — so the workflow can test every point × payload. Deter
 
 from __future__ import annotations
 
-import copy
 import json
 from dataclasses import dataclass
 from typing import Callable, Dict, List
@@ -30,8 +29,15 @@ class InjectionPoint:
         return {"location": self.location, "name": self.name}
 
 
+def _shallow_copy(req: Dict) -> Dict:
+    r = dict(req)
+    if "headers" in r:
+        r["headers"] = dict(r["headers"])
+    return r
+
+
 def _with_query(req: Dict, key: str, value: str) -> Dict:
-    r = copy.deepcopy(req)
+    r = _shallow_copy(req)
     p = urlparse(r["url"])
     q = dict(parse_qsl(p.query, keep_blank_values=True))
     q[key] = value
@@ -40,7 +46,7 @@ def _with_query(req: Dict, key: str, value: str) -> Dict:
 
 
 def _with_path_segment(req: Dict, idx: int, value: str) -> Dict:
-    r = copy.deepcopy(req)
+    r = _shallow_copy(req)
     p = urlparse(r["url"])
     segs = p.path.split("/")
     segs[idx] = value
@@ -49,13 +55,13 @@ def _with_path_segment(req: Dict, idx: int, value: str) -> Dict:
 
 
 def _with_header(req: Dict, name: str, value: str) -> Dict:
-    r = copy.deepcopy(req)
+    r = _shallow_copy(req)
     r.setdefault("headers", {})[name] = value
     return r
 
 
 def _with_cookie(req: Dict, name: str, value: str) -> Dict:
-    r = copy.deepcopy(req)
+    r = _shallow_copy(req)
     cookies = dict(c.split("=", 1) for c in r.get("headers", {}).get("Cookie", "").split("; ")
                    if "=" in c)
     cookies[name] = value
@@ -64,7 +70,7 @@ def _with_cookie(req: Dict, name: str, value: str) -> Dict:
 
 
 def _with_form(req: Dict, key: str, value: str) -> Dict:
-    r = copy.deepcopy(req)
+    r = _shallow_copy(req)
     body = dict(parse_qsl(r.get("body") or "", keep_blank_values=True))
     body[key] = value
     r["body"] = urlencode(body)
@@ -72,7 +78,7 @@ def _with_form(req: Dict, key: str, value: str) -> Dict:
 
 
 def _with_json(req: Dict, path: List, value: str) -> Dict:
-    r = copy.deepcopy(req)
+    r = _shallow_copy(req)
     obj = json.loads(r.get("body") or "{}")
     cur = obj
     for k in path[:-1]:

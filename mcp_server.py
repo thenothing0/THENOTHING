@@ -45,6 +45,60 @@ from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("hydra-security")
 
+
+def _install_threaded_stdio_transport() -> None:
+    """Use asyncio pipe reads when AnyIO stdin iteration stalls."""
+    import asyncio
+    from contextlib import asynccontextmanager
+
+    import anyio
+    import mcp.server.fastmcp.server as fastmcp_server
+    from mcp import types as mcp_types
+    from mcp.shared.message import SessionMessage
+
+    @asynccontextmanager
+    async def threaded_stdio_server():
+        read_stream_writer, read_stream = anyio.create_memory_object_stream(0)
+        write_stream, write_stream_reader = anyio.create_memory_object_stream(0)
+
+        async def stdin_reader():
+            try:
+                async with read_stream_writer:
+                    loop = asyncio.get_running_loop()
+                    reader = asyncio.StreamReader()
+                    protocol = asyncio.StreamReaderProtocol(reader)
+                    await loop.connect_read_pipe(lambda: protocol, sys.stdin.buffer)
+                    while True:
+                        line_bytes = await reader.readline()
+                        if not line_bytes:
+                            break
+                        line = line_bytes.decode("utf-8")
+                        try:
+                            message = mcp_types.JSONRPCMessage.model_validate_json(line)
+                        except Exception as exc:  # pragma: no cover
+                            await read_stream_writer.send(exc)
+                            continue
+                        await read_stream_writer.send(SessionMessage(message))
+            except anyio.ClosedResourceError:  # pragma: no cover
+                await anyio.lowlevel.checkpoint()
+
+        async def stdout_writer():
+            try:
+                async with write_stream_reader:
+                    async for session_message in write_stream_reader:
+                        line = session_message.message.model_dump_json(by_alias=True, exclude_none=True) + "\n"
+                        sys.stdout.write(line)
+                        sys.stdout.flush()
+            except anyio.ClosedResourceError:  # pragma: no cover
+                await anyio.lowlevel.checkpoint()
+
+        async with anyio.create_task_group() as tg:
+            tg.start_soon(stdin_reader)
+            tg.start_soon(stdout_writer)
+            yield read_stream, write_stream
+
+    fastmcp_server.stdio_server = threaded_stdio_server
+
 # Paths
 BASE_DIR = Path(__file__).parent
 WORDLISTS_DIR = BASE_DIR / "wordlists"
@@ -1223,10 +1277,6 @@ try:
     from hydra.attack.poc_bundle import (
         FindingReverifier as _FindingReverifier,
         build_bundle as _build_bundle,
-    )
-    from hydra.attack.triage import (
-        SubmissionReadiness as _SubmissionReadiness,
-        program_severity as _program_severity,
     )
     from hydra.attack.correlate import FindingCorrelator as _FindingCorrelator
     from hydra.attack.auth_session import (
@@ -5663,6 +5713,8 @@ if __name__ == "__main__":
     print("[HYDRA] Tools available for any MCP-compatible AI agent", file=sys.stderr)
 
     if args.transport == "sse":
-        mcp.run(transport="sse", port=args.port)
+        mcp.settings.port = args.port
+        mcp.run(transport="sse")
     else:
+        _install_threaded_stdio_transport()
         mcp.run(transport="stdio")

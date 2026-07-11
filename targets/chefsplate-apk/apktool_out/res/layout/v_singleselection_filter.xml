@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView android:id="@id/textViewTitle" android:paddingTop="@dimen/spacing_md_1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="58.0dip" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" style="@style/Theme.HelloFresh.TextView.Recipes.Search.Filter.Title" />
+    <com.google.android.material.slider.Slider android:id="@id/seekbar" android:layout_width="fill_parent" android:layout_height="wrap_content" app:labelStyle="@style/Theme.HelloFresh.Slider.Label.Recipes.Search.Filter" app:thumbColor="@color/brand_foreground_default" app:trackColorActive="@color/brand_foreground_default" app:trackColorInactive="@color/brand_foreground_disabled" />
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:layout_marginBottom="44.0dip" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2">
+        <TextView android:gravity="start" android:id="@id/textViewMinValue" android:paddingBottom="@dimen/spacing_sm_2" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" style="@style/Theme.HelloFresh.TextView.Recipes.Search.Filter.Hint" />
+        <TextView android:gravity="end" android:id="@id/textViewMaxValue" android:paddingBottom="@dimen/spacing_sm_2" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" style="@style/Theme.HelloFresh.TextView.Recipes.Search.Filter.Hint" />
+    </LinearLayout>
+</merge>

@@ -1,0 +1,63 @@
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:8880 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:2082 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:2095 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://172.64.155.254:80 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:2086 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:2087 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:2083 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:34 INFO result 🤖 target=http://104.18.32.2:80 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://172.64.155.254:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://172.64.155.254:2082 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://172.64.155.254:2083 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://172.64.155.254:2086 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://172.64.155.254:2087 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://172.64.155.254:2095 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://172.64.155.254:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://172.64.155.254:8880 status-code=403 title="" have-screenshot=true
+2026/07/08 01:53:37 INFO result 🤖 target=http://easy.chefsplate.com:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:40 INFO result 🤖 target=http://static-staging-cdn.chefsplate.com:2083 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:40 INFO result 🤖 target=http://staging-vercel.chefsplate.com:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:40 INFO result 🤖 target=http://fr-support.chefsplate.com:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:40 INFO result 🤖 target=http://links.chefsplate.com:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:40 INFO result 🤖 target=http://static-staging-cdn.chefsplate.com:443 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:41 INFO result 🤖 target=http://static-staging-cdn.chefsplate.com:80 status-code=403 title="Access denied | static-staging-cdn.chefsplate.com used Cloudflare to restrict access | static-staging-cdn.chefsplate.com | Cloudflare" have-screenshot=true
+2026/07/08 01:53:41 ERRO failed to witness target target=https://bob-staging-cdn.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:43 INFO result 🤖 target=http://staging-vercel.chefsplate.com:8880 status-code=200 title="Sign in to your account" have-screenshot=true
+2026/07/08 01:53:44 INFO result 🤖 target=http://track-staging-cdn.chefsplate.com:2083 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:44 ERRO failed to witness target target=https://bob-staging-cdn.chefsplate.com:2087 err="page load error net::ERR_HTTP_RESPONSE_CODE_FAILURE"
+2026/07/08 01:53:44 INFO result 🤖 target=http://static-staging-cdn.chefsplate.com:2087 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:44 INFO result 🤖 target=http://static-staging-cdn.chefsplate.com:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:44 INFO result 🤖 target=http://track.chefsplate.com:2096 status-code=400 title="400 The plain HTTP request was sent to HTTPS port" have-screenshot=true
+2026/07/08 01:53:44 INFO result 🤖 target=http://static-staging-cdn.chefsplate.com:2086 status-code=403 title="Access denied | static-staging-cdn.chefsplate.com used Cloudflare to restrict access | static-staging-cdn.chefsplate.com | Cloudflare" have-screenshot=true
+2026/07/08 01:53:44 INFO result 🤖 target=https://bob-staging-cdn.chefsplate.com:443 status-code=403 title="Access denied | bob-staging-cdn.chefsplate.com used Cloudflare to restrict access | bob-staging-cdn.chefsplate.com | Cloudflare" have-screenshot=true
+2026/07/08 01:53:44 ERRO failed to witness target target=https://cloud.link.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:44 ERRO failed to witness target target=https://chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:44 ERRO failed to witness target target=https://eat.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:46 INFO result 🤖 target=http://easy.chefsplate.com:80 status-code=200 title="Chefs Plate: Get Up to 20 Free Meals + Free Shipping + $1 menu!" have-screenshot=true
+2026/07/08 01:53:47 ERRO failed to witness target target=https://image.link.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:47 INFO result 🤖 target=http://eat.chefsplate.com:2086 status-code=200 title="Chefs Plate: Get Up to 20 Free Meals + Free Shipping + $1 menu!" have-screenshot=true
+2026/07/08 01:53:47 ERRO failed to witness target target=https://links.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:48 INFO result 🤖 target=https://cloud.link.chefsplate.com:443 status-code=404 title="" have-screenshot=true
+2026/07/08 01:53:48 INFO result 🤖 target=https://email.u.chefsplate.com:80 status-code=404 title="" have-screenshot=true
+2026/07/08 01:53:48 INFO result 🤖 target=https://email.u.chefsplate.com:443 status-code=404 title="" have-screenshot=true
+2026/07/08 01:53:48 ERRO failed to witness target target=https://mobile.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:48 INFO result 🤖 target=https://fr-support.chefsplate.com:2083 status-code=530 title="Origin DNS error | fr-support.chefsplate.com | Cloudflare" have-screenshot=true
+2026/07/08 01:53:49 ERRO failed to witness target target=https://media.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:50 INFO result 🤖 target=https://image.link.chefsplate.com:443 status-code=403 title="Access Denied" have-screenshot=true
+2026/07/08 01:53:50 ERRO failed to witness target target=https://stage.mobile.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:51 ERRO failed to witness target target=https://support.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:51 INFO result 🤖 target=https://media.chefsplate.com:443 status-code=400 title="" have-screenshot=true
+2026/07/08 01:53:52 INFO result 🤖 target=https://mobile.chefsplate.com:443 status-code=403 title="Attention Required! | Cloudflare" have-screenshot=true
+2026/07/08 01:53:52 INFO result 🤖 target=https://mobile.chefsplate.com:2087 status-code=403 title="Attention Required! | Cloudflare" have-screenshot=true
+2026/07/08 01:53:52 ERRO failed to witness target target=https://track-staging-cdn.chefsplate.com:80 err="page load error net::ERR_SSL_PROTOCOL_ERROR"
+2026/07/08 01:53:53 INFO result 🤖 target=https://stage.mobile.chefsplate.com:443 status-code=403 title="Access denied | stage.mobile.chefsplate.com used Cloudflare to restrict access | stage.mobile.chefsplate.com | Cloudflare" have-screenshot=true
+2026/07/08 01:53:54 INFO result 🤖 target=https://chefsplate.com:443 status-code=200 title="Chefs Plate: Get Up to 20 Free Meals + Free Shipping + $1 menu!" have-screenshot=true
+2026/07/08 01:53:54 INFO result 🤖 target=https://support.chefsplate.com:443 status-code=530 title="Origin DNS error | support.chefsplate.com | Cloudflare" have-screenshot=true
+2026/07/08 01:53:54 INFO result 🤖 target=https://eat.chefsplate.com:443 status-code=200 title="Chefs Plate: Get Up to 20 Free Meals + Free Shipping + $1 menu!" have-screenshot=true
+2026/07/08 01:53:54 INFO result 🤖 target=https://easy.chefsplate.com:2096 status-code=200 title="Chefs Plate: Get Up to 20 Free Meals + Free Shipping + $1 menu!" have-screenshot=true
+2026/07/08 01:53:55 INFO result 🤖 target=https://track-staging-cdn.chefsplate.com:443 status-code=403 title="Access denied | track-staging-cdn.chefsplate.com used Cloudflare to restrict access | track-staging-cdn.chefsplate.com | Cloudflare" have-screenshot=true
+2026/07/08 01:53:55 INFO result 🤖 target=https://links.chefsplate.com:443 status-code=200 title="Chefs Plate: Get Up to 20 Free Meals + Free Shipping + $1 menu!" have-screenshot=true
+2026/07/08 01:54:38 ERRO could not grab screenshot target=http://easy.chefsplate.com:2095 err="context deadline exceeded"
+2026/07/08 01:54:38 INFO result 🤖 target=http://easy.chefsplate.com:2095 status-code=200 title="Chefs Plate: Get Up to 20 Free Meals + Free Shipping + $1 menu!" have-screenshot=false

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.applanga.android.ALOverlayView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layoutDirection="ltr"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:layout_gravity="center|top" android:orientation="vertical" android:background="@color/applanga_blue" android:padding="4.0dip" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <EditText android:textColor="#ff000000" android:textColorHint="#3232327f" android:id="@id/applanga_edit_text_tag" android:background="#ffffffff" android:layout_width="fill_parent" android:layout_height="50.0dip" android:hint="@string/ID_APPLANGA_DRAFTMENU_TAG_HINT" android:fontFamily="sans-serif" />
+        <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <Button android:textColor="@color/applanga_blue" android:id="@id/applanga_button_cancel" android:background="@drawable/applanga_spinner_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="4.0dip" android:text="@string/ID_APPLANGA_DRAFTMENU_CANCEL_ISSUE" android:layout_weight="1.0" />
+            <Button android:textColor="@color/applanga_blue" android:id="@id/applanga_button_upload" android:background="@drawable/applanga_spinner_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="4.0dip" android:text="@string/ID_APPLANGA_DRAFTMENU_TAG_PERFORM" android:layout_weight="1.0" />
+        </LinearLayout>
+    </LinearLayout>
+</com.applanga.android.ALOverlayView>

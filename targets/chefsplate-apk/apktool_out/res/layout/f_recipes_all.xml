@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hellofresh.features.legacy.view.NestedCoordinatorLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.appbar.AppBarLayout android:background="@color/neutral_100" android:layout_width="fill_parent" android:layout_height="wrap_content" android:elevation="@dimen/elevation_none">
+        <com.google.android.material.appbar.CollapsingToolbarLayout android:fitsSystemWindows="true" android:layout_width="fill_parent" android:layout_height="fill_parent" app:layout_scrollFlags="scroll|enterAlways">
+            <include android:id="@id/searchBar" app:layout_scrollFlags="scroll|enterAlways" layout="@layout/i_search_bar" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:paddingBottom="@dimen/spacing_xs" android:scrollbars="vertical" android:clipChildren="false" android:clipToPadding="false" android:layout_width="fill_parent" android:layout_height="fill_parent" app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_gravity="end|bottom|center" android:id="@id/fabFilter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="@dimen/spacing_sm_2" android:src="@drawable/ic_filter_list" app:backgroundTint="@color/brand_foreground_default" app:fabSize="normal" />
+    <com.hellofresh.cookbookrecipes.filter.ui.view.ActiveFiltersView android:layout_gravity="bottom" android:id="@id/activeFiltersView" android:clickable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:elevation="@dimen/elevation_lg" app:layout_insetEdge="bottom" />
+    <include android:id="@id/noMenuPlaceHolder" android:visibility="gone" layout="@layout/i_no_menu_placeholder" />
+    <include android:id="@id/noInternetPlaceholder" android:visibility="gone" layout="@layout/i_no_internet_placeholder" />
+    <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="center" android:id="@id/progressView" style="@style/wrapped" />
+</com.hellofresh.features.legacy.view.NestedCoordinatorLayout>

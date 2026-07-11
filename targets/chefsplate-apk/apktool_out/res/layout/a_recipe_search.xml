@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.appbar.AppBarLayout android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" android:background="@color/neutral_100" android:layout_width="fill_parent" android:layout_height="wrap_content" android:elevation="@dimen/elevation_none">
+        <com.google.android.material.appbar.CollapsingToolbarLayout android:layout_width="fill_parent" android:layout_height="wrap_content" app:layout_scrollFlags="scroll|enterAlways">
+            <androidx.appcompat.widget.Toolbar android:id="@id/toolbar" android:focusable="true" android:focusableInTouchMode="true" android:fitsSystemWindows="true" android:backgroundTint="@color/neutral_100" style="@style/ToolbarStyle">
+                <EditText android:textAppearance="@style/HFText.BodyMediumBold" android:textColor="@color/neutral_800" android:id="@id/toolbarEditText" android:background="@null" android:layout_width="fill_parent" android:layout_height="wrap_content" android:maxLines="1" android:inputType="text" android:imeOptions="actionSearch" />
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        <View android:background="@drawable/below_shadow" android:layout_width="fill_parent" android:layout_height="@dimen/spacing_xxs" app:layout_scrollFlags="scroll|enterAlways" />
+        <com.hellofresh.cookbookrecipes.search.ui.view.SearchNoResultsView android:id="@id/searchNoResultsView" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" app:layout_scrollFlags="scroll|enterAlways" />
+        <com.hellofresh.cookbookrecipes.search.ui.view.SearchResultsView android:id="@id/searchResultsView" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" app:layout_scrollFlags="scroll|enterAlways" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <ScrollView android:id="@id/historyContainer" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout android:orientation="vertical" android:id="@id/historyRowsContainer" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    </ScrollView>
+    <androidx.recyclerview.widget.RecyclerView android:id="@id/listRecyclerView" android:layout_width="fill_parent" android:layout_height="wrap_content" app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="bottom|center" android:id="@id/progressView" style="@style/wrapped" />
+    <com.hellofresh.cookbookrecipes.filter.ui.view.ActiveFiltersView android:layout_gravity="bottom" android:id="@id/activeFiltersView" android:layout_width="fill_parent" android:layout_height="48.0dip" android:translationY="48.0dip" android:elevation="@dimen/elevation_lg" app:layout_insetEdge="bottom" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_gravity="end|bottom|center" android:id="@id/filtersFab" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="@dimen/spacing_sm_2" android:src="@drawable/ic_filter_list" app:backgroundTint="@color/primary_700" app:fabSize="normal" app:layout_dodgeInsetEdges="bottom" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

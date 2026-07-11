@@ -1,0 +1,14 @@
+108.156.60.115
+108.156.60.19
+18.172.153.31
+18.172.153.57
+3.5.165.104
+3.5.169.233
+34.234.48.164
+bcrc.io
+dev-lnk.bcrc.io
+inbound-smtp.us-west-2.amazonaws.com
+lnk-dev.bcrc.io
+lnk.bcrc.io
+trk.bcrc.io
+www.bcrc.io

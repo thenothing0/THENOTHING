@@ -43,38 +43,38 @@ class ResearcherProfile:
     profile_type: ProfileType
     name: str
     description: str
-    
+
     # Stealth configuration
     stealth_mode: str = "normal"  # aggressive, normal, cautious, stealth, ghost
     max_requests_per_second: float = 10.0
-    
+
     # Tool preferences
     preferred_tools: List[str] = field(default_factory=list)
     avoided_tools: List[str] = field(default_factory=list)
-    
+
     # Skill weights
     skill_weights: List[SkillWeight] = field(default_factory=list)
-    
+
     # Attack methodology
     attack_priorities: List[str] = field(default_factory=list)
-    
+
     # Cognitive parameters
     min_theory_confidence: float = 0.3
     max_theories_per_cycle: int = 5
     max_cycles: int = 10
     simulation_required: bool = True
     debate_required: bool = True
-    
+
     # Scan parameters
     crawl_depth: int = 3
     max_concurrent_tools: int = 3
     timeout_per_tool: int = 120
-    
+
     # Trigger conditions (when to auto-activate)
     trigger_tech: List[str] = field(default_factory=list)
     trigger_industry: List[str] = field(default_factory=list)
     trigger_conditions: List[str] = field(default_factory=list)
-    
+
     # Performance tracking
     times_activated: int = 0
     total_findings: int = 0
@@ -109,7 +109,7 @@ BUILTIN_PROFILES: Dict[ProfileType, ResearcherProfile] = {
         max_concurrent_tools=1,
         trigger_conditions=["waf_detected", "ids_detected", "rate_limited"],
     ),
-    
+
     ProfileType.AGGRESSIVE: ResearcherProfile(
         profile_type=ProfileType.AGGRESSIVE,
         name="Full-Spectrum Hunter",
@@ -134,7 +134,7 @@ BUILTIN_PROFILES: Dict[ProfileType, ResearcherProfile] = {
         max_concurrent_tools=10,
         timeout_per_tool=300,
     ),
-    
+
     ProfileType.RECON: ResearcherProfile(
         profile_type=ProfileType.RECON,
         name="Recon Specialist",
@@ -156,7 +156,7 @@ BUILTIN_PROFILES: Dict[ProfileType, ResearcherProfile] = {
         crawl_depth=4,
         max_concurrent_tools=5,
     ),
-    
+
     ProfileType.CLOUD: ResearcherProfile(
         profile_type=ProfileType.CLOUD,
         name="Cloud Hunter",
@@ -180,7 +180,7 @@ BUILTIN_PROFILES: Dict[ProfileType, ResearcherProfile] = {
             SkillWeight("cloud_azure_blob", 1.8, 2),
         ],
     ),
-    
+
     ProfileType.API: ResearcherProfile(
         profile_type=ProfileType.API,
         name="API Specialist",
@@ -204,7 +204,7 @@ BUILTIN_PROFILES: Dict[ProfileType, ResearcherProfile] = {
             SkillWeight("auth_oauth_redirect", 1.8, 2),
         ],
     ),
-    
+
     ProfileType.BUSINESS_LOGIC: ResearcherProfile(
         profile_type=ProfileType.BUSINESS_LOGIC,
         name="Business Logic Researcher",
@@ -227,7 +227,7 @@ BUILTIN_PROFILES: Dict[ProfileType, ResearcherProfile] = {
         crawl_depth=2,
         max_concurrent_tools=1,
     ),
-    
+
     ProfileType.EXPLOIT_CHAIN: ResearcherProfile(
         profile_type=ProfileType.EXPLOIT_CHAIN,
         name="Exploit Chain Analyst",

@@ -1,0 +1,20 @@
+[*] Checking http://172.64.145.146:2086
+[*] Checking http://34.242.102.67
+[*] Checking http://bob.factor75.com
+[*] Checking http://business-plan.factor75.com:2087
+[*] Checking http://business.factor75.com:2086
+[*] Checking http://business.factor75.com:8880
+[*] Checking http://click.link.factor75.com
+[*] Checking http://cloud.link.factor75.com
+[*] Checking http://email.updates.factor75.com
+[*] Checking http://factorfoods.factor75.com
+[*] Checking http://join.factor75.com
+[*] Checking https://34.242.102.67
+[*] Checking https://34.248.159.121
+[*] Checking https://hft.factor75.com
+[*] Checking https://staging-vercel.factor75.com
+[~] Number of requests: 1
+[~] Number of requests: 2
+[~] Number of requests: 3
+[~] Number of requests: 6
+[~] Number of requests: 7

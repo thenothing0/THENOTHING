@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "tool": "TheN0thing",
+    "version": "11.0",
+    "timestamp": "2026-07-08T03:57:48+00:00",
+    "duration": 20625,
+    "target": "everyplate.com.au",
+    "type": "domain"
+  },
+  "summary": {
+    "subdomains": 157,
+    "ips": 30,
+    "asns": 0,
+    "cidrs": 0,
+    "urls": 49,
+    "ports": 12,
+    "vulns": 0,
+    "cloud": 0,
+    "waf": 12,
+    "tech": 0
+  },
+  "securitytrails": {
+    "subdomains": 0,
+    "historical_ips": 0,
+    "associated_domains": 0
+  },
+  "advanced": {
+    "wayback": 0,
+    "otx": 0,
+    "virustotal": 24,
+    "axfr_records": 0,
+    "zonewalk": 0,
+    "permutations": 91,
+    "recursive": 1,
+    "ai_predicted": 0,
+    "buckets": 191,
+    "buckets_open": 15,
+    "vhosts": 147,
+    "cname_chains": 21,
+    "cname_thirdparty": 4,
+    "wildcard_dns": "false",
+    "dnssec": "not enabled on everyplate.com.au"
+  },
+  "health": {
+    "errors": 0,
+    "warnings": 15,
+    "log": "/sec/root/.config/then0thing/logs/TheN0thing.sh_20260707_221403.log"
+  }
+}

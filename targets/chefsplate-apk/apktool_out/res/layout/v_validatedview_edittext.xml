@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.textfield.TextInputLayout android:textColorHint="@color/neutral_600" android:id="@id/textInputLayout" android:layout_width="fill_parent" android:layout_height="wrap_content" app:errorEnabled="true" app:errorTextAppearance="@style/Theme.HelloFresh.TextView.Form.Error" app:hintTextAppearance="@style/Theme.HelloFresh.TextView.Form.Hint">
+        <com.google.android.material.textfield.TextInputEditText android:id="@id/textInputEditText" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/Theme.HelloFresh.EditText.Form.Default" />
+    </com.google.android.material.textfield.TextInputLayout>
+</merge>

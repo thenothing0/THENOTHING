@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/po_action_border_disabled" />
+    <size android:height="@dimen/po_dragHandle_height" android:width="@dimen/po_dragHandle_width" />
+    <corners android:radius="10.0dip" />
+</shape>

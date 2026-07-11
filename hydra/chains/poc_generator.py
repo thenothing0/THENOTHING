@@ -5,11 +5,10 @@
 ╚══════════════════════════════════════════════════════════════╝
 """
 
-import json
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Dict, List
 
 logger = logging.getLogger("hydra.chains.poc")
 
@@ -88,8 +87,8 @@ class ProofOfConcept:
             f"# {self.title}",
             f"**Severity**: {self.severity.upper()}",
             f"**Chain ID**: {self.chain_id}",
-            "", f"## Description", self.description,
-            "", f"## Impact", self.impact,
+            "", "## Description", self.description,
+            "", "## Impact", self.impact,
         ]
         if self.prerequisites:
             lines.extend(["", "## Prerequisites"])
@@ -148,14 +147,7 @@ class PoCGenerator:
             # Add pivot step if there's a link
             if i < len(chain.links):
                 link = chain.links[i]
-                pivot = PoCStep(
-                    step_number=i + 1,
-                    method="GET",
-                    url=matched_at,
-                    description=f"Pivot: {link.technique} — {link.description}",
-                    notes=f"Confidence: {link.confidence}",
-                )
-                # Don't duplicate — just add context to main step
+                # Add context to main step
                 poc.steps[-1].notes += f"\n→ Next: {link.description}"
 
         poc.prerequisites = [

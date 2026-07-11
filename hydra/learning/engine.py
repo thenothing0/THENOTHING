@@ -5,12 +5,11 @@
 ╚══════════════════════════════════════════════════════════════╝
 """
 
-import json
 import logging
 import sqlite3
 import time
 import threading
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from pathlib import Path
 
 from hydra.config import get_config
@@ -33,21 +32,21 @@ class LearningEngine:
       - Confidence thresholds per finding type
       - Tool selection preferences
     """
-    
+
     def __init__(self, db_path: Optional[str] = None):
         config = get_config()
         self.db_path = db_path or config.learning.db_path
         self.config = config.learning
         self._lock = threading.Lock()
         self._initialized = False
-    
+
     def initialize(self):
         """Create the learning database schema."""
         if self._initialized:
             return
-        
+
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
-        
+
         with self._lock:
             conn = sqlite3.connect(self.db_path)
             try:
@@ -105,20 +104,20 @@ class LearningEngine:
                 conn.commit()
             finally:
                 conn.close()
-        
+
         self._initialized = True
         logger.info("🧠 Learning engine initialized")
-    
+
     def _conn(self) -> sqlite3.Connection:
         """Get a thread-safe database connection."""
         conn = sqlite3.connect(self.db_path, timeout=10)
         conn.row_factory = sqlite3.Row
         return conn
-    
+
     # ──────────────────────────────────────────
     #  Record Events
     # ──────────────────────────────────────────
-    
+
     def record_finding(
         self,
         scan_id: str,
@@ -146,7 +145,7 @@ class LearningEngine:
                 conn.commit()
             finally:
                 conn.close()
-    
+
     def record_tool_execution(
         self,
         tool_name: str,
@@ -168,7 +167,7 @@ class LearningEngine:
                 conn.commit()
             finally:
                 conn.close()
-    
+
     def record_agent_task(
         self,
         agent_type: str,
@@ -190,7 +189,7 @@ class LearningEngine:
                 conn.commit()
             finally:
                 conn.close()
-    
+
     def mark_true_positive(self, scan_id: str, template_id: str, is_tp: bool):
         """Mark a finding as true/false positive (feedback loop)."""
         with self._lock:
@@ -202,7 +201,7 @@ class LearningEngine:
                     (int(is_tp), scan_id, template_id),
                 )
                 conn.commit()
-                
+
                 # Update routing weight
                 self._update_weight(conn, f"template:{template_id}",
                                     self.config.reward_success if is_tp
@@ -210,13 +209,13 @@ class LearningEngine:
                 conn.commit()
             finally:
                 conn.close()
-    
+
     def _update_weight(self, conn: sqlite3.Connection, key: str, reward: float):
         """Update a routing weight with exponential decay."""
         row = conn.execute(
             "SELECT weight, samples FROM routing_weights WHERE key = ?", (key,)
         ).fetchone()
-        
+
         if row:
             old_weight = row["weight"]
             samples = row["samples"] + 1
@@ -233,11 +232,11 @@ class LearningEngine:
                    VALUES (?, ?, ?, ?)""",
                 (key, 0.5 + reward * self.config.learning_rate, 1, time.time()),
             )
-    
+
     # ──────────────────────────────────────────
     #  Query Learning Data
     # ──────────────────────────────────────────
-    
+
     async def get_historical_accuracy(self, finding_type: str) -> Optional[float]:
         """Get historical accuracy for a finding type."""
         with self._lock:
@@ -252,13 +251,13 @@ class LearningEngine:
                          AND is_true_positive >= 0""",
                     (finding_type, finding_type),
                 ).fetchone()
-                
+
                 if row and row["total"] >= self.config.min_samples_to_learn:
                     return row["tp"] / row["total"]
                 return None
             finally:
                 conn.close()
-    
+
     def get_tool_effectiveness(self, tool_name: str) -> Dict[str, float]:
         """Get effectiveness stats for a tool."""
         with self._lock:
@@ -273,7 +272,7 @@ class LearningEngine:
                        FROM tool_performance WHERE tool_name = ?""",
                     (tool_name,),
                 ).fetchone()
-                
+
                 if row and row["total"] > 0:
                     return {
                         "total_runs": row["total"],
@@ -284,7 +283,7 @@ class LearningEngine:
                 return {"total_runs": 0, "success_rate": 0, "avg_time": 0, "avg_findings": 0}
             finally:
                 conn.close()
-    
+
     def get_routing_weight(self, key: str) -> float:
         """Get a routing weight (for adaptive decisions)."""
         with self._lock:
@@ -296,7 +295,7 @@ class LearningEngine:
                 return row["weight"] if row else 0.5
             finally:
                 conn.close()
-    
+
     def get_summary(self) -> Dict[str, Any]:
         """Get a learning engine summary."""
         with self._lock:
@@ -311,7 +310,7 @@ class LearningEngine:
                 weight_count = conn.execute(
                     "SELECT COUNT(*) as c FROM routing_weights"
                 ).fetchone()["c"]
-                
+
                 return {
                     "total_findings_recorded": findings_count,
                     "tools_tracked": tool_count,

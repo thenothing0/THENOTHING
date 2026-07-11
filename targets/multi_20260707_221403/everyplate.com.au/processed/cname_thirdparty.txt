@@ -1,0 +1,4 @@
+flex.everyplate.com.au -> dznc3ygsd930e.cloudfront.net.
+live-vercel.everyplate.com.au -> live-vercel.everyplate.com.au.cdn.cloudflare.net.
+staging-vercel.everyplate.com.au -> staging-vercel.everyplate.com.au.cdn.cloudflare.net.
+stg-flex.everyplate.com.au -> d1xrgj4thhbyx.cloudfront.net.

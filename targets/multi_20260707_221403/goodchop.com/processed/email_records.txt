@@ -1,0 +1,2 @@
+DMARC: v=DMARC1; p=quarantine; sp=quarantine; pct=100; rua=mailto:657cc8b2ff904b88b07ff17b332443be@dmarc-reports.cloudflare.net,mailto:dmarc_agg@dmarc.everest.email; ruf=mailto:dmarc_fr@dmarc.everest.email; adkim=r; aspf=r; ri=43200; fo=1; rf=afrf
+DKIM[google]: present

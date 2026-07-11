@@ -231,7 +231,6 @@ def yaml_document_to_skill(folder: str, data: Dict[str, Any]) -> Skill:
     if conf_rules.get("minimum_score"):
         evidence.append(f"min_confidence:{min_conf}")
 
-    branches = data.get("adaptive_branches") or {}
     false_positive = list(data.get("false_positive_reduction") or data.get("false_positives") or [])
 
     skill = Skill(

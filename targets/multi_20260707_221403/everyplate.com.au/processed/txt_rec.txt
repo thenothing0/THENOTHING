@@ -1,0 +1,2 @@
+active.everyplate.com.au -> v=spf1 include:cust-spf.exacttarget.com -all, google-site-verification=OKLpOWKC9qoQznVhrTLjK0FJ7Vgcv_-a0sTZeqypvKg
+alerts.everyplate.com.au -> google-site-verification=c_KGG6BiITgZqoIc-McnCSF3OZ0LvJ_3FT5vAdrJbuU

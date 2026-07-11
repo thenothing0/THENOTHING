@@ -16,12 +16,12 @@ logger = logging.getLogger("hydra.agent.vuln_research")
 class VulnResearchAgent(BaseAgent):
     AGENT_TYPE = "vuln_research"
     AGENT_NAME = "Vulnerability Research Agent"
-    
+
     def __init__(self, bus: MemoryBus, mcp_client=None, ai_router=None):
         super().__init__(bus)
         self.mcp = mcp_client
         self.ai = ai_router
-    
+
     async def execute(self, task: Task) -> Dict[str, Any]:
         handlers = {
             "vuln_scan": self._vuln_scan,
@@ -32,12 +32,12 @@ class VulnResearchAgent(BaseAgent):
         if not handler:
             raise ValueError(f"Unknown task type: {task.task_type}")
         return await handler(task)
-    
+
     async def _vuln_scan(self, task: Task) -> Dict[str, Any]:
         """Run Nuclei vulnerability scan against discovered hosts."""
         target = task.payload["target"]
         context = task.payload.get("context", {})
-        
+
         # Get live hosts from recon phase
         live_hosts = []
         for r in context.get("recon", []):
@@ -45,7 +45,7 @@ class VulnResearchAgent(BaseAgent):
                 live_hosts.extend(r.get("live_hosts", []))
         if not live_hosts:
             live_hosts = [target if target.startswith("http") else f"https://{target}"]
-        
+
         findings = []
         for host in live_hosts[:100]:  # cap to prevent runaway
             try:
@@ -58,11 +58,11 @@ class VulnResearchAgent(BaseAgent):
                     findings.extend(parsed)
             except Exception as e:
                 self.logger.warning(f"Nuclei scan failed for {host}: {e}")
-        
+
         self.logger.info(f"Found {len(findings)} potential vulnerabilities")
         return {"task_type": "vuln_scan", "target": target,
                 "findings": findings, "count": len(findings)}
-    
+
     def _parse_nuclei_output(self, output: str) -> list:
         """Parse Nuclei JSON/text output into structured findings."""
         import json
@@ -87,12 +87,12 @@ class VulnResearchAgent(BaseAgent):
                 if "[" in line and "]" in line:
                     findings.append({"raw": line, "severity": "info"})
         return findings
-    
+
     async def _tech_detection(self, task: Task) -> Dict[str, Any]:
         """Detect technologies running on the target."""
         target = task.payload["target"]
         technologies = []
-        
+
         try:
             result = await self.mcp.execute_tool("tech_detect", {
                 "target": target, "tool": "whatweb",
@@ -101,22 +101,22 @@ class VulnResearchAgent(BaseAgent):
                 technologies = self._parse_tech_output(result["output"])
         except Exception as e:
             self.logger.warning(f"Tech detection failed: {e}")
-        
+
         return {"task_type": "tech_detection", "target": target,
                 "technologies": technologies}
-    
+
     def _parse_tech_output(self, output: str) -> list:
         techs = []
         for line in output.strip().split("\n"):
             if line.strip():
                 techs.append(line.strip())
         return techs
-    
+
     async def _cve_lookup(self, task: Task) -> Dict[str, Any]:
         """Use AI to map findings to known CVEs."""
         target = task.payload["target"]
         context = task.payload.get("context", {})
-        
+
         # Collect technologies and findings for CVE mapping
         techs = []
         findings = []
@@ -124,7 +124,7 @@ class VulnResearchAgent(BaseAgent):
             if isinstance(r, dict):
                 techs.extend(r.get("technologies", []))
                 findings.extend(r.get("findings", []))
-        
+
         cve_mappings = []
         if self.ai and (techs or findings):
             prompt = (
@@ -143,6 +143,6 @@ class VulnResearchAgent(BaseAgent):
                         cve_mappings = [{"raw_analysis": ai_result}]
             except Exception as e:
                 self.logger.warning(f"AI CVE lookup failed: {e}")
-        
+
         return {"task_type": "cve_lookup", "target": target,
                 "cve_mappings": cve_mappings}

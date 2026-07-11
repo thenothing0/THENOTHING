@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:id="@id/layoutRoot" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.appbar.AppBarLayout android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" android:id="@id/appBarLayoutDeliveries" android:background="@android:color/transparent" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <com.google.android.material.appbar.CollapsingToolbarLayout android:id="@id/collapsingToolbarLayout" android:layout_width="fill_parent" android:layout_height="fill_parent" app:layout_scrollFlags="scroll">
+            <include android:id="@id/layoutToolbar" android:layout_width="fill_parent" android:layout_height="wrap_content" layout="@layout/v_delivery_navigation" />
+            <com.hellofresh.features.legacy.ui.flows.subscription.overview.deliveries.navigation.toolbar.DeliveryToolbarView android:gravity="top" android:id="@id/deliveryToolbarView" android:background="@color/page_background_alternative" android:paddingLeft="@dimen/spacing_sm_2" android:paddingRight="@dimen/spacing_sm_2" android:focusable="true" android:visibility="gone" android:clickable="true" android:layout_width="fill_parent" android:layout_height="56.0dip" app:layout_collapseMode="pin" style="@style/ToolbarStyle" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+    <com.hellofresh.features.legacy.ui.flows.subscription.overview.deliveries.LockableNestedScrollView android:layout_width="fill_parent" android:layout_height="fill_parent" android:fillViewport="true" app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <com.hellofresh.features.legacy.view.ConfigurableViewPager android:id="@id/viewPagerDeliveries" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+    </com.hellofresh.features.legacy.ui.flows.subscription.overview.deliveries.LockableNestedScrollView>
+    <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="center" android:id="@id/progressViewMyDeliveries" app:layout_anchor="@id/viewPagerDeliveries" app:layout_anchorGravity="center" style="@style/wrapped" />
+    <com.hellofresh.sharedui.view.ErrorPlaceholderView android:gravity="center" android:layout_gravity="center" android:id="@id/viewErrorPlaceholderMyDeliveries" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

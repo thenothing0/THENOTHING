@@ -1,0 +1,12 @@
+email.newsletter.youfoodz.com -> ns-508.awsdns-63.com, ns-619.awsdns-13.net, ns-1452.awsdns-53.org, ns-2026.awsdns-61.co.uk
+email.updates.youfoodz.com -> ns-508.awsdns-63.com, ns-619.awsdns-13.net, ns-1452.awsdns-53.org, ns-2026.awsdns-61.co.uk
+hungry.youfoodz.com -> ns-1953.awsdns-52.co.uk, ns-315.awsdns-39.com, ns-1352.awsdns-41.org, ns-839.awsdns-40.net
+email.gh-mail.youfoodz.com -> ns-1614.awsdns-09.co.uk, ns-586.awsdns-09.net, ns-133.awsdns-16.com, ns-1482.awsdns-57.org
+link.youfoodz.com -> ns1.exacttarget.com, ns2.exacttarget.com, ns3.exacttarget.com, ns4.exacttarget.com
+email.deals.youfoodz.com -> ns-619.awsdns-13.net, ns-1452.awsdns-53.org, ns-508.awsdns-63.com, ns-2026.awsdns-61.co.uk
+n.youfoodz.com -> ns1.exacttarget.com, ns4.exacttarget.com, ns3.exacttarget.com, ns2.exacttarget.com
+m.youfoodz.com -> ns2.exacttarget.com, ns4.exacttarget.com, ns1.exacttarget.com, ns3.exacttarget.com
+image.link.youfoodz.com -> ns-1610.awsdns-09.co.uk, ns-1371.awsdns-43.org, ns-659.awsdns-18.net, ns-135.awsdns-16.com
+e.youfoodz.com -> ns1.exacttarget.com, ns2.exacttarget.com, ns3.exacttarget.com, ns4.exacttarget.com
+f.youfoodz.com -> ns4.exacttarget.com, ns2.exacttarget.com, ns3.exacttarget.com, ns1.exacttarget.com
+a.youfoodz.com -> ns1.exacttarget.com, ns2.exacttarget.com, ns3.exacttarget.com, ns4.exacttarget.com

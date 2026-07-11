@@ -144,7 +144,7 @@ class HallucinationDefense:
 
         # Step 2: Scan for hallucination indicators
         hallucination_indicators = self._detect_hallucination_indicators(full_text)
-        
+
         # Step 3: Scan for evidence indicators
         evidence_indicators = self._detect_evidence_indicators(full_text)
 

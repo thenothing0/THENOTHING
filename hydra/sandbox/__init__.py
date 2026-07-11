@@ -256,7 +256,7 @@ class SecuritySandbox:
             self.rate_limiter = RateLimiter(
                 rate=scope_data["rate_limit"]
             )
-        logger.info(f"🔒 Sandbox policy updated from scope data")
+        logger.info("🔒 Sandbox policy updated from scope data")
 
     def get_audit_log(self) -> List[Dict[str, Any]]:
         return list(self._execution_log)

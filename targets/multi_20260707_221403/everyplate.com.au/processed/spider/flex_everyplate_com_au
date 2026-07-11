@@ -1,0 +1,97 @@
+[url] - [code-200] - https://flex.everyplate.com.au
+[subdomains] - https://www.everyplate.com.au
+[href] - https://flex.everyplate.com.au/styles.css?v=20260414-1
+[href] - https://www.everyplate.com.au/
+[href] - https://www.everyplate.com.au/login
+[href] - https://flex.everyplate.com.au
+[href] - https://www.everyplate.com.au/about/faq
+[javascript] - https://flex.everyplate.com.au/config.js?v=20260414-1
+[javascript] - https://flex.everyplate.com.au/script.js?v=20260414-1
+[url] - [code-200] - https://flex.everyplate.com.au/config.js?v=20260414-1
+[subdomains] - https://flex.everyplate.com.au
+[subdomains] - https://stg-flex.everyplate.com.au
+[linkfinder] - [from: https://flex.everyplate.com.au/config.js?v=20260414-1] - https://partnerships-node-api-public.au-live.hellofresh.io
+[linkfinder] - https://partnerships-node-api-public.au-live.hellofresh.io
+[linkfinder] - [from: https://flex.everyplate.com.au/config.js?v=20260414-1] - https://partnerships-node-api-public.au-staging.hellofresh.io
+[linkfinder] - https://partnerships-node-api-public.au-staging.hellofresh.io
+[url] - [code-200] - https://flex.everyplate.com.au/script.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/script.js?v=20260414-1] - Australia/Sydney
+[linkfinder] - https://flex.everyplate.com.au/Australia/Sydney
+[linkfinder] - https://flex.everyplate.com.au/Australia/Sydney
+[linkfinder] - [from: https://flex.everyplate.com.au/script.js?v=20260414-1] - https://www.everyplate.com.au/login
+[linkfinder] - [from: https://flex.everyplate.com.au/script.js?v=20260414-1] - application/json
+[linkfinder] - https://flex.everyplate.com.au/application/json
+[url] - [code-200] - https://flex.everyplate.com.au/application/json
+[href] - https://flex.everyplate.com.au/application/styles.css?v=20260414-1
+[javascript] - https://flex.everyplate.com.au/application/config.js?v=20260414-1
+[javascript] - https://flex.everyplate.com.au/application/script.js?v=20260414-1
+[url] - [code-200] - https://flex.everyplate.com.au/Australia/Sydney
+[href] - https://flex.everyplate.com.au/Australia/styles.css?v=20260414-1
+[javascript] - https://flex.everyplate.com.au/Australia/config.js?v=20260414-1
+[javascript] - https://flex.everyplate.com.au/Australia/script.js?v=20260414-1
+[url] - [code-200] - https://flex.everyplate.com.au/application/config.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - ./styles.css?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - ./config.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - ./script.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - https://www.everyplate.com.au/
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - https://www.everyplate.com.au/login
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - https://www.everyplate.com.au/about/faq
+[linkfinder] - [from: https://flex.everyplate.com.au/application/config.js?v=20260414-1] - ./box_delivery_process.jpeg
+[linkfinder] - https://flex.everyplate.com.au/application/box_delivery_process.jpeg
+[linkfinder] - https://flex.everyplate.com.au/box_delivery_process.jpeg
+[url] - [code-200] - https://flex.everyplate.com.au/application/script.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - ./styles.css?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - ./config.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - ./script.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - https://www.everyplate.com.au/
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - https://www.everyplate.com.au/login
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - https://www.everyplate.com.au/about/faq
+[linkfinder] - [from: https://flex.everyplate.com.au/application/script.js?v=20260414-1] - ./box_delivery_process.jpeg
+[url] - [code-200] - https://flex.everyplate.com.au/Australia/config.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - ./styles.css?v=20260414-1
+[linkfinder] - https://flex.everyplate.com.au/Australia/styles.css?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - ./config.js?v=20260414-1
+[linkfinder] - https://flex.everyplate.com.au/Australia/config.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - ./script.js?v=20260414-1
+[linkfinder] - https://flex.everyplate.com.au/Australia/script.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - https://www.everyplate.com.au/
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - https://www.everyplate.com.au/login
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - https://www.everyplate.com.au/about/faq
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/config.js?v=20260414-1] - ./box_delivery_process.jpeg
+[linkfinder] - https://flex.everyplate.com.au/Australia/box_delivery_process.jpeg
+[url] - [code-200] - https://flex.everyplate.com.au/Australia/script.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - https://www.googletagmanager.com/gtag/js?id=G-EG2M3NP108
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - ./styles.css?v=20260414-1
+[linkfinder] - https://flex.everyplate.com.au/Australia/styles.css?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - ./config.js?v=20260414-1
+[linkfinder] - https://flex.everyplate.com.au/Australia/config.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - ./script.js?v=20260414-1
+[linkfinder] - https://flex.everyplate.com.au/Australia/script.js?v=20260414-1
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - https://www.everyplate.com.au/
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - https://media.everyplate.com/w_256%2Cq_100%2Cf_auto%2Cc_limit%2Cfl_lossy/hellofresh_website/logo/whitelabel_logos_lg/ep_lg.png
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - https://www.everyplate.com.au/login
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - https://www.everyplate.com.au/about/faq
+[linkfinder] - [from: https://flex.everyplate.com.au/Australia/script.js?v=20260414-1] - ./box_delivery_process.jpeg
+[linkfinder] - https://flex.everyplate.com.au/Australia/box_delivery_process.jpeg

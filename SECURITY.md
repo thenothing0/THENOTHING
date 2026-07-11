@@ -1,32 +1,49 @@
 # Security Policy
 
-## ⚠️ Responsible Use
-
-HYDRA is designed **exclusively** for authorized security testing within approved bug bounty program scopes. 
-
-**Unauthorized use of this tool against systems you do not have explicit permission to test is illegal and unethical.**
-
-## 🔒 Scope Enforcement
-
-HYDRA includes mandatory scope enforcement at three levels:
-1. **Scope Intelligence Layer** — Blocks out-of-scope targets before any scan
-2. **MCP Tool Server** — Validates every tool execution against scope policy
-3. **Coordinator** — Blocks entire scan phases for unauthorized targets
-
-These safety mechanisms should **never** be bypassed or disabled.
-
-## 📋 Supported Versions
+## Supported versions
 
 | Version | Supported |
 |---------|-----------|
-| 3.x     | ✅ Active |
-| 2.x     | ⚠️ Critical fixes only |
-| < 2.0   | ❌ End of life |
+| 1.0.x   | Active support |
+| < 1.0   | Not supported |
 
-## ⚖️ Legal Notice
+## Reporting a vulnerability
 
-Users of HYDRA are solely responsible for ensuring compliance with:
-- Applicable laws and regulations
-- Bug bounty program terms and conditions
-- Target organization's security testing policies
-- Rate limiting and responsible testing practices
+If you discover a security vulnerability in HYDRA itself (not in a target you're testing), please report it responsibly:
+
+1. **GitHub Security Advisories** (preferred): Go to [Security Advisories](https://github.com/thenothing-sec/hydra/security/advisories) and create a new draft advisory.
+2. **Email**: Contact the maintainers directly (see the repository for contact details).
+
+Please **do not** open a public GitHub issue for security vulnerabilities.
+
+### What to include
+
+- Description of the vulnerability
+- Steps to reproduce
+- Impact assessment
+- Suggested fix (if any)
+
+### Response timeline
+
+- **Acknowledgment**: within 48 hours
+- **Initial assessment**: within 7 days
+- **Fix or mitigation**: within 30 days for critical issues
+
+## Scope enforcement
+
+HYDRA enforces deny-by-default authorization at multiple levels:
+
+1. **Authorization gate** — `authorize_target` must be called before any active action. Only targets covered by a registered bug bounty program are permitted.
+2. **MCP tool server** — every tool execution validates scope policy.
+3. **Four absolute prohibitions** — DoS, destructive actions, data exfiltration, and social engineering are never permitted, even against in-scope targets.
+4. **Catastrophic command denylist** — `shell_exec` blocks dangerous system commands regardless of operator mode.
+5. **Secret redaction** — evidence storage automatically redacts credentials and secrets.
+6. **Poison-gate quarantine** — cross-session learning quarantines target-derived steering text.
+
+These safety mechanisms must never be bypassed or disabled.
+
+## Responsible use
+
+HYDRA is designed exclusively for authorized security testing within approved bug bounty program scopes or explicit written authorization.
+
+Unauthorized use against systems you do not have permission to test is illegal and unethical. Users are solely responsible for compliance with applicable laws, program terms, and responsible testing practices.

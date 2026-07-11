@@ -1,0 +1,7 @@
+bcrc.io
+dev-lnk.bcrc.io
+inbound-smtp.us-west-2.amazonaws.com
+lnk-dev.bcrc.io
+lnk.bcrc.io
+trk.bcrc.io
+www.bcrc.io

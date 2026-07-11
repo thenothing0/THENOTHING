@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView android:textAppearance="@style/HFText.BodySmallRegular" android:textColor="@color/neutral_800" android:ellipsize="marquee" android:gravity="center_vertical" android:id="@id/textViewCountry" android:paddingTop="@dimen/spacing_xs" android:paddingBottom="@dimen/spacing_xs" android:layout_width="fill_parent" android:layout_height="wrap_content" android:singleLine="true" android:drawablePadding="@dimen/spacing_sm_2" android:textAlignment="inherit" android:paddingStart="@dimen/spacing_xxs" android:paddingEnd="@dimen/spacing_sm_2"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

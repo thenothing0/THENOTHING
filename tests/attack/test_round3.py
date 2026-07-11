@@ -11,7 +11,6 @@ Live end-to-end paths (through the gated HttpExecutor + a local server) live in 
 """
 
 import gzip
-import json
 
 import pytest
 

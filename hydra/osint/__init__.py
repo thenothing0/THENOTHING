@@ -556,7 +556,6 @@ class OSINTIntelligenceEngine(HTTPMixin):
         """Build attack surface summary from all gathered intelligence."""
         domains = set()
         ips = set()
-        services = []
         cloud_resources = []
 
         for asset in report.assets:
