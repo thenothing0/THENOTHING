@@ -445,6 +445,7 @@ class TestWorkspaceState:
 
 class TestCommandHistory:
     def test_history_persistence(self):
+        pytest.importorskip("textual")
         with tempfile.TemporaryDirectory() as td:
             hist_path = Path(td) / ".hydra_command_history"
             hist_path.write_text("/help\n/status\n/recon example.com\n")
@@ -467,6 +468,7 @@ class TestCommandHistory:
 
 class TestCommandCompletion:
     def test_argument_hints_exist(self):
+        pytest.importorskip("textual")
         from control_center.tui.widgets.command_input import _ARGUMENT_HINTS
         assert "recon" in _ARGUMENT_HINTS
         assert "scan" in _ARGUMENT_HINTS
@@ -474,6 +476,7 @@ class TestCommandCompletion:
         assert "session" in _ARGUMENT_HINTS
 
     def test_scan_hints(self):
+        pytest.importorskip("textual")
         from control_center.tui.widgets.command_input import _ARGUMENT_HINTS
         scan_hints = _ARGUMENT_HINTS["scan"]
         assert "xss" in scan_hints

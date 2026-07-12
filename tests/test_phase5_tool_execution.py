@@ -137,6 +137,7 @@ def test_scan_service_campaign():
 
 
 def test_event_bridge_tool_output():
+    pytest.importorskip("textual")
     from control_center.tui.event_bridge import EventBridge, ToolOutputChunk
     from unittest.mock import MagicMock
 
@@ -157,6 +158,7 @@ def test_event_bridge_tool_output():
 
 
 def test_event_bridge_workflow_advanced():
+    pytest.importorskip("textual")
     from control_center.tui.event_bridge import EventBridge, WorkflowAdvanced
     from unittest.mock import MagicMock
 

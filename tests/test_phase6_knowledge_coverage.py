@@ -16,6 +16,9 @@ Validates:
 
 import sys
 import os
+
+import pytest
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from hydra.services.event_bus import EventBus
@@ -129,6 +132,7 @@ def test_engage():
 
 def test_conversation_renderers():
     """Verify ConversationLog can render all new result types without crashing."""
+    pytest.importorskip("textual")
     from control_center.tui.widgets.conversation import ConversationLog
     from unittest.mock import MagicMock
 

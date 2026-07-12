@@ -13,6 +13,9 @@ Validates:
 import asyncio
 import sys
 import os
+
+import pytest
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from hydra.services.event_bus import EventBus
@@ -123,6 +126,7 @@ def test_ai_session_history():
 # ── Event bridge AI events ──
 
 def test_event_bridge_ai():
+    pytest.importorskip("textual")
     from control_center.tui.event_bridge import EventBridge, AIToken, AIChatCompleted
     from unittest.mock import MagicMock
 
@@ -249,6 +253,7 @@ def test_workspace_state():
 
 
 def test_conversation_plugin_renderer():
+    pytest.importorskip("textual")
     from control_center.tui.widgets.conversation import ConversationLog
     from unittest.mock import MagicMock
 

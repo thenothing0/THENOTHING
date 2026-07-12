@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
+from unittest.mock import MagicMock
+
 import pytest
 
 textual = pytest.importorskip("textual")
 
-from unittest.mock import MagicMock
-
-from control_center.tui.event_bridge import (
+from control_center.tui.event_bridge import (  # noqa: E402
     AgentGoalProgress,
     AgentPlanReady,
     AgentReasoning,
@@ -17,8 +17,8 @@ from control_center.tui.event_bridge import (
     AgentTaskUpdate,
     EventBridge,
 )
-from control_center.tui.widgets import markdown_renderer as mr
-from hydra.services.event_bus import EventBus
+from control_center.tui.widgets import markdown_renderer as mr  # noqa: E402
+from hydra.services.event_bus import EventBus  # noqa: E402
 
 
 def _posted(app):
