@@ -1,2 +1,0 @@
-intranet.becoolcouriers.com.au	2a00:1450:4001:c13::79
-mail.becoolcouriers.com.au	2607:f8b0:400c:c13::79

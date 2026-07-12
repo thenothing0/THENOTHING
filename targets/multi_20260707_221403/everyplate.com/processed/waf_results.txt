@@ -1,6 +1,0 @@
-[*] Checking http://media.everyplate.com
-[~] Number of requests: 2
-[~] Number of requests: 4
-[~] Number of requests: 5
-[~] Number of requests: 6
-[~] Number of requests: 7

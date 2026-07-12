@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:id="@id/textViewFound" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" style="@style/Theme.HelloFresh.TextView.Recipes.Results.Found" />
-    <TextView android:layout_gravity="end|center" android:id="@id/textViewSort" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/buttonNoBackground.GreyRipple" />
-</merge>

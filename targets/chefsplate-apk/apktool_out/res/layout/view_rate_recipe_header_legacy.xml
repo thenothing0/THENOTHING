@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:id="@id/legacyHeaderRoot" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:gravity="center_horizontal" android:layout_gravity="center_horizontal" android:id="@id/textViewTitle" android:focusable="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_1" android:layout_marginBottom="@dimen/spacing_sm_2" style="@style/Theme.HelloFresh.TextView.Header" />
-    <com.hellofresh.design.component.rating.ZestInteractiveRatingButtonView android:layout_gravity="center_horizontal" android:id="@id/ratingBar" android:layout_marginBottom="@dimen/spacing_md_1" style="@style/RatingStars" />
-    <TextView android:id="@id/textViewStars" android:focusable="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/spacing_sm_2" style="@style/Theme.HelloFresh.TextView.Header.RateRecipe" />
-</LinearLayout>

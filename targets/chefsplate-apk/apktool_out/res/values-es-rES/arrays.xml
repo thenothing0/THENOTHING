@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="myMenu.editableOrderSummary.addonsQuantity">
-        <item>Productos</item>
-    </string-array>
-    <string-array name="myMenu.editableOrderSummary.mealsQuantity">
-        <item>[quantity] Receta</item>
-    </string-array>
-</resources>

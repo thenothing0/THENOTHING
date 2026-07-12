@@ -1,6 +1,0 @@
-live-vercel.youfoodz.com -> live-vercel.youfoodz.com.cdn.cloudflare.net.
-partnerships.youfoodz.com -> dpnkow9o4nx98.cloudfront.net.
-shopify-dandomain-controllererpsychotechnics.fresh.youfoodz.com -> c69ee047def545f018e34bf38f44f283.7d7d3772d2769c8c044b0e3010684195.pfkqlkldb6o55k55c555.comodoca.com.
-staging-vercel.youfoodz.com -> staging-vercel.youfoodz.com.cdn.cloudflare.net.
-support.youfoodz.com -> youfoodzsupport.zendesk.com.
-www.care.youfoodz.com -> shops.myshopify.com.

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:backgroundTint="@color/page_background_alternative" style="@style/PauseSurveyStyle">
-        <ImageView android:id="@id/imageViewDeliveryCheckInIcon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_delivery_check_in_main" />
-        <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_800" android:gravity="center_horizontal" android:id="@id/textViewDeliveryCheckInTitle" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:fontFamily="@null" />
-        <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerViewDeliveryCheckIn" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" />
-    </LinearLayout>
-</merge>

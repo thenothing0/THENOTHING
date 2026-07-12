@@ -1,7 +1,0 @@
-web.chefsplate.com
-support.chefsplate.com
-mobile.chefsplate.com
-newsletter.chefsplate.com
-www.chefsplate.com
-mail.chefsplate.com
-status.chefsplate.com

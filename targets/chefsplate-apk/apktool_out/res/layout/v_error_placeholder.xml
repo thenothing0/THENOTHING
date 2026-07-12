@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/imageViewError" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@null" />
-    <TextView android:id="@id/textViewErrorTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg_1" style="@style/Cancellation.Title" />
-    <TextView android:id="@id/textViewErrorSubtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Theme.HelloFresh.TextView.TextMenuDetails" />
-    <androidx.appcompat.widget.AppCompatButton android:theme="@style/Theme.HelloFresh.Button.Green.Small" android:id="@id/buttonRefresh" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" android:textAllCaps="false" />
-</merge>

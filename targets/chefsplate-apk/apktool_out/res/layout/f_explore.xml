@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.appcompat.widget.Toolbar android:id="@id/toolbar" android:background="@color/brand_background_default" android:fitsSystemWindows="true" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/ToolbarStyle" />
-    <androidx.compose.ui.platform.ComposeView android:id="@id/explorePromotionContainer" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:fillViewport="true" />
-    <FrameLayout android:id="@id/layoutContent" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-</LinearLayout>

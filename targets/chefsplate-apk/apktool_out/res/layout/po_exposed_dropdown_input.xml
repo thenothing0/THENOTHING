@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:gravity="start" android:layout_gravity="center_horizontal" android:id="@id/po_title" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/po_input_marginVertical" style="@style/Widget.ProcessOut.Input.Title" />
-    <com.google.android.material.textfield.TextInputLayout android:layout_gravity="center_horizontal" android:id="@id/po_dropdown_layout" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/Widget.ProcessOut.ExposedDropdown.TextInputLayout">
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView android:id="@id/po_dropdown_auto_complete" android:background="@null" android:layout_width="fill_parent" android:layout_height="wrap_content" android:completionThreshold="1" android:inputType="none" android:imeOptions="actionNone" style="@style/Widget.ProcessOut.EditText" />
-    </com.google.android.material.textfield.TextInputLayout>
-    <TextView android:gravity="start" android:layout_gravity="center_horizontal" android:id="@id/po_error_message" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/po_input_marginVertical" android:layout_marginBottom="@dimen/po_input_marginVertical" style="@style/Widget.ProcessOut.Input.ErrorMessage" />
-</merge>

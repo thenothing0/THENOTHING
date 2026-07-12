@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_gravity="center_horizontal" android:orientation="vertical" android:background="@color/page_background_alternative" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_800" android:gravity="center_horizontal" android:id="@id/textViewTitlePauseSurvey" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/spacing_xxs" />
-    <TextView android:textAppearance="@style/HFText.BodyMediumRegular" android:textColor="@color/neutral_800" android:gravity="center_horizontal" android:id="@id/textViewSubtitlePauseSurvey" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-</LinearLayout>

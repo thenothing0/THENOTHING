@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_800" android:id="@id/textViewTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" android:fontFamily="@null" />
-    <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerViewSupportedWeeks" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_1" android:minHeight="@dimen/delivery_check_in_supported_week_button_width" android:backgroundTint="@color/page_background_alternative" />
-    <TextView android:textAppearance="@style/HFText.BodyMediumRegular" android:textColor="@color/neutral_700" android:id="@id/textViewNote" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_1" android:fontFamily="@null" />
-    <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonCta" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" app:zestBtnType="filled" />
-</merge>

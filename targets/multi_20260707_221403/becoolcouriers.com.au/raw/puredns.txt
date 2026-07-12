@@ -1,3 +1,0 @@
-vpn.becoolcouriers.com.au
-mail.becoolcouriers.com.au
-dev.becoolcouriers.com.au

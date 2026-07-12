@@ -1,5 +1,0 @@
-click.link.greenchef.co.uk
-greenchef.co.uk
-live-vercel.greenchef.co.uk
-track.greenchef.co.uk
-www.greenchef.co.uk

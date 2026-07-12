@@ -1,5 +1,0 @@
-Analysis v11.0
-Subdomains: 7
-IPs: 7
-URLs: 8
-Ports: 13

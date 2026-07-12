@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:layout_gravity="center_vertical" android:id="@id/imageViewClock" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/time_icon_gray" />
-    <com.hellofresh.features.food.cookingsteps.ui.timers.ui.view.TimerTextView android:textAppearance="@style/HFText.BodyLargeRegular" android:textColor="@color/neutral_800" android:layout_gravity="center_vertical" android:id="@id/timerTextView" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:paddingStart="@dimen/spacing_md_2" android:paddingEnd="@dimen/spacing_md_2" />
-    <com.google.android.material.button.MaterialButton android:id="@id/buttonStartStop" style="@style/TimerButton" />
-</merge>

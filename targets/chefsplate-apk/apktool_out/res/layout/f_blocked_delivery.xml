@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_800" android:gravity="center" android:id="@id/textViewTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:drawableTop="@drawable/ic_truck_no_delivery" android:drawablePadding="@dimen/spacing_sm_2" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" />
-    <TextView android:textAppearance="@style/HFText.BodySmallRegular" android:textColor="@color/neutral_800" android:gravity="center" android:id="@id/textViewDescription" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:layout_marginStart="@dimen/spacing_sm_2" android:layout_marginEnd="@dimen/spacing_sm_2" />
-    <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonCta" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg_1" app:zestText="Learn more" />
-</LinearLayout>

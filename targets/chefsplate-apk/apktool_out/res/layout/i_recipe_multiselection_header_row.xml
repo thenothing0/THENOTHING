@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:background="@color/page_background_default" android:clickable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginEnd="@dimen/spacing_sm_2"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <View android:background="@color/neutral_400" android:layout_width="fill_parent" android:layout_height="1.0dip" />
-    <TextView android:gravity="start|center" android:id="@id/textViewHeader" android:layout_width="fill_parent" android:layout_height="@dimen/bottomsheet_sort_recipe_item_height" android:layout_weight="1.0" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" style="@style/Theme.HelloFresh.TextView.Recipes.Search.Filter.Header" />
-    <View android:background="@color/neutral_400" android:layout_width="fill_parent" android:layout_height="1.0dip" android:layout_marginStart="@dimen/spacing_sm_2" />
-</LinearLayout>

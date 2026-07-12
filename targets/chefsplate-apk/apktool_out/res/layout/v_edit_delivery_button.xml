@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonUnskip" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" app:zestBtnStyle="negative" app:zestText="UNSKIP" />
-    <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonEditDelivery" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHeight_min="40.0dip" app:layout_constraintTop_toTopOf="parent" app:zestBtnType="outlined" app:zestText="Edit delivery" />
-    <TextView android:id="@id/textViewBadge" android:background="@drawable/bg_red_rounded" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:importantForAccessibility="no" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" style="@style/EditDelivery.Badge" />
-    <com.hellofresh.design.component.button.ZestSecondaryButtonView android:id="@id/buttonDeliverySupport" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" app:zestBtnType="outlined" app:zestText="Delivery support" />
-</merge>

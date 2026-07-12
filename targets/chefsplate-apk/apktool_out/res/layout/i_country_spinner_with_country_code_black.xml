@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:paddingTop="@dimen/spacing_xs" android:paddingBottom="@dimen/spacing_xs" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_xxs" android:paddingEnd="@dimen/spacing_xxs"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView android:textAppearance="@style/HFText.BodyMediumRegular" android:textColor="@color/neutral_800" android:ellipsize="marquee" android:gravity="center_vertical" android:id="@id/textViewCountry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:singleLine="true" android:drawablePadding="@dimen/spacing_xs" android:textAlignment="inherit" />
-    <ImageView android:layout_gravity="center_vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_chevron_down" android:scaleType="fitCenter" app:tint="@color/neutral_800" />
-</LinearLayout>

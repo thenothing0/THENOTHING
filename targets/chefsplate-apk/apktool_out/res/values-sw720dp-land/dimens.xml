@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="recipe_details_backdrop_height">400.0dip</dimen>
-    <dimen name="recipe_done_camera_size">112.0dip</dimen>
-</resources>

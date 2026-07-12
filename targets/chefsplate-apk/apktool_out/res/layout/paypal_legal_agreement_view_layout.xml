@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@id/payPalLegalAgreementsContainer" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@null" android:layout_marginBottom="@null"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:id="@id/userProfileLegalAgreementsTextView" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/paypal_checkout_legal_agreements" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_alignParentStart="true" style="@style/PYPLTextViewBody2Style" />
-</RelativeLayout>

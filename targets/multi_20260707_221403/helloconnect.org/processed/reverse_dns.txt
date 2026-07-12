@@ -1,6 +1,0 @@
-142.251.127.26	lcfrai-in-f26.1e100.net
-142.251.127.27	lcfrai-in-f27.1e100.net
-148.72.90.67	67.90.72.148.host.secureserver.net
-172.253.152.27	yulpptr-in-f27.1e100.net
-192.178.158.26	lcdels-in-f26.1e100.net
-192.178.230.26	yunrtab-in-f26.1e100.net

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:animateLayoutChanges="true" style="@style/matched"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.compose.ui.platform.ComposeView android:id="@id/composeViewViewCookIt" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-    <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="center" android:id="@id/progressView" style="@style/wrapped" />
-    <com.hellofresh.sharedui.view.ErrorPlaceholderView android:id="@id/viewErrorPlaceholder" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-</FrameLayout>

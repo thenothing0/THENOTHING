@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:background="@drawable/action_button_ripple" android:padding="10.0dip" android:clickable="true" android:clipToPadding="false" android:layout_width="48.0dip" android:layout_height="48.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:layout_width="26.0dip" android:layout_height="26.0dip" android:src="@drawable/ic_timer" android:adjustViewBounds="true" android:layout_centerInParent="true" />
-    <TextView android:textAppearance="@style/HFText.BodyExtraSmallRegular" android:textColor="@color/neutral_100" android:gravity="center" android:id="@id/timersCount" android:background="@drawable/red_dot" android:layout_width="16.0dip" android:layout_height="16.0dip" android:layout_marginTop="-4.0dip" android:layout_alignParentTop="true" android:layout_marginEnd="-4.0dip" android:layout_alignParentEnd="true" />
-</RelativeLayout>

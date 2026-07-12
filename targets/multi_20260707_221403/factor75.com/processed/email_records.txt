@@ -1,4 +1,0 @@
-DMARC: v=DMARC1; p=quarantine; sp=quarantine; pct=100; rua=mailto:dmarc_@factor75.com,mailto:dmarc_agg@dmarc.everest.email; ruf=mailto:dmarc_fr@dmarc.everest.email; adkim=r; aspf=r; ri=43200; fo=1; rf=afrf
-DKIM[google]: present
-DKIM[s2]: present
-DKIM[mandrill]: present

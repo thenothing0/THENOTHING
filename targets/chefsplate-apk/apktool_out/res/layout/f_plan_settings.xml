@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <WebView android:id="@id/webView" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-    <include android:id="@id/noInternetLayout" android:layout_width="fill_parent" android:layout_height="fill_parent" layout="@layout/i_no_internet_placeholder" />
-    <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="center" android:id="@id/webViewProgressView" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-    <com.hellofresh.web.platform.actions.debugger.MobileActionsDebugView android:layout_gravity="bottom" android:id="@id/layoutDebug" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-</FrameLayout>

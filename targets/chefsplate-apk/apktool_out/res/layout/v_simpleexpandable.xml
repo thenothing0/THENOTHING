@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="horizontal" android:background="?selectableItemBackground" android:padding="@dimen/spacing_sm_2" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:layout_gravity="center_vertical" android:id="@id/textViewLabel" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" style="@style/SimpleExpandableViewTextLabel" />
-    <ImageView android:id="@id/imageViewIcon" android:paddingTop="@dimen/spacing_xs" android:paddingBottom="@dimen/spacing_xs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_chevron_down_outline_24" android:layout_marginStart="@dimen/spacing_sm_2" />
-</LinearLayout>

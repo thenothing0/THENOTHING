@@ -1,8 +1,0 @@
-[*] Checking http://easy.chefsplate.com:2095
-[*] Checking http://eat.chefsplate.com:2086
-[*] Checking http://staging-vercel.chefsplate.com:8880
-[*] Checking http://track-staging-cdn.chefsplate.com:2083
-[~] Number of requests: 1
-[~] Number of requests: 2
-[~] Number of requests: 6
-[~] Number of requests: 7

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.adyen.checkout.dropin.internal.ui.DropInBottomSheetToolbar android:id="@id/bottom_sheet_toolbar" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-    <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView_paymentMethods" android:paddingBottom="@dimen/standard_half_margin" android:clipToPadding="false" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="1.0" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-</LinearLayout>

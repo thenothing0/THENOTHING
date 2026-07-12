@@ -1,1 +1,0 @@
-alerts.everyplate.com.au -> mx.sendgrid.net

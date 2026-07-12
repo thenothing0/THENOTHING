@@ -1,6 +1,0 @@
-[*] Checking http://greenchef.co.uk
-[~] Number of requests: 1
-[~] Number of requests: 2
-[~] Number of requests: 3
-[~] Number of requests: 6
-[~] Number of requests: 7

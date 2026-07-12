@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_800" android:gravity="center" android:id="@id/textViewTitle" android:paddingTop="@dimen/base_level5_2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:drawablePadding="@dimen/spacing_sm_2" android:paddingStart="@dimen/spacing_sm_2" android:paddingEnd="@dimen/spacing_sm_2" />
-    <TextView android:textAppearance="@style/HFText.BodySmallRegular" android:textColor="@color/neutral_800" android:gravity="center" android:id="@id/textViewDescription" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" />
-    <com.hellofresh.design.component.button.legacy.LegacyZestButtonView android:id="@id/buttonCta" android:padding="0.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg_1" />
-</merge>

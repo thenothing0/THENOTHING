@@ -1,3 +1,0 @@
-104.18.32.95	helloconnect.org	403	5470
-104.18.32.95	portal.www.helloconnect.org	403	5470
-104.18.32.95	www.helloconnect.org	403	5470

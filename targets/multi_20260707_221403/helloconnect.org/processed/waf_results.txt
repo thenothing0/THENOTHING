@@ -1,9 +1,0 @@
-[*] Checking http://172.64.155.161:2096
-[*] Checking http://172.64.155.161:8880
-[*] Checking http://helloconnect.org
-[*] Checking http://www.helloconnect.org:2086
-[*] Checking https://148.72.90.67:8443
-[*] Checking https://helloconnect.org:8443
-[~] Number of requests: 1
-[~] Number of requests: 2
-[~] Number of requests: 7

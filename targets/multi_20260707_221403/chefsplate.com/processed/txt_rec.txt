@@ -1,1 +1,0 @@
-active.chefsplate.com -> v=spf1 include:cust-spf.exacttarget.com -all

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:background="@color/neutral_200" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:textAppearance="@style/HFText.BodySmallRegular" android:textColor="@color/neutral_800" android:id="@id/searchSuggestionNoResultsTextViewMessage" android:background="@drawable/button_no_background_ripple_grey" android:padding="@dimen/spacing_sm_2" android:clickable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-    <View android:background="@color/neutral_400" android:layout_width="fill_parent" android:layout_height="2.0dip" android:layout_marginStart="@dimen/spacing_sm_2" />
-</LinearLayout>

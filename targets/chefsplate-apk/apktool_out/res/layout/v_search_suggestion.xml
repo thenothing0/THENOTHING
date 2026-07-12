@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="horizontal" android:background="@drawable/bg_ripple_grey" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="1.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:id="@id/imageViewRecipeImage" android:layout_width="70.0dip" android:layout_height="70.0dip" android:scaleType="centerCrop" />
-    <TextView android:textAppearance="@style/HFText.BodySmallRegular" android:textColor="@color/neutral_600" android:ellipsize="end" android:gravity="center_vertical" android:id="@id/textViewRecipeTitle" android:layout_width="fill_parent" android:layout_height="fill_parent" android:maxLines="2" android:paddingStart="@dimen/spacing_xs" android:paddingEnd="@dimen/spacing_xs" />
-</LinearLayout>

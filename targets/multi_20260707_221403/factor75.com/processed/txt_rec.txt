@@ -1,1 +1,0 @@
-a.factor75.com -> v=spf1 include:cust-spf.exacttarget.com -all, google-site-verification=13Grgy1vv4YDLWqUSgxvWrG3vSwWUs2vXRE9UcpYYio

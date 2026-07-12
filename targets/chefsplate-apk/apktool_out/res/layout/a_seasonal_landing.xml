@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <include app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" layout="@layout/v_toolbar" />
-    <androidx.viewpager.widget.ViewPager android:id="@id/viewPagerSeasonalProducts" android:layout_width="0.0dip" android:layout_height="0.0dip" android:layout_marginTop="@dimen/seasonal_landing_view_pager_margin_top" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
-    <com.google.android.material.tabs.TabLayout android:id="@id/circularIndicatorTabLayout" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/spacing_xs" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:tabBackground="@drawable/bg_onboarding_flow_tab" app:tabGravity="center" app:tabIndicator="@drawable/bg_onboarding_flow_tab_indicator" app:tabIndicatorColor="@color/primary_600" app:tabIndicatorGravity="center" app:tabPadding="@dimen/spacing_xs" />
-</androidx.constraintlayout.widget.ConstraintLayout>

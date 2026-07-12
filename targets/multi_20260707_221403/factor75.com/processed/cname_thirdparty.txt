@@ -1,7 +1,0 @@
-blog.factor75.com -> factor75.wpengine.com.
-business.factor75.com -> shops.myshopify.com.
-live-vercel.factor75.com -> live-vercel.factor75.com.cdn.cloudflare.net.
-mi.factor75.com -> d3ufbjzls6pqru.cloudfront.net.
-partners.factor75.com -> shops.myshopify.com.
-staging-vercel.factor75.com -> staging-vercel.factor75.com.cdn.cloudflare.net.
-work.factor75.com -> shops.myshopify.com.

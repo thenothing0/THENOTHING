@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <include layout="@layout/v_toolbar" />
-    <TextView android:textAppearance="@style/HFText.BodyMediumRegular" android:textColor="@color/neutral_800" android:id="@id/textViewHeaderInfo" android:padding="@dimen/spacing_sm_2" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-    <include layout="@layout/v_divider" />
-    <com.hellofresh.design.component.switchx.ZestSwitchView android:textAppearance="@style/HFText.BodyMediumRegular" android:textColor="@color/neutral_800" android:id="@id/switchTracking" android:padding="@dimen/spacing_sm_2" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-</LinearLayout>

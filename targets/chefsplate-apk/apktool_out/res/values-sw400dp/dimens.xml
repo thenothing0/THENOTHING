@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item type="dimen" name="bt_edit_text_icon_padding">@dimen/base_level3</item>
-    <dimen name="bt_mobile_number_explanation_padding">60.0dip</dimen>
-    <item type="dimen" name="bt_no_edit_text_icon_padding">@dimen/base_level3</item>
-</resources>

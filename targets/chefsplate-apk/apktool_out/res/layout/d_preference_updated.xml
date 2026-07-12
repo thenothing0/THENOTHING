@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:paddingTop="@dimen/spacing_sm_2" android:paddingBottom="@dimen/spacing_md_1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/spacing_md_1" android:paddingEnd="@dimen/spacing_md_1"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/ic_meal_box_preferences" />
-    <TextView android:textAppearance="@style/HFText.HeadlineMedium" android:textColor="@color/neutral_800" android:gravity="center" android:id="@id/textViewTitle" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:lineSpacingExtra="8.0sp" />
-    <TextView android:textAppearance="@style/HFText.BodySmallRegular" android:textColor="@color/neutral_800" android:gravity="center" android:id="@id/textViewDescription" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm_2" />
-    <com.hellofresh.design.component.button.ZestPrimaryButtonView android:id="@id/buttonDismiss" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md_1" android:stateListAnimator="@null" />
-</LinearLayout>

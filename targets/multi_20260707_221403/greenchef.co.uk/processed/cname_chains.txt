@@ -1,9 +1,0 @@
-bob-staging-cdn.greenchef.co.uk -> bob-staging-cdn.greenchef.co.uk.cdn.cloudflare.net.
-bob.greenchef.co.uk -> bob.greenchef.co.uk.cdn.cloudflare.net.
-click.link.greenchef.co.uk -> tl8l7zw2x6wf-phl4cg90cpr66pq.click-sap.sfmc-marketing.com.
-cloud.link.greenchef.co.uk -> tlh1t69d4vtlrtqhjklj5yr1z2hy.cp-sap.sfmc-content.com.
-image.link.greenchef.co.uk -> tlr8cnqcgvpfr5s83d5zdlh7h0fy.image-sap.sfmc-content.com.
-live-vercel.greenchef.co.uk -> live-vercel.greenchef.co.uk.cdn.cloudflare.net.
-stage.mobile.greenchef.co.uk -> stage.mobile.greenchef.co.uk.cdn.cloudflare.net.
-staging-vercel.greenchef.co.uk -> staging-vercel.greenchef.co.uk.cdn.cloudflare.net.
-static-staging-cdn.greenchef.co.uk -> static-staging-cdn.greenchef.co.uk.cdn.cloudflare.net.

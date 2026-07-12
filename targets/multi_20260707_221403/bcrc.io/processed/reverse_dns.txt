@@ -1,6 +1,0 @@
-108.156.60.115	server-108-156-60-115.ams1.r.cloudfront.net
-108.156.60.19	server-108-156-60-19.ams1.r.cloudfront.net
-18.172.153.31	server-18-172-153-31.lhr50.r.cloudfront.net
-18.172.153.57	server-18-172-153-57.lhr50.r.cloudfront.net
-3.5.165.104	s3-website.ap-southeast-2.amazonaws.com
-34.234.48.164	ec2-34-234-48-164.compute-1.amazonaws.com

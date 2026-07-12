@@ -1,1 +1,0 @@
-becoolrefrigeratedcouriers.com.au (FQDN) --> mx_record --> mail.becoolrefrigeratedcouriers.com.au (FQDN)

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:background="@color/page_background_default" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <androidx.compose.ui.platform.ComposeView android:id="@id/toolbarComposeView" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-    <com.google.android.material.tabs.TabLayout android:id="@id/tabLayoutMyRecipes" android:layout_width="fill_parent" android:layout_height="wrap_content" android:elevation="@dimen/elevation_md" app:tabBackground="@drawable/tab_layout_selector" app:tabGravity="fill" app:tabIndicatorColor="@color/neutral_800" app:tabIndicatorHeight="@dimen/base_level2" app:tabMode="fixed" app:tabRippleColor="@color/neutral_800_15" app:tabSelectedTextAppearance="@style/HFText.BodyMediumBold" app:tabSelectedTextColor="@color/neutral_foreground_default" app:tabTextAppearance="@style/HFText.BodyMediumRegular" app:tabTextColor="@color/neutral_foreground_default" />
-    <androidx.viewpager.widget.ViewPager android:id="@id/viewPagerMyRecipes" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="1.0" app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-</LinearLayout>

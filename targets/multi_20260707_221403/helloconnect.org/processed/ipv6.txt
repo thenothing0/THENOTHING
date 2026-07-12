@@ -1,7 +1,0 @@
-alt1.aspmx.l.google.com	2a00:1450:4013:c1e::1b
-alt2.aspmx.l.google.com	2a00:1450:4025:c01::1a
-alt3.aspmx.l.google.com	2a00:1450:4001:c21::1b
-alt4.aspmx.l.google.com	2a00:1450:400c:c23::1a
-aspmx.l.google.com	2a00:1450:4001:c21::1b
-www.helloconnect.org	2606:4700:4403::ac40:9ba1
-www.helloconnect.org	2606:4700:4402::6812:205f

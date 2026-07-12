@@ -1,8 +1,0 @@
-43.250.142.36
-cpcalendars.becoolrefrigeratedcouriers.com.au
-ftp.becoolrefrigeratedcouriers.com.au
-new.becoolrefrigeratedcouriers.com.au
-webdisk.becoolrefrigeratedcouriers.com.au
-webmail.becoolrefrigeratedcouriers.com.au
-www.staging.becoolrefrigeratedcouriers.com.au
-www.test.becoolrefrigeratedcouriers.com.au

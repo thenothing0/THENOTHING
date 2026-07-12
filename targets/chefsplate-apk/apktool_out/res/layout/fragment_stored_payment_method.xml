@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:paddingBottom="@dimen/standard_half_margin" android:layout_width="fill_parent" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.adyen.checkout.dropin.internal.ui.DropInBottomSheetToolbar android:id="@id/bottom_sheet_toolbar" android:layout_width="fill_parent" android:layout_height="wrap_content" />
-    <include android:id="@id/stored_payment_method_item" android:layout_width="fill_parent" android:layout_height="wrap_content" layout="@layout/removable_payment_methods_list_item" />
-    <com.google.android.material.button.MaterialButton android:id="@id/payButton" android:layout_width="fill_parent" style="@style/AdyenCheckout.DropIn.ContinueButton" />
-    <androidx.core.widget.ContentLoadingProgressBar android:layout_gravity="center" android:id="@id/progressBar" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Widget.AppCompat.ProgressBar" />
-    <com.google.android.material.button.MaterialButton android:id="@id/change_payment_method_button" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/AdyenCheckout.DropIn.ChangePaymentMethodButton" />
-</LinearLayout>

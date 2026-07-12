@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.hellofresh.design.component.card.ZestCardView android:layout_width="wrap_content" android:layout_height="wrap_content" android:elevation="@dimen/elevation_none" app:cardCornerRadius="@dimen/corner_radius_large"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout android:layout_gravity="center" android:orientation="horizontal" android:background="@color/primary_200" android:layout_width="fill_parent" android:layout_height="fill_parent">
-        <TextView android:textAppearance="@style/HFText.BodyMediumBold" android:textColor="@color/neutral_800" android:gravity="center_vertical" android:layout_gravity="center" android:id="@id/textViewTitle" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="@dimen/spacing_sm_2" android:layout_marginEnd="@dimen/spacing_sm_2" />
-        <ImageView android:layout_gravity="center_vertical" android:id="@id/imageViewChevron" android:layout_width="28.0dip" android:layout_height="28.0dip" android:src="@drawable/ic_chevron_right_outline_24" android:layout_marginEnd="@dimen/spacing_sm_2" />
-    </LinearLayout>
-</com.hellofresh.design.component.card.ZestCardView>

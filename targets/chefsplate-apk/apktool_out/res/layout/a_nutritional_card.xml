@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:id="@id/layoutNutritionalCard" android:background="@color/neutral_800" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <include layout="@layout/v_toolbar" />
-    <FrameLayout android:id="@id/progressViewContainer" android:clickable="false" android:layout_width="fill_parent" android:layout_height="fill_parent">
-        <com.hellofresh.design.component.progress.ZestProgressView android:layout_gravity="center" android:id="@id/progressView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="true" />
-    </FrameLayout>
-    <com.hellofresh.features.food.nutritionalcard.ui.view.TouchImageView android:id="@id/imageViewContainer" android:layout_width="fill_parent" android:layout_height="fill_parent" />
-</LinearLayout>
